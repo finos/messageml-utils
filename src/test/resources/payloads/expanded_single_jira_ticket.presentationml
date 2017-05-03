@@ -1,0 +1,37 @@
+<div data-format="PresentationML" data-version="2.0">
+    <div class="entity" data-entity-id="jiraIssueCreated">
+        <div class="card barStyle">
+            <div class="cardHeader">
+                <img src="https://whiteam1.atlassian.net/images/icons/priorities/highest.svg" />
+                <a href="https://whiteam1.atlassian.net/browse/SAM-25/">SAM-25</a>
+                <span>Issue Test - </span>
+                <span class="entity" data-entity-id="mention123">@Bot User01</span>
+                <span class="action">Created</span>
+            </div>
+            <div class="cardBody">
+                <div class="entity" data-entity-id="jiraIssueCreated">
+                    <div class="labelBackground badge">
+                        <p>
+                            <span class="label">Description:</span>
+                            <span>Only for test</span>
+                        </p>
+                        <p>
+                            <span class="label">Assignee:</span>
+                            <span class="entity" data-entity-id="mention456">@Bot User02</span>
+                        </p>
+                    </div>
+                    <div class="labelBackground badge">
+                        <p>
+                            <span class="label">Type:</span>
+                            <img src="Story" />
+                            <span class="label">Priority:</span>
+                            <img src="https://whiteam1.atlassian.net/images/icons/priorities/highest.svg" />
+                            <span>Highest</span> <span class="label">Labels:</span>
+                            <span class="entity" data-entity-id="hash789">#production</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

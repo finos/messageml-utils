@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.symphonyoss.symphony</groupId>
+    <artifactId>messageml</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <!--
+  ~
+  ~ Copyright 2016 The Symphony Software Foundation
+  ~
+  ~ Licensed to The Symphony Software Foundation (SSF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/symphonyoss/messageml.git</connection>
+        <developerConnection>scm:git:git@github.com:symphonyoss/messageml.git</developerConnection>
+        <url>https://github.com/symphonyoss/messageml</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>ldrozdz</id>
+            <name>Łukasz Dróżdż</name>
+            <email>lukasz@symphony.com</email>
+            <url>http://github.com/ldrozdz</url>
+            <organization>Symphony Communication Services LLC</organization>
+            <organizationUrl>http://symphony.com</organizationUrl>
+            <roles>
+                <role>Senior Director Platform</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>bruceskingle</id>
+            <name>Bruce Skingle</name>
+            <email>bruce.skingle@symphony.com</email>
+            <url>http://github.com/bruceskingle</url>
+            <organization>Symphony Communication Services LLC</organization>
+            <organizationUrl>http://symphony.com</organizationUrl>
+            <roles>
+                <role>Principal Software Engineer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>Adrian Zarifis</name>
+            <email>adrian.zarifis@symphony.com</email>
+            <organization>Symphony</organization>
+            <roles>
+                <role>QA Engineer</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Daniel Nathanson</name>
+            <email>daniel.nathanson@symphony.com</email>
+            <organization>Symphony Communication Services LLC</organization>
+            <roles>
+                <role>Senior Director Platform Engineering</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Paul Teyssier</name>
+            <email>p@symphony.com</email>
+            <organization>Symphony Communication Services LLC</organization>
+            <roles>
+                <role>Senior Director Platform</role>
+            </roles>
+        </contributor>
+    </contributors>
+
+    <properties>
+        <jackson.version>2.7.3</jackson.version>
+        <commons.io.version>2.4</commons.io.version>
+        <commons.lang3.version>3.4</commons.lang3.version>
+        <freemarker.version>2.3.23</freemarker.version>
+        <commonmark.version>0.9.0</commonmark.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>1.9.5</mockito.version>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>${commonmark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

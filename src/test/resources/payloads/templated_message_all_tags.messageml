@@ -1,0 +1,56 @@
+<messageML>
+<p><img src="${entity["jiraUpdated"].issue.logo}"/> <br/> Sample JIRA issue</p>
+<div class="entity" >
+<h1>${entity["jiraUpdated"].user.displayName} updated Bug
+<a href="${entity["jiraUpdated"].issue.link}">
+<i>${entity["jiraUpdated"].issue.key}</i>,<b>${entity["jiraUpdated"].issue.subject}</b>
+</a>
+</h1>
+<card iconSrc="${entity["jiraUpdated"].issue.logo}" class="barStyle">
+<header>
+<span class="label">Field</span><span class="info">Old Value => New Value</span>
+</header>
+<body>
+<ol><#list entity["jiraUpdated"].issue.changelog.change as change>
+<li>
+<span class="label">${change.fieldName}</span>
+<span class="info">${change.oldValue} => ${change.newValue}</span>
+</li>
+</#list></ol>
+</body>
+</card>
+<hr/>
+<table>
+<thead>
+<th>
+<td>Field</td>
+<td>Value</td>
+</th>
+</thead>
+<tbody>
+<tr>
+<td>Assignee</td>
+<td><mention email="${entity["jiraUpdated"].issue.assignee.emailAddress}"/></td>
+</tr>
+<tr>
+<td>Labels</td>
+<td>
+<ul><#list entity["jiraUpdated"].labels as label>
+<li><hash tag="${label}"/></li>
+</#list></ul>
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th>Priority</th>
+<td>${entity["jiraUpdated"].issue.priority}</td>
+</tr>
+<tr>
+<th>Status</th>
+<td>${entity["jiraUpdated"].issue.status}</td>
+</tr>
+</tfoot>
+</table>
+</div>
+</messageML>

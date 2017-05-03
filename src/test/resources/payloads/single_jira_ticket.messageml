@@ -1,0 +1,40 @@
+<messageML>
+    <div class="entity" data-entity-id="jiraIssueCreated">
+        <card class="barStyle">
+            <header>
+                <img src="${entity['jiraIssueCreated'].issue.priority.iconUrl}"/>
+                <a href="${entity['jiraIssueCreated'].issue.url}">${entity['jiraIssueCreated'].issue.key}</a>
+                <span>${entity['jiraIssueCreated'].issue.subject} - </span>
+                <mention email="${entity['jiraIssueCreated'].user.emailAddress}"/>
+                <span class="action">Created</span>
+            </header>
+            <body>
+                <div class="entity" data-entity-id="jiraIssueCreated">
+                    <div class="labelBackground badge">
+                        <p>
+                            <span class="label">Description:</span>
+                            <span>${entity['jiraIssueCreated'].issue.description}</span>
+                        </p>
+                        <p>
+                            <span class="label">Assignee:</span>
+                            <mention email="${entity['jiraIssueCreated'].issue.assignee.emailAddress}"/>
+                        </p>
+                    </div>
+                    <div class="labelBackground badge">
+                        <p>
+                            <span class="label">Type:</span>
+                            <img src="${entity['jiraIssueCreated'].issue.issueType}"/>
+                            <span class="label">Priority:</span>
+                            <img src="${entity['jiraIssueCreated'].issue.priority.iconUrl}"/>
+                            <span>${entity['jiraIssueCreated'].issue.priority.name}</span>
+                            <span class="label">Labels:</span>
+                            <#list entity['jiraIssueCreated'].issue.labels as label>
+                                <hash tag="${label.text}"/>
+                            </#list>
+                        </p>
+                    </div>
+                </div>
+            </body>
+        </card>
+    </div>
+</messageML>

@@ -1,0 +1,16 @@
+<messageML>
+Hey Bob, today I have buyers for:
+<div class="entity" data-entity-id="123">
+<b><cash tag="Apple"/></b>
+</div>,
+<div class="entity" data-entity-id="456">
+<b><cash tag="Microsoft"/></b>
+</div>,
+<div class="entity" data-entity-id="789">
+<b>IBM</b>
+</div>
+and I am selling
+<div class="entity" data-entity-id="321">
+<b><cash tag="Apple"/> June 16 Puts</b>
+</div>
+</messageML>
