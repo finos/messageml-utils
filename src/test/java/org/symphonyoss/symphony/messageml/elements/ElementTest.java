@@ -1585,7 +1585,7 @@ public class ElementTest {
 
     verifyCard(card);
 
-    String withAttr = "<messageML><card iconSrc=\"icon.png\" class=\"label\">"
+    String withAttr = "<messageML><card iconSrc=\"icon.png\" class=\"label\" accent=\"mauve\">"
         + "<header>Hello</header>"
         + "<body>world!</body>"
         + "</card></messageML>";
@@ -1594,11 +1594,12 @@ public class ElementTest {
     messageML = context.getMessageML();
     card = messageML.getChildren().get(0);
 
-    assertEquals("Element attributes", 2, card.getAttributes().size());
+    assertEquals("Element attributes", 3, card.getAttributes().size());
     assertEquals("Attribute", "label", card.getAttribute("class"));
     assertEquals("Attribute", "icon.png", card.getAttribute("iconSrc"));
+    assertEquals("Attribute", "mauve", card.getAttribute("accent"));
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<div class=\"card label\" data-icon-src=\"icon.png\">"
+        + "<div class=\"card label\" data-icon-src=\"icon.png\" data-accent-color=\"mauve\">"
         + "<div class=\"cardHeader\">Hello</div>"
         + "<div class=\"cardBody\">world!</div>"
         + "</div>"
@@ -1610,7 +1611,7 @@ public class ElementTest {
   @Test
   public void testCardByPresentationML() throws Exception {
     String input = "<messageML>"
-        + "<div class=\"card\">"
+        + "<div class=\"card\" data-icon-src=\"icon.png\" data-accent-color=\"mauve\">"
         + "<div class=\"cardHeader\">Hello</div>"
         + "<div class=\"cardBody\">world!</div>"
         + "</div>"
@@ -1622,9 +1623,9 @@ public class ElementTest {
     Element card = messageML.getChildren().get(0);
 
     assertEquals("Element children", 1, messageML.getChildren().size());
-    assertEquals("Element attributes", 0, card.getAttributes().size());
+    assertEquals("Element attributes", 2, card.getAttributes().size());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "<div class=\"card\">"
+            + "<div class=\"card\" data-icon-src=\"icon.png\" data-accent-color=\"mauve\">"
             + "<div class=\"cardHeader\">Hello</div>"
             + "<div class=\"cardBody\">world!</div>"
             + "</div>"

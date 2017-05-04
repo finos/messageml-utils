@@ -35,7 +35,9 @@ public class Card extends Element {
   public static final String PRESENTATIONML_CLASS = "card";
   private static final String PRESENTATIONML_TAG = "div";
   private static final String ATTR_ICON = "iconSrc";
+  private static final String ATTR_ACCENT = "accent";
   private static final String PRESENTATIONML_ICON = "data-icon-src";
+  private static final String PRESENTATIONML_ACCENT = "data-accent-color";
 
   public Card(int index, Element parent, FormatEnum format) {
     super(index, parent, MESSAGEML_TAG, format);
@@ -44,8 +46,13 @@ public class Card extends Element {
   @Override
   protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
+      case PRESENTATIONML_ICON:
       case ATTR_ICON:
         setAttribute(ATTR_ICON, getStringAttribute(item));
+        break;
+      case PRESENTATIONML_ACCENT:
+      case ATTR_ACCENT:
+        setAttribute(ATTR_ACCENT, getStringAttribute(item));
         break;
       default:
         super.buildAttribute(item);
@@ -62,6 +69,9 @@ public class Card extends Element {
     }
     if (getAttribute(ATTR_ICON) != null) {
       presentationAttrs.put(PRESENTATIONML_ICON, getAttribute(ATTR_ICON));
+    }
+    if (getAttribute(ATTR_ACCENT) != null) {
+      presentationAttrs.put(PRESENTATIONML_ACCENT, getAttribute(ATTR_ACCENT));
     }
 
     out.openElement(PRESENTATIONML_TAG, presentationAttrs);
