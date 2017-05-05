@@ -37,7 +37,7 @@ public class Mention extends Entity {
   static final String PREFIX = "@";
   private static final String ATTR_EMAIL = "email";
   private static final String ATTR_UID = "uid";
-  private static final String ATTR_SOFT = "soft";
+  private static final String ATTR_STRICT = "strict";
   private static final String ENTITY_SUBTYPE = "com.symphony.user.userId";
   private static final String ENTITY_VERSION = "1.0";
 
@@ -79,8 +79,8 @@ public class Mention extends Entity {
         uid = getLongAttribute(item);
         break;
 
-      case ATTR_SOFT:
-        fallback = getBooleanAttribute(item);
+      case ATTR_STRICT:
+        fallback = !getBooleanAttribute(item);
         break;
 
       default:

@@ -1056,7 +1056,7 @@ public class ElementTest {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
     ((DataProvider) dataProvider).setUserPresentation(user);
 
-    String invalidAttr = "<messageML>Hello <mention email=\"invalid@email.com\" soft=\"true\" />!</messageML>";
+    String invalidAttr = "<messageML>Hello <mention email=\"invalid@email.com\" strict=\"false\" />!</messageML>";
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
 
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello invalid@email.com!</div>",
@@ -1082,7 +1082,7 @@ public class ElementTest {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
     ((DataProvider) dataProvider).setUserPresentation(user);
 
-    String invalidAttr = "<messageML>Hello <mention uid=\"0\" soft=\"true\" />!</messageML>";
+    String invalidAttr = "<messageML>Hello <mention uid=\"0\" strict=\"false\" />!</messageML>";
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
 
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello 0!</div>",
