@@ -55,7 +55,7 @@ abstract class Keyword extends Entity {
     }
 
     if (!this.tag.matches(KEYWORD_PATTERN)) {
-      throw new InvalidInputException("Keywords may only contain alphanumeric characters, dashes and underscores");
+      throw new InvalidInputException("Keywords may only contain alphanumeric characters");
     }
 
     super.validate();

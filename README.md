@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/symphonyoss/messageml-utils.svg)](https://travis-ci.org/symphonyoss/messageml-utils)
 [![Dependencies](https://www.versioneye.com/user/projects/59260c2c25feb9004d428b63/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/59260c2c25feb9004d428b63)
+[![Validation Status](https://scan.coverity.com/projects/12785/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-messageml-utils)
+[![Test Coverage](https://codeclimate.com/github/symphonyoss/messageml-utils/badges/coverage.svg)](https://codeclimate.com/github/symphonyoss/messageml-utils/coverage)
 
 # Introduction
 

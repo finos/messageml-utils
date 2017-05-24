@@ -873,7 +873,7 @@ public class ElementTest {
     String input = "<messageML>Hello <hash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters, dashes and underscores");
+    expectedException.expectMessage("Keywords may only contain alphanumeric characters");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -892,7 +892,7 @@ public class ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters, dashes and underscores");
+    expectedException.expectMessage("Keywords may only contain alphanumeric characters");
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1017,7 +1017,7 @@ public class ElementTest {
     String input = "<messageML>Hello <cash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters, dashes and underscores");
+    expectedException.expectMessage("Keywords may only contain alphanumeric characters");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1036,7 +1036,7 @@ public class ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters, dashes and underscores");
+    expectedException.expectMessage("Keywords may only contain alphanumeric characters");
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
