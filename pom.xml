@@ -45,9 +45,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/symphonyoss/messageml.git</connection>
-        <developerConnection>scm:git:git@github.com:symphonyoss/messageml.git</developerConnection>
-        <url>https://github.com/symphonyoss/messageml</url>
+        <connection>scm:git:git://github.com/symphonyoss/messageml-utils.git</connection>
+        <developerConnection>scm:git:git@github.com:symphonyoss/messageml-utils.git</developerConnection>
+        <url>https://github.com/symphonyoss/messageml-utils</url>
         <tag>messageml-1.0</tag>
     </scm>
 
