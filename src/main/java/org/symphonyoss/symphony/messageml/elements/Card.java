@@ -39,8 +39,8 @@ public class Card extends Element {
   private static final String PRESENTATIONML_ICON = "data-icon-src";
   private static final String PRESENTATIONML_ACCENT = "data-accent-color";
 
-  public Card(int index, Element parent, FormatEnum format) {
-    super(index, parent, MESSAGEML_TAG, format);
+  public Card(Element parent, FormatEnum format) {
+    super(parent, MESSAGEML_TAG, format);
   }
 
   @Override

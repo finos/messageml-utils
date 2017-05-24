@@ -16,6 +16,7 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.commonmark.node.Node;
 import org.commonmark.node.Paragraph;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -31,8 +32,8 @@ public class Div extends Element {
   private static final String ATTR_ENTITY_ID = "data-entity-id";
   private static final String ATTR_ICON_SRC = "data-icon-src";
 
-  public Div(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public Div(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override
@@ -57,9 +58,26 @@ public class Div extends Element {
   }
 
   @Override
+  public ObjectNode asEntityJson(ObjectNode parent) {
+    String entityId = getAttribute(ATTR_ENTITY_ID);
+
+    if (entityId != null) {
+      //The existence and type of EntityJSON data has already been validated by MessageMLParser
+      return (ObjectNode) parent.path(entityId);
+    }
+
+    return null;
+  }
+
+  @Override
   public void validate() throws InvalidInputException {
     if (getAttribute(ATTR_ENTITY_ID) != null && !"entity".equals(getAttribute(CLASS_ATTR))) {
       throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is only allowed if the element "
+          + "class is \"entity\".");
+    }
+
+    if ("entity".equals(getAttribute(CLASS_ATTR)) && getAttribute(ATTR_ENTITY_ID) == null)  {
+      throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is required if the element "
           + "class is \"entity\".");
     }
 

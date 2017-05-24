@@ -22,13 +22,21 @@ import static org.symphonyoss.symphony.messageml.markdown.EntityDelimiterProcess
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.ObjectUtils;
 import org.commonmark.node.AbstractVisitor;
+import org.commonmark.node.Block;
+import org.commonmark.node.BlockQuote;
 import org.commonmark.node.CustomNode;
 import org.commonmark.node.Document;
 import org.commonmark.node.Emphasis;
+import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.HardLineBreak;
+import org.commonmark.node.Heading;
+import org.commonmark.node.HtmlInline;
+import org.commonmark.node.IndentedCodeBlock;
+import org.commonmark.node.ListBlock;
 import org.commonmark.node.Node;
 import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
+import org.commonmark.node.ThematicBreak;
 import org.commonmark.parser.Parser;
 import org.symphonyoss.symphony.messageml.elements.Bold;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
@@ -49,8 +57,10 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Used for converting legacy messages in Markdown and JSON entities to MessageMLV2 documents.
@@ -58,14 +68,30 @@ import java.util.Map;
  * @since 3/30/17
  */
 public class MarkdownParser extends AbstractVisitor {
-  private static final Parser MARKDOWN_PARSER = Parser.builder()
-      .customDelimiterProcessor(new EntityDelimiterProcessor())
-      .build();
+  private static final Parser MARKDOWN_PARSER;
+  private static final String INDEX_START = "indexStart";
+  private static final String TYPE = "type";
+  private static final String ID = "id";
+  private static final String INDEX_END = "indexEnd";
   private final IDataProvider dataProvider;
   private MessageML messageML;
   private Element parent;
   private int index;
-  private int size;
+
+  static {
+    Set<Class<? extends Block>> enabledBlockTypes = new HashSet<>();
+    enabledBlockTypes.add(Heading.class);
+    enabledBlockTypes.add(ThematicBreak.class);
+    enabledBlockTypes.add(FencedCodeBlock.class);
+    enabledBlockTypes.add(IndentedCodeBlock.class);
+    enabledBlockTypes.add(BlockQuote.class);
+    enabledBlockTypes.add(ListBlock.class);
+
+    MARKDOWN_PARSER = Parser.builder()
+        .enabledBlockTypes(enabledBlockTypes)
+        .customDelimiterProcessor(new EntityDelimiterProcessor())
+        .build();
+  }
 
   public MarkdownParser(IDataProvider dataProvider) {
     this.dataProvider = dataProvider;
@@ -80,59 +106,50 @@ public class MarkdownParser extends AbstractVisitor {
 
   @Override
   public void visit(Text text) {
-    this.index += text.getLiteral().length();
-
     TextNode node = new TextNode(parent, text.getLiteral());
     parent.addChild(node);
     visitChildren(text);
   }
 
   @Override
-  public void visit(HardLineBreak hardLineBreak) {
-    this.index += 1;
+  public void visit(HtmlInline tag) {
+    TextNode node = new TextNode(parent, tag.getLiteral());
+    parent.addChild(node);
+    visitChildren(tag);
+  }
 
-    LineBreak node = new LineBreak(++size, parent);
+  @Override
+  public void visit(HardLineBreak hardLineBreak) {
+    LineBreak node = new LineBreak(parent);
     parent.addChild(node);
     visitChildren(hardLineBreak);
   }
 
   @Override
   public void visit(org.commonmark.node.Paragraph paragraph) {
-    this.index += 1;
-
     if (!(parent instanceof ListItem)) {
-      LineBreak node = new LineBreak(++size, parent);
+      LineBreak node = new LineBreak(parent);
       parent.addChild(node);
     }
     visitChildren(paragraph);
-
-    this.index += 1;
   }
 
   @Override
   public void visit(Emphasis em) {
-    this.index += em.getOpeningDelimiter().length();
-
-    Italic node = new Italic(++size, parent);
+    Italic node = new Italic(parent);
     visitChildren(node, em);
-
-    this.index += em.getClosingDelimiter().length();
   }
 
   @Override
   public void visit(StrongEmphasis b) {
-    this.index += b.getOpeningDelimiter().length();
-
-    Bold node = new Bold(++size, parent);
+    Bold node = new Bold(parent);
     visitChildren(node, b);
-
-    this.index += b.getClosingDelimiter().length();
   }
 
   @Override
   public void visit(org.commonmark.node.Link a) {
     try {
-      Link node = new Link(++size, parent, a.getDestination(), dataProvider);
+      Link node = new Link(parent, a.getDestination(), dataProvider);
       node.validate();
       visitChildren(node, a);
     } catch (InvalidInputException e) {
@@ -143,19 +160,19 @@ public class MarkdownParser extends AbstractVisitor {
 
   @Override
   public void visit(org.commonmark.node.BulletList ul) {
-    BulletList node = new BulletList(++size, parent);
+    BulletList node = new BulletList(parent);
     visitChildren(node, ul);
   }
 
   @Override
   public void visit(org.commonmark.node.OrderedList ol) {
-    OrderedList node = new OrderedList(++size, parent);
+    OrderedList node = new OrderedList(parent);
     visitChildren(node, ol);
   }
 
   @Override
   public void visit(org.commonmark.node.ListItem li) {
-    ListItem node = new ListItem(++size, parent);
+    ListItem node = new ListItem(parent);
     visitChildren(node, li);
   }
 
@@ -171,11 +188,11 @@ public class MarkdownParser extends AbstractVisitor {
   private void visit(KeywordNode keyword) {
     switch (keyword.getPrefix()) {
       case HashTag.PREFIX:
-        HashTag hashtag = new HashTag(++size, parent, keyword.getText(), FormatEnum.MESSAGEML);
+        HashTag hashtag = new HashTag(parent, ++index, keyword.getText());
         visitChildren(hashtag, keyword);
         break;
       case CashTag.PREFIX:
-        CashTag cashtag = new CashTag(++size, parent, keyword.getText(), FormatEnum.MESSAGEML);
+        CashTag cashtag = new CashTag(parent, ++index, keyword.getText());
         visitChildren(cashtag, keyword);
         break;
     }
@@ -183,7 +200,7 @@ public class MarkdownParser extends AbstractVisitor {
 
   private void visit(MentionNode mention) {
     try {
-      Mention node = new Mention(++size, parent, mention.getUid(), true, dataProvider, FormatEnum.MESSAGEML);
+      Mention node = new Mention(parent, ++index, mention.getUid(), dataProvider);
       node.validate();
       visitChildren(node, mention);
     } catch (InvalidInputException e) {
@@ -205,10 +222,12 @@ public class MarkdownParser extends AbstractVisitor {
    * Generate intermediate markup to delimit custom nodes representing entities for further processing by the
    * Markdown parser.
    */
-  private String enrichMarkdown(String message, JsonNode data) {
+  private String enrichMarkdown(String message, JsonNode data) throws InvalidInputException {
+    validateEntities(data);
+
     Map<Integer, JsonNode> entities = new LinkedHashMap<>();
-    for (JsonNode node : data.findParents("indexStart")) {
-      entities.put(node.get("indexStart").intValue(), node);
+    for (JsonNode node : data.findParents(INDEX_START)) {
+      entities.put(node.get(INDEX_START).intValue(), node);
     }
 
     StringBuilder output = new StringBuilder();
@@ -218,15 +237,17 @@ public class MarkdownParser extends AbstractVisitor {
 
       if (entities.containsKey(i)) {
         JsonNode entity = entities.get(i);
-        String entityType = entity.get("type").textValue().toUpperCase();
-        String id = entity.get("id").textValue();
+        String entityType = entity.get(TYPE).textValue().toUpperCase();
+        String id = entity.get(ID).textValue();
 
         output.append(ENTITY_DELIMITER);
         output.append(entityType).append(FIELD_DELIMITER);
         output.append(id);
         output.append(ENTITY_DELIMITER);
 
-        i = entity.get("indexEnd").intValue() - 1;
+        // We explicitly check the entity indices above, but make double sure that we don't get into an infinite loop here
+        int endIndex = entity.get(INDEX_END).intValue() - 1;
+        i = Math.max(endIndex, i);
       } else {
         output.append(c);
       }
@@ -236,9 +257,33 @@ public class MarkdownParser extends AbstractVisitor {
   }
 
   /**
+   * Verify that JSON entities contain the required fields and that entity indices are correct.
+   */
+  private void validateEntities(JsonNode data) throws InvalidInputException {
+    for (JsonNode node : data.findParents(INDEX_START)) {
+
+      for (String key : new String[]{INDEX_START, INDEX_END, ID, TYPE}) {
+        if (node.path(key).isMissingNode()) {
+          throw new InvalidInputException("Required field \"" + key + "\" missing from the entity payload");
+        }
+      }
+
+      int startIndex = node.get(INDEX_START).intValue();
+      int endIndex = node.get(INDEX_END).intValue();
+
+      if (endIndex <= startIndex) {
+        throw new InvalidInputException(String.format("Invalid entity payload: %s (start index: %s, end index: %s)",
+            node.get(ID).textValue(), startIndex, endIndex));
+      }
+
+    }
+  }
+
+  /**
    * Parse the Markdown message and entity JSON into a MessageML document.
    */
-  public MessageML parse(String message, JsonNode data) {
+  public MessageML parse(String message, JsonNode data) throws InvalidInputException {
+    this.index = 0;
     String enriched = enrichMarkdown(message, data);
     Node markdown = MARKDOWN_PARSER.parse(enriched);
     markdown.accept(this);

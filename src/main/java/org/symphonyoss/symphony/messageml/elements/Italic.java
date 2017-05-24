@@ -29,8 +29,8 @@ public class Italic extends Element {
   public static final String MESSAGEML_TAG = "i";
   private static final String MARKDOWN = "_";
 
-  public Italic(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public Italic(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

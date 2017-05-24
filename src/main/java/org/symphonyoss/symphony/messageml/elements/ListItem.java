@@ -27,8 +27,8 @@ import org.commonmark.node.Node;
 public class ListItem extends Element {
   public static final String MESSAGEML_TAG = "li";
 
-  public ListItem(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public ListItem(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

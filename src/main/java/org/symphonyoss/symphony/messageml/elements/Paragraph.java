@@ -27,8 +27,8 @@ import org.commonmark.node.Node;
 public class Paragraph extends Element {
   public static final String MESSAGEML_TAG = "p";
 
-  public Paragraph(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public Paragraph(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

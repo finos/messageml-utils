@@ -29,8 +29,8 @@ import java.util.Collections;
 public class TableHeader extends Element {
   public static final String MESSAGEML_TAG = "thead";
 
-  public TableHeader(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public TableHeader(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override
@@ -41,6 +41,6 @@ public class TableHeader extends Element {
   @Override
   public void validate() throws InvalidInputException {
     assertNoText();
-    assertContentModel(Collections.singleton(TableRow.class));
+    assertContentModel(Collections.<Class<? extends Element>>singleton(TableRow.class));
   }
 }

@@ -32,12 +32,20 @@ public class HashTag extends Keyword {
   private static final String ENTITY_SUBTYPE = "org.symphonyoss.taxonomy.hashtag";
   private static final String ENTITY_VERSION = "1.0";
 
-  public HashTag(int index, Element parent, FormatEnum format) {
-    this(index, parent, null, format);
+  public HashTag(Element parent, int entityIndex) {
+    super(parent, MESSAGEML_TAG, DEFAULT_PRESENTATIONML_TAG, FormatEnum.MESSAGEML);
+    this.entityId = getEntityId(entityIndex);
   }
 
-  public HashTag(int index, Element parent, String textContent, FormatEnum format) {
-    super(index, parent, MESSAGEML_TAG, textContent, format);
+  public HashTag(Element parent, int entityIndex, String value) {
+    super(parent, MESSAGEML_TAG, DEFAULT_PRESENTATIONML_TAG, FormatEnum.MESSAGEML);
+    this.entityId = getEntityId(entityIndex);
+    this.tag = value;
+  }
+
+  public HashTag(Element parent, String presentationMlTag, String value) {
+    super(parent, MESSAGEML_TAG, presentationMlTag, FormatEnum.PRESENTATIONML);
+    this.tag = value;
   }
 
   @Override

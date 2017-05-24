@@ -82,7 +82,8 @@ public class MessageMLParser {
   private FormatEnum messageFormat;
   private MessageML messageML;
   private ObjectNode entityJson;
-  private int size;
+
+  private int index;
 
   static {
     FREEMARKER.setDefaultEncoding("UTF-8");
@@ -106,8 +107,7 @@ public class MessageMLParser {
    */
   MessageML parse(String message, String entityJson, String version) throws InvalidInputException, ProcessingException,
       IOException {
-    this.size = 0;
-
+    this.index = 0;
     String expandedMessage;
 
     if (StringUtils.isNotBlank(entityJson)) {
@@ -132,8 +132,7 @@ public class MessageMLParser {
     this.messageML = parseMessageML(expandedMessage, version);
 
     if (this.messageML != null) {
-      ObjectNode generatedEntities = this.messageML.asEntityJson();
-      this.entityJson.setAll(generatedEntities);
+      this.entityJson = this.messageML.asEntityJson(this.entityJson);
 
       return this.messageML;
     }
@@ -181,9 +180,13 @@ public class MessageMLParser {
       Node node = nodes.item(i);
       String entityId = ((org.w3c.dom.Attr) node).getValue();
 
-      if (entityJson.findPath(entityId).isMissingNode()) {
+      JsonNode entityNode = entityJson.findPath(entityId);
+      if (entityNode.isMissingNode()) {
         throw new InvalidInputException("Error processing EntityJSON: "
             + "no entity data provided for \"data-entity-id\"=\"" + entityId + "\"");
+      } else if (!entityNode.isObject()) {
+        throw new InvalidInputException("Error processing EntityJSON: "
+            + "the node \"" + entityId + "\" has to be an object");
       }
     }
   }
@@ -191,7 +194,7 @@ public class MessageMLParser {
   /**
    * Throw an exception if the enclosing message is in PresentationML and a MessageML tag is used.
    */
-  private void validatePresentationML(String tag) throws InvalidInputException {
+  private void validateFormat(String tag) throws InvalidInputException {
     if (messageFormat == FormatEnum.PRESENTATIONML) {
       throw new InvalidInputException("Shorthand tag \"" + tag + "\" is not allowed in PresentationML");
     }
@@ -290,129 +293,126 @@ public class MessageMLParser {
     String tag = element.getNodeName();
 
     if (Header.isHeaderElement(tag)) {
-      return new Header(++size, parent, tag);
+      return new Header(parent, tag);
     }
 
     switch (tag) {
       case Chime.MESSAGEML_TAG:
-        validatePresentationML(tag);
-        return new Chime(++size, parent, FormatEnum.MESSAGEML);
+        validateFormat(tag);
+        return new Chime(parent, FormatEnum.MESSAGEML);
 
       case Chime.PRESENTATIONML_TAG:
-        return new Chime(++size, parent, FormatEnum.PRESENTATIONML);
+        return new Chime(parent, FormatEnum.PRESENTATIONML);
 
       case Paragraph.MESSAGEML_TAG:
-        return new Paragraph(++size, parent);
+        return new Paragraph(parent);
 
       case LineBreak.MESSAGEML_TAG:
-        return new LineBreak(++size, parent);
+        return new LineBreak(parent);
 
       case HorizontalRule.MESSAGEML_TAG:
-        return new HorizontalRule(++size, parent);
+        return new HorizontalRule(parent);
 
       case Span.MESSAGEML_TAG:
         switch (element.getAttribute(CLASS_ATTR)) {
           case Entity.PRESENTATIONML_CLASS:
             return createEntity(element, parent);
           default:
-            return new Span(++size, parent);
+            return new Span(parent);
         }
 
       case Div.MESSAGEML_TAG:
         switch (element.getAttribute(CLASS_ATTR)) {
+          case Entity.PRESENTATIONML_CLASS:
+            return createEntity(element, parent);
           case Card.PRESENTATIONML_CLASS:
             element.removeAttribute(CLASS_ATTR);
-            return new Card(++size, parent, FormatEnum.PRESENTATIONML);
+            return new Card(parent, FormatEnum.PRESENTATIONML);
           case CardBody.PRESENTATIONML_CLASS:
             element.removeAttribute(CLASS_ATTR);
-            return new CardBody(++size, parent, FormatEnum.PRESENTATIONML);
+            return new CardBody(parent, FormatEnum.PRESENTATIONML);
           case CardHeader.PRESENTATIONML_CLASS:
             element.removeAttribute(CLASS_ATTR);
-            return new CardHeader(++size, parent, FormatEnum.PRESENTATIONML);
+            return new CardHeader(parent, FormatEnum.PRESENTATIONML);
           default:
-            return new Div(++size, parent);
+            return new Div(parent);
         }
 
       case Bold.MESSAGEML_TAG:
-        return new Bold(++size, parent);
+        return new Bold(parent);
 
       case Italic.MESSAGEML_TAG:
-        return new Italic(++size, parent);
+        return new Italic(parent);
 
       case HashTag.MESSAGEML_TAG:
-        validatePresentationML(tag);
-        return new HashTag(++size, parent, FormatEnum.MESSAGEML);
+        validateFormat(tag);
+        return new HashTag(parent, ++index);
 
       case CashTag.MESSAGEML_TAG:
-        validatePresentationML(tag);
-        return new CashTag(++size, parent, FormatEnum.MESSAGEML);
+        validateFormat(tag);
+        return new CashTag(parent, ++index);
 
       case Mention.MESSAGEML_TAG:
-        validatePresentationML(tag);
-        return new Mention(++size, parent, dataProvider, FormatEnum.MESSAGEML);
+        validateFormat(tag);
+        return new Mention(parent, ++index, dataProvider);
 
       case Link.MESSAGEML_TAG:
-        return new Link(++size, parent, dataProvider);
+        return new Link(parent, dataProvider);
 
       case Image.MESSAGEML_TAG:
-        return new Image(++size, parent);
+        return new Image(parent);
 
       case BulletList.MESSAGEML_TAG:
-        return new BulletList(++size, parent);
+        return new BulletList(parent);
 
       case OrderedList.MESSAGEML_TAG:
-        return new OrderedList(++size, parent);
+        return new OrderedList(parent);
 
       case ListItem.MESSAGEML_TAG:
-        return new ListItem(++size, parent);
+        return new ListItem(parent);
 
       case Table.MESSAGEML_TAG:
-        return new Table(++size, parent);
+        return new Table(parent);
 
       case TableHeader.MESSAGEML_TAG:
-        return new TableHeader(++size, parent);
+        return new TableHeader(parent);
 
       case TableBody.MESSAGEML_TAG:
-        return new TableBody(++size, parent);
+        return new TableBody(parent);
 
       case TableFooter.MESSAGEML_TAG:
-        return new TableFooter(++size, parent);
+        return new TableFooter(parent);
 
       case TableRow.MESSAGEML_TAG:
-        return new TableRow(++size, parent);
+        return new TableRow(parent);
 
       case TableHeaderCell.MESSAGEML_TAG:
-        return new TableHeaderCell(++size, parent);
+        return new TableHeaderCell(parent);
 
       case TableCell.MESSAGEML_TAG:
-        return new TableCell(++size, parent);
+        return new TableCell(parent);
 
       case Card.MESSAGEML_TAG:
-        validatePresentationML(tag);
-        return new Card(++size, parent, FormatEnum.MESSAGEML);
+        validateFormat(tag);
+        return new Card(parent, FormatEnum.MESSAGEML);
 
       case CardHeader.MESSAGEML_TAG:
-        validatePresentationML(tag);
-        return new CardHeader(++size, parent, FormatEnum.MESSAGEML);
+        validateFormat(tag);
+        return new CardHeader(parent, FormatEnum.MESSAGEML);
 
       case CardBody.MESSAGEML_TAG:
-        validatePresentationML(tag);
-        return new CardBody(++size, parent, FormatEnum.MESSAGEML);
+        validateFormat(tag);
+        return new CardBody(parent, FormatEnum.MESSAGEML);
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
     }
   }
 
-  /**
-   * Return the number of elements in this context's MessageML tree.
-   */
-  public int getSize() {
-    return size;
-  }
-
   private Element createEntity(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
-    JsonNode entity = entityJson.path(element.getAttribute(Entity.ENTITY_ID_ATTR));
+    String entityId = element.getAttribute(Entity.ENTITY_ID_ATTR);
+    String tag = element.getNodeName();
+    JsonNode entity = entityJson.path(entityId);
     JsonNode type = entity.path(Entity.TYPE_FIELD);
     JsonNode value = entity.path(Entity.ID_FIELD).path(0).path(Entity.VALUE_FIELD);
 
@@ -420,19 +420,25 @@ public class MessageMLParser {
       throw new InvalidInputException("The attribute \"data-entity-id\" is required");
     }
 
-    if (type.isMissingNode() || value.isMissingNode()) {
-      throw new InvalidInputException("Entity data not found for node \"" + entity + "\"");
-    }
-
+    if (!type.isMissingNode() && !value.isMissingNode()) {
     switch (type.textValue()) {
       case CashTag.ENTITY_TYPE:
-        return new CashTag(++size, parent, value.textValue(), FormatEnum.PRESENTATIONML);
+          return new CashTag(parent, tag, value.asText());
       case HashTag.ENTITY_TYPE:
-        return new HashTag(++size, parent, value.textValue(), FormatEnum.PRESENTATIONML);
+          return new HashTag(parent, tag, value.asText());
       case Mention.ENTITY_TYPE:
-        return new Mention(++size, parent, value.longValue(), dataProvider, FormatEnum.PRESENTATIONML);
+          return new Mention(parent, tag, value.asLong(), dataProvider);
       default:
-        return new Span(++size, parent);
+          break;
+      }
+    }
+
+    if (Div.MESSAGEML_TAG.equals(tag)) {
+      return new Div(parent);
+    } else if (Span.MESSAGEML_TAG.equals(tag)) {
+      return new Span(parent);
+    } else {
+      throw new InvalidInputException("The element \'" + tag + "\" cannot be an entity");
     }
   }
 

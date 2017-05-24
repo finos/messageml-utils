@@ -34,8 +34,8 @@ public class CardBody extends Element {
   public static final String PRESENTATIONML_CLASS = "cardBody";
   private static final String PRESENTATIONML_TAG = "div";
 
-  public CardBody(int index, Element parent, FormatEnum format) {
-    super(index, parent, MESSAGEML_TAG, format);
+  public CardBody(Element parent, FormatEnum format) {
+    super(parent, MESSAGEML_TAG, format);
   }
 
   @Override

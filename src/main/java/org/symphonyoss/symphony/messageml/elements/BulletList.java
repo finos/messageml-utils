@@ -30,8 +30,8 @@ import java.util.Collections;
 public class BulletList extends Element {
   public static final String MESSAGEML_TAG = "ul";
 
-  public BulletList(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public BulletList(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override
@@ -45,7 +45,7 @@ public class BulletList extends Element {
   @Override
   public void validate() throws InvalidInputException {
     assertNoText();
-    assertContentModel(Collections.singleton(ListItem.class));
+    assertContentModel(Collections.<Class<? extends Element>>singleton(ListItem.class));
   }
 
 }

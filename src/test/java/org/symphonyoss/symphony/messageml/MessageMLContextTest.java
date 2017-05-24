@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Rule;
@@ -63,7 +64,7 @@ public class MessageMLContextTest {
   @Rule
   public final ExpectedException expectedException = ExpectedException.none();
 
-  MessageMLContext context;
+  private MessageMLContext context;
 
   @Before
   public void setUp() throws InvalidInputException, ProcessingException, ParserConfigurationException {
@@ -134,7 +135,7 @@ public class MessageMLContextTest {
     final String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"> "
         + "<p><img src=\"https://symphony.com/images/web/logo/symphony-logo-nav-light.svg\"/> <br/> "
         + "Sample JIRA issue</p> "
-        + "<div class=\"entity\"> "
+        + "<div class=\"entity\" data-entity-id=\"jiraUpdated\"> "
         + "<h1>Bot User01 updated Bug "
         + "<a href=\"https://whiteam1.atlassian.net/browse/SAM-24\"> "
         + "<i>SAM-24</i>,<b>Sample Bug Blocker</b> "
@@ -168,14 +169,14 @@ public class MessageMLContextTest {
         + "<tbody> "
         + "<tr> "
         + "<td>Assignee</td> "
-        + "<td><span class=\"entity\" data-entity-id=\"mention31\">@Bot User01</span></td> "
+        + "<td><span class=\"entity\" data-entity-id=\"mention1\">@Bot User01</span></td> "
         + "</tr> "
         + "<tr> "
         + "<td>Labels</td> "
         + "<td> "
         + "<ul> "
-        + "<li><span class=\"entity\" data-entity-id=\"keyword37\">#production</span></li> "
-        + "<li><span class=\"entity\" data-entity-id=\"keyword39\">#major</span></li> "
+        + "<li><span class=\"entity\" data-entity-id=\"keyword2\">#production</span></li> "
+        + "<li><span class=\"entity\" data-entity-id=\"keyword3\">#major</span></li> "
         + "</ul> "
         + "</td> "
         + "</tr> "
@@ -258,28 +259,28 @@ public class MessageMLContextTest {
         + "    }]\n"
         + "}");
     final ObjectNode expectedEntityJson = (ObjectNode) MAPPER.readTree(data);
-    final String generatedEntities = "{\"mention31\":{"
+    final String generatedEntities = "{\"mention1\":{"
         + "\"type\":\"com.symphony.user.mention\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"com.symphony.user.userId\","
         + "\"value\":\"1\""
         + "}]},"
-        + "\"keyword37\":{"
+        + "\"keyword2\":{"
         + "\"type\":\"org.symphonyoss.taxonomy\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
         + "\"value\":\"production\""
         + "}]},"
-        + "\"keyword39\":{"
+        + "\"keyword3\":{"
         + "\"type\":\"org.symphonyoss.taxonomy\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
         + "\"value\":\"major\""
         + "}]}}";
-    expectedEntityJson.setAll((ObjectNode) MAPPER.readTree(generatedEntities));
+    ((ObjectNode) expectedEntityJson.get("jiraUpdated")).setAll((ObjectNode) MAPPER.readTree(generatedEntities));
 
     context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
 
@@ -304,8 +305,9 @@ public class MessageMLContextTest {
     assertTrue("Child #3 children", children.get(2).getChildren().isEmpty());
 
     assertEquals("Child #4 class", Div.class, children.get(3).getClass());
-    assertEquals("Child #4 attributes", 1, children.get(3).getAttributes().size());
+    assertEquals("Child #4 attributes", 2, children.get(3).getAttributes().size());
     assertEquals("Child #4 attribute", "entity", children.get(3).getAttribute("class"));
+    assertEquals("Child #4 attribute", "jiraUpdated", children.get(3).getAttribute("data-entity-id"));
     assertEquals("Child #4 children", 9, children.get(3).getChildren().size());
 
     assertEquals("Child #5 class", TextNode.class, children.get(4).getClass());
@@ -323,9 +325,9 @@ public class MessageMLContextTest {
 
     final String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>Hello!<br/>"
         + "<b>bold</b> <i>italic</i> "
-        + "<span class=\"entity\" data-entity-id=\"keyword5\">#hashtag</span> "
-        + "<span class=\"entity\" data-entity-id=\"keyword6\">$cashtag</span> "
-        + "<span class=\"entity\" data-entity-id=\"mention7\">@Bot User01</span> "
+        + "<span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span> "
+        + "<span class=\"entity\" data-entity-id=\"keyword2\">$cashtag</span> "
+        + "<span class=\"entity\" data-entity-id=\"mention3\">@Bot User01</span> "
         + "<a href=\"http://example.com\">http://example.com</a>"
         + "<ul>"
         + "<li>list</li>"
@@ -371,21 +373,21 @@ public class MessageMLContextTest {
         + "}");
 
     final String generatedEntities = "{"
-        + "\"keyword5\":{"
+        + "\"keyword1\":{"
         + "\"type\":\"org.symphonyoss.taxonomy\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
         + "\"value\":\"hashtag\""
         + "}]},"
-        + "\"keyword6\":{"
+        + "\"keyword2\":{"
         + "\"type\":\"org.symphonyoss.fin.security\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
         + "\"value\":\"cashtag\""
         + "}]},"
-        + "\"mention7\":{"
+        + "\"mention3\":{"
         + "\"type\":\"com.symphony.user.mention\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
@@ -442,6 +444,70 @@ public class MessageMLContextTest {
     assertEquals("Child #15 children", 2, children.get(14).getChildren().size());
 
     validateMessageML(expectedPresentationML, expectedEntityJson, expectedMarkdown, expectedEntities);
+  }
+
+  @Test
+  public void testParseMarkdownWithHtmlTag() throws Exception {
+    String markdown = "<div class=\"foo\">*Markdown*</div> *Markdown* <hr/>";
+    JsonNode entities = new ObjectNode(JsonNodeFactory.instance);
+    context.parseMarkdown(markdown, entities);
+
+    assertEquals("Generated PresentationML","<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
+        + "&lt;div class=&quot;foo&quot;&gt;<i>Markdown</i>&lt;/div&gt; <i>Markdown</i> &lt;hr/&gt;</div>",
+        context.getPresentationML());
+    assertEquals("Generated Markdown", "<div class=\"foo\">_Markdown_</div> _Markdown_ <hr/>",
+        context.getMarkdown());
+  }
+
+  @Test
+  public void testParseMarkdownMissingEntityId() throws Exception {
+    String message = "Hello #world";
+
+    JsonNode entities = MAPPER.readTree("{"
+        + "        \"hashtags\": [{"
+        + "          \"indexStart\": 6,"
+        + "          \"indexEnd\": 12,"
+        + "          \"type\": \"KEYWORD\""
+        + "        }]"
+        + "      }");
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Required field \"id\" missing from the entity payload");
+    context.parseMarkdown(message, entities);
+  }
+
+  @Test
+  public void testParseMarkdownMissingEntityType() throws Exception {
+    String message = "Hello #world";
+    JsonNode entities = MAPPER.readTree("{"
+        + "        \"hashtags\": [{"
+        + "          \"indexStart\": 6,"
+        + "          \"indexEnd\": 12,"
+        + "          \"id\": \"#world\""
+        + "        }]"
+        + "      }");
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Required field \"type\" missing from the entity payload");
+    context.parseMarkdown(message, entities);
+  }
+
+  @Test
+  public void testParseMarkdownInvalidEntityIndices() throws Exception {
+    String message = "Hello #world";
+    JsonNode entities = MAPPER.readTree("{"
+        + "        \"hashtags\": [{"
+        + "          \"indexStart\": 0,"
+        + "          \"indexEnd\": 0,"
+        + "          \"id\": \"?AQB6QI3LzHsTHfacv2E9x4QFAAAAAAAAAAAAAAAAAAAAAK5saXEaylHzAK65LoYFTqRcsI+4Qrc=\",\n"
+        + "          \"type\": \"KEYWORD\""
+        + "        }]"
+        + "      }");
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid entity payload: "
+        + "?AQB6QI3LzHsTHfacv2E9x4QFAAAAAAAAAAAAAAAAAAAAAK5saXEaylHzAK65LoYFTqRcsI+4Qrc= (start index: 0, end index: 0)");
+    context.parseMarkdown(message, entities);
   }
 
   @Test
@@ -565,6 +631,27 @@ public class MessageMLContextTest {
     expectedException.expectMessage("The message hasn't been parsed yet. "
         + "Please call MessageMLContext.parse() first.");
     context.getEntityJson();
+  }
+
+  @Test
+  public void testEscapeReservedChars() throws Exception {
+    String markdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ & * ( ) _ + { } | : \" < > ?";
+    String messageML = "<messageML>½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : \" &lt; &gt; ?</messageML>";
+    String escapedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ?";
+
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("Generated PresentationML",
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", escapedPresentationML),
+        context.getPresentationML());
+    assertEquals("Generated Markdown", markdown, context.getMarkdown());
+
+    context.parseMarkdown(markdown, new ObjectNode(JsonNodeFactory.instance));
+
+    assertEquals("Generated PresentationML",
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>%s</div>", escapedPresentationML),
+        context.getPresentationML());
+    assertEquals("Generated Markdown", markdown, context.getMarkdown());
   }
 
   private String getPayload(String filename) throws IOException {

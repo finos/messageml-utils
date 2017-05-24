@@ -51,7 +51,7 @@ public class MessageML extends Element {
   private boolean chime;
 
   public MessageML(FormatEnum format, String version) {
-    super(0, null, MESSAGEML_TAG, format);
+    super(null, MESSAGEML_TAG, format);
     this.version = version;
   }
 
@@ -95,10 +95,13 @@ public class MessageML extends Element {
   }
 
   @Override
-  public ObjectNode asEntityJson() {
-    ObjectNode root = new ObjectNode(JsonNodeFactory.instance);
-    buildEntityJson(root);
-    return root;
+  public ObjectNode asEntityJson(ObjectNode parent) {
+    if (parent == null) {
+      parent = new ObjectNode(JsonNodeFactory.instance);
+    }
+
+    buildEntityJson(parent);
+    return parent;
   }
 
   @Override

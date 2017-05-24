@@ -34,7 +34,7 @@ public class TextNode extends Element {
   }
 
   public TextNode(Element parent, String text) {
-    super(-1, parent);
+    super(parent);
     this.text = text;
   }
 
@@ -65,7 +65,7 @@ public class TextNode extends Element {
     out.println(out.escape(this.text));
   }
 
-  public void asMarkdown(org.commonmark.node.Node parent) {
+  public void asMarkdown(Node parent) {
     org.commonmark.node.Text node = new org.commonmark.node.Text(this.text);
     parent.appendChild(node);
   }

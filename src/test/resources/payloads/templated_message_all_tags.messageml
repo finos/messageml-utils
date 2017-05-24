@@ -1,6 +1,6 @@
 <messageML>
 <p><img src="${entity["jiraUpdated"].issue.logo}"/> <br/> Sample JIRA issue</p>
-<div class="entity" >
+<div class="entity" data-entity-id="jiraUpdated">
 <h1>${entity["jiraUpdated"].user.displayName} updated Bug
 <a href="${entity["jiraUpdated"].issue.link}">
 <i>${entity["jiraUpdated"].issue.key}</i>,<b>${entity["jiraUpdated"].issue.subject}</b>

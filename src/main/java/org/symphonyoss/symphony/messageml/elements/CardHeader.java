@@ -35,8 +35,8 @@ public class CardHeader extends Element {
   public static final String PRESENTATIONML_CLASS = "cardHeader";
   private static final String PRESENTATIONML_TAG = "div";
 
-  public CardHeader(int index, Element parent, FormatEnum format) {
-    super(index, parent, MESSAGEML_TAG, format);
+  public CardHeader(Element parent, FormatEnum format) {
+    super(parent, MESSAGEML_TAG, format);
   }
 
   @Override

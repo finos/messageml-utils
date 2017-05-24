@@ -32,8 +32,8 @@ public class Header extends Element {
   public static final String MESSAGEML_TAG = "h";
   private static final String MARKDOWN = "**";
 
-  public Header(int index, Element parent, String tag) {
-    super(index, parent, tag);
+  public Header(Element parent, String tag) {
+    super(parent, tag);
   }
 
   @Override

@@ -32,12 +32,20 @@ public class CashTag extends Keyword {
   private static final String ENTITY_SUBTYPE = "org.symphonyoss.fin.security.id.ticker";
   private static final String ENTITY_VERSION = "1.0";
 
-  public CashTag(int index, Element parent, FormatEnum format) {
-    this(index, parent, null, format);
+  public CashTag(Element parent, int entityIndex) {
+    super(parent, MESSAGEML_TAG, DEFAULT_PRESENTATIONML_TAG, FormatEnum.MESSAGEML);
+    this.entityId = getEntityId(entityIndex);
   }
 
-  public CashTag(int index, Element parent, String textContent, FormatEnum format) {
-    super(index, parent, MESSAGEML_TAG, textContent, format);
+  public CashTag(Element parent, int entityIndex, String value) {
+    super(parent, MESSAGEML_TAG, DEFAULT_PRESENTATIONML_TAG, FormatEnum.MESSAGEML);
+    this.entityId = getEntityId(entityIndex);
+    this.tag = value;
+  }
+
+  public CashTag(Element parent, String presentationMlTag, String value) {
+    super(parent, MESSAGEML_TAG, presentationMlTag, FormatEnum.PRESENTATIONML);
+    this.tag = value;
   }
 
   @Override
@@ -53,11 +61,6 @@ public class CashTag extends Keyword {
   @Override
   public String toString() {
     return "CashTag(" + getTag() + ")";
-  }
-
-  @Override
-  protected String getEntityValue() {
-    return getTag();
   }
 
   @Override

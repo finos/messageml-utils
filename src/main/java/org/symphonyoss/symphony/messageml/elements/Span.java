@@ -16,6 +16,7 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -29,8 +30,8 @@ public class Span extends Element {
   public static final String MESSAGEML_TAG = "span";
   private static final String ATTR_ENTITY_ID = "data-entity-id";
 
-  public Span(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public Span(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override
@@ -47,9 +48,26 @@ public class Span extends Element {
   }
 
   @Override
+  public ObjectNode asEntityJson(ObjectNode parent) {
+    String entityId = getAttribute(ATTR_ENTITY_ID);
+
+    if (entityId != null) {
+      //The existence and type of EntityJSON data has already been validated by MessageMLParser
+      return (ObjectNode) parent.path(entityId);
+    }
+
+    return null;
+  }
+
+  @Override
   public void validate() throws InvalidInputException {
     if (getAttribute(ATTR_ENTITY_ID) != null && !"entity".equals(getAttribute(CLASS_ATTR))) {
       throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is only allowed if the element "
+          + "class is \"entity\".");
+    }
+
+    if ("entity".equals(getAttribute(CLASS_ATTR)) && getAttribute(ATTR_ENTITY_ID) == null)  {
+      throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is required if the element "
           + "class is \"entity\".");
     }
   }

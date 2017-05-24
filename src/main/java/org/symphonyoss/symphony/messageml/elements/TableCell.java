@@ -28,8 +28,8 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 public class TableCell extends Element {
   public static final String MESSAGEML_TAG = "td";
 
-  public TableCell(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public TableCell(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

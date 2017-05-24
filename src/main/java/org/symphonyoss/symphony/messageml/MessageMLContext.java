@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -43,7 +44,7 @@ public class MessageMLContext {
   private final MarkdownParser markdownParser;
   private MarkdownRenderer markdownRenderer;
   private MessageML messageML;
-  private JsonNode entityJson;
+  private ObjectNode entityJson;
 
   public MessageMLContext(IDataProvider dataProvider) {
     this.markdownParser = new MarkdownParser(dataProvider);
@@ -77,7 +78,7 @@ public class MessageMLContext {
    */
   public void parseMarkdown(String message, JsonNode entities) throws InvalidInputException {
     this.messageML = markdownParser.parse(message, entities);
-    this.entityJson = messageML.asEntityJson();
+    this.entityJson = messageML.asEntityJson(this.entityJson);
     this.markdownRenderer = new MarkdownRenderer(messageML.asMarkdown());
   }
 
@@ -120,7 +121,7 @@ public class MessageMLContext {
   /**
    * Retrieve a JSON representation of entity data (EntityJSON).
    */
-  public JsonNode getEntityJson() {
+  public ObjectNode getEntityJson() {
     if (messageML == null) {
       throw new IllegalStateException("The message hasn't been parsed yet. "
           + "Please call MessageMLContext.parse() first.");

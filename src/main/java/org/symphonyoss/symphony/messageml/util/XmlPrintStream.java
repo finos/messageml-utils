@@ -13,7 +13,7 @@ import java.util.Stack;
 
 
 /**
- * A PrintStream based on INdentedPrintStream which adds functions to format XML.
+ * A PrintStream based on IndentedPrintStream which adds functions to format XML.
  * @author Bruce Skingle
  */
 public class XmlPrintStream extends IndentedPrintStream {

@@ -16,6 +16,7 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -28,22 +29,42 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 public abstract class Entity extends Element {
   public static final String PRESENTATIONML_CLASS = "entity";
   public static final String ENTITY_ID_ATTR = "data-entity-id";
-  static final String PRESENTATIONML_TAG = "span";
   public static final String TYPE_FIELD = "type";
-  private static final String VERSION_FIELD = "version";
   public static final String VALUE_FIELD = "value";
   public static final String ID_FIELD = "id";
+  static final String DEFAULT_PRESENTATIONML_TAG = "span";
+  private static final String VERSION_FIELD = "version";
+  String presentationMLTag = DEFAULT_PRESENTATIONML_TAG;
 
   String entityId;
 
-  Entity(int index, Element parent, String messageMLTag, FormatEnum format) {
-    super(index, parent, messageMLTag, format);
+  Entity(Element parent, String messageMLTag, String presentationMlTag, FormatEnum format) {
+    super(parent, messageMLTag, format);
+    this.presentationMLTag = presentationMlTag;
   }
 
   @Override
-  public ObjectNode asEntityJson() {
+  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+    switch (item.getNodeName()) {
+      case ENTITY_ID_ATTR:
+        this.entityId = item.getTextContent();
+        break;
+      default:
+        if (format == FormatEnum.PRESENTATIONML) {
+          super.buildAttribute(item);
+        } else {
+          throw new InvalidInputException("Attribute \"" + item.getNodeName()
+              + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        }
+    }
+  }
+
+  @Override
+  public ObjectNode asEntityJson(ObjectNode parent) {
+    JsonNode entityNode = parent.path(entityId);
+
     //Generate JSON only if we don't have a corresponding entity in EntityJson
-    if (entityId == null) {
+    if (entityNode.isMissingNode()) {
       ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
       node.put(TYPE_FIELD, getEntityType());
       node.put(VERSION_FIELD, getEntityVersion());
@@ -56,10 +77,13 @@ public abstract class Entity extends Element {
       idArray.add(idNode);
       node.set(ID_FIELD, idArray);
 
+      parent.set(entityId, node);
       return node;
+    } else {
+      //For preexisting data-entity-id the node type has already been validated by MessageMLParser
+      return (ObjectNode) entityNode;
     }
 
-    return null;
   }
 
   @Override
@@ -69,6 +93,10 @@ public abstract class Entity extends Element {
     }
   }
 
+  String getEntityId(int index) {
+    return String.format("%s%s", getEntityIdPrefix(), index);
+  }
+
   protected abstract String getEntityValue();
 
   protected abstract String getEntitySubType();
@@ -76,4 +104,6 @@ public abstract class Entity extends Element {
   protected abstract String getEntityVersion();
 
   protected abstract String getEntityType();
+
+  protected abstract String getEntityIdPrefix();
 }

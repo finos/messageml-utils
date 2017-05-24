@@ -31,8 +31,8 @@ public class OrderedList extends Element {
 
   public static final String MESSAGEML_TAG = "ol";
 
-  public OrderedList(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public OrderedList(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override
@@ -46,6 +46,6 @@ public class OrderedList extends Element {
   @Override
   public void validate() throws InvalidInputException {
     assertNoText();
-    assertContentModel(Collections.singleton(ListItem.class));
+    assertContentModel(Collections.<Class<? extends Element>>singleton(ListItem.class));
   }
 }

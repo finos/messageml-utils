@@ -31,8 +31,8 @@ import java.util.Arrays;
 public class Table extends Element {
   public static final String MESSAGEML_TAG = "table";
 
-  public Table(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public Table(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

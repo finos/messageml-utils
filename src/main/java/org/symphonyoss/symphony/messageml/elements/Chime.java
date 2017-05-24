@@ -32,8 +32,8 @@ public class Chime extends Element {
   private static final String SRC = "https://asset.symphony.com/symphony/audio/chime.mp3";
   private static final String ATTR_AUTOPLAY = "autoplay";
 
-  public Chime(int index, Element parent, FormatEnum format) throws InvalidInputException {
-    super(index, parent, MESSAGEML_TAG, format);
+  public Chime(Element parent, FormatEnum format) throws InvalidInputException {
+    super(parent, MESSAGEML_TAG, format);
 
     if (parent instanceof MessageML) {
       ((MessageML) parent).setChime(true);

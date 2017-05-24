@@ -49,28 +49,30 @@ public class Mention extends Entity {
   private Long uid;
   private boolean fallback = false;
 
-  public Mention(int index, Element parent, IDataProvider dataProvider, FormatEnum format) {
-    this(index, parent, null, false, dataProvider, format);
+  public Mention(Element parent, int entityIndex, IDataProvider dataProvider) {
+    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, null, false, dataProvider, FormatEnum.MESSAGEML);
   }
 
-  public Mention(int index, Element parent, Long uid, IDataProvider dataProvider, FormatEnum format) {
-    this(index, parent, uid, false, dataProvider, format);
+  public Mention(Element parent, int entityIndex, Long uid, IDataProvider dataProvider) {
+    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, uid, true, dataProvider, FormatEnum.MESSAGEML);
   }
 
-  public Mention(int index, Element parent, Long uid, Boolean fallback, IDataProvider dataProvider, FormatEnum format) {
-    super(index, parent, MESSAGEML_TAG, format);
+  public Mention(Element parent, String presentationMlTag, Long uid, IDataProvider dataProvider) {
+    this(parent, presentationMlTag, 0, uid, false, dataProvider, FormatEnum.PRESENTATIONML);
+  }
+
+  private Mention(Element parent, String presentationMlTag, Integer entityIndex, Long uid, Boolean fallback,
+      IDataProvider dataProvider, FormatEnum format) {
+    super(parent, MESSAGEML_TAG, presentationMlTag, format);
     this.dataProvider = dataProvider;
     this.uid = uid;
     this.fallback = fallback;
+    this.entityId = getEntityId(entityIndex);
   }
 
   @Override
   protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case ENTITY_ID_ATTR:
-        this.entityId = item.getTextContent();
-        break;
-
       case ATTR_EMAIL:
         email = getStringAttribute(item);
         break;
@@ -84,20 +86,14 @@ public class Mention extends Entity {
         break;
 
       default:
-        if (format == FormatEnum.PRESENTATIONML) {
           super.buildAttribute(item);
-        } else {
-          throw new InvalidInputException("Attribute \"" + item.getNodeName()
-              + "\" is not allowed in \"" + getMessageMLTag() + "\"");
-        }
     }
   }
 
   @Override
   public void asPresentationML(XmlPrintStream out) {
     if (userPresentation != null) {
-      String entityId = MESSAGEML_TAG + getIndex();
-      out.printElement(PRESENTATIONML_TAG, asText(), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+      out.printElement(presentationMLTag, asText(), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
     } else if (prettyName != null) {
       out.print(prettyName);
     } else if (email != null) {
@@ -126,9 +122,9 @@ public class Mention extends Entity {
   }
 
   @Override
-  public ObjectNode asEntityJson() {
+  public ObjectNode asEntityJson(ObjectNode parent) {
     if (userPresentation != null) {
-      return super.asEntityJson();
+      return super.asEntityJson(parent);
     } else {
       return null;
     }
@@ -181,8 +177,8 @@ public class Mention extends Entity {
   }
 
   @Override
-  public String getEntityId() {
-    return String.format("%s%s", getMessageMLTag(), (entityId != null) ? entityId : getIndex());
+  protected String getEntityIdPrefix() {
+    return MESSAGEML_TAG;
   }
 
   @Override

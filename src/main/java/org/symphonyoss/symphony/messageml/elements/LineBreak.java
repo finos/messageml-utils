@@ -30,8 +30,8 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 public class LineBreak extends Element {
   public static final String MESSAGEML_TAG = "br";
 
-  public LineBreak(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public LineBreak(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

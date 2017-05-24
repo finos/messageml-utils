@@ -29,8 +29,8 @@ public class Bold extends Element {
   public static final String MESSAGEML_TAG = "b";
   private static final String MARKDOWN = "**";
 
-  public Bold(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public Bold(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

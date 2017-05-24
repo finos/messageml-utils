@@ -31,8 +31,8 @@ public class HorizontalRule extends Element {
   public static final String MESSAGEML_TAG = "hr";
   private static final String MARKDOWN = "---";
 
-  public HorizontalRule(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public HorizontalRule(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

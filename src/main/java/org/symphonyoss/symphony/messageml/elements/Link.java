@@ -37,12 +37,12 @@ public class Link extends Element {
 
   private URI uri;
 
-  public Link(int index, Element parent, IDataProvider dataProvider) throws InvalidInputException {
-    this(index, parent, null, dataProvider);
+  public Link(Element parent, IDataProvider dataProvider) throws InvalidInputException {
+    this(parent, null, dataProvider);
   }
 
-  public Link(int index, Element parent, String href, IDataProvider dataProvider) throws InvalidInputException {
-    super(index, parent, MESSAGEML_TAG);
+  public Link(Element parent, String href, IDataProvider dataProvider) throws InvalidInputException {
+    super(parent, MESSAGEML_TAG);
     this.dataProvider = dataProvider;
 
     if (href != null) {

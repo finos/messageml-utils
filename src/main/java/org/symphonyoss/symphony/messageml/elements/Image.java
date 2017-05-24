@@ -30,8 +30,8 @@ public class Image extends Element {
   public static final String MESSAGEML_TAG = "img";
   private static final String ATTR_SRC = "src";
 
-  public Image(int index, Element parent) {
-    super(index, parent, MESSAGEML_TAG);
+  public Image(Element parent) {
+    super(parent, MESSAGEML_TAG);
   }
 
   @Override

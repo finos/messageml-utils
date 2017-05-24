@@ -55,21 +55,19 @@ public abstract class Element {
   private final Map<String, String> attributes = new LinkedHashMap<>();
   private final List<Element> children = new ArrayList<>();
   private final Element parent;
-  private final String messageMLTag;
-  private int index;
+  private String messageMLTag;
 
-  Element(int index, Element parent) {
-    this(index, parent, null);
+  Element(Element parent) {
+    this(parent, null);
   }
 
-  Element(int index, Element parent, String messageMLTag) {
-    this(index, parent, messageMLTag, FormatEnum.PRESENTATIONML);
+  Element(Element parent, String messageMLTag) {
+    this(parent, messageMLTag, FormatEnum.PRESENTATIONML);
   }
 
-  Element(int index, Element parent, String messageMLTag, FormatEnum format) {
+  Element(Element parent, String messageMLTag, FormatEnum format) {
     this.messageMLTag = messageMLTag;
     this.parent = parent;
-    this.index = index;
     this.format = format;
   }
 
@@ -163,13 +161,13 @@ public abstract class Element {
    */
   void buildEntityJson(ObjectNode parent) {
     for (Element child : this.children) {
-      ObjectNode node = child.asEntityJson();
+      ObjectNode node = child.asEntityJson(parent);
 
       if (node != null) {
-        String id = child.getEntityId();
-        parent.set(id, node);
+        child.buildEntityJson(node);
+      } else {
+        child.buildEntityJson(parent);
       }
-      child.buildEntityJson(parent);
     }
   }
 
@@ -209,7 +207,7 @@ public abstract class Element {
   /**
    * Return the EntityJSON representation of the node.
    */
-  ObjectNode asEntityJson() {
+  ObjectNode asEntityJson(ObjectNode parent) {
     return null;
   }
 
@@ -217,13 +215,6 @@ public abstract class Element {
    * Check the syntax and contents of the element.
    */
   void validate() throws InvalidInputException {
-  }
-
-  /**
-   * Get the entity ID of the element.
-   */
-  String getEntityId() {
-    return null;
   }
 
   /**
@@ -390,20 +381,6 @@ public abstract class Element {
    */
   public Element getParent() {
     return parent;
-  }
-
-  /**
-   * Return the element's index in a DFS traversal of the document tree.
-   */
-  public int getIndex() {
-    return index;
-  }
-
-  /**
-   * Set the element's index in a DFS traversal of the document tree.
-   */
-  public void setIndex(int i) {
-    index = i;
   }
 
   /**

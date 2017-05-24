@@ -29,30 +29,22 @@ abstract class Keyword extends Entity {
 
   private static final String ATTR_TAG = "tag";
   private static final String ENTITY_ID_PREFIX = "keyword";
+  private static final String KEYWORD_PATTERN = "[\\p{Alnum}\\-_]*";
 
-  private String tag;
+  protected String tag;
 
-  Keyword(int index, Element parent, String messageMlTag, String tag, FormatEnum format) {
-    super(index, parent, messageMlTag, format);
-    this.tag = tag;
+  Keyword(Element parent, String messageMLTag, String presentationMlTag, FormatEnum format) {
+    super(parent, messageMLTag, presentationMlTag, format);
   }
 
   @Override
   protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case ENTITY_ID_ATTR:
-        this.entityId = item.getTextContent();
-        break;
       case ATTR_TAG:
         this.tag = item.getTextContent();
         break;
       default:
-        if (format == FormatEnum.PRESENTATIONML) {
           super.buildAttribute(item);
-        } else {
-          throw new InvalidInputException("Attribute \"" + item.getNodeName()
-              + "\" is not allowed in \"" + getMessageMLTag() + "\"");
-        }
     }
   }
 
@@ -60,6 +52,10 @@ abstract class Keyword extends Entity {
   public void validate() throws InvalidInputException {
     if (this.tag == null) {
       throw new InvalidInputException("The attribute \"tag\" is required");
+    }
+
+    if (!this.tag.matches(KEYWORD_PATTERN)) {
+      throw new InvalidInputException("Keywords may only contain alphanumeric characters, dashes and underscores");
     }
 
     super.validate();
@@ -70,14 +66,13 @@ abstract class Keyword extends Entity {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
-    String entityId = ENTITY_ID_PREFIX + getIndex();
-    out.printElement(PRESENTATIONML_TAG, asText(), CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+  protected String getEntityIdPrefix() {
+    return ENTITY_ID_PREFIX;
   }
 
   @Override
-  public String getEntityId() {
-    return String.format("%s%s", ENTITY_ID_PREFIX, (entityId != null) ? entityId : getIndex());
+  public void asPresentationML(XmlPrintStream out) {
+    out.printElement(presentationMLTag, asText(), CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
   }
 
   @Override
