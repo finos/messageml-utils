@@ -29,4 +29,24 @@ script:
 - "if [[ \"$TRAVIS_PULL_REQUEST\" != \"false\" ]]; then mvn clean install ; fi"
 
 jdk:
-  - oraclejdk7
+  - oraclejdk8
+
+env:
+  global:
+   # The encrypted COVERITY_SCAN_TOKEN, created via the "travis encrypt" command using the project repo's public key
+   - secure: "qSjSBty//s1mc4XnXej8RM8Oe1rYP6RSbQqvLoiJph2F8nQpYnh8wBhILyvnPEshFKsK4IDtUz+GDClUJN0WwYCI65zcwtggAIT9frIpjuoQVYrE2oNUFfwCzl2fxXrFKQuUZ/fInDTdRgyFSQlpDK0i1AcB1WzCAKnVtWEBqOa+vYWh22cJRaEGyYNS1fw14ib299fWihBTO0PYIfJBHFM5BB27YxdE6bmEzZj2Zb4n2p3n83LV6ZLYBlKXrMLAVonaU/jCBJzhjKNYkHZuWGRVcL0eemYyddcz+oqzLlCwIAgqfFMnl5xKn1bNs7dU2WQXhqQJDpcblB6LnsDBBWnFmQ7NGolLLfqPd4Tb7sTMVGDyjNivTBNNCef+Nh2SlzntEsGrLyWGyVK+jA2LSc1vA6oRk2ogecJo0kHEyFjF5ShOmSd4b1oHxtEdAQ+RSe5FKFyecnXcGZPcbxXm1pwqWC2MbQIVshWeak6Fnha3w6NWRFEk/gS9KMnjuODFCwrAmr/qAv2fkUAHyAdIEzYYqhSqk4zEG/IJr486KuVTRgpTjuLZS4WjabdIszxr83SCD3mnuma/46V89rXUORcNe/MAtiePGpZUPdmXX0y+D9G7F2UXp+IVZnPv7Yphafo3Fb8YgvRfcFzWqfOredtoPGubKEgOIlxlr1PLpsE="
+
+notifications:
+  email:
+    recipients:
+      - dev-notify@symphony.foundation
+
+addons:
+  coverity_scan:
+    project:
+      name: "symphonyoss/messageml-utils"
+      description: "Build submitted via Travis CI"
+    notification_email: dev-notify@symphony.foundation
+    build_command_prepend: "mvn clean"
+    build_command:   "mvn  -DskipTests=true compile"
+    branch_pattern: $COVERITY_BRANCH_PATTERN

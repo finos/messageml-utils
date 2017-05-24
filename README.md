@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/symphonyoss/messageml-utils.svg)](https://travis-ci.org/symphonyoss/messageml-utils)
+[![Dependencies](https://www.versioneye.com/user/projects/59260c2c25feb9004d428b63/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/59260c2c25feb9004d428b63)
+
 # Introduction
 
 MessageML is a markup language used by the Symphony Agent API for representing messages, including formatting (bold, italic, numbered and unnumbered lists etc.) 

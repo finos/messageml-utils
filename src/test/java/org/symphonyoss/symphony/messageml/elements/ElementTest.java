@@ -860,37 +860,6 @@ public class ElementTest {
   }
 
   @Test
-  public void testHashTagAllowedCharacters() throws Exception {
-    String input = "<messageML>Hello <hash tag=\"hash_tag-1\"/>!</messageML>";
-
-    try {
-      context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    } catch (InvalidInputException e) {
-      fail("Should not have thrown an exception!");
-    }
-  }
-
-  @Test
-  public void testHashTagByPresentationMLAllowedCharacters() throws Exception {
-    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"hash123\">world</span>!"
-        + "</div>";
-    String entityJson = "{\"hash123\":{"
-        + "\"type\":\"org.symphonyoss.taxonomy\","
-        + "\"version\":\"1.0\","
-        + "\"id\":[{"
-        + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
-        + "\"value\":\"hash_tag-1\""
-        + "}]}}";
-
-    try {
-      context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
-    } catch (InvalidInputException e) {
-      fail("Should not have thrown an exception!");
-    }
-  }
-
-  @Test
   public void testHashTagByPresentationMLMissingEntityId() throws Exception {
     String input = "<messageML>Hello <span class=\"entity\">world</span>!</messageML>";
 
@@ -1032,37 +1001,6 @@ public class ElementTest {
     assertEquals("Element attributes", 1, messageML.getChildren().get(1).getAttributes().size());
     assertEquals("Element class attribute", "entity", messageML.getChildren().get(1).getAttribute("class"));
     verifyCashTag(messageML, expectedPresentationML, entityJson);
-  }
-
-  @Test
-  public void testCashTagAllowedCharacters() throws Exception {
-    String input = "<messageML>Hello <cash tag=\"cash_tag-1\"/>!</messageML>";
-
-    try {
-      context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    } catch (InvalidInputException e) {
-      fail("Should not have thrown an exception!");
-    }
-  }
-
-  @Test
-  public void testCashTagByPresentationMLAllowedCharacters() throws Exception {
-    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"cash123\">world</span>!"
-        + "</div>";
-    String entityJson = "{\"cash123\":{"
-        + "\"type\":\"org.symphonyoss.fin.security\","
-        + "\"version\":\"1.0\","
-        + "\"id\":[{"
-        + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
-        + "\"value\":\"cash_tag-1\""
-        + "}]}}";
-
-    try {
-      context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
-    } catch (InvalidInputException e) {
-      fail("Should not have thrown an exception!");
-    }
   }
 
   @Test
