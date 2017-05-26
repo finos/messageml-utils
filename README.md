@@ -6,7 +6,7 @@
 # Introduction
 
 MessageML is a markup language used by the Symphony Agent API for representing messages, including formatting (bold, italic, numbered and unnumbered lists etc.) 
-and entity data representing _structured objects_. 
+and entity data representing [_structured objects_](https://rest-api.symphony.com/docs/objects). 
 
 The format is intended to allow third parties to create and render rich content messages representing complex objects, 
 enabling deep workflow integrations across multiple systems, with Symphony being the central hub.
@@ -15,13 +15,13 @@ enabling deep workflow integrations across multiple systems, with Symphony being
 
 Support of Symphony structured objects comprises the ability to parse and render the following formats:
 
-* [PresentationML](https://symphonyoss.atlassian.net/wiki/display/WGFOS/PresentationML), 
-a strict subset of HTML5 describing the markup which controls the formatting (presentation) of a message. 
-PresenttionML is the format used internally by Symphony and returned from message ingestion and retrieval by the Agent API.
-* [MessageML](https://symphonyoss.atlassian.net/wiki/display/WGFOS/MessageML), 
+* [MessageML](https://rest-api.symphony.com/docs/messagemlv2), 
 a superset of PresentationML, adding a number of convenience tags for more complex or frequently used constructs.
 It is translated to PresentationML internally by the Agent API before ingestion in Symphony.
-* [EntityJSON](https://symphonyoss.atlassian.net/wiki/display/WGFOS/EntityJSON), 
+* [PresentationML](https://rest-api.symphony.com/docs/messagemlv2#reading-messageml-messages), 
+a strict subset of HTML5 describing the markup which controls the formatting (presentation) of a message. 
+PresenttionML is the format used internally by Symphony and returned from message ingestion and retrieval by the Agent API.
+* [EntityJSON](https://rest-api.symphony.com/docs/objects#message-and-object-presentation), 
 JSON data representing complex financial objects and other structured data. 
 EntityJSON elements are referenced in PresentationML and are provided by the message originator 
 or generated automatically during the expansion of MessageML convenience tags.
