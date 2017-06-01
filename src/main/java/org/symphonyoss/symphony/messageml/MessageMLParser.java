@@ -206,7 +206,7 @@ public class MessageMLParser {
   private String expandTemplates(String message, JsonNode entityJson) throws IOException, TemplateException {
     // Read entityJSON data
     Map<String, Object> data = new HashMap<>();
-    data.put("entity", MAPPER.convertValue(entityJson, Map.class));
+    data.put("data", MAPPER.convertValue(entityJson, Map.class));
 
     // Read MessageMLV2 template
     StringWriter sw = new StringWriter();

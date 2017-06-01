@@ -194,7 +194,7 @@ public abstract class Element {
   /**
    * Return a text representation of the element, descending into its children.
    */
-  String asText() {
+  public String asText() {
     StringBuilder b = new StringBuilder();
 
     for (Element child : children) {

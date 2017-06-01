@@ -319,6 +319,27 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseFreemarker() throws Exception {
+    String message = "<messageML>${data['obj123'].value}</messageML>";
+    String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
+
+    context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+    assertEquals("Message text", "Hello world!", context.getMessageML().asText());
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello world!</div>", context.getPresentationML());
+  }
+
+  @Test
+  public void testParseFreemarkerInvalidContainerObject() throws Exception {
+    String message = "<messageML>${entity['obj123'].value}</messageML>";
+    String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Error parsing Freemarker template: invalid input at line 1, column 14");
+    context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testParseMarkdown() throws Exception {
     String message = getPayload("payloads/messageml_v1_payload.json");
     JsonNode messageNode = MAPPER.readTree(message);
