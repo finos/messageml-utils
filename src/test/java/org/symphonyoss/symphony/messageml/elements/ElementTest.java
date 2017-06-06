@@ -36,6 +36,7 @@ import org.symphonyoss.symphony.messageml.util.DataProvider;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
 
+import java.net.URI;
 import java.util.Collections;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -756,11 +757,27 @@ public class ElementTest {
   }
 
   @Test
-  public void testLinkInvalidUri() throws Exception {
-    String invaliduri = "<messageML><a href=\"invalid://hello.org\">Hello world!</a></messageML>";
+  public void testLinkUnsupportedProtocol() throws Exception {
+    String invalidUri = "<messageML><a href=\"invalid://hello.org\">Hello world!</a></messageML>";
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("URI scheme \"invalid\" is not supported by the pod.");
-    context.parseMessageML(invaliduri, null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testLinkInvalidUri() throws Exception {
+    String invalidUri = "<messageML><a href=\"[invalid]\">Hello world!</a></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid input: null must be a URI value not \"[invalid]\"");
+    context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testLinkEmptyUri() throws Exception {
+    String invalidUri = "<messageML><a href=\"\">Hello world!</a></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"href\" cannot be empty");
+    context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
   }
 
   private void verifyHashTag(Element messageML, String expectedPresentationML, String expectedJson) throws Exception {

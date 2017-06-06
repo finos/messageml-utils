@@ -16,6 +16,7 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -46,12 +47,12 @@ public class Link extends Element {
     this.dataProvider = dataProvider;
 
     if (href != null) {
-    try {
-      setAttribute(ATTR_HREF, href);
-      this.uri = new URI(href);
-    } catch (URISyntaxException e) {
-      throw new InvalidInputException("Error processing URI: " + e.getMessage());
-    }
+      try {
+        setAttribute(ATTR_HREF, href);
+        this.uri = new URI(href);
+      } catch (URISyntaxException e) {
+        throw new InvalidInputException("Error processing URI: " + e.getMessage());
+      }
     }
   }
 
@@ -93,6 +94,10 @@ public class Link extends Element {
 
     if (uri == null) {
       throw new InvalidInputException("The attribute \"href\" is required");
+    }
+
+    if (StringUtils.isBlank(uri.toString())) {
+      throw new InvalidInputException("The attribute \"href\" cannot be empty");
     }
 
     try {
