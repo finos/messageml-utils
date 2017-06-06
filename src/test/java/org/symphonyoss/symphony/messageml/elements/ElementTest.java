@@ -19,7 +19,6 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +35,6 @@ import org.symphonyoss.symphony.messageml.util.DataProvider;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
 
-import java.net.URI;
 import java.util.Collections;
 
 import javax.xml.parsers.ParserConfigurationException;
