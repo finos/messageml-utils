@@ -27,7 +27,7 @@ EntityJSON elements are referenced in PresentationML and are provided by the mes
 or generated automatically during the expansion of MessageML convenience tags.
 * [Freemarker](http://freemarker.org/),
 a templating language providing macros (conditional blocks, iterations, assignments etc.) 
-to expand message templates into MessageML messages.
+to expand message templates into MessageML messages. Freemarker support is experimental.
 * [Markdown](http://daringfireball.net/projects/markdown/syntax),
 the legacy text format used by Symphony. 
 Markdown parsing and rendering capabilities are provided for compatibility with older versions of Symphony.
