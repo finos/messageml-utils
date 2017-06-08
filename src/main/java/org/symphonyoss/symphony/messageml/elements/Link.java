@@ -100,6 +100,10 @@ public class Link extends Element {
       throw new InvalidInputException("The attribute \"href\" cannot be empty");
     }
 
+    if (!uri.isAbsolute()) {
+      throw new InvalidInputException("The attribute \"href\" must contain an absolute URI");
+    }
+
     try {
       dataProvider.validateURI(uri);
     } catch (ProcessingException e) {

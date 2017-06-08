@@ -540,6 +540,22 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testFailOnBlankMessageML() throws Exception {
+    String invalidMarkup = "";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Error parsing message: the message cannot be null or empty");
+    context.parseMessageML(invalidMarkup, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testFailOnNullMessageML() throws Exception {
+    String invalidMarkup = null;
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Error parsing message: the message cannot be null or empty");
+    context.parseMessageML(invalidMarkup, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testFailOnInvalidCharacters() throws Exception {
     String invalidMarkup = "<messageML>Hello\bworld!</messageML>";
     expectedException.expect(InvalidInputException.class);

@@ -110,6 +110,10 @@ public class MessageMLParser {
     this.index = 0;
     String expandedMessage;
 
+    if (StringUtils.isBlank(message)) {
+     throw new InvalidInputException("Error parsing message: the message cannot be null or empty");
+    }
+
     if (StringUtils.isNotBlank(entityJson)) {
       try {
         this.entityJson = (ObjectNode) MAPPER.readTree(entityJson);

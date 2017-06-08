@@ -778,6 +778,14 @@ public class ElementTest {
     context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testLinkNoProtocol() throws Exception {
+    String invalidUri = "<messageML><a href=\"example.com\">Hello world!</a></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"href\" must contain an absolute URI");
+    context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
+  }
+
   private void verifyHashTag(Element messageML, String expectedPresentationML, String expectedJson) throws Exception {
     assertEquals("Element children", 3, messageML.getChildren().size());
 
