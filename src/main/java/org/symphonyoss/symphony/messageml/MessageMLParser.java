@@ -211,6 +211,7 @@ public class MessageMLParser {
     // Read entityJSON data
     Map<String, Object> data = new HashMap<>();
     data.put("data", MAPPER.convertValue(entityJson, Map.class));
+    data.put("entity", MAPPER.convertValue(entityJson, Map.class));
 
     // Read MessageMLV2 template
     StringWriter sw = new StringWriter();

@@ -330,8 +330,19 @@ public class MessageMLContextTest {
   }
 
   @Test
-  public void testParseFreemarkerInvalidContainerObject() throws Exception {
+  public void testParseFreemarkerAltEntityObject() throws Exception {
     String message = "<messageML>${entity['obj123'].value}</messageML>";
+    String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
+
+    context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello world!</div>", context.getPresentationML());
+  }
+
+  @Test
+  public void testParseFreemarkerInvalidContainerObject() throws Exception {
+    String message = "<messageML>${obj['obj123'].value}</messageML>";
     String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
 
     expectedException.expect(InvalidInputException.class);
