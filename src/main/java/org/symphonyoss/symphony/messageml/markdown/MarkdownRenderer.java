@@ -38,6 +38,7 @@ import org.commonmark.renderer.text.TextContentWriter;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
 
@@ -183,6 +184,8 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((TableNode) node);
     } else if (node instanceof TableCellNode) {
       visit((TableCellNode) node);
+    } else if (node instanceof PreformattedNode) {
+      visit((PreformattedNode) node);
     }
   }
 
@@ -229,6 +232,13 @@ public class MarkdownRenderer extends AbstractVisitor {
     if (cell.getNext() != null) {
       writer.write(cell.getDelimiter());
     }
+  }
+
+  private void visit(PreformattedNode pre) {
+    writer.write(pre.getOpeningDelimiter());
+    visitChildren(pre);
+    writer.write(pre.getClosingDelimiter());
+    writer.line();
   }
 
   private void visitDelimited(Delimited delimited) {

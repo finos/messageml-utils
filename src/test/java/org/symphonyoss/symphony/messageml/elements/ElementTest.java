@@ -393,6 +393,57 @@ public class ElementTest {
   }
 
   @Test
+  public void testPreformatted() throws Exception {
+    String input = "<messageML>\n<pre>\n<span>\nHello\n</span>\n world!\n</pre>\n</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    assertEquals("Element children", 3, messageML.getChildren().size());
+
+    Element pre = messageML.getChildren().get(1);
+
+    assertEquals("Element class", Preformatted.class, pre.getClass());
+    assertEquals("Element tag name", "pre", pre.getMessageMLTag());
+    assertEquals("Element attributes", Collections.emptyMap(), pre.getAttributes());
+    assertEquals("Element children", 3, pre.getChildren().size());
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + " <pre>\n<span>\nHello\n</span>\n world!\n</pre> </div>", context.getPresentationML());
+    assertEquals("Markdown", " Formatted:\n\n\n\nHello\n\n world!\n\n ", context.getMarkdown());
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
+    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
+
+    String withAttr = "<messageML><pre class=\"label\">Hello world!</pre></messageML>";
+    context.parseMessageML(withAttr, null, MessageML.MESSAGEML_VERSION);
+    pre = context.getMessageML().getChildren().get(0);
+    assertEquals("Attribute count", 1, pre.getAttributes().size());
+    assertEquals("Attribute", "label", pre.getAttribute("class"));
+  }
+
+  @Test
+  public void testPreformattedInvalidAttr() throws Exception {
+    String invalidAttr = "<messageML><pre style=\"invalid\">Hello world!</pre></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"style\" is not allowed in \"pre\"");
+    context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testPreformattedInvalidContent() throws Exception {
+    String invalidContent = "<messageML><pre><p>Hello world!</p></pre></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"p\" is not allowed in \"pre\"");
+    context.parseMessageML(invalidContent, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testPreformattedInvalidMarkup() throws Exception {
+    String invalidMarkup = "<messageML><pre><span>Hello world!</pre></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The element type \"span\" must be terminated by the matching end-tag \"</span>\"");
+    context.parseMessageML(invalidMarkup, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testHeaders() throws Exception {
     for (int level = 1; level < 7; level++) {
       String input = "<messageML><h" + level + ">Hello world!</h" + level + "></messageML>";

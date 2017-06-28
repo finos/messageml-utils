@@ -36,6 +36,7 @@ import org.symphonyoss.symphony.messageml.elements.Mention;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.OrderedList;
 import org.symphonyoss.symphony.messageml.elements.Paragraph;
+import org.symphonyoss.symphony.messageml.elements.Preformatted;
 import org.symphonyoss.symphony.messageml.elements.Span;
 import org.symphonyoss.symphony.messageml.elements.Table;
 import org.symphonyoss.symphony.messageml.elements.TableBody;
@@ -348,6 +349,9 @@ public class MessageMLParser {
 
       case Italic.MESSAGEML_TAG:
         return new Italic(parent);
+
+      case Preformatted.MESSAGEML_TAG:
+        return new Preformatted(parent);
 
       case HashTag.MESSAGEML_TAG:
         validateFormat(tag);
