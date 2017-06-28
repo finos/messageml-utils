@@ -291,7 +291,7 @@ public class MessageMLContextTest {
     List<Element> children = messageML.getChildren();
     assertEquals("MessageML children", 5, children.size());
     assertEquals("Child #1 class", TextNode.class, children.get(0).getClass());
-    assertEquals("Child #1 text", " ", ((TextNode) children.get(0)).getText());
+    assertEquals("Child #1 text", "\n", ((TextNode) children.get(0)).getText());
     assertTrue("Child #1 attributes", children.get(0).getAttributes().isEmpty());
     assertTrue("Child #1 children", children.get(0).getChildren().isEmpty());
 
@@ -300,7 +300,7 @@ public class MessageMLContextTest {
     assertEquals("Child #2 children", 4, children.get(1).getChildren().size());
 
     assertEquals("Child #3 class", TextNode.class, children.get(2).getClass());
-    assertEquals("Child #3 text", " ", ((TextNode) children.get(2)).getText());
+    assertEquals("Child #3 text", "\n", ((TextNode) children.get(2)).getText());
     assertTrue("Child #3 attributes", children.get(2).getAttributes().isEmpty());
     assertTrue("Child #3 children", children.get(2).getChildren().isEmpty());
 
@@ -311,7 +311,7 @@ public class MessageMLContextTest {
     assertEquals("Child #4 children", 9, children.get(3).getChildren().size());
 
     assertEquals("Child #5 class", TextNode.class, children.get(4).getClass());
-    assertEquals("Child #5 text", " ", ((TextNode) children.get(4)).getText());
+    assertEquals("Child #5 text", "\n", ((TextNode) children.get(4)).getText());
     assertTrue("Child #5 attributes", children.get(4).getAttributes().isEmpty());
     assertTrue("Child #5 children", children.get(4).getChildren().isEmpty());
 

@@ -65,7 +65,11 @@ public class XmlPrintStream extends IndentedPrintStream {
     for (Entry<String, String> entry : attributes.entrySet()) {
       print(" " + entry.getKey() + "=\"" + escape(entry.getValue()) + "\"");
     }
-    println(">");
+    if (this.isNoNl()) {
+      print(">");
+    } else {
+      println(">");
+    }
     indent();
   }
 
@@ -90,7 +94,11 @@ public class XmlPrintStream extends IndentedPrintStream {
    */
   public void closeElement() {
     outdent();
-    println("</" + elementStack.pop() + ">");
+    if (this.isNoNl()) {
+      print("</" + elementStack.pop() + ">");
+    } else {
+      println("</" + elementStack.pop() + ">");
+    }
   }
 
   /**
@@ -179,5 +187,31 @@ public class XmlPrintStream extends IndentedPrintStream {
     }
 
     return out.toString();
+  }
+
+  /**
+   * Replace multiple newline characters with a single space.
+   * @param textContent input String
+   */
+  public static String removeNewLines(String textContent) {
+    if (textContent == null) {
+      return "";
+    }
+
+    StringBuilder s = new StringBuilder();
+    boolean inNl = false;
+
+    for (char c : textContent.toCharArray()) {
+      if (c == '\n') {
+        if (!inNl) {
+          s.append(' ');
+          inNl = true;
+        }
+      } else {
+        inNl = false;
+        s.append(c);
+      }
+    }
+    return s.toString();
   }
 }

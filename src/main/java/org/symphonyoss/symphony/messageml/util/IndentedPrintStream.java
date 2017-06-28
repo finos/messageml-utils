@@ -32,6 +32,7 @@ public class IndentedPrintStream extends PrintStream {
   private boolean oNlCr = false;
   private boolean noIndent = false;
   private boolean noNl = false;
+  private boolean removeNl = true;
   private String linePrefix;
   private int linePrefixIndent = 9999;
 
@@ -608,5 +609,11 @@ public class IndentedPrintStream extends PrintStream {
     this.noNl = noNl;
   }
 
+  public boolean isRemoveNl() {
+    return removeNl;
+  }
 
+  public void setRemoveNl(boolean removeNl) {
+    this.removeNl = removeNl;
+  }
 }

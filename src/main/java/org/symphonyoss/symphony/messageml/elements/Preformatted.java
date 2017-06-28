@@ -17,10 +17,9 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
-import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
+import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Arrays;
 
@@ -37,16 +36,18 @@ public class Preformatted extends Element {
   }
 
   @Override
-  public void buildAll(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException,
-      ProcessingException {
-    boolean nl = TextNode.isRemoveNewLines();
-    TextNode.setRemoveNewLines(false);
-    super.buildAll(context, element);
-    TextNode.setRemoveNewLines(nl);
+  public void asPresentationML(XmlPrintStream out) {
+    boolean removeNl = out.isRemoveNl();
+
+    out.setRemoveNl(false);
+
+    super.asPresentationML(out);
+
+    out.setRemoveNl(removeNl);
   }
 
   @Override
-  public Node asMarkdown() {
+  public Node asMarkdown() throws InvalidInputException {
     return new PreformattedNode();
   }
 

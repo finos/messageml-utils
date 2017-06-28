@@ -27,11 +27,10 @@ import org.w3c.dom.Text;
  * @since 3/27/17
  */
 public class TextNode extends Element {
-  private static boolean removeNewLines = true;
   private String text;
 
   public TextNode(Element parent, Text node) {
-    this(parent, removeNewLines ? removeNewLines(node.getTextContent()) : node.getTextContent());
+    this(parent, node.getTextContent());
   }
 
   public TextNode(Element parent, String text) {
@@ -39,41 +38,24 @@ public class TextNode extends Element {
     this.text = text;
   }
 
-  private static String removeNewLines(String textContent) {
-    if (textContent == null) {
-      return "";
+  @Override
+  public void asPresentationML(XmlPrintStream out) {
+    String content = this.text;
+    if (out.isRemoveNl()) {
+      content = XmlPrintStream.removeNewLines(content);
     }
-
-    StringBuilder s = new StringBuilder();
-    boolean inNl = false;
-
-    for (char c : textContent.toCharArray()) {
-      if (c == '\n') {
-        if (!inNl) {
-          s.append(' ');
-          inNl = true;
-        }
-      } else {
-        inNl = false;
-        s.append(c);
-      }
-    }
-    return s.toString();
+    content = out.escape(content);
+    out.println(content);
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
-    out.println(out.escape(this.text));
-  }
-
-  public void asMarkdown(Node parent) {
-    org.commonmark.node.Text node = new org.commonmark.node.Text(this.text);
-    parent.appendChild(node);
+  public Node asMarkdown() {
+    return new org.commonmark.node.Text(this.text);
   }
 
   @Override
   protected void buildText(Text node) {
-    this.text = removeNewLines(node.getTextContent());
+    this.text = node.getTextContent();
   }
 
   public String getText() {
@@ -84,22 +66,9 @@ public class TextNode extends Element {
     this.text = text;
   }
 
-  public static boolean isRemoveNewLines() {
-    return removeNewLines;
-  }
-
-  public static void setRemoveNewLines(boolean removeNewLines) {
-    TextNode.removeNewLines = removeNewLines;
-  }
-
   @Override
   public String asText() {
     return this.text;
-  }
-
-  @Override
-  public Node asMarkdown() {
-    return new org.commonmark.node.Text(this.text);
   }
 
   @Override

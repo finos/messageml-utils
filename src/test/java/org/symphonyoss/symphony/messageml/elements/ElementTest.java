@@ -394,7 +394,7 @@ public class ElementTest {
 
   @Test
   public void testPreformatted() throws Exception {
-    String input = "<messageML>\n<pre>\n<span>\nHello\n</span>\n world!\n</pre>\n</messageML>";
+    String input = "<messageML>\n<pre>\n\t<span>\n\t\tHello\n\t</span>\n\tworld!\n</pre>\n</messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -407,8 +407,8 @@ public class ElementTest {
     assertEquals("Element attributes", Collections.emptyMap(), pre.getAttributes());
     assertEquals("Element children", 3, pre.getChildren().size());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + " <pre>\n<span>\nHello\n</span>\n world!\n</pre> </div>", context.getPresentationML());
-    assertEquals("Markdown", " Formatted:\n\n\n\nHello\n\n world!\n\n ", context.getMarkdown());
+            + " <pre>\n\t<span>\n\t\tHello\n\t</span>\n\tworld!\n</pre> </div>", context.getPresentationML());
+    assertEquals("Markdown", " Formatted:\n\n\n\t\n\t\tHello\n\t\n\tworld!\n\n ", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
 
