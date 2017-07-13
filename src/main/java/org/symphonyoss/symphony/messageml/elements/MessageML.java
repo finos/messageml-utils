@@ -78,7 +78,11 @@ public class MessageML extends Element {
   @Override
   public Document asMarkdown() throws InvalidInputException {
     Document root = new Document();
-    buildMarkdown(root);
+    try {
+      buildMarkdown(root);
+    } catch (IllegalArgumentException e) {
+      throw new InvalidInputException("Failed to build Markdown: " + e.getMessage());
+    }
     return root;
   }
 

@@ -492,6 +492,15 @@ public class ElementTest {
   }
 
   @Test
+  public void testHeadersInvalidContent() throws Exception {
+    String invalidContent = "<messageML><h1><pre>>Hello world!</pre></h1></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"pre\" is not allowed in \"h1\"");
+    context.parseMessageML(invalidContent, null, MessageML.MESSAGEML_VERSION);
+    context.getMessageML();
+  }
+
+  @Test
   public void testParagraph() throws Exception {
     String input = "<messageML>Hello<p>world</p>!</messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);

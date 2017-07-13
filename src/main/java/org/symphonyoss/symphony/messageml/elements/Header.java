@@ -18,7 +18,9 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
 import org.commonmark.node.StrongEmphasis;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -43,5 +45,11 @@ public class Header extends Element {
 
   public static boolean isHeaderElement(String tag) {
     return PATTERN.matcher(tag).matches();
+  }
+
+  @Override
+  public void validate() throws InvalidInputException {
+    assertContentModel(Arrays.asList(TextNode.class, Link.class, Chime.class, Bold.class, Italic.class, Image.class,
+        LineBreak.class, Span.class));
   }
 }
