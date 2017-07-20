@@ -53,7 +53,7 @@ MessageMLContext context = new MessageMLContext(/*IDataProvider*/ dataProvider);
 context.parseMessageML(/*String*/ message, /*String*/ entityJSON, /*String*/ version);
 
 /* Parse a Markdown message into a MessageML document tree */
-context.prseMarkdown(/*String*/ markdown, /*JsonNode*/ entities);
+context.praseMarkdown(/*String*/ markdown, /*JsonNode*/ entities);
 
 /* Get the MessageML document tree */
 Element messageML = context.getMessageML();
