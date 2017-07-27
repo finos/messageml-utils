@@ -22,10 +22,10 @@
 <hr/>
 <table>
 <thead>
-<th>
-<td>Field</td>
-<td>Value</td>
-</th>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
 </thead>
 <tbody>
 <tr>

@@ -311,7 +311,7 @@ public abstract class Element {
 
         //Permit whitespace
         if (child instanceof TextNode && StringUtils.isBlank(((TextNode) child).getText())) {
-          return;
+          continue;
         }
 
         throw new InvalidInputException("Element \"" + child.getMessageMLTag() + "\" is not allowed in \""
