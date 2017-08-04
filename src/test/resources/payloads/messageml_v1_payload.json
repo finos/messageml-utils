@@ -46,5 +46,38 @@
         "type": "URL"
       }
     ]
+  },
+  "media": {
+    "mediaType": "JSON",
+    "content": [
+      {
+        "index": 8,
+        "type": "excel-rcp",
+        "text": [
+          [
+            "A1",
+            "B1"
+          ],
+          [
+            "A2",
+            "B2"
+          ]
+        ]
+      },
+      {
+        "index": 97,
+        "type": "excel-rcp",
+        "text": [
+          [
+            "X1",
+            "Y1"
+          ],
+          [
+            "X2",
+            "Y2"
+          ]
+        ]
+      }
+    ]
   }
 }

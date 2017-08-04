@@ -83,46 +83,46 @@ public class MessageMLContextTest {
     assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
 
     JsonNode entities = context.getEntities();
+    assertEquals("Entity URL id", expectedEntities.get("urls").get(0).get("id"),
+        entities.get("urls").get(0).get("id"));
     assertEquals("Entity URL text", expectedEntities.get("urls").get(0).get("text"),
         entities.get("urls").get(0).get("text"));
-    assertEquals("Entity URL text", expectedEntities.get("urls").get(0).get("id"),
-        entities.get("urls").get(0).get("id"));
-    assertEquals("Entity URL text", expectedEntities.get("urls").get(0).get("expandedUrl"),
+    assertEquals("Entity URL url", expectedEntities.get("urls").get(0).get("expandedUrl"),
         entities.get("urls").get(0).get("expandedUrl"));
-    assertEquals("Entity URL text", expectedEntities.get("urls").get(0).get("indexStart"),
+    assertEquals("Entity URL start index", expectedEntities.get("urls").get(0).get("indexStart"),
         entities.get("urls").get(0).get("indexStart"));
-    assertEquals("Entity URL text", expectedEntities.get("urls").get(0).get("indexEnd"),
+    assertEquals("Entity URL end index", expectedEntities.get("urls").get(0).get("indexEnd"),
         entities.get("urls").get(0).get("indexEnd"));
-    assertEquals("Entity URL text", expectedEntities.get("urls").get(0).get("type"),
+    assertEquals("Entity URL type", expectedEntities.get("urls").get(0).get("type"),
         entities.get("urls").get(0).get("type"));
 
-    assertEquals("Entity user mention text", expectedEntities.get("userMentions").get(0).get("id").longValue(),
+    assertEquals("Entity user mention id", expectedEntities.get("userMentions").get(0).get("id").longValue(),
         entities.get("userMentions").get(0).get("id").longValue());
-    assertEquals("Entity user mention text", expectedEntities.get("userMentions").get(0).get("screenName"),
+    assertEquals("Entity user mention screen name", expectedEntities.get("userMentions").get(0).get("screenName"),
         entities.get("userMentions").get(0).get("screenName"));
-    assertEquals("Entity user mention text", expectedEntities.get("userMentions").get(0).get("prettyName"),
+    assertEquals("Entity user mention pretty name", expectedEntities.get("userMentions").get(0).get("prettyName"),
         entities.get("userMentions").get(0).get("prettyName"));
     assertEquals("Entity user mention text", expectedEntities.get("userMentions").get(0).get("text"),
         entities.get("userMentions").get(0).get("text"));
-    assertEquals("Entity user mention text", expectedEntities.get("userMentions").get(0).get("indexStart"),
+    assertEquals("Entity user mention start index", expectedEntities.get("userMentions").get(0).get("indexStart"),
         entities.get("userMentions").get(0).get("indexStart"));
-    assertEquals("Entity user mention text", expectedEntities.get("userMentions").get(0).get("indexEnd"),
+    assertEquals("Entity user mention end index", expectedEntities.get("userMentions").get(0).get("indexEnd"),
         entities.get("userMentions").get(0).get("indexEnd"));
     assertEquals("Entity user mention text", expectedEntities.get("userMentions").get(0).get("userType"),
         entities.get("userMentions").get(0).get("userType"));
-    assertEquals("Entity user mention text", expectedEntities.get("userMentions").get(0).get("type"),
+    assertEquals("Entity user mention type", expectedEntities.get("userMentions").get(0).get("type"),
         entities.get("userMentions").get(0).get("type"));
 
     for (int i = 0; i < 2; i++) {
-      assertEquals("Entity hashtag text", expectedEntities.get("hashtags").get(i).get("id"),
+      assertEquals("Entity hashtag id", expectedEntities.get("hashtags").get(i).get("id"),
           entities.get("hashtags").get(i).get("id"));
       assertEquals("Entity hashtag text", expectedEntities.get("hashtags").get(i).get("text"),
           entities.get("hashtags").get(i).get("text"));
-      assertEquals("Entity hashtag text", expectedEntities.get("hashtags").get(i).get("indexStart"),
+      assertEquals("Entity hashtag start index", expectedEntities.get("hashtags").get(i).get("indexStart"),
           entities.get("hashtags").get(i).get("indexStart"));
-      assertEquals("Entity hashtag text", expectedEntities.get("hashtags").get(i).get("indexEnd"),
+      assertEquals("Entity hashtag end index", expectedEntities.get("hashtags").get(i).get("indexEnd"),
           entities.get("hashtags").get(i).get("indexEnd"));
-      assertEquals("Entity hashtag text", expectedEntities.get("hashtags").get(i).get("type"),
+      assertEquals("Entity hashtag type", expectedEntities.get("hashtags").get(i).get("type"),
           entities.get("hashtags").get(i).get("type"));
     }
   }
@@ -358,6 +358,7 @@ public class MessageMLContextTest {
     JsonNode messageNode = MAPPER.readTree(message);
 
     final String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>Hello!<br/>"
+        + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table> "
         + "<b>bold</b> <i>italic</i> "
         + "<span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span> "
         + "<span class=\"entity\" data-entity-id=\"keyword2\">$cashtag</span> "
@@ -366,24 +367,35 @@ public class MessageMLContextTest {
         + "<ul>"
         + "<li>list</li>"
         + "<li>item</li>"
-        + "</ul>"
+        + "</ul><br/>"
+        + "<table><tr><td>X1</td><td>Y1</td></tr><tr><td>X2</td><td>Y2</td></tr></table>"
         + "</div>";
     final String expectedMarkdown = "Hello!\n"
-        + "**bold** _italic_ #hashtag $cashtag @Bot User01 http://example.com\n"
+        + "Table:\n"
+        + "---\n"
+        + "A1 | B1\n"
+        + "A2 | B2\n"
+        + "---\n"
+        + " **bold** _italic_ #hashtag $cashtag @Bot User01 http://example.com\n"
         + "- list\n"
-        + "- item\n";
+        + "- item\n"
+        + "Table:\n"
+        + "---\n"
+        + "X1 | Y1\n"
+        + "X2 | Y2\n"
+        + "---\n";
     final JsonNode expectedEntities = MAPPER.readTree("{\n"
         + "    \"hashtags\": [{\n"
         + "        \"id\": \"#hashtag\",\n"
         + "        \"text\": \"#hashtag\",\n"
-        + "        \"indexStart\": 25,\n"
-        + "        \"indexEnd\": 33,\n"
+        + "        \"indexStart\": 57,\n"
+        + "        \"indexEnd\": 65,\n"
         + "        \"type\": \"KEYWORD\"\n"
         + "    }, {\n"
         + "        \"id\": \"$cashtag\",\n"
         + "        \"text\": \"$cashtag\",\n"
-        + "        \"indexStart\": 34,\n"
-        + "        \"indexEnd\": 42,\n"
+        + "        \"indexStart\": 66,\n"
+        + "        \"indexEnd\": 74,\n"
         + "        \"type\": \"KEYWORD\"\n"
         + "    }],\n"
         + "    \"userMentions\": [{\n"
@@ -391,8 +403,8 @@ public class MessageMLContextTest {
         + "        \"screenName\": \"bot.user1\",\n"
         + "        \"prettyName\": \"Bot User01\",\n"
         + "        \"text\": \"@Bot User01\",\n"
-        + "        \"indexStart\": 43,\n"
-        + "        \"indexEnd\": 54,\n"
+        + "        \"indexStart\": 75,\n"
+        + "        \"indexEnd\": 86,\n"
         + "        \"userType\": \"lc\",\n"
         + "        \"type\": \"USER_FOLLOW\"\n"
         + "    }],\n"
@@ -400,8 +412,8 @@ public class MessageMLContextTest {
         + "        \"text\": \"http://example.com\",\n"
         + "        \"id\": \"http://example.com\",\n"
         + "        \"expandedUrl\": \"http://example.com\",\n"
-        + "        \"indexStart\": 55,\n"
-        + "        \"indexEnd\": 73,\n"
+        + "        \"indexStart\": 87,\n"
+        + "        \"indexEnd\": 105,\n"
         + "        \"type\": \"URL\"\n"
         + "    }]\n"
         + "}");
@@ -431,14 +443,14 @@ public class MessageMLContextTest {
         + "}";
     final JsonNode expectedEntityJson =  MAPPER.readTree(generatedEntities);
 
-    context.parseMarkdown(messageNode.get("text").textValue(), messageNode.get("entities"));
+    context.parseMarkdown(messageNode.get("text").textValue(), messageNode.get("entities"), messageNode.get("media"));
 
     MessageML messageML = context.getMessageML();
     assertNotNull("MessageML", messageML);
     assertEquals("Chime", false, messageML.isChime());
 
     List<Element> children = messageML.getChildren();
-    assertEquals("MessageML children", 15, children.size());
+    assertEquals("MessageML children", 19, children.size());
     assertEquals("Child #1 class", LineBreak.class, children.get(0).getClass());
     assertTrue("Child #1 attributes", children.get(0).getAttributes().isEmpty());
     assertTrue("Child #1 children", children.get(0).getChildren().isEmpty());
@@ -448,34 +460,34 @@ public class MessageMLContextTest {
     assertTrue("Child #2 attributes", children.get(1).getAttributes().isEmpty());
     assertEquals("Child #2 children", 0, children.get(1).getChildren().size());
 
-    assertEquals("Child #8 class", HashTag.class, children.get(7).getClass());
-    assertEquals("Child #8 text", "hashtag", ((HashTag) children.get(7)).getTag());
-    assertTrue("Child #8 attributes", children.get(7).getAttributes().isEmpty());
-    assertTrue("Child #8 children", children.get(7).getChildren().isEmpty());
+    assertEquals("Child #10 class", HashTag.class, children.get(9).getClass());
+    assertEquals("Child #10 text", "hashtag", ((HashTag) children.get(9)).getTag());
+    assertTrue("Child #10 attributes", children.get(9).getAttributes().isEmpty());
+    assertTrue("Child #10 children", children.get(9).getChildren().isEmpty());
 
-    assertEquals("Child #10 class", CashTag.class, children.get(9).getClass());
-    assertEquals("Child #10 text", "cashtag", ((CashTag) children.get(9)).getTag());
-    assertEquals("Child #10 attributes", 0, children.get(9).getAttributes().size());
-    assertEquals("Child #10 children", 0, children.get(9).getChildren().size());
+    assertEquals("Child #12 class", CashTag.class, children.get(11).getClass());
+    assertEquals("Child #12 text", "cashtag", ((CashTag) children.get(11)).getTag());
+    assertEquals("Child #12 attributes", 0, children.get(11).getAttributes().size());
+    assertEquals("Child #12 children", 0, children.get(11).getChildren().size());
 
-    assertEquals("Child #12 class", Mention.class, children.get(11).getClass());
-    assertEquals("Child #12 user ID", 1, ((Mention) children.get(11)).getUserPresentation().getId());
-    assertEquals("Child #12 user email", "bot.user1@localhost.com",
-        ((Mention) children.get(11)).getUserPresentation().getEmail());
-    assertEquals("Child #12 user name", "bot.user1",
-        ((Mention) children.get(11)).getUserPresentation().getScreenName());
-    assertTrue("Child #12 attributes", children.get(11).getAttributes().isEmpty());
-    assertTrue("Child #12 children", children.get(11).getChildren().isEmpty());
+    assertEquals("Child #14 class", Mention.class, children.get(13).getClass());
+    assertEquals("Child #14 user ID", 1, ((Mention) children.get(13)).getUserPresentation().getId());
+    assertEquals("Child #14 user email", "bot.user1@localhost.com",
+        ((Mention) children.get(13)).getUserPresentation().getEmail());
+    assertEquals("Child #14 user name", "bot.user1",
+        ((Mention) children.get(13)).getUserPresentation().getScreenName());
+    assertTrue("Child #14 attributes", children.get(13).getAttributes().isEmpty());
+    assertTrue("Child #14 children", children.get(13).getChildren().isEmpty());
 
-    assertEquals("Child #14 class", Link.class, children.get(13).getClass());
-    assertEquals("Child #14 text", new URI("http://example.com"), ((Link) children.get(13)).getUri());
-    assertEquals("Child #14 attributes", 1, children.get(13).getAttributes().size());
-    assertEquals("Child #14 attribute", "http://example.com", children.get(13).getAttribute("href"));
-    assertEquals("Child #14 children", 0, children.get(13).getChildren().size());
+    assertEquals("Child #16 class", Link.class, children.get(15).getClass());
+    assertEquals("Child #16 text", new URI("http://example.com"), ((Link) children.get(15)).getUri());
+    assertEquals("Child #16 attributes", 1, children.get(15).getAttributes().size());
+    assertEquals("Child #16 attribute", "http://example.com", children.get(15).getAttribute("href"));
+    assertEquals("Child #16 children", 0, children.get(15).getChildren().size());
 
-    assertEquals("Child #15 class", BulletList.class, children.get(14).getClass());
-    assertEquals("Child #15 attributes", 0, children.get(14).getAttributes().size());
-    assertEquals("Child #15 children", 2, children.get(14).getChildren().size());
+    assertEquals("Child #17 class", BulletList.class, children.get(16).getClass());
+    assertEquals("Child #17 attributes", 0, children.get(16).getAttributes().size());
+    assertEquals("Child #17 children", 2, children.get(16).getChildren().size());
 
     validateMessageML(expectedPresentationML, expectedEntityJson, expectedMarkdown, expectedEntities);
   }
@@ -484,7 +496,7 @@ public class MessageMLContextTest {
   public void testParseMarkdownWithHtmlTag() throws Exception {
     String markdown = "<div class=\"foo\">*Markdown*</div> *Markdown* <hr/>";
     JsonNode entities = new ObjectNode(JsonNodeFactory.instance);
-    context.parseMarkdown(markdown, entities);
+    context.parseMarkdown(markdown, entities, null);
 
     assertEquals("Generated PresentationML","<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
         + "&lt;div class=&quot;foo&quot;&gt;<i>Markdown</i>&lt;/div&gt; <i>Markdown</i> &lt;hr/&gt;</div>",
@@ -507,7 +519,7 @@ public class MessageMLContextTest {
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Required field \"id\" missing from the entity payload");
-    context.parseMarkdown(message, entities);
+    context.parseMarkdown(message, entities, null);
   }
 
   @Test
@@ -523,7 +535,7 @@ public class MessageMLContextTest {
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Required field \"type\" missing from the entity payload");
-    context.parseMarkdown(message, entities);
+    context.parseMarkdown(message, entities, null);
   }
 
   @Test
@@ -541,7 +553,7 @@ public class MessageMLContextTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Invalid entity payload: "
         + "?AQB6QI3LzHsTHfacv2E9x4QFAAAAAAAAAAAAAAAAAAAAAK5saXEaylHzAK65LoYFTqRcsI+4Qrc= (start index: 0, end index: 0)");
-    context.parseMarkdown(message, entities);
+    context.parseMarkdown(message, entities, null);
   }
 
   @Test
@@ -696,7 +708,7 @@ public class MessageMLContextTest {
         context.getPresentationML());
     assertEquals("Generated Markdown", markdown, context.getMarkdown());
 
-    context.parseMarkdown(markdown, new ObjectNode(JsonNodeFactory.instance));
+    context.parseMarkdown(markdown, null, null);
 
     assertEquals("Generated PresentationML",
         String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>%s</div>", escapedPresentationML),

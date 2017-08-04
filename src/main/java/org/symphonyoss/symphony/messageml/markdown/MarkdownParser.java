@@ -18,12 +18,16 @@ package org.symphonyoss.symphony.messageml.markdown;
 
 import static org.symphonyoss.symphony.messageml.markdown.EntityDelimiterProcessor.ENTITY_DELIMITER;
 import static org.symphonyoss.symphony.messageml.markdown.EntityDelimiterProcessor.FIELD_DELIMITER;
+import static org.symphonyoss.symphony.messageml.markdown.EntityDelimiterProcessor.GROUP_DELIMITER;
+import static org.symphonyoss.symphony.messageml.markdown.EntityDelimiterProcessor.RECORD_DELIMITER;
+import static org.symphonyoss.symphony.messageml.markdown.EntityDelimiterProcessor.TABLE;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.ObjectUtils;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.Block;
 import org.commonmark.node.BlockQuote;
+import org.commonmark.node.CustomBlock;
 import org.commonmark.node.CustomNode;
 import org.commonmark.node.Document;
 import org.commonmark.node.Emphasis;
@@ -51,10 +55,16 @@ import org.symphonyoss.symphony.messageml.elements.ListItem;
 import org.symphonyoss.symphony.messageml.elements.Mention;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.OrderedList;
+import org.symphonyoss.symphony.messageml.elements.Table;
+import org.symphonyoss.symphony.messageml.elements.TableCell;
+import org.symphonyoss.symphony.messageml.elements.TableRow;
 import org.symphonyoss.symphony.messageml.elements.TextNode;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 
 import java.util.HashSet;
@@ -69,10 +79,12 @@ import java.util.Set;
  */
 public class MarkdownParser extends AbstractVisitor {
   private static final Parser MARKDOWN_PARSER;
+  private static final String INDEX = "index";
   private static final String INDEX_START = "indexStart";
+  private static final String INDEX_END = "indexEnd";
   private static final String TYPE = "type";
   private static final String ID = "id";
-  private static final String INDEX_END = "indexEnd";
+  private static final String TEXT = "text";
   private final IDataProvider dataProvider;
   private MessageML messageML;
   private Element parent;
@@ -185,6 +197,17 @@ public class MarkdownParser extends AbstractVisitor {
     }
   }
 
+  @Override
+  public void visit(CustomBlock block) {
+    if (block instanceof TableNode) {
+      visit((TableNode) block);
+    } else if (block instanceof TableRowNode) {
+      visit((TableRowNode) block);
+    } else if (block instanceof TableCellNode) {
+      visit((TableCellNode) block);
+    }
+  }
+
   private void visit(KeywordNode keyword) {
     switch (keyword.getPrefix()) {
       case HashTag.PREFIX:
@@ -211,6 +234,21 @@ public class MarkdownParser extends AbstractVisitor {
     }
   }
 
+  private void visit(TableNode table) {
+    Table node = new Table(parent);
+    visitChildren(node, table);
+  }
+
+  private void visit(TableRowNode tr) {
+    TableRow node = new TableRow(parent);
+    visitChildren(node, tr);
+  }
+
+  private void visit(TableCellNode td) {
+    TableCell node = new TableCell(parent);
+    visitChildren(node, td);
+  }
+
   private void visitChildren(Element element, Node node) {
     parent.addChild(element);
     parent = element;
@@ -222,12 +260,23 @@ public class MarkdownParser extends AbstractVisitor {
    * Generate intermediate markup to delimit custom nodes representing entities for further processing by the
    * Markdown parser.
    */
-  private String enrichMarkdown(String message, JsonNode data) throws InvalidInputException {
-    validateEntities(data);
+  private String enrichMarkdown(String message, JsonNode entitiesNode, JsonNode mediaNode) throws InvalidInputException {
 
     Map<Integer, JsonNode> entities = new LinkedHashMap<>();
-    for (JsonNode node : data.findParents(INDEX_START)) {
-      entities.put(node.get(INDEX_START).intValue(), node);
+    Map<Integer, JsonNode> media = new LinkedHashMap<>();
+
+    if (entitiesNode != null) {
+      validateEntities(entitiesNode);
+      for (JsonNode node : entitiesNode.findParents(INDEX_START)) {
+        entities.put(node.get(INDEX_START).intValue(), node);
+      }
+    }
+
+    if (mediaNode != null) {
+      validateMedia(mediaNode);
+      for (JsonNode node : mediaNode.findParents(INDEX)) {
+        media.put(node.get(INDEX).intValue(), node.get(TEXT));
+      }
     }
 
     StringBuilder output = new StringBuilder();
@@ -248,6 +297,21 @@ public class MarkdownParser extends AbstractVisitor {
         // We explicitly check the entity indices above, but make double sure that we don't get into an infinite loop here
         int endIndex = entity.get(INDEX_END).intValue() - 1;
         i = Math.max(endIndex, i);
+
+      } else if (media.containsKey(i)) {
+        output.append(c);
+        JsonNode table = media.get(i);
+
+        output.append(ENTITY_DELIMITER);
+        output.append(TABLE).append(FIELD_DELIMITER);
+        for (JsonNode row : table) {
+          for (JsonNode cell : row) {
+            String text = cell.textValue();
+            output.append(text).append(RECORD_DELIMITER);
+          }
+          output.append(GROUP_DELIMITER);
+        }
+        output.append(ENTITY_DELIMITER);
       } else {
         output.append(c);
       }
@@ -262,7 +326,7 @@ public class MarkdownParser extends AbstractVisitor {
   private void validateEntities(JsonNode data) throws InvalidInputException {
     for (JsonNode node : data.findParents(INDEX_START)) {
 
-      for (String key : new String[]{INDEX_START, INDEX_END, ID, TYPE}) {
+      for (String key : new String[] {INDEX_START, INDEX_END, ID, TYPE}) {
         if (node.path(key).isMissingNode()) {
           throw new InvalidInputException("Required field \"" + key + "\" missing from the entity payload");
         }
@@ -280,16 +344,28 @@ public class MarkdownParser extends AbstractVisitor {
   }
 
   /**
+   * Verify that JSON media node contains valid table payload.
+   */
+  private void validateMedia(JsonNode data) throws InvalidInputException {
+    for (JsonNode node : data.findParents(INDEX)) {
+      JsonNode text = node.path(TEXT);
+      if (!text.isMissingNode() && (!text.isArray() || !text.get(0).isArray())) {
+        throw new InvalidInputException(String.format("Invalid table payload: %s (start index: %s, end index: %s)",
+            text.asText(), node.get(INDEX)));
+      }
+    }
+  }
+
+  /**
    * Parse the Markdown message and entity JSON into a MessageML document.
    */
-  public MessageML parse(String message, JsonNode data) throws InvalidInputException {
+  public MessageML parse(String message, JsonNode entities, JsonNode media) throws InvalidInputException {
     this.index = 0;
-    String enriched = enrichMarkdown(message, data);
+    String enriched = enrichMarkdown(message, entities, media);
     Node markdown = MARKDOWN_PARSER.parse(enriched);
     markdown.accept(this);
 
     return messageML;
   }
-
 
 }

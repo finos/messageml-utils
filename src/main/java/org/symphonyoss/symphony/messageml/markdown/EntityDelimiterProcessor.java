@@ -23,6 +23,9 @@ import org.commonmark.parser.delimiter.DelimiterProcessor;
 import org.commonmark.parser.delimiter.DelimiterRun;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 
 /**
  * Custom processor for entities (tags, mentions, urls). Supports text processed by the method
@@ -33,6 +36,12 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
 public class EntityDelimiterProcessor implements DelimiterProcessor {
   public static final char ENTITY_DELIMITER = '\u0091';
   public static final char FIELD_DELIMITER = '\u0092';
+  public static final char GROUP_DELIMITER = '\u001D';
+  public static final char RECORD_DELIMITER = '\u001E';
+  public static final String KEYWORD = "KEYWORD";
+  public static final String URL = "URL";
+  public static final String MENTION = "USER_FOLLOW";
+  public static final String TABLE = "TABLE";
 
   @Override
   public char getOpeningCharacter() {
@@ -63,21 +72,34 @@ public class EntityDelimiterProcessor implements DelimiterProcessor {
     String[] text = node.getLiteral().split(String.valueOf(FIELD_DELIMITER));
     if (text.length >= 2) {
       switch (text[0]) {
-        case "KEYWORD":
+        case KEYWORD:
           String prefix = text[1].substring(0, 1);
           String value = text[1].substring(1);
           return new KeywordNode(prefix, value);
 
-        case "URL":
+        case URL:
           return new Link(text[1], text[1]);
 
-        case "USER_FOLLOW":
+        case MENTION:
           try {
             Long uid = Long.valueOf(text[1]);
             return new MentionNode(uid);
           } catch (NumberFormatException e) {
             return new Text(text[1]);
           }
+
+        case TABLE:
+          TableNode tableNode = new TableNode();
+          for (String row : text[1].split(String.valueOf(GROUP_DELIMITER))) {
+            TableRowNode rowNode = new TableRowNode();
+            for (String cell : row.split(String.valueOf(RECORD_DELIMITER))) {
+              TableCellNode cellNode = new TableCellNode();
+              cellNode.appendChild(new Text(cell));
+              rowNode.appendChild(cellNode);
+            }
+            tableNode.appendChild(rowNode);
+          }
+          return tableNode;
 
         default:
           return null;

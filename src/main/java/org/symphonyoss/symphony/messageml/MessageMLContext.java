@@ -76,8 +76,8 @@ public class MessageMLContext {
    * @param message string containing a message in Markdown
    * @param entities additional entity data in JSON
    */
-  public void parseMarkdown(String message, JsonNode entities) throws InvalidInputException {
-    this.messageML = markdownParser.parse(message, entities);
+  public void parseMarkdown(String message, JsonNode entities, JsonNode media) throws InvalidInputException {
+    this.messageML = markdownParser.parse(message, entities, media);
     this.entityJson = messageML.asEntityJson(this.entityJson);
     this.markdownRenderer = new MarkdownRenderer(messageML.asMarkdown());
   }
