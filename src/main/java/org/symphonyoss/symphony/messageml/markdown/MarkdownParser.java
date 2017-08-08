@@ -299,7 +299,6 @@ public class MarkdownParser extends AbstractVisitor {
         i = Math.max(endIndex, i);
 
       } else if (media.containsKey(i)) {
-        output.append(c);
         JsonNode table = media.get(i);
 
         output.append(ENTITY_DELIMITER);
@@ -312,6 +311,7 @@ public class MarkdownParser extends AbstractVisitor {
           output.append(GROUP_DELIMITER);
         }
         output.append(ENTITY_DELIMITER);
+        output.append(c);
       } else {
         output.append(c);
       }
