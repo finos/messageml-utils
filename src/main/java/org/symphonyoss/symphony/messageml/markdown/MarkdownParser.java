@@ -24,6 +24,7 @@ import static org.symphonyoss.symphony.messageml.markdown.EntityDelimiterProcess
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.Block;
 import org.commonmark.node.BlockQuote;
@@ -68,9 +69,8 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Used for converting legacy messages in Markdown and JSON entities to MessageMLV2 documents.
@@ -262,8 +262,8 @@ public class MarkdownParser extends AbstractVisitor {
    */
   private String enrichMarkdown(String message, JsonNode entitiesNode, JsonNode mediaNode) throws InvalidInputException {
 
-    Map<Integer, JsonNode> entities = new LinkedHashMap<>();
-    Map<Integer, JsonNode> media = new LinkedHashMap<>();
+    TreeMap<Integer, JsonNode> entities = new TreeMap<>();
+    TreeMap<Integer, JsonNode> media = new TreeMap<>();
 
     if (entitiesNode != null) {
       validateEntities(entitiesNode);
@@ -277,6 +277,12 @@ public class MarkdownParser extends AbstractVisitor {
       for (JsonNode node : mediaNode.findParents(INDEX)) {
         media.put(node.get(INDEX).intValue(), node.get(TEXT));
       }
+    }
+
+    // If entity indices are outside the message, pad the message to the necessary length
+    int lastIndex = Math.max((!entities.isEmpty()) ? entities.lastKey() : 0, (!media.isEmpty()) ? media.lastKey() : 0);
+    if (message.length() <= lastIndex) {
+      message = StringUtils.rightPad(message, lastIndex + 1);
     }
 
     StringBuilder output = new StringBuilder();

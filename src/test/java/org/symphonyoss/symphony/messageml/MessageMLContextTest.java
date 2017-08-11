@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
@@ -502,6 +503,45 @@ public class MessageMLContextTest {
         + "&lt;div class=&quot;foo&quot;&gt;<i>Markdown</i>&lt;/div&gt; <i>Markdown</i> &lt;hr/&gt;</div>",
         context.getPresentationML());
     assertEquals("Generated Markdown", "<div class=\"foo\">_Markdown_</div> _Markdown_ <hr/>",
+        context.getMarkdown());
+  }
+
+  @Test
+  public void testParseMarkdownWithOnlyTable() throws Exception {
+    String markdown = "";
+    ObjectNode entities = new ObjectNode(JsonNodeFactory.instance);
+
+    ObjectNode media = new ObjectNode(JsonNodeFactory.instance);
+    media.put("mediaType", "JSON");
+
+    ArrayNode contentWrapper = new ArrayNode(JsonNodeFactory.instance);
+    ObjectNode content = new ObjectNode(JsonNodeFactory.instance);
+    content.put("index", 0);
+    content.put("type", "excel-rcp");
+
+    ArrayNode text = new ArrayNode(JsonNodeFactory.instance);
+    ArrayNode r1 = new ArrayNode(JsonNodeFactory.instance);
+    r1.add("A1");
+    r1.add("B1");
+    ArrayNode r2 = new ArrayNode(JsonNodeFactory.instance);
+    r2.add("A2");
+    r2.add("B2");
+
+    text.add(r1);
+    text.add(r2);
+    content.set("text", text);
+    contentWrapper.add(content);
+    media.set("content", content);
+
+    context.parseMarkdown(markdown, entities, media);
+
+    assertEquals("Generated PresentationML","<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
+        + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table></div>", context.getPresentationML());
+    assertEquals("Generated Markdown", "Table:\n"
+            + "---\n"
+            + "A1 | B1\n"
+            + "A2 | B2\n"
+            + "---\n",
         context.getMarkdown());
   }
 
