@@ -853,9 +853,9 @@ public class ElementTest {
 
     assertEquals("Element class", HashTag.class, hashtag.getClass());
     assertEquals("Element tag name", "hash", hashtag.getMessageMLTag());
-    assertEquals("Element text", "world", ((HashTag) hashtag).getTag());
+    assertEquals("Element text", "hello_world", ((HashTag) hashtag).getTag());
     assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
-    assertEquals("Markdown", "Hello #world!", context.getMarkdown());
+    assertEquals("Markdown", "Hello #hello_world!", context.getMarkdown());
     assertEquals("EntityJSON", expectedJson, MAPPER.writeValueAsString(context.getEntityJson()));
     assertEquals("Legacy entities", 1, context.getEntities().size());
 
@@ -863,26 +863,26 @@ public class ElementTest {
     assertNotNull("Entity node", entity);
     assertEquals("Entity count", 1, entity.size());
 
-    assertEquals("Entity text", "#world", entity.get(0).get("text").textValue());
-    assertEquals("Entity id", "#world", entity.get(0).get("id").textValue());
+    assertEquals("Entity text", "#hello_world", entity.get(0).get("text").textValue());
+    assertEquals("Entity id", "#hello_world", entity.get(0).get("id").textValue());
     assertEquals("Entity start index", 6, entity.get(0).get("indexStart").intValue());
-    assertEquals("Entity end index", 12, entity.get(0).get("indexEnd").intValue());
+    assertEquals("Entity end index", 18, entity.get(0).get("indexEnd").intValue());
     assertEquals("Entity type", "KEYWORD", entity.get(0).get("type").textValue());
   }
 
   @Test
   public void testHashTag() throws Exception {
-    String input = "<messageML>Hello <hash tag=\"world\"/>!</messageML>";
+    String input = "<messageML>Hello <hash tag=\"hello_world\"/>!</messageML>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">#world</span>!"
+        + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">#hello_world</span>!"
         + "</div>";
     String expectedJson = "{\"keyword1\":{"
         + "\"type\":\"org.symphonyoss.taxonomy\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
-        + "\"value\":\"world\""
+        + "\"value\":\"hello_world\""
         + "}]}}";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -899,14 +899,14 @@ public class ElementTest {
         + "</div>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <div class=\"entity\" data-entity-id=\"hash123\">#world</div>!"
+        + "Hello <div class=\"entity\" data-entity-id=\"hash123\">#hello_world</div>!"
         + "</div>";
     String entityJson = "{\"hash123\":{"
         + "\"type\":\"org.symphonyoss.taxonomy\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
-        + "\"value\":\"world\""
+        + "\"value\":\"hello_world\""
         + "}]}}";
 
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
@@ -920,18 +920,18 @@ public class ElementTest {
   @Test
   public void testHashTagByPresentationMLSpan() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"hash123\">world</span>!"
+        + "Hello <span class=\"entity\" data-entity-id=\"hash123\">hello_world</span>!"
         + "</div>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"hash123\">#world</span>!"
+        + "Hello <span class=\"entity\" data-entity-id=\"hash123\">#hello_world</span>!"
         + "</div>";
     String entityJson = "{\"hash123\":{"
         + "\"type\":\"org.symphonyoss.taxonomy\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
-        + "\"value\":\"world\""
+        + "\"value\":\"hello_world\""
         + "}]}}";
 
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
@@ -956,7 +956,7 @@ public class ElementTest {
     String input = "<messageML>Hello <hash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters");
+    expectedException.expectMessage("Keywords may only contain alphanumeric characters, underscore or dot");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -995,9 +995,9 @@ public class ElementTest {
 
     assertEquals("Element class", CashTag.class, cashtag.getClass());
     assertEquals("Element tag name", "cash", cashtag.getMessageMLTag());
-    assertEquals("Element text", "world", ((CashTag) cashtag).getTag());
+    assertEquals("Element text", "hello.world", ((CashTag) cashtag).getTag());
     assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
-    assertEquals("Markdown", "Hello $world!", context.getMarkdown());
+    assertEquals("Markdown", "Hello $hello.world!", context.getMarkdown());
     assertEquals("EntityJSON", expectedJson, MAPPER.writeValueAsString(context.getEntityJson()));
     assertEquals("Legacy entities", 1, context.getEntities().size());
 
@@ -1005,26 +1005,26 @@ public class ElementTest {
     assertNotNull("Entity node", entity);
     assertEquals("Entity count", 1, entity.size());
 
-    assertEquals("Entity text", "$world", entity.get(0).get("text").textValue());
-    assertEquals("Entity id", "$world", entity.get(0).get("id").textValue());
+    assertEquals("Entity text", "$hello.world", entity.get(0).get("text").textValue());
+    assertEquals("Entity id", "$hello.world", entity.get(0).get("id").textValue());
     assertEquals("Entity start index", 6, entity.get(0).get("indexStart").intValue());
-    assertEquals("Entity end index", 12, entity.get(0).get("indexEnd").intValue());
+    assertEquals("Entity end index", 18, entity.get(0).get("indexEnd").intValue());
     assertEquals("Entity type", "KEYWORD", entity.get(0).get("type").textValue());
   }
 
   @Test
   public void testCashTag() throws Exception {
-    String input = "<messageML>Hello <cash tag=\"world\"/>!</messageML>";
+    String input = "<messageML>Hello <cash tag=\"hello.world\"/>!</messageML>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">$world</span>!"
+        + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">$hello.world</span>!"
         + "</div>";
     String expectedJson = "{\"keyword1\":{"
         + "\"type\":\"org.symphonyoss.fin.security\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
-        + "\"value\":\"world\""
+        + "\"value\":\"hello.world\""
         + "}]}}";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -1042,14 +1042,14 @@ public class ElementTest {
         + "</div>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <div class=\"entity\" data-entity-id=\"cash123\">$world</div>!"
+        + "Hello <div class=\"entity\" data-entity-id=\"cash123\">$hello.world</div>!"
         + "</div>";
     String entityJson = "{\"cash123\":{"
         + "\"type\":\"org.symphonyoss.fin.security\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
-        + "\"value\":\"world\""
+        + "\"value\":\"hello.world\""
         + "}]}}";
 
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
@@ -1064,18 +1064,18 @@ public class ElementTest {
   public void testCashTagByPresentationMLSpan() throws Exception {
 
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"cash123\">world</span>!"
+        + "Hello <span class=\"entity\" data-entity-id=\"cash123\">hello.world</span>!"
         + "</div>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"cash123\">$world</span>!"
+        + "Hello <span class=\"entity\" data-entity-id=\"cash123\">$hello.world</span>!"
         + "</div>";
     String entityJson = "{\"cash123\":{"
         + "\"type\":\"org.symphonyoss.fin.security\","
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
-        + "\"value\":\"world\""
+        + "\"value\":\"hello.world\""
         + "}]}}";
 
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
@@ -1100,7 +1100,7 @@ public class ElementTest {
     String input = "<messageML>Hello <cash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters");
+    expectedException.expectMessage("Keywords may only contain alphanumeric characters, underscore or dot");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
