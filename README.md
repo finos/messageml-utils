@@ -1,5 +1,5 @@
 [![Licence](https://img.shields.io/badge/licence-Apache%20Licence%20%282.0%29-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven/apache-maven.svg)]()
+[![Maven Central](https://img.shields.io/maven-central/v/org.symphonyoss.symphony/messageml.svg)]()
 [![Build Status](https://travis-ci.org/symphonyoss/messageml-utils.svg)](https://travis-ci.org/symphonyoss/messageml-utils)
 [![Dependencies](https://www.versioneye.com/user/projects/59260c2c25feb9004d428b63/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/59260c2c25feb9004d428b63)
 [![Validation Status](https://scan.coverity.com/projects/12785/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-messageml-utils)
