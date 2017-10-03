@@ -756,6 +756,24 @@ public class MessageMLContextTest {
     assertEquals("Generated Markdown", markdown, context.getMarkdown());
   }
 
+  @Test
+  public void testFindElements() throws Exception {
+    String message = getPayload("payloads/templated_message_all_tags.messageml");
+    String data = getPayload("payloads/templated_message_all_tags.json");
+
+    context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+
+    MessageML messageML = context.getMessageML();
+    List<Element> mentions = messageML.findElements(Mention.class);
+    List<Element> hashtags = messageML.findElements(HashTag.MESSAGEML_TAG);
+    List<Element> labels = messageML.findElements("class", "label");
+
+    assertEquals("Mention count", 1, mentions.size());
+    assertEquals("Hashtag count", 2, hashtags.size());
+    assertEquals("Label count", 3, labels.size());
+
+  }
+
   private String getPayload(String filename) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
     return new Scanner(classLoader.getResourceAsStream(filename)).useDelimiter("\\A").next();
