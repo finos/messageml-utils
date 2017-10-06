@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -2052,4 +2053,24 @@ public class ElementTest {
     assertEquals("Legacy hashtag type", 4, legacyHashtags.get(0).get("indexEnd").intValue());
   }
 
+  @Test
+  public void testEmoji() throws Exception {
+    String input = "<messageML><emoji name=\"smiley\"/></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element emoji = messageML.getChildren().get(0);
+
+    assertEquals("Emoji class", Emoji.class, emoji.getClass());
+    verifyEmoji((Emoji) emoji);
+  }
+
+  private void verifyEmoji(Emoji emoji) throws JsonProcessingException {
+    assertEquals("Emoji name attribute", "smiley", emoji.getName());
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><span class=\"entity\" "
+        + "data-entity-id=\"emoji1\">:smiley:</span></div>", context.getPresentationML());
+    assertEquals("EntityJSON", "{\"emoji1\":{\"type\":\"org.symphonyoss.emoji\",\"version\":\"1.0\",\"id\":[{\"type\":\"org.symphonyoss.emoji.name\",\"value\":\"smiley\"}]}}",
+        MAPPER.writeValueAsString(context.getEntityJson()));
+    assertEquals("Markdown", ":smiley:",context.getMarkdown());
+  }
 }

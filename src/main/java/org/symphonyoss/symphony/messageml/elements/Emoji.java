@@ -8,10 +8,10 @@ import org.w3c.dom.Node;
 public class Emoji extends Entity {
 
   public static final String MESSAGEML_TAG = "emoji";
-  private static final String ATTR_NAME = "name";
-  private static final String DELIMITER = ":";
   public static final String ENTITY_TYPE = "org.symphonyoss.emoji";
   public static final String SUB_ENTITY_TYPE = "org.symphonyoss.emoji.name";
+  private static final String ATTR_NAME = "name";
+  private static final String DELIMITER = ":";
   private static final String ENTITY_VERSION = "1.0";
   private static final String ENTITY_ID_PREFIX = "emoji";
 
@@ -22,19 +22,30 @@ public class Emoji extends Entity {
     this.entityId = getEntityId(entityIndex);
   }
 
+  public String getName() {
+    return this.name;
+  }
+
   @Override
   public void asPresentationML(XmlPrintStream out) {
     out.printElement(presentationMLTag, asText(), CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
   }
 
   @Override
-  org.commonmark.node.Node asMarkdown() throws InvalidInputException {
-    return new EmojiNode(DELIMITER);
+  public org.commonmark.node.Node asMarkdown() throws InvalidInputException {
+    return new EmojiNode(DELIMITER, this.name);
   }
 
   @Override
   public String asText() {
     return DELIMITER + this.name + DELIMITER;
+  }
+
+  @Override
+  public void validate() throws InvalidInputException {
+    if (this.name == null) {
+      throw new InvalidInputException("The attribute \"name\" is required");
+    }
   }
 
   @Override
@@ -47,14 +58,6 @@ public class Emoji extends Entity {
         throw new InvalidInputException("Attribute \"" + item.getNodeName() + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
   }
-
-  @Override
-  public void validate() throws InvalidInputException {
-    if (this.name==null) {
-      throw new InvalidInputException("The attribute \"name\" is required");
-    }
-  }
-
 
   @Override
   protected String getEntityValue() {

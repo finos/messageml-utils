@@ -6,9 +6,11 @@ import org.commonmark.node.Delimited;
 public class EmojiNode extends CustomNode implements Delimited {
 
   private String delimiter;
+  private String name;
 
-  public EmojiNode(String delimiter) {
+  public EmojiNode(String delimiter, String name) {
     this.delimiter = delimiter;
+    this.name = name;
   }
 
   @Override
@@ -19,5 +21,9 @@ public class EmojiNode extends CustomNode implements Delimited {
   @Override
   public String getClosingDelimiter() {
     return delimiter;
+  }
+
+  public String getName() {
+    return name;
   }
 }
