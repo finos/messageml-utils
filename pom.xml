@@ -10,7 +10,7 @@
 
     <groupId>org.symphonyoss.symphony</groupId>
     <artifactId>messageml</artifactId>
-    <version>0.9.12-SNAPSHOT</version>
+    <version>0.9.13-SNAPSHOT</version>
     <name>MessageML Utils</name>
     <url>https://github.com/symphonyoss/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages</description>
@@ -72,6 +72,17 @@
             <organizationUrl>http://symphony.com</organizationUrl>
             <roles>
                 <role>Principal Software Engineer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>cristiadu</id>
+            <name>Cristiano Faustino</name>
+            <email>cristiano.faustino@symphony.com</email>
+            <url>http://github.com/cristiadu</url>
+            <organization>Symphony Communication Services LLC</organization>
+            <organizationUrl>http://symphony.com</organizationUrl>
+            <roles>
+                <role>Software Developer</role>
             </roles>
         </developer>
     </developers>
