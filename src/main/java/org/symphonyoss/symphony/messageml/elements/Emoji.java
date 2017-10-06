@@ -1,6 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
@@ -8,7 +9,7 @@ public class Emoji extends Entity {
 
   public static final String MESSAGEML_TAG = "emoji";
   private static final String ATTR_NAME = "name";
-  private static final String TEXT_PREFIX = ":";
+  private static final String DELIMITER = ":";
   public static final String ENTITY_TYPE = "org.symphonyoss.emoji";
   public static final String SUB_ENTITY_TYPE = "org.symphonyoss.emoji.name";
   private static final String ENTITY_VERSION = "1.0";
@@ -27,8 +28,13 @@ public class Emoji extends Entity {
   }
 
   @Override
+  org.commonmark.node.Node asMarkdown() throws InvalidInputException {
+    return new EmojiNode(DELIMITER);
+  }
+
+  @Override
   public String asText() {
-    return TEXT_PREFIX + this.name + TEXT_PREFIX;
+    return DELIMITER + this.name + DELIMITER;
   }
 
   @Override
