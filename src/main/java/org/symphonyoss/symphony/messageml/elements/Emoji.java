@@ -17,6 +17,11 @@ public class Emoji extends Entity {
 
   private String name;
 
+  public Emoji(Element parent, String name, int entityIndex) {
+    this(parent, entityIndex);
+    this.name = name;
+  }
+
   public Emoji(Element parent, int entityIndex) {
     super(parent, MESSAGEML_TAG, DEFAULT_PRESENTATIONML_TAG, FormatEnum.MESSAGEML);
     this.entityId = getEntityId(entityIndex);
@@ -33,7 +38,7 @@ public class Emoji extends Entity {
 
   @Override
   public org.commonmark.node.Node asMarkdown() throws InvalidInputException {
-    return new EmojiNode(DELIMITER, this.name);
+    return new EmojiNode(name);
   }
 
   @Override

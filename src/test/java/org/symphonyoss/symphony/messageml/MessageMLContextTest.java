@@ -546,6 +546,36 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseMarkdownEmoji() throws Exception {
+    String message = "Hello :smile:!";
+    context.parseMarkdown(message, null, null);
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<br/>Hello <span class=\"entity\" data-entity-id=\"emoji1\">:smile:</span>!"
+        + "</div>";
+    String expectedMarkdown = "Hello :smile:!";
+    JsonNode expectedEntityJSON = MAPPER.readTree("{"
+        + "  \"emoji1\": {"
+        + "    \"type\": \"org.symphonyoss.emoji\","
+        + "    \"version\": \"1.0\","
+        + "    \"id\": ["
+        + "      {"
+        + "        \"type\": \"org.symphonyoss.emoji.name\","
+        + "        \"value\": \"smile\""
+        + "      }"
+        + "    ]"
+        + "  }"
+        + "}");
+    JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
+
+    //TODO: check children of context.getMessageML() (should be: "\n", Text(Hello ), Emoji, Text(!)
+    assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertTrue("EntityJSON", context.getEntityJson().equals(expectedEntityJSON));
+    assertTrue("Legacy entities", context.getEntities().equals(expectedEntities));
+  }
+
+  @Test
   public void testParseMarkdownMissingEntityId() throws Exception {
     String message = "Hello #world";
 

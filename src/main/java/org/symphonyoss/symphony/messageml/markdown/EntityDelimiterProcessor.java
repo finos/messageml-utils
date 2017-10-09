@@ -42,6 +42,7 @@ public class EntityDelimiterProcessor implements DelimiterProcessor {
   public static final String URL = "URL";
   public static final String MENTION = "USER_FOLLOW";
   public static final String TABLE = "TABLE";
+  public static final String EMOJI = "EMOJI";
 
   @Override
   public char getOpeningCharacter() {

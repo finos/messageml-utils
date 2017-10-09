@@ -104,6 +104,7 @@ public class MarkdownParser extends AbstractVisitor {
     MARKDOWN_PARSER = Parser.builder()
         .enabledBlockTypes(enabledBlockTypes)
         .customDelimiterProcessor(new EntityDelimiterProcessor())
+        .customDelimiterProcessor(new EmojiDelimiterProcessor())
         .build();
   }
 
@@ -213,8 +214,8 @@ public class MarkdownParser extends AbstractVisitor {
   }
 
   private void visit(EmojiNode emoji){
-    Emoji node = new Emoji(parent,++index);
-    visitChildren(node, emoji);
+    Emoji node = new Emoji(parent, emoji.getName(),  ++index);
+    parent.addChild(node);
   }
 
   private void visit(KeywordNode keyword) {
