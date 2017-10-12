@@ -1,34 +1,53 @@
 package org.symphonyoss.symphony.messageml.elements;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
+import org.symphonyoss.symphony.messageml.util.EmojiAnnotationToUnicode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
 public class Emoji extends Entity {
 
   public static final String MESSAGEML_TAG = "emoji";
-  public static final String ENTITY_TYPE = "org.symphonyoss.emoji";
-  public static final String SUB_ENTITY_TYPE = "org.symphonyoss.emoji.name";
-  private static final String ATTR_NAME = "name";
-  private static final String DELIMITER = ":";
+  private static final String ATTR_ANNOTATION = "annotation";
+  private static final String ATTR_FAMILY = "family";
+  private static final String ATTR_SIZE = "size";
+
+  private static final String ENTITY_TYPE = "com.symphony.emoji";
   private static final String ENTITY_VERSION = "1.0";
   private static final String ENTITY_ID_PREFIX = "emoji";
+  private static final String DATA_FIELD = "data";
+  private static final String UNICODE_FIELD = "unicode";
+  private static final String DEFAULT_EMOJI_SIZE = "normal";
 
-  private String name;
+  private String annotation;
+  private String family;
+  private String size;
 
-  public Emoji(Element parent, String name, int entityIndex) {
+  public Emoji(Element parent, String annotation, int entityIndex) {
     this(parent, entityIndex);
-    this.name = name;
+    this.annotation = annotation;
   }
 
   public Emoji(Element parent, int entityIndex) {
     super(parent, MESSAGEML_TAG, DEFAULT_PRESENTATIONML_TAG, FormatEnum.MESSAGEML);
     this.entityId = getEntityId(entityIndex);
+    this.size = DEFAULT_EMOJI_SIZE;
   }
 
-  public String getName() {
-    return this.name;
+  public String getAnnotation() {
+    return this.annotation;
+  }
+
+  public String getFamily() {
+    return family;
+  }
+
+  public String getSize() {
+    return size;
   }
 
   @Override
@@ -38,26 +57,59 @@ public class Emoji extends Entity {
 
   @Override
   public org.commonmark.node.Node asMarkdown() throws InvalidInputException {
-    return new EmojiNode(name);
+    return new EmojiNode(annotation);
   }
 
   @Override
-  public String asText() {
-    return DELIMITER + this.name + DELIMITER;
+  public ObjectNode asEntityJson(ObjectNode parent) {
+    JsonNode entityNode = parent.path(entityId);
+
+    if (entityNode.isMissingNode()) {
+      ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
+      node.put(TYPE_FIELD, getEntityType());
+      node.put(VERSION_FIELD, getEntityVersion());
+
+      ObjectNode idNode = new ObjectNode(JsonNodeFactory.instance);
+      idNode.put(ATTR_ANNOTATION, getAnnotation());
+      idNode.put(ATTR_SIZE, getSize());
+      idNode.put(UNICODE_FIELD, EmojiAnnotationToUnicode.getUnicode(annotation));
+
+      if (getFamily() != null) {
+        idNode.put(ATTR_FAMILY, getFamily());
+      }
+
+      node.set(DATA_FIELD, idNode);
+
+      parent.set(entityId, node);
+      return node;
+    } else {
+      //For preexisting data-entity-id the node type has already been validated by MessageMLParser
+      return (ObjectNode) entityNode;
+    }
+
+
   }
+
+
 
   @Override
   public void validate() throws InvalidInputException {
-    if (this.name == null) {
-      throw new InvalidInputException("The attribute \"name\" is required");
+    if (this.annotation == null) {
+      throw new InvalidInputException("The attribute \"annotation\" is required");
     }
   }
 
   @Override
   protected void buildAttribute(Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case ATTR_NAME:
-        this.name = getStringAttribute(item);
+      case ATTR_ANNOTATION:
+        this.annotation = getStringAttribute(item);
+        break;
+      case ATTR_FAMILY:
+        this.family = getStringAttribute(item);
+        break;
+      case ATTR_SIZE:
+        this.size = getStringAttribute(item);
         break;
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName() + "\" is not allowed in \"" + getMessageMLTag() + "\"");
@@ -66,12 +118,12 @@ public class Emoji extends Entity {
 
   @Override
   protected String getEntityValue() {
-    return name;
+    return annotation;
   }
 
   @Override
   protected String getEntitySubType() {
-    return SUB_ENTITY_TYPE;
+    return null;
   }
 
   @Override

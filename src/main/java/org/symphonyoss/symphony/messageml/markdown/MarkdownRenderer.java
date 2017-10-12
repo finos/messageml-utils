@@ -200,7 +200,7 @@ public class MarkdownRenderer extends AbstractVisitor {
 
   private void visit(EmojiNode emoji){
     writer.write(emoji.getOpeningDelimiter());
-    writer.write(emoji.getName());
+    writer.write(emoji.getAnnotation());
     writer.write(emoji.getClosingDelimiter());
   }
 

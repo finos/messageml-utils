@@ -9,11 +9,11 @@ public class EmojiNode extends CustomNode implements Delimited {
   public static final char DELIMITER = ':';
 
   private String delimiter;
-  private String name;
+  private String annotation;
 
-  public EmojiNode(String name) {
+  public EmojiNode(String annotation) {
     this();
-    this.name = name;
+    this.annotation = annotation;
   }
 
   public EmojiNode() {
@@ -35,12 +35,12 @@ public class EmojiNode extends CustomNode implements Delimited {
     visitor.visit(this);
   }
 
-  public String getName() {
-    return this.name;
+  public String getAnnotation() {
+    return this.annotation;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setAnnotation(String name) {
+    this.annotation = annotation;
   }
 
 }

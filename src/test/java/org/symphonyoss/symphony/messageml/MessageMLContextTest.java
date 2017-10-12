@@ -547,25 +547,25 @@ public class MessageMLContextTest {
 
   @Test
   public void testParseMarkdownEmoji() throws Exception {
-    String message = "Hello :smile:!";
+    String message = "Hello :smiley:!";
     context.parseMarkdown(message, null, null);
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<br/>Hello <span class=\"entity\" data-entity-id=\"emoji1\">:smile:</span>!"
+        + "<br/>Hello <span class=\"entity\" data-entity-id=\"emoji1\"></span>!"
         + "</div>";
-    String expectedMarkdown = "Hello :smile:!";
-    JsonNode expectedEntityJSON = MAPPER.readTree("{"
-        + "  \"emoji1\": {"
-        + "    \"type\": \"org.symphonyoss.emoji\","
-        + "    \"version\": \"1.0\","
-        + "    \"id\": ["
-        + "      {"
-        + "        \"type\": \"org.symphonyoss.emoji.name\","
-        + "        \"value\": \"smile\""
-        + "      }"
-        + "    ]"
-        + "  }"
-        + "}");
+    String expectedMarkdown = "Hello :smiley:!";
+    JsonNode expectedEntityJSON = MAPPER.readTree(
+        "{"+
+          "\"emoji1\":{"+
+            "\"type\":\"com.symphony.emoji\","+
+            "\"version\":\"1.0\","+
+            "\"data\":{"+
+              "\"annotation\":\"smiley\","+
+              "\"size\":\"normal\","+
+              "\"unicode\":\"\uD83D\uDE03\""+
+            "}"+
+          "}"+
+        "}");
     JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
 
     //TODO: check children of context.getMessageML() (should be: "\n", Text(Hello ), Emoji, Text(!)

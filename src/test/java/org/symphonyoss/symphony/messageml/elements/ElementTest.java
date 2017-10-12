@@ -2055,21 +2055,32 @@ public class ElementTest {
 
   @Test
   public void testEmoji() throws Exception {
-    String input = "<messageML><emoji name=\"smiley\"/></messageML>";
+    String input = "<messageML><emoji annotation=\"smiley\"/></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
     Element emoji = messageML.getChildren().get(0);
 
     assertEquals("Emoji class", Emoji.class, emoji.getClass());
-    verifyEmoji((Emoji) emoji);
+    verifyEmojiPresentation((Emoji) emoji);
   }
 
-  private void verifyEmoji(Emoji emoji) throws JsonProcessingException {
-    assertEquals("Emoji name attribute", "smiley", emoji.getName());
+  private void verifyEmojiPresentation(Emoji emoji) throws JsonProcessingException {
+    assertEquals("Emoji name attribute", "smiley", emoji.getAnnotation());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><span class=\"entity\" "
-        + "data-entity-id=\"emoji1\">:smiley:</span></div>", context.getPresentationML());
-    assertEquals("EntityJSON", "{\"emoji1\":{\"type\":\"org.symphonyoss.emoji\",\"version\":\"1.0\",\"id\":[{\"type\":\"org.symphonyoss.emoji.name\",\"value\":\"smiley\"}]}}",
+        + "data-entity-id=\"emoji1\"></span></div>", context.getPresentationML());
+    assertEquals("EntityJSON",
+      "{"+
+        "\"emoji1\":{"+
+          "\"type\":\"com.symphony.emoji\","+
+          "\"version\":\"1.0\","+
+          "\"data\":{"+
+            "\"annotation\":\"smiley\","+
+            "\"size\":\"normal\","+
+          "\"unicode\":\"\uD83D\uDE03\""+
+          "}"+
+        "}"+
+      "}",
         MAPPER.writeValueAsString(context.getEntityJson()));
     assertEquals("Markdown", ":smiley:",context.getMarkdown());
   }

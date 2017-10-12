@@ -33,7 +33,7 @@ public abstract class Entity extends Element {
   public static final String VALUE_FIELD = "value";
   public static final String ID_FIELD = "id";
   static final String DEFAULT_PRESENTATIONML_TAG = "span";
-  private static final String VERSION_FIELD = "version";
+  static final String VERSION_FIELD = "version";
   String presentationMLTag = DEFAULT_PRESENTATIONML_TAG;
 
   String entityId;
