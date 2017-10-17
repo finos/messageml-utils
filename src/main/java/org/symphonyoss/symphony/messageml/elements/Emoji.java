@@ -9,6 +9,14 @@ import org.symphonyoss.symphony.messageml.util.EmojiAnnotationToUnicode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
+
+/**
+ * Class representing an emoji
+ *
+ * @author cristiadu
+ * @since 10/10/17
+ */
+
 public class Emoji extends Entity {
 
   public static final String MESSAGEML_TAG = "emoji";

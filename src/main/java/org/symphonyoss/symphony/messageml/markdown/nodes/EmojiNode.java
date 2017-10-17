@@ -4,6 +4,13 @@ import org.commonmark.node.CustomNode;
 import org.commonmark.node.Delimited;
 import org.commonmark.node.Visitor;
 
+/**
+ * Class representing a Markdown node for emojis.
+ *
+ * @author cristiadu
+ * @since 10/10/17
+ */
+
 public class EmojiNode extends CustomNode implements Delimited {
 
   public static final char DELIMITER = ':';

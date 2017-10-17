@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * created by @cristiadu
  * Class that contains HashMap which has conversion annotation -> unicode for all supported Emojis.
+ *
+ *  @author cristiadu
+ * @since 10/10/17
  */
 public class EmojiAnnotationToUnicode {
 
