@@ -74,6 +74,17 @@
                 <role>Principal Software Engineer</role>
             </roles>
         </developer>
+        <developer>
+            <id>cristiadu</id>
+            <name>Cristiano Faustino</name>
+            <email>cristiano.faustino@symphony.com</email>
+            <url>http://github.com/cristiadu</url>
+            <organization>Symphony Communication Services LLC</organization>
+            <organizationUrl>http://symphony.com</organizationUrl>
+            <roles>
+                <role>Software Developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <contributors>

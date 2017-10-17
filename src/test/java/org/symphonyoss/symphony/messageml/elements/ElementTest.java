@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -2052,4 +2053,83 @@ public class ElementTest {
     assertEquals("Legacy hashtag type", 4, legacyHashtags.get(0).get("indexEnd").intValue());
   }
 
+  @Test
+  public void testEmojiDefaultNonRequiredAttributes() throws Exception {
+    String input = "<messageML><emoji annotation=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element emoji = messageML.getChildren().get(0);
+
+    assertEquals("Emoji class", Emoji.class, emoji.getClass());
+    verifyEmojiPresentation((Emoji) emoji,"smiley", null, "normal","😃");
+  }
+
+  @Test
+  public void testEmojiWithBlockLevelContent() throws Exception {
+    String invalidContent = "<messageML><emoji annotation=\"smiley\"><p>Invalid content</p></emoji></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"p\" is not allowed in \"emoji\"");
+    context.parseMessageML(invalidContent, null, MessageML.MESSAGEML_VERSION);
+    context.getMessageML();
+  }
+
+  @Test
+  public void testEmojiWithNonRequiredAttributes() throws Exception {
+    String input = "<messageML><emoji family=\"Rick and Morty\" size=\"big\" annotation=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element emoji = messageML.getChildren().get(0);
+
+    assertEquals("Emoji class", Emoji.class, emoji.getClass());
+    verifyEmojiPresentation((Emoji) emoji,"smiley", "Rick and Morty", "big","😃");
+  }
+
+  @Test
+  public void testEmojiUnicodeNotFound() throws Exception{
+    String input = "<messageML><emoji annotation=\"notfoundemoji\"><b>Test of content</b></emoji></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element emoji = messageML.getChildren().get(0);
+
+    assertEquals("Emoji class", Emoji.class, emoji.getClass());
+    verifyEmojiPresentation((Emoji) emoji, "notfoundemoji",null, "normal","😃");
+  }
+
+  @Test
+  public void testEmojiMultipleUnicodes() throws Exception{
+    String input = "<messageML><emoji annotation=\"surfer_tone3\"><b>Test of content</b></emoji></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element emoji = messageML.getChildren().get(0);
+
+    assertEquals("Emoji class", Emoji.class, emoji.getClass());
+    verifyEmojiPresentation((Emoji) emoji, "surfer_tone3",null, "normal","\uD83C\uDFC4\uD83C\uDFFD");
+  }
+
+  private void verifyEmojiPresentation(Emoji emoji, String annotation, String family, String size, String unicode) throws JsonProcessingException {
+    assertEquals("Emoji name attribute", annotation, emoji.getAnnotation());
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><span class=\"entity\" "
+        + "data-entity-id=\"emoji1\"><b>Test of content</b></span></div>", context.getPresentationML());
+
+    String familyAttr =  (family!=null)?",\"family\":\""+family+"\"":"";
+    assertEquals("EntityJSON",
+      "{"+
+        "\"emoji1\":{"+
+          "\"type\":\"com.symphony.emoji\","+
+          "\"version\":\"1.0\","+
+          "\"data\":{"+
+            "\"annotation\":\""+annotation+"\","+
+            "\"size\":\""+size+"\","+
+          "\"unicode\":\""+unicode+"\""+
+          familyAttr+
+          "}"+
+        "}"+
+      "}",
+        MAPPER.writeValueAsString(context.getEntityJson()));
+    assertEquals("Markdown", ":"+annotation+":",context.getMarkdown());
+  }
 }

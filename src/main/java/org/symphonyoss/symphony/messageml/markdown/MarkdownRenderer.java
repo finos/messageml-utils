@@ -36,6 +36,7 @@ import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.renderer.text.TextContentWriter;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
@@ -179,6 +180,8 @@ public class MarkdownRenderer extends AbstractVisitor {
   public void visit(CustomNode node) {
     if (node instanceof KeywordNode) {
       visit((KeywordNode) node);
+    } else if (node instanceof EmojiNode) {
+      visit((EmojiNode) node);
     } else if (node instanceof MentionNode) {
       visit((MentionNode) node);
     }
@@ -193,6 +196,12 @@ public class MarkdownRenderer extends AbstractVisitor {
     } else if (node instanceof PreformattedNode) {
       visit((PreformattedNode) node);
     }
+  }
+
+  private void visit(EmojiNode emoji){
+    writer.write(emoji.getOpeningDelimiter());
+    writer.write(emoji.getAnnotation());
+    writer.write(emoji.getClosingDelimiter());
   }
 
   private void visit(KeywordNode keyword) {

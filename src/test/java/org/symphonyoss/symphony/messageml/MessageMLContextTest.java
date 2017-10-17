@@ -546,6 +546,39 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseMarkdownEmoji() throws Exception {
+    String message = "Hello :smiley:!";
+    context.parseMarkdown(message, null, null);
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<br/>Hello <span class=\"entity\" data-entity-id=\"emoji1\"></span>!"
+        + "</div>";
+    String expectedMarkdown = "Hello :smiley:!";
+    JsonNode expectedEntityJSON = MAPPER.readTree(
+        "{"+
+          "\"emoji1\":{"+
+            "\"type\":\"com.symphony.emoji\","+
+            "\"version\":\"1.0\","+
+            "\"data\":{"+
+              "\"annotation\":\"smiley\","+
+              "\"size\":\"normal\","+
+              "\"unicode\":\"\uD83D\uDE03\""+
+            "}"+
+          "}"+
+        "}");
+    JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
+
+    assertEquals("\\n","\n",context.getMessageML().getChildren().get(0).toString());
+    assertEquals("\\n","Text(Hello )",context.getMessageML().getChildren().get(1).toString());
+    assertEquals("\\n","Emoji(smiley)",context.getMessageML().getChildren().get(2).toString());
+    assertEquals("\\n","Text(!)",context.getMessageML().getChildren().get(3).toString());
+    assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertTrue("EntityJSON", context.getEntityJson().equals(expectedEntityJSON));
+    assertTrue("Legacy entities", context.getEntities().equals(expectedEntities));
+  }
+
+  @Test
   public void testParseMarkdownMissingEntityId() throws Exception {
     String message = "Hello #world";
 

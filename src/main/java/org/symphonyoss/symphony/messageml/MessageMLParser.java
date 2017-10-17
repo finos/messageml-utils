@@ -22,6 +22,7 @@ import org.symphonyoss.symphony.messageml.elements.CashTag;
 import org.symphonyoss.symphony.messageml.elements.Chime;
 import org.symphonyoss.symphony.messageml.elements.Div;
 import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.Emoji;
 import org.symphonyoss.symphony.messageml.elements.Entity;
 import org.symphonyoss.symphony.messageml.elements.FormatEnum;
 import org.symphonyoss.symphony.messageml.elements.HashTag;
@@ -412,6 +413,9 @@ public class MessageMLParser {
       case CardBody.MESSAGEML_TAG:
         validateFormat(tag);
         return new CardBody(parent, FormatEnum.MESSAGEML);
+
+      case Emoji.MESSAGEML_TAG:
+        return new Emoji(parent, ++index);
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");

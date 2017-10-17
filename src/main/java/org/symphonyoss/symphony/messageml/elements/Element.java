@@ -31,6 +31,7 @@ import org.w3c.dom.Text;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -301,6 +302,15 @@ public abstract class Element {
       if (child instanceof TextNode && StringUtils.isNotBlank(((TextNode) child).getText())) {
         throw new InvalidInputException("Element \"" + this.getMessageMLTag() + "\" may not have text content");
       }
+  }
+
+  /**
+   * Check that the element's children are limited to phrasing content.
+   * @throws InvalidInputException
+   */
+  void assertPhrasingContent() throws InvalidInputException {
+    assertContentModel(Arrays.asList(TextNode.class, Link.class, Chime.class, Bold.class, Italic.class, Image.class,
+        LineBreak.class, Span.class, Emoji.class));
   }
 
   /**
