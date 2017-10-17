@@ -106,6 +106,11 @@ public class Emoji extends Entity {
   }
 
   @Override
+  public String toString() {
+    return "Emoji(" + getAnnotation() + ")";
+  }
+
+  @Override
   protected void buildAttribute(Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_ANNOTATION:
@@ -146,4 +151,6 @@ public class Emoji extends Entity {
   protected String getEntityIdPrefix() {
     return ENTITY_ID_PREFIX;
   }
+
+
 }

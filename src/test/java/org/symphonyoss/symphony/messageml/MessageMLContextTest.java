@@ -568,7 +568,10 @@ public class MessageMLContextTest {
         "}");
     JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
 
-    //TODO: check children of context.getMessageML() (should be: "\n", Text(Hello ), Emoji, Text(!)
+    assertEquals("\\n","\n",context.getMessageML().getChildren().get(0).toString());
+    assertEquals("\\n","Text(Hello )",context.getMessageML().getChildren().get(1).toString());
+    assertEquals("\\n","Emoji(smiley)",context.getMessageML().getChildren().get(2).toString());
+    assertEquals("\\n","Text(!)",context.getMessageML().getChildren().get(3).toString());
     assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
     assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
     assertTrue("EntityJSON", context.getEntityJson().equals(expectedEntityJSON));
