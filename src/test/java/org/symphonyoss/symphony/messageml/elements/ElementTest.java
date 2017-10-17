@@ -2054,21 +2054,35 @@ public class ElementTest {
   }
 
   @Test
-  public void testEmoji() throws Exception {
-    String input = "<messageML><emoji annotation=\"smiley\"/></messageML>";
+  public void testEmojiDefaultNonRequiredAttributes() throws Exception {
+    String input = "<messageML><emoji annotation=\"smiley\"><b>Test of content</b></emoji></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
     Element emoji = messageML.getChildren().get(0);
 
     assertEquals("Emoji class", Emoji.class, emoji.getClass());
-    verifyEmojiPresentation((Emoji) emoji);
+    verifyEmojiPresentation((Emoji) emoji, null, "normal");
   }
 
-  private void verifyEmojiPresentation(Emoji emoji) throws JsonProcessingException {
+  @Test
+  public void testEmojiWithNonRequiredAttributes() throws Exception {
+    String input = "<messageML><emoji family=\"Rick and Morty\" size=\"big\" annotation=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element emoji = messageML.getChildren().get(0);
+
+    assertEquals("Emoji class", Emoji.class, emoji.getClass());
+    verifyEmojiPresentation((Emoji) emoji, "Rick and Morty", "big");
+  }
+
+  private void verifyEmojiPresentation(Emoji emoji, String family, String size) throws JsonProcessingException {
     assertEquals("Emoji name attribute", "smiley", emoji.getAnnotation());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><span class=\"entity\" "
-        + "data-entity-id=\"emoji1\"></span></div>", context.getPresentationML());
+        + "data-entity-id=\"emoji1\"><b>Test of content</b></span></div>", context.getPresentationML());
+
+    String familyAttr =  (family!=null)?",\"family\":\""+family+"\"":"";
     assertEquals("EntityJSON",
       "{"+
         "\"emoji1\":{"+
@@ -2076,8 +2090,9 @@ public class ElementTest {
           "\"version\":\"1.0\","+
           "\"data\":{"+
             "\"annotation\":\"smiley\","+
-            "\"size\":\"normal\","+
+            "\"size\":\""+size+"\","+
           "\"unicode\":\"\uD83D\uDE03\""+
+          familyAttr+
           "}"+
         "}"+
       "}",

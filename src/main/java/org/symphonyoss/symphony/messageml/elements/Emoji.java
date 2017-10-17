@@ -52,7 +52,13 @@ public class Emoji extends Entity {
 
   @Override
   public void asPresentationML(XmlPrintStream out) {
-    out.printElement(presentationMLTag, asText(), CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+    out.openElement(presentationMLTag, CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+
+    for (Element child : getChildren()) {
+      child.asPresentationML(out);
+    }
+
+    out.closeElement();
   }
 
   @Override
