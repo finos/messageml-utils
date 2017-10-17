@@ -21,8 +21,6 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
-import java.util.Arrays;
-
 /**
  * Class representing preformatted text.
  * @author lukasz
@@ -53,8 +51,6 @@ public class Preformatted extends Element {
 
   @Override
   public void validate() throws InvalidInputException {
-    assertContentModel(Arrays.asList(TextNode.class, Link.class, Chime.class, Bold.class, Italic.class, Image.class, LineBreak
-            .class,
-        Span.class));
+    assertPhrasingContent();
   }
 }

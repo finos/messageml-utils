@@ -2066,6 +2066,15 @@ public class ElementTest {
   }
 
   @Test
+  public void testEmojiWithBlockLevelContent() throws Exception {
+    String invalidContent = "<messageML><emoji annotation=\"smiley\"><p>Invalid content</p></emoji></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"p\" is not allowed in \"emoji\"");
+    context.parseMessageML(invalidContent, null, MessageML.MESSAGEML_VERSION);
+    context.getMessageML();
+  }
+
+  @Test
   public void testEmojiWithNonRequiredAttributes() throws Exception {
     String input = "<messageML><emoji family=\"Rick and Morty\" size=\"big\" annotation=\"smiley\"><b>Test of content</b></emoji></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);

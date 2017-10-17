@@ -101,16 +101,15 @@ public class Emoji extends Entity {
       return (ObjectNode) entityNode;
     }
 
-
   }
-
-
 
   @Override
   public void validate() throws InvalidInputException {
     if (this.annotation == null) {
       throw new InvalidInputException("The attribute \"annotation\" is required");
     }
+
+    assertPhrasingContent();
   }
 
   @Override
