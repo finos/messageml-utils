@@ -86,7 +86,7 @@ public class Link extends Element {
 
   @Override
   public Node asMarkdown() {
-    return new org.commonmark.node.Link(getUri().toString(), getUri().toString());
+    return new org.commonmark.node.Link(getUri().toString(), asText());
   }
 
   @Override
@@ -120,13 +120,4 @@ public class Link extends Element {
     uri = url;
   }
 
-  @Override
-  public String toString() {
-    return "Link(" + uri + ")";
-  }
-
-  @Override
-  public String asText() {
-    return uri.toString();
-  }
 }

@@ -783,7 +783,7 @@ public class ElementTest {
     assertNotNull("Entity node", entity);
     assertEquals("Entity count", 1, entity.size());
 
-    assertEquals("Entity text", "https://hello.org", entity.get(0).get("text").textValue());
+    assertEquals("Entity text", "Hello world!", entity.get(0).get("text").textValue());
     assertEquals("Entity id", "https://hello.org", entity.get(0).get("id").textValue());
     assertEquals("Entity expanded URL", "https://hello.org", entity.get(0).get("expandedUrl").textValue());
     assertEquals("Entity start index", 0, entity.get(0).get("indexStart").intValue());
