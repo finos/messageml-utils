@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BulletList;
 import org.commonmark.node.CustomBlock;
@@ -124,23 +123,18 @@ public class MarkdownRenderer extends AbstractVisitor {
   @Override
   public void visit(Link a) {
     String href = a.getDestination();
-    String text = (StringUtils.isNotBlank(a.getTitle())) ? a.getTitle().trim() : href;
+
+    // Note: this is the correct Markdown representation of links with text. We can't do this as we'd break legacy clients.
+//    String markdown = (StringUtils.isNotBlank(a.getTitle())) ? String.format("[%s](%s)", a.getTitle().trim(), href) : href;
 
     ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
-    node.put(TEXT, text);
+    node.put(TEXT, href);
     node.put(ID, href);
     node.put(EXPANDED_URL, href);
     node.put(INDEX_START, writer.length());
     node.put(INDEX_END, writer.length() + href.length());
     node.put(TYPE, "URL");
     putJsonObject(URLS, node);
-
-    // That's the correct rendering of links, but it has the potential to break Symphony clients. Stick with the old way for now.
-//    if (StringUtils.isNotBlank(a.getTitle())) {
-//      writer.write("[" + text + "](" + href + ")");
-//    } else {
-//      writer.write(href);
-//    }
 
     writer.write(href);
   }
