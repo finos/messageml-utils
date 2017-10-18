@@ -230,7 +230,7 @@ public class MessageMLContextTest {
         + " ";
     final JsonNode expectedEntities = MAPPER.readTree("{\n"
         + "    \"urls\": [{\n"
-        + "        \"text\": \"SAM-24,Sample Bug Blocker\",\n"
+        + "        \"text\": \"https://whiteam1.atlassian.net/browse/SAM-24\",\n"
         + "        \"id\": \"https://whiteam1.atlassian.net/browse/SAM-24\",\n"
         + "        \"expandedUrl\": \"https://whiteam1.atlassian.net/browse/SAM-24\",\n"
         + "        \"indexStart\": 51,\n"
