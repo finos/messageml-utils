@@ -564,17 +564,17 @@ public class MessageMLContextTest {
         + "</div>";
     String expectedMarkdown = "Hello :smiley:!";
     JsonNode expectedEntityJSON = MAPPER.readTree(
-        "{" +
-            "\"emoji1\":{" +
-            "\"type\":\"com.symphony.emoji\"," +
-            "\"version\":\"1.0\"," +
-            "\"data\":{" +
-            "\"shortcode\":\"smiley\"," +
-            "\"size\":\"normal\"," +
-            "\"unicode\":\"\uD83D\uDE03\"" +
-            "}" +
-            "}" +
-            "}");
+        "{"+
+          "\"emoji1\":{"+
+            "\"type\":\"com.symphony.emoji\","+
+            "\"version\":\"1.0\","+
+            "\"data\":{"+
+              "\"shortcode\":\"smiley\","+
+              "\"size\":\"normal\","+
+              "\"unicode\":\"\uD83D\uDE03\""+
+            "}"+
+          "}"+
+        "}");
     JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
 
     assertEquals("\\n", "\n", context.getMessageML().getChildren().get(0).toString());
