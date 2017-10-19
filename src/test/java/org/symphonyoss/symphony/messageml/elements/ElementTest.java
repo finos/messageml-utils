@@ -2055,7 +2055,7 @@ public class ElementTest {
 
   @Test
   public void testEmojiDefaultNonRequiredAttributes() throws Exception {
-    String input = "<messageML><emoji annotation=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    String input = "<messageML><emoji shortcode=\"smiley\"><b>Test of content</b></emoji></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -2067,7 +2067,7 @@ public class ElementTest {
 
   @Test
   public void testEmojiWithBlockLevelContent() throws Exception {
-    String invalidContent = "<messageML><emoji annotation=\"smiley\"><p>Invalid content</p></emoji></messageML>";
+    String invalidContent = "<messageML><emoji shortcode=\"smiley\"><p>Invalid content</p></emoji></messageML>";
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"p\" is not allowed in \"emoji\"");
     context.parseMessageML(invalidContent, null, MessageML.MESSAGEML_VERSION);
@@ -2076,7 +2076,7 @@ public class ElementTest {
 
   @Test
   public void testEmojiWithNonRequiredAttributes() throws Exception {
-    String input = "<messageML><emoji family=\"Rick and Morty\" size=\"big\" annotation=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    String input = "<messageML><emoji family=\"Rick and Morty\" size=\"big\" shortcode=\"smiley\"><b>Test of content</b></emoji></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -2088,7 +2088,7 @@ public class ElementTest {
 
   @Test
   public void testEmojiUnicodeNotFound() throws Exception{
-    String input = "<messageML><emoji annotation=\"notfoundemoji\"><b>Test of content</b></emoji></messageML>";
+    String input = "<messageML><emoji shortcode=\"notfoundemoji\"><b>Test of content</b></emoji></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -2100,7 +2100,7 @@ public class ElementTest {
 
   @Test
   public void testEmojiMultipleUnicodes() throws Exception{
-    String input = "<messageML><emoji annotation=\"surfer_tone3\"><b>Test of content</b></emoji></messageML>";
+    String input = "<messageML><emoji shortcode=\"surfer_tone3\"><b>Test of content</b></emoji></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -2110,8 +2110,8 @@ public class ElementTest {
     verifyEmojiPresentation((Emoji) emoji, "surfer_tone3",null, "normal","\uD83C\uDFC4\uD83C\uDFFD");
   }
 
-  private void verifyEmojiPresentation(Emoji emoji, String annotation, String family, String size, String unicode) throws JsonProcessingException {
-    assertEquals("Emoji name attribute", annotation, emoji.getAnnotation());
+  private void verifyEmojiPresentation(Emoji emoji, String shortcode, String family, String size, String unicode) throws JsonProcessingException {
+    assertEquals("Emoji name attribute", shortcode, emoji.getShortCode());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><span class=\"entity\" "
         + "data-entity-id=\"emoji1\"><b>Test of content</b></span></div>", context.getPresentationML());
 
@@ -2122,7 +2122,7 @@ public class ElementTest {
           "\"type\":\"com.symphony.emoji\","+
           "\"version\":\"1.0\","+
           "\"data\":{"+
-            "\"annotation\":\""+annotation+"\","+
+            "\"shortcode\":\""+shortcode+"\","+
             "\"size\":\""+size+"\","+
           "\"unicode\":\""+unicode+"\""+
           familyAttr+
@@ -2130,6 +2130,6 @@ public class ElementTest {
         "}"+
       "}",
         MAPPER.writeValueAsString(context.getEntityJson()));
-    assertEquals("Markdown", ":"+annotation+":",context.getMarkdown());
+    assertEquals("Markdown", ":"+shortcode+":",context.getMarkdown());
   }
 }

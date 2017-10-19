@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
-import org.symphonyoss.symphony.messageml.util.EmojiAnnotationToUnicode;
+import org.symphonyoss.symphony.messageml.util.EmojiShortcodeToUnicode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
@@ -20,7 +20,7 @@ import org.w3c.dom.Node;
 public class Emoji extends Entity {
 
   public static final String MESSAGEML_TAG = "emoji";
-  private static final String ATTR_ANNOTATION = "annotation";
+  private static final String ATTR_SHORTCODE = "shortcode";
   private static final String ATTR_FAMILY = "family";
   private static final String ATTR_SIZE = "size";
 
@@ -31,13 +31,13 @@ public class Emoji extends Entity {
   private static final String UNICODE_FIELD = "unicode";
   private static final String DEFAULT_EMOJI_SIZE = "normal";
 
-  private String annotation;
+  private String shortcode;
   private String family;
   private String size;
 
-  public Emoji(Element parent, String annotation, int entityIndex) {
+  public Emoji(Element parent, String shortcode, int entityIndex) {
     this(parent, entityIndex);
-    this.annotation = annotation;
+    this.shortcode = shortcode;
   }
 
   public Emoji(Element parent, int entityIndex) {
@@ -46,8 +46,8 @@ public class Emoji extends Entity {
     this.size = DEFAULT_EMOJI_SIZE;
   }
 
-  public String getAnnotation() {
-    return this.annotation;
+  public String getShortCode() {
+    return this.shortcode;
   }
 
   public String getFamily() {
@@ -71,7 +71,7 @@ public class Emoji extends Entity {
 
   @Override
   public org.commonmark.node.Node asMarkdown() throws InvalidInputException {
-    return new EmojiNode(annotation);
+    return new EmojiNode(shortcode);
   }
 
   @Override
@@ -84,15 +84,17 @@ public class Emoji extends Entity {
       node.put(VERSION_FIELD, getEntityVersion());
 
       ObjectNode idNode = new ObjectNode(JsonNodeFactory.instance);
-      idNode.put(ATTR_ANNOTATION, getAnnotation());
+      idNode.put(ATTR_SHORTCODE, getShortCode());
       idNode.put(ATTR_SIZE, getSize());
-      idNode.put(UNICODE_FIELD, EmojiAnnotationToUnicode.getUnicode(annotation));
+      idNode.put(UNICODE_FIELD, EmojiShortcodeToUnicode.getUnicode(shortcode));
 
       if (getFamily() != null) {
         idNode.put(ATTR_FAMILY, getFamily());
       }
 
       node.set(DATA_FIELD, idNode);
+
+
 
       parent.set(entityId, node);
       return node;
@@ -105,8 +107,8 @@ public class Emoji extends Entity {
 
   @Override
   public void validate() throws InvalidInputException {
-    if (this.annotation == null) {
-      throw new InvalidInputException("The attribute \"annotation\" is required");
+    if (this.shortcode == null) {
+      throw new InvalidInputException("The attribute \"shortcode\" is required");
     }
 
     assertPhrasingContent();
@@ -114,14 +116,14 @@ public class Emoji extends Entity {
 
   @Override
   public String toString() {
-    return "Emoji(" + getAnnotation() + ")";
+    return "Emoji(" + getShortCode() + ")";
   }
 
   @Override
   protected void buildAttribute(Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case ATTR_ANNOTATION:
-        this.annotation = getStringAttribute(item);
+      case ATTR_SHORTCODE:
+        this.shortcode = getStringAttribute(item);
         break;
       case ATTR_FAMILY:
         this.family = getStringAttribute(item);
@@ -136,7 +138,7 @@ public class Emoji extends Entity {
 
   @Override
   protected String getEntityValue() {
-    return annotation;
+    return shortcode;
   }
 
   @Override

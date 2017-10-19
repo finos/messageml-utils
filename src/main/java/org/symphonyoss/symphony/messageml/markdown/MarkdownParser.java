@@ -214,7 +214,7 @@ public class MarkdownParser extends AbstractVisitor {
   }
 
   private void visit(EmojiNode emoji){
-    Emoji node = new Emoji(parent, emoji.getAnnotation(),  ++index);
+    Emoji node = new Emoji(parent, emoji.getShortcode(),  ++index);
     parent.addChild(node);
   }
 
