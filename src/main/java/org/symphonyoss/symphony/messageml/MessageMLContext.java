@@ -25,6 +25,7 @@ import org.symphonyoss.symphony.messageml.markdown.MarkdownParser;
 import org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.Element;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -154,6 +155,22 @@ public class MessageMLContext {
     }
 
     return markdownRenderer.getJson();
+  }
+
+  /**
+   * Retrieve a string representation of the message by getting the values of
+   * its PresentationML elements.
+   * @throws IllegalStateException thrown if the message hasn't been parsed yet
+   */
+  public String getText() throws InvalidInputException, ProcessingException, IllegalStateException {
+    if (messageML == null) {
+      throw new IllegalStateException("The message hasn't been parsed yet. "
+          + "Please call MessageMLContext.parse() first.");
+    }
+
+    String presentationML = getPresentationML();
+    Element doc = messageMLParser.parseDocument(presentationML);
+    return doc.getTextContent();
   }
 
 }

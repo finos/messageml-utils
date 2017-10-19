@@ -322,6 +322,15 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseEmptyMessage() throws Exception {
+    context.parseMarkdown("", new ObjectNode(JsonNodeFactory.instance), null);
+
+    MessageML messageML = context.getMessageML();
+    assertTrue("Message children", messageML.getChildren().isEmpty());
+    assertTrue("Message attributes", messageML.getAttributes().isEmpty());
+  }
+
+  @Test
   public void testParseFreemarker() throws Exception {
     String message = "<messageML>${data['obj123'].value}</messageML>";
     String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
@@ -733,6 +742,21 @@ public class MessageMLContextTest {
     expectedException.expectMessage("The message hasn't been parsed yet. "
         + "Please call MessageMLContext.parse() first.");
     context.getEntityJson();
+  }
+
+  @Test
+  public void testGetText() throws Exception {
+    String message = getPayload("payloads/templated_message_all_tags.messageml");
+    String data = getPayload("payloads/templated_message_all_tags.json");
+
+    String expectedText =
+        "   Sample JIRA issue  Bot User01 updated Bug  SAM-24,Sample Bug Blocker     FieldOld Value => New Value     "
+            + "resolution Open => Done   status To Do => Done         Field Value     Assignee @Bot User01   Labels   "
+            + "#production #major       Priority Highest   Status Done     ";
+
+    context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+    String text = context.getText();
+    assertEquals("Message as text", expectedText, text);
   }
 
   @Test

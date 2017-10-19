@@ -261,8 +261,7 @@ public class MessageMLParser {
   /**
    * Parse the message string into a DOM element tree.
    */
-  private org.w3c.dom.Element parseDocument(String messageML)
-      throws InvalidInputException, ProcessingException {
+  org.w3c.dom.Element parseDocument(String messageML) throws InvalidInputException, ProcessingException {
     try {
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       //XXE prevention as per https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet
