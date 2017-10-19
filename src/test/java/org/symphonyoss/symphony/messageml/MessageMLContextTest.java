@@ -560,7 +560,7 @@ public class MessageMLContextTest {
             "\"type\":\"com.symphony.emoji\","+
             "\"version\":\"1.0\","+
             "\"data\":{"+
-              "\"annotation\":\"smiley\","+
+              "\"shortcode\":\"smiley\","+
               "\"size\":\"normal\","+
               "\"unicode\":\"\uD83D\uDE03\""+
             "}"+
