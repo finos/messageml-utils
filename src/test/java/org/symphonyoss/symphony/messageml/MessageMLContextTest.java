@@ -326,8 +326,8 @@ public class MessageMLContextTest {
     context.parseMarkdown("", new ObjectNode(JsonNodeFactory.instance), null);
 
     MessageML messageML = context.getMessageML();
-    assertTrue("Message children",  messageML.getChildren().isEmpty());
-    assertTrue("Message attributes",  messageML.getAttributes().isEmpty());
+    assertTrue("Message children", messageML.getChildren().isEmpty());
+    assertTrue("Message attributes", messageML.getAttributes().isEmpty());
   }
 
   @Test
@@ -451,7 +451,7 @@ public class MessageMLContextTest {
         + "\"value\":\"1\""
         + "}]}"
         + "}";
-    final JsonNode expectedEntityJson =  MAPPER.readTree(generatedEntities);
+    final JsonNode expectedEntityJson = MAPPER.readTree(generatedEntities);
 
     context.parseMarkdown(messageNode.get("text").textValue(), messageNode.get("entities"), messageNode.get("media"));
 
@@ -508,8 +508,8 @@ public class MessageMLContextTest {
     JsonNode entities = new ObjectNode(JsonNodeFactory.instance);
     context.parseMarkdown(markdown, entities, null);
 
-    assertEquals("Generated PresentationML","<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
-        + "&lt;div class=&quot;foo&quot;&gt;<i>Markdown</i>&lt;/div&gt; <i>Markdown</i> &lt;hr/&gt;</div>",
+    assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
+            + "&lt;div class=&quot;foo&quot;&gt;<i>Markdown</i>&lt;/div&gt; <i>Markdown</i> &lt;hr/&gt;</div>",
         context.getPresentationML());
     assertEquals("Generated Markdown", "<div class=\"foo\">_Markdown_</div> _Markdown_ <hr/>",
         context.getMarkdown());
@@ -544,7 +544,7 @@ public class MessageMLContextTest {
 
     context.parseMarkdown(markdown, entities, media);
 
-    assertEquals("Generated PresentationML","<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
+    assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
         + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table></div>", context.getPresentationML());
     assertEquals("Generated Markdown", "Table:\n"
             + "---\n"
@@ -564,23 +564,23 @@ public class MessageMLContextTest {
         + "</div>";
     String expectedMarkdown = "Hello :smiley:!";
     JsonNode expectedEntityJSON = MAPPER.readTree(
-        "{"+
-          "\"emoji1\":{"+
-            "\"type\":\"com.symphony.emoji\","+
-            "\"version\":\"1.0\","+
-            "\"data\":{"+
-              "\"shortcode\":\"smiley\","+
-              "\"size\":\"normal\","+
-              "\"unicode\":\"\uD83D\uDE03\""+
-            "}"+
-          "}"+
-        "}");
+        "{" +
+            "\"emoji1\":{" +
+            "\"type\":\"com.symphony.emoji\"," +
+            "\"version\":\"1.0\"," +
+            "\"data\":{" +
+            "\"shortcode\":\"smiley\"," +
+            "\"size\":\"normal\"," +
+            "\"unicode\":\"\uD83D\uDE03\"" +
+            "}" +
+            "}" +
+            "}");
     JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
 
-    assertEquals("\\n","\n",context.getMessageML().getChildren().get(0).toString());
-    assertEquals("\\n","Text(Hello )",context.getMessageML().getChildren().get(1).toString());
-    assertEquals("\\n","Emoji(smiley)",context.getMessageML().getChildren().get(2).toString());
-    assertEquals("\\n","Text(!)",context.getMessageML().getChildren().get(3).toString());
+    assertEquals("\\n", "\n", context.getMessageML().getChildren().get(0).toString());
+    assertEquals("\\n", "Text(Hello )", context.getMessageML().getChildren().get(1).toString());
+    assertEquals("\\n", "Emoji(smiley)", context.getMessageML().getChildren().get(2).toString());
+    assertEquals("\\n", "Text(!)", context.getMessageML().getChildren().get(3).toString());
     assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
     assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
     assertTrue("EntityJSON", context.getEntityJson().equals(expectedEntityJSON));
@@ -782,9 +782,10 @@ public class MessageMLContextTest {
     String message = getPayload("payloads/templated_message_all_tags.messageml");
     String data = getPayload("payloads/templated_message_all_tags.json");
 
-    String expectedText = "Sample JIRA issue  Bot User01 updated Bug  SAM-24,Sample Bug Blocker     FieldOld Value => New "
-        + "Value     resolution Open => Done   status To Do => Done         Field Value     Assignee @Bot User01   Labels   "
-        + "#production #major       Priority Highest   Status Done";
+    String expectedText =
+        "   Sample JIRA issue  Bot User01 updated Bug  SAM-24,Sample Bug Blocker     FieldOld Value => New Value     "
+            + "resolution Open => Done   status To Do => Done         Field Value     Assignee @Bot User01   Labels   "
+            + "#production #major       Priority Highest   Status Done     ";
 
     context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
     String text = context.getText();
