@@ -25,6 +25,7 @@ import org.symphonyoss.symphony.messageml.markdown.MarkdownParser;
 import org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.Element;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -154,6 +155,12 @@ public class MessageMLContext {
     }
 
     return markdownRenderer.getJson();
+  }
+
+  public String getText() throws InvalidInputException, ProcessingException {
+    String presentationML = getPresentationML();
+    Element doc = messageMLParser.parseDocument(presentationML);
+    return doc.getTextContent();
   }
 
 }
