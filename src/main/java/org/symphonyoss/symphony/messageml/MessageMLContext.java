@@ -157,7 +157,17 @@ public class MessageMLContext {
     return markdownRenderer.getJson();
   }
 
-  public String getText() throws InvalidInputException, ProcessingException {
+  /**
+   * Retrieve a string representation of the message by getting the values of
+   * its PresentationML elements.
+   * @throws IllegalStateException thrown if the message hasn't been parsed yet
+   */
+  public String getText() throws InvalidInputException, ProcessingException, IllegalStateException {
+    if (messageML == null) {
+      throw new IllegalStateException("The message hasn't been parsed yet. "
+          + "Please call MessageMLContext.parse() first.");
+    }
+
     String presentationML = getPresentationML();
     Element doc = messageMLParser.parseDocument(presentationML);
     return doc.getTextContent();
