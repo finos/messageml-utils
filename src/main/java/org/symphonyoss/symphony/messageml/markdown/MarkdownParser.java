@@ -302,8 +302,8 @@ public class MarkdownParser extends AbstractVisitor {
 
       if (entities.containsKey(i)) {
         JsonNode entity = entities.get(i);
-        String entityType = entity.get(TYPE).textValue().toUpperCase();
-        String id = entity.get(ID).textValue();
+        String entityType = entity.get(TYPE).asText().toUpperCase();
+        String id = entity.get(ID).asText();
 
         output.append(ENTITY_DELIMITER);
         output.append(entityType).append(FIELD_DELIMITER);
@@ -321,7 +321,7 @@ public class MarkdownParser extends AbstractVisitor {
         output.append(TABLE).append(FIELD_DELIMITER);
         for (JsonNode row : table) {
           for (JsonNode cell : row) {
-            String text = cell.textValue();
+            String text = cell.asText();
             output.append(text).append(RECORD_DELIMITER);
           }
           output.append(GROUP_DELIMITER);
