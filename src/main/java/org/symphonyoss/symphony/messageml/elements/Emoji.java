@@ -12,7 +12,6 @@ import org.w3c.dom.Node;
 
 /**
  * Class representing an emoji
- *
  * @author cristiadu
  * @since 10/10/17
  */
@@ -62,8 +61,12 @@ public class Emoji extends Entity {
   public void asPresentationML(XmlPrintStream out) {
     out.openElement(presentationMLTag, CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
 
-    for (Element child : getChildren()) {
-      child.asPresentationML(out);
+    if (this.getChildren().isEmpty()) {
+      out.append(EmojiShortcodeToUnicode.getUnicode(shortcode));
+    } else {
+      for (Element child : getChildren()) {
+        child.asPresentationML(out);
+      }
     }
 
     out.closeElement();
@@ -72,6 +75,21 @@ public class Emoji extends Entity {
   @Override
   public org.commonmark.node.Node asMarkdown() throws InvalidInputException {
     return new EmojiNode(shortcode);
+  }
+
+  @Override
+  public String asText() {
+    StringBuilder b = new StringBuilder();
+
+    if (this.getChildren().isEmpty()) {
+      b.append(EmojiShortcodeToUnicode.getUnicode(shortcode));
+    } else {
+      for (Element child : this.getChildren()) {
+        b.append(child.asText());
+      }
+    }
+
+    return b.toString();
   }
 
   @Override

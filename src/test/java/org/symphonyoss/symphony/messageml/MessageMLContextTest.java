@@ -560,7 +560,7 @@ public class MessageMLContextTest {
     context.parseMarkdown(message, null, null);
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<br/>Hello <span class=\"entity\" data-entity-id=\"emoji1\"></span>!"
+        + "<br/>Hello <span class=\"entity\" data-entity-id=\"emoji1\">\uD83D\uDE03</span>!"
         + "</div>";
     String expectedMarkdown = "Hello :smiley:!";
     JsonNode expectedEntityJSON = MAPPER.readTree(
