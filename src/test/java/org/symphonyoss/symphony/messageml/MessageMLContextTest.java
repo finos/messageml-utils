@@ -588,6 +588,18 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseMarkdownWithNbsp() throws Exception {
+    String message = "Hello\u00A0world!";
+    context.parseMarkdown(message, null, null);
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>Hello world!</div>";
+    String expectedMarkdown = "Hello world!";
+
+    assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+  }
+
+  @Test
   public void testParseMarkdownMissingEntityId() throws Exception {
     String message = "Hello #world";
 

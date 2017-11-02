@@ -366,8 +366,7 @@ public class MarkdownParser extends AbstractVisitor {
     for (JsonNode node : data.findParents(INDEX)) {
       JsonNode text = node.path(TEXT);
       if (!text.isMissingNode() && (!text.isArray() || !text.get(0).isArray())) {
-        throw new InvalidInputException(String.format("Invalid table payload: %s (start index: %s, end index: %s)",
-            text.asText(), node.get(INDEX)));
+        throw new InvalidInputException(String.format("Invalid table payload: %s (index: %s)", text.asText(), node.get(INDEX)));
       }
     }
   }
@@ -377,6 +376,7 @@ public class MarkdownParser extends AbstractVisitor {
    */
   public MessageML parse(String message, JsonNode entities, JsonNode media) throws InvalidInputException {
     this.index = 0;
+    message = message.replace((char) 160, (char) 32);
     String enriched = enrichMarkdown(message, entities, media);
     Node markdown = MARKDOWN_PARSER.parse(enriched);
     markdown.accept(this);
