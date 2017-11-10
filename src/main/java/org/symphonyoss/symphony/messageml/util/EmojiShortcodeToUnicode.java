@@ -5,17 +5,19 @@ import java.util.Map;
 
 /**
  * Class that contains HashMap which has conversion shortcode -> unicode for all supported Emojis.
- *
- *  @author cristiadu
+ * @author cristiadu
  * @since 10/10/17
  */
 public class EmojiShortcodeToUnicode {
 
   private static final Map<String, String> emojiShortcodeToUnicode = new HashMap<>();
-  private static final String DEFAULT_EMOJI = "smiley";
 
   public static String getUnicode(String shortcode) {
-    return (emojiShortcodeToUnicode.get(shortcode) != null) ? emojiShortcodeToUnicode.get(shortcode) : emojiShortcodeToUnicode.get(DEFAULT_EMOJI);
+    return emojiShortcodeToUnicode.get(shortcode);
+  }
+
+  public static Boolean hasUnicodeRepresentation(String shortcode) {
+    return (emojiShortcodeToUnicode.get(shortcode) != null);
   }
 
   private static String emojiToUnicodeString(int... unicodes) {

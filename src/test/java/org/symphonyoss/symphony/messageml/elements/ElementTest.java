@@ -2095,7 +2095,7 @@ public class ElementTest {
     Element emoji = messageML.getChildren().get(0);
 
     assertEquals("Emoji class", Emoji.class, emoji.getClass());
-    verifyEmojiPresentation((Emoji) emoji, "notfoundemoji",null, "normal","😃");
+    verifyEmojiPresentation((Emoji) emoji, "notfoundemoji",null, "normal",null);
   }
 
   @Test
@@ -2116,6 +2116,7 @@ public class ElementTest {
         + "data-entity-id=\"emoji1\"><b>Test of content</b></span></div>", context.getPresentationML());
 
     String familyAttr =  (family!=null)?",\"family\":\""+family+"\"":"";
+    String unicodeAttr = (unicode!=null)?",\"unicode\":\""+unicode+"\"":"";
     assertEquals("EntityJSON",
       "{"+
         "\"emoji1\":{"+
@@ -2123,8 +2124,8 @@ public class ElementTest {
           "\"version\":\"1.0\","+
           "\"data\":{"+
             "\"shortcode\":\""+shortcode+"\","+
-            "\"size\":\""+size+"\","+
-          "\"unicode\":\""+unicode+"\""+
+            "\"size\":\""+size+"\""+
+          unicodeAttr+
           familyAttr+
           "}"+
         "}"+
