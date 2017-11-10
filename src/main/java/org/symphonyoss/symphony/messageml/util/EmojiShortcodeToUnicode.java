@@ -1,8 +1,5 @@
 package org.symphonyoss.symphony.messageml.util;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +11,6 @@ import java.util.Map;
 public class EmojiShortcodeToUnicode {
 
   private static final Map<String, String> emojiShortcodeToUnicode = new HashMap<>();
-  private static final String DEFAULT_EMOJI = "smiley";
 
   public static String getUnicode(String shortcode) {
     return emojiShortcodeToUnicode.get(shortcode);
