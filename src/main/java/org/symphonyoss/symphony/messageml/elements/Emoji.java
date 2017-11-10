@@ -26,6 +26,7 @@ public class Emoji extends Entity {
   private static final String ENTITY_TYPE = "com.symphony.emoji";
   private static final String ENTITY_VERSION = "1.0";
   private static final String ENTITY_ID_PREFIX = "emoji";
+  private static final String DELIMITER = ":";
   private static final String DATA_FIELD = "data";
   private static final String UNICODE_FIELD = "unicode";
   private static final String DEFAULT_EMOJI_SIZE = "normal";
@@ -62,7 +63,7 @@ public class Emoji extends Entity {
     out.openElement(presentationMLTag, CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
 
     if (this.getChildren().isEmpty()) {
-      out.append(EmojiShortcodeToUnicode.getUnicode(shortcode));
+      out.append(asDefaultRepresentation());
     } else {
       for (Element child : getChildren()) {
         child.asPresentationML(out);
@@ -82,7 +83,7 @@ public class Emoji extends Entity {
     StringBuilder b = new StringBuilder();
 
     if (this.getChildren().isEmpty()) {
-      b.append(EmojiShortcodeToUnicode.getUnicode(shortcode));
+      b.append(asDefaultRepresentation());
     } else {
       for (Element child : this.getChildren()) {
         b.append(child.asText());
@@ -104,7 +105,10 @@ public class Emoji extends Entity {
       ObjectNode idNode = new ObjectNode(JsonNodeFactory.instance);
       idNode.put(ATTR_SHORTCODE, getShortCode());
       idNode.put(ATTR_SIZE, getSize());
-      idNode.put(UNICODE_FIELD, EmojiShortcodeToUnicode.getUnicode(shortcode));
+
+      if (EmojiShortcodeToUnicode.hasUnicodeRepresentation(shortcode)) {
+        idNode.put(UNICODE_FIELD, EmojiShortcodeToUnicode.getUnicode(shortcode));
+      }
 
       if (getFamily() != null) {
         idNode.put(ATTR_FAMILY, getFamily());
@@ -179,5 +183,12 @@ public class Emoji extends Entity {
     return ENTITY_ID_PREFIX;
   }
 
+  private String asDefaultRepresentation() {
+    if (EmojiShortcodeToUnicode.hasUnicodeRepresentation(shortcode)) {
+      return EmojiShortcodeToUnicode.getUnicode(shortcode);
+    } else {
+      return DELIMITER + shortcode + DELIMITER;
+    }
+  }
 
 }
