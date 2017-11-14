@@ -20,8 +20,10 @@ public class Emoji extends Entity {
 
   public static final String MESSAGEML_TAG = "emoji";
   private static final String ATTR_SHORTCODE = "shortcode";
+  private static final String SHORTCODE_PATTERN = "[\\p{Alnum}_+-]*";
   private static final String ATTR_FAMILY = "family";
   private static final String ATTR_SIZE = "size";
+  private static final String OTHER_ATTR_PATTERN = "[\\p{Alnum}_-]*";
 
   private static final String ENTITY_TYPE = "com.symphony.emoji";
   private static final String ENTITY_VERSION = "1.0";
@@ -131,6 +133,17 @@ public class Emoji extends Entity {
   public void validate() throws InvalidInputException {
     if (this.shortcode == null) {
       throw new InvalidInputException("The attribute \"shortcode\" is required");
+    } else if (!this.shortcode.matches(SHORTCODE_PATTERN)) {
+      throw new InvalidInputException("Shortcode parameter may only contain alphanumeric characters, underscore, plus sign and dash");
+    }
+
+    if ((this.family != null) && (!this.family.matches(OTHER_ATTR_PATTERN))) {
+      throw new InvalidInputException("Family parameter may only contain alphanumeric characters, underscore and dash");
+
+    }
+
+    if ((this.size != null) && (!this.size.matches(OTHER_ATTR_PATTERN))) {
+      throw new InvalidInputException("Size parameter may only contain alphanumeric characters, underscore and dash");
     }
 
     assertPhrasingContent();
