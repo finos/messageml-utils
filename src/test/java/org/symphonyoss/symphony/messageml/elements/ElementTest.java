@@ -2076,7 +2076,7 @@ public class ElementTest {
 
   @Test
   public void testEmojiWithNonRequiredAttributes() throws Exception {
-    String input = "<messageML><emoji family=\"Rick and Morty\" size=\"big\" shortcode=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    String input = "<messageML><emoji family=\"Rick-Morty\" size=\"big\" shortcode=\"smiley\"><b>Test of content</b></emoji></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -2084,6 +2084,33 @@ public class ElementTest {
 
     assertEquals("Emoji class", Emoji.class, emoji.getClass());
     verifyEmojiPresentation((Emoji) emoji,"smiley", "Rick and Morty", "big","😃");
+  }
+
+  @Test
+  public void testEmojiNonValidShortcode() throws Exception {
+    String input = "<messageML><emoji family=\"Rick-Morty\" size=\"big\" shortcode=\"smiley.something invalid\"><b>Test of content</b></emoji></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Shortcode parameter may only contain alphanumeric characters, underscore, plus sign and dash");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+  }
+
+  @Test
+  public void testEmojiNonValidFamily() throws Exception {
+    String input = "<messageML><emoji family=\"Rick and Morty//{\" size=\"big\" shortcode=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Family parameter may only contain alphanumeric characters, underscore and dash");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+  }
+
+  @Test
+  public void testEmojiNonValidSize() throws Exception {
+    String input = "<messageML><emoji family=\"Rick-Morty\" size=\"big{{}\" shortcode=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Size parameter may only contain alphanumeric characters, underscore and dash");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
   }
 
   @Test
