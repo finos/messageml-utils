@@ -2083,7 +2083,7 @@ public class ElementTest {
     Element emoji = messageML.getChildren().get(0);
 
     assertEquals("Emoji class", Emoji.class, emoji.getClass());
-    verifyEmojiPresentation((Emoji) emoji,"smiley", "Rick and Morty", "big","😃");
+    verifyEmojiPresentation((Emoji) emoji,"smiley", "Rick-Morty", "big","😃");
   }
 
   @Test
