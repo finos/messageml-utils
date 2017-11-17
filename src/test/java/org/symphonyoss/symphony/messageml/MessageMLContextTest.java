@@ -38,7 +38,6 @@ import org.symphonyoss.symphony.messageml.elements.CashTag;
 import org.symphonyoss.symphony.messageml.elements.Div;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.HashTag;
-import org.symphonyoss.symphony.messageml.elements.LineBreak;
 import org.symphonyoss.symphony.messageml.elements.Link;
 import org.symphonyoss.symphony.messageml.elements.Mention;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
@@ -367,7 +366,7 @@ public class MessageMLContextTest {
     String message = getPayload("payloads/messageml_v1_payload.json");
     JsonNode messageNode = MAPPER.readTree(message);
 
-    final String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>Hello!"
+    final String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello!"
         + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table>"
         + "<b>bold</b> <i>italic</i> "
         + "<span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span> "
@@ -377,7 +376,7 @@ public class MessageMLContextTest {
         + "<ul>"
         + "<li>list</li>"
         + "<li>item</li>"
-        + "</ul><br/>"
+        + "</ul>"
         + "<table><tr><td>X1</td><td>Y1</td></tr><tr><td>X2</td><td>Y2</td></tr></table>"
         + "</div>";
     final String expectedMarkdown = "Hello!"
@@ -460,44 +459,41 @@ public class MessageMLContextTest {
     assertEquals("Chime", false, messageML.isChime());
 
     List<Element> children = messageML.getChildren();
-    assertEquals("MessageML children", 17, children.size());
-    assertEquals("Child #1 class", LineBreak.class, children.get(0).getClass());
+    assertEquals("MessageML children", 15, children.size());
+
+    assertEquals("Child #1 class", TextNode.class, children.get(0).getClass());
+    assertEquals("Child #1 text", "Hello!", ((TextNode) children.get(0)).getText());
     assertTrue("Child #1 attributes", children.get(0).getAttributes().isEmpty());
-    assertTrue("Child #1 children", children.get(0).getChildren().isEmpty());
+    assertEquals("Child #1 children", 0, children.get(0).getChildren().size());
 
-    assertEquals("Child #2 class", TextNode.class, children.get(1).getClass());
-    assertEquals("Child #2 text", "Hello!", ((TextNode) children.get(1)).getText());
-    assertTrue("Child #2 attributes", children.get(1).getAttributes().isEmpty());
-    assertEquals("Child #2 children", 0, children.get(1).getChildren().size());
+    assertEquals("Child #7 class", HashTag.class, children.get(6).getClass());
+    assertEquals("Child #7 text", "hashtag", ((HashTag) children.get(6)).getTag());
+    assertTrue("Child #7 attributes", children.get(6).getAttributes().isEmpty());
+    assertTrue("Child #7 children", children.get(6).getChildren().isEmpty());
 
-    assertEquals("Child #10 class", HashTag.class, children.get(7).getClass());
-    assertEquals("Child #10 text", "hashtag", ((HashTag) children.get(7)).getTag());
-    assertTrue("Child #10 attributes", children.get(7).getAttributes().isEmpty());
-    assertTrue("Child #10 children", children.get(7).getChildren().isEmpty());
+    assertEquals("Child #9 class", CashTag.class, children.get(8).getClass());
+    assertEquals("Child #9 text", "cashtag", ((CashTag) children.get(8)).getTag());
+    assertEquals("Child #9 attributes", 0, children.get(8).getAttributes().size());
+    assertEquals("Child #9 children", 0, children.get(8).getChildren().size());
 
-    assertEquals("Child #12 class", CashTag.class, children.get(9).getClass());
-    assertEquals("Child #12 text", "cashtag", ((CashTag) children.get(9)).getTag());
-    assertEquals("Child #12 attributes", 0, children.get(9).getAttributes().size());
-    assertEquals("Child #12 children", 0, children.get(9).getChildren().size());
+    assertEquals("Child #11 class", Mention.class, children.get(10).getClass());
+    assertEquals("Child #11 user ID", 1, ((Mention) children.get(10)).getUserPresentation().getId());
+    assertEquals("Child #11 user email", "bot.user1@localhost.com",
+        ((Mention) children.get(10)).getUserPresentation().getEmail());
+    assertEquals("Child #11 user name", "bot.user1",
+        ((Mention) children.get(10)).getUserPresentation().getScreenName());
+    assertTrue("Child #11 attributes", children.get(10).getAttributes().isEmpty());
+    assertTrue("Child #11 children", children.get(10).getChildren().isEmpty());
 
-    assertEquals("Child #14 class", Mention.class, children.get(11).getClass());
-    assertEquals("Child #14 user ID", 1, ((Mention) children.get(11)).getUserPresentation().getId());
-    assertEquals("Child #14 user email", "bot.user1@localhost.com",
-        ((Mention) children.get(11)).getUserPresentation().getEmail());
-    assertEquals("Child #14 user name", "bot.user1",
-        ((Mention) children.get(11)).getUserPresentation().getScreenName());
-    assertTrue("Child #14 attributes", children.get(11).getAttributes().isEmpty());
-    assertTrue("Child #14 children", children.get(11).getChildren().isEmpty());
+    assertEquals("Child #13 class", Link.class, children.get(12).getClass());
+    assertEquals("Child #13 text", new URI("http://example.com"), ((Link) children.get(12)).getUri());
+    assertEquals("Child #13 attributes", 1, children.get(12).getAttributes().size());
+    assertEquals("Child #13 attribute", "http://example.com", children.get(12).getAttribute("href"));
+    assertEquals("Child #13 children", 0, children.get(12).getChildren().size());
 
-    assertEquals("Child #16 class", Link.class, children.get(13).getClass());
-    assertEquals("Child #16 text", new URI("http://example.com"), ((Link) children.get(13)).getUri());
-    assertEquals("Child #16 attributes", 1, children.get(13).getAttributes().size());
-    assertEquals("Child #16 attribute", "http://example.com", children.get(13).getAttribute("href"));
-    assertEquals("Child #16 children", 0, children.get(13).getChildren().size());
-
-    assertEquals("Child #17 class", BulletList.class, children.get(14).getClass());
-    assertEquals("Child #17 attributes", 0, children.get(14).getAttributes().size());
-    assertEquals("Child #17 children", 2, children.get(14).getChildren().size());
+    assertEquals("Child #14 class", BulletList.class, children.get(13).getClass());
+    assertEquals("Child #14 attributes", 0, children.get(13).getAttributes().size());
+    assertEquals("Child #14 children", 2, children.get(13).getChildren().size());
 
     validateMessageML(expectedPresentationML, expectedEntityJson, expectedMarkdown, expectedEntities);
   }
@@ -508,7 +504,7 @@ public class MessageMLContextTest {
     JsonNode entities = new ObjectNode(JsonNodeFactory.instance);
     context.parseMarkdown(markdown, entities, null);
 
-    assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
+    assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
             + "&lt;div class=&quot;foo&quot;&gt;<i>Markdown</i>&lt;/div&gt; <i>Markdown</i> &lt;hr/&gt;</div>",
         context.getPresentationML());
     assertEquals("Generated Markdown", "<div class=\"foo\">_Markdown_</div> _Markdown_ <hr/>",
@@ -544,7 +540,7 @@ public class MessageMLContextTest {
 
     context.parseMarkdown(markdown, entities, media);
 
-    assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>"
+    assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table></div>", context.getPresentationML());
     assertEquals("Generated Markdown", "Table:\n"
             + "---\n"
@@ -560,7 +556,7 @@ public class MessageMLContextTest {
     context.parseMarkdown(message, null, null);
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<br/>Hello <span class=\"entity\" data-entity-id=\"emoji1\">\uD83D\uDE03</span>!"
+        + "Hello <span class=\"entity\" data-entity-id=\"emoji1\">\uD83D\uDE03</span>!"
         + "</div>";
     String expectedMarkdown = "Hello :smiley:!";
     JsonNode expectedEntityJSON = MAPPER.readTree(
@@ -577,10 +573,9 @@ public class MessageMLContextTest {
         "}");
     JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
 
-    assertEquals("\\n", "\n", context.getMessageML().getChildren().get(0).toString());
-    assertEquals("\\n", "Text(Hello )", context.getMessageML().getChildren().get(1).toString());
-    assertEquals("\\n", "Emoji(smiley)", context.getMessageML().getChildren().get(2).toString());
-    assertEquals("\\n", "Text(!)", context.getMessageML().getChildren().get(3).toString());
+    assertEquals("\\n", "Text(Hello )", context.getMessageML().getChildren().get(0).toString());
+    assertEquals("\\n", "Emoji(smiley)", context.getMessageML().getChildren().get(1).toString());
+    assertEquals("\\n", "Text(!)", context.getMessageML().getChildren().get(2).toString());
     assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
     assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
     assertTrue("EntityJSON", context.getEntityJson().equals(expectedEntityJSON));
@@ -592,7 +587,7 @@ public class MessageMLContextTest {
     String message = "Hello\u00A0world!";
     context.parseMarkdown(message, null, null);
 
-    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>Hello world!</div>";
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello world!</div>";
     String expectedMarkdown = "Hello world!";
 
     assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
@@ -820,7 +815,7 @@ public class MessageMLContextTest {
     context.parseMarkdown(markdown, null, null);
 
     assertEquals("Generated PresentationML",
-        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><br/>%s</div>", escapedPresentationML),
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", escapedPresentationML),
         context.getPresentationML());
     assertEquals("Generated Markdown", markdown, context.getMarkdown());
   }
