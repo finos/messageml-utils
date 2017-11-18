@@ -142,7 +142,7 @@ public class MarkdownParser extends AbstractVisitor {
 
   @Override
   public void visit(org.commonmark.node.Paragraph paragraph) {
-    if (!(parent instanceof ListItem)) {
+    if (!(parent instanceof ListItem) && !(parent instanceof MessageML)) {
       LineBreak node = new LineBreak(parent);
       parent.addChild(node);
     }
