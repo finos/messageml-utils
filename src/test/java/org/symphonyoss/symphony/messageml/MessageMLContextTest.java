@@ -376,7 +376,7 @@ public class MessageMLContextTest {
         + "<ul>"
         + "<li>list</li>"
         + "<li>item</li>"
-        + "</ul>"
+        + "</ul><br/>"
         + "<table><tr><td>X1</td><td>Y1</td></tr><tr><td>X2</td><td>Y2</td></tr></table>"
         + "</div>";
     final String expectedMarkdown = "Hello!"
@@ -459,7 +459,7 @@ public class MessageMLContextTest {
     assertEquals("Chime", false, messageML.isChime());
 
     List<Element> children = messageML.getChildren();
-    assertEquals("MessageML children", 15, children.size());
+    assertEquals("MessageML children", 16, children.size());
 
     assertEquals("Child #1 class", TextNode.class, children.get(0).getClass());
     assertEquals("Child #1 text", "Hello!", ((TextNode) children.get(0)).getText());
@@ -643,6 +643,17 @@ public class MessageMLContextTest {
     expectedException.expectMessage("Invalid entity payload: "
         + "?AQB6QI3LzHsTHfacv2E9x4QFAAAAAAAAAAAAAAAAAAAAAK5saXEaylHzAK65LoYFTqRcsI+4Qrc= (start index: 0, end index: 0)");
     context.parseMarkdown(message, entities, null);
+  }
+
+  @Test
+  public void testParseMarkdownLineBreak() throws Exception {
+    String message = "Hello\n\nworld!";
+
+    context.parseMarkdown(message, null, null);
+    String presentationML = context.getPresentationML();
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello<br/>world!</div>", presentationML);
+
   }
 
   @Test
