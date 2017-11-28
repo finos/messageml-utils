@@ -43,6 +43,14 @@ public class EntityJsonURIDownloader implements URIDownloader
   {
   }
 
+  /**
+   * Singleton getter.
+   * 
+   * This is merely a performance optimisation, this class does not rely on there being only
+   * a single instance.
+   * 
+   * @return The single instance.
+   */
   public static URIDownloader getInstance()
   {
     return INSTANCE;

@@ -33,28 +33,28 @@ public class InvalidInstanceException extends EntityJsonException
 {
   private static final long serialVersionUID = 1L;
 
-  public InvalidInstanceException(EntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
+  public InvalidInstanceException(IEntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
       boolean writableStackTrace)
   {
     super(context, message, cause, enableSuppression, writableStackTrace);
   }
 
-  public InvalidInstanceException(EntityJsonContext context, String message, Throwable cause)
+  public InvalidInstanceException(IEntityJsonContext context, String message, Throwable cause)
   {
     super(context, message, cause);
   }
 
-  public InvalidInstanceException(EntityJsonContext context, String message)
+  public InvalidInstanceException(IEntityJsonContext context, String message)
   {
     super(context, message);
   }
 
-  public InvalidInstanceException(EntityJsonContext context, Throwable cause)
+  public InvalidInstanceException(IEntityJsonContext context, Throwable cause)
   {
     super(context, cause);
   }
 
-  public InvalidInstanceException(EntityJsonContext context)
+  public InvalidInstanceException(IEntityJsonContext context)
   {
     super(context);
   }

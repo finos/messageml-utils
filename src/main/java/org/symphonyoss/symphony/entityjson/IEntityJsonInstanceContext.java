@@ -23,46 +23,35 @@
 
 package org.symphonyoss.symphony.entityjson;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
- * Builder for EntityJsonParser.
- * 
- * Fluent interface.
+ * A parser context containing an instance.
  * 
  * @author Bruce Skingle
  *
  */
-public class EntityJsonParserBuilder
+public interface IEntityJsonInstanceContext extends IEntityJsonContext
 {
-  private boolean unrestrictedSchemaLoad_;
-  
   /**
-   * @return The current value of the UnrestrictedSchemaLoad parameter.
+   * @return  An object describing the source of the instance. Will not return null.
    */
-  public boolean isUnrestrictedSchemaLoad()
-  {
-    return unrestrictedSchemaLoad_;
-  }
+  Object      getInstanceSource();
   
   /**
-   * Set schema loading behavior. By default referenced schemas will only be loaded from known
-   * hosts. Setting this parameter to true allows referenced schemas to be loaded from anywhere.
+   * @return  The instance. Will not return null.
+   */
+  ObjectNode  getInstanceJsonNode();
+  
+  /**
+   * Add the given instance and return the current object as an IEntityJsonInstanceContext.
+   * @param instanceSource    An object describing the source of the instance, typically an
+   * instance of java.net.URL or java.io.File.
+   * @param instanceJsonNode  The instance.
    * 
-   * @param unrestrictedSchemaLoad  Allow schema loading from unknown hosts.
-   * @return this (fluent interface)
-   */
-  public EntityJsonParserBuilder withUnrestrictedSchemaLoad(boolean unrestrictedSchemaLoad)
-  {
-    unrestrictedSchemaLoad_ = unrestrictedSchemaLoad;
-    return this;
-  }
-  
-  /**
-   * Create a parser from the current state of this builder.
+   * @return The current object as an IEntityJsonInstanceContext.
    * 
-   * @return and EntityJsonParser.
+   * @throws NullPointerException if either parameter is null.
    */
-  EntityJsonParser  build()
-  {
-    return new EntityJsonParser(unrestrictedSchemaLoad_);
-  }
+  IEntityJsonSchemaContext  withSchema(Object schemaSource, ObjectNode schemaJsonNode);
 }

@@ -23,41 +23,92 @@
 
 package org.symphonyoss.symphony.entityjson;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * Represents the context of a parsing and validation opreration.
+ * Represents the context of a parsing and validation operation.
  * 
  * Returned from validate() methods and contained within various exception classes.
+ * 
+ * All access to this class should be via the interfaces IEntityJsonContext and its sub-interfaces
+ * to ensure null correctness.
  * 
  * @author Bruce Skingle
  *
  */
-public class EntityJsonContext
+/* package */ class EntityJsonContext implements IEntityJsonSchemaContext
 {
-  private JsonNode         schemaJsonNode_;
-  private JsonNode         instanceJsonNode_;
-  private ProcessingReport processingReport_;
+  private Object     instanceSource_;
+  private ObjectNode instanceJsonNode_;
+  private Object     schemaSource_;
+  private ObjectNode schemaJsonNode_;
+  private Object     validationResult_;
+      
+  private EntityJsonContext()
+  {}
   
-  public EntityJsonContext  withSchema(JsonNode schemaJsonNode)
+  /**
+   * Create a new instance of IEntityJsonContext
+   * 
+   * @return A new instance of IEntityJsonContext
+   */
+  public static IEntityJsonContext newInstance()
   {
+    return (IEntityJsonContext)new EntityJsonContext();
+  }
+  
+  @Override
+  public IEntityJsonSchemaContext  withSchema(Object schemaSource, ObjectNode schemaJsonNode)
+  {
+    Objects.requireNonNull(schemaSource, "schemaSource may not be null.");
+    Objects.requireNonNull(schemaJsonNode, "schemaJsonNode may not be null.");
+    
+    schemaSource_ = schemaSource;
     schemaJsonNode_ = schemaJsonNode;
-    return this;
+    return (IEntityJsonSchemaContext)this;
   }
 
-  public EntityJsonContext  withInstance(JsonNode instanceJsonNode)
+  @Override
+  public IEntityJsonInstanceContext  withInstance(Object instanceSource, ObjectNode instanceJsonNode)
   {
+    Objects.requireNonNull(instanceSource, "instanceSource may not be null.");
+    Objects.requireNonNull(instanceJsonNode, "instanceJsonNode may not be null.");
+    
+    instanceSource_ = instanceSource;
     instanceJsonNode_ = instanceJsonNode;
-    return this;
+    return (IEntityJsonInstanceContext)this;
   }
 
-  public JsonNode getSchemaJsonNode()
+  @Override
+  public ObjectNode getSchemaJsonNode()
   {
     return schemaJsonNode_;
   }
 
-  public JsonNode getInstanceJsonNode()
+  @Override
+  public Object getInstanceSource()
+  {
+    return instanceSource_;
+  }
+
+  @Override
+  public Object getSchemaSource()
+  {
+    return schemaSource_;
+  }
+
+  @Override
+  public @Nullable Object getValidationResult()
+  {
+    return validationResult_;
+  }
+
+  @Override
+  public ObjectNode getInstanceJsonNode()
   {
     return instanceJsonNode_;
   }
@@ -65,12 +116,36 @@ public class EntityJsonContext
   @Override
   public String toString()
   {
-    return processingReport_.toString();
+    StringBuffer s = new StringBuffer("EntityJsonContext");
+    
+    if(instanceSource_ != null)
+    {
+      s.append(" instanceSource=\"");
+      s.append(instanceSource_);
+      s.append('"');
+    }
+    
+    if(schemaSource_ != null)
+    {
+      s.append(" schemaSource=\"");
+      s.append(schemaSource_);
+      s.append('"');
+    }
+    
+    if(validationResult_ != null)
+    {
+      s.append(" validationResult=\"");
+      s.append(validationResult_);
+      s.append('"');
+    }
+      
+    return s.toString();
   }
 
-  /* package */ EntityJsonContext  withProcessingReport(ProcessingReport processingReport)
+  @Override
+  public IEntityJsonSchemaContext  withValidationResult(Object validationResult)
   {
-    processingReport_ = processingReport;
-    return this;
+    validationResult_ = validationResult;
+    return (IEntityJsonSchemaContext)this;
   }
 }

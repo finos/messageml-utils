@@ -35,39 +35,39 @@ public abstract class EntityJsonException extends Exception
 {
   private static final long serialVersionUID = 1L;
   
-  private final EntityJsonContext context_;
+  private final IEntityJsonContext context_;
 
-  public EntityJsonException(@Nullable EntityJsonContext context)
+  public EntityJsonException(@Nullable IEntityJsonContext context)
   {
     context_ = context;
   }
 
-  public EntityJsonException(@Nullable EntityJsonContext context, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+  public EntityJsonException(@Nullable IEntityJsonContext context, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
   {
     super(message, cause, enableSuppression, writableStackTrace);
     context_ = context;
   }
 
-  public EntityJsonException(@Nullable EntityJsonContext context, String message, Throwable cause)
+  public EntityJsonException(@Nullable IEntityJsonContext context, String message, Throwable cause)
   {
     super(message, cause);
     context_ = context;
   }
 
-  public EntityJsonException(@Nullable EntityJsonContext context, String message)
+  public EntityJsonException(@Nullable IEntityJsonContext context, String message)
   {
     super(message);
     context_ = context;
   }
 
-  public EntityJsonException(@Nullable EntityJsonContext context, Throwable cause)
+  public EntityJsonException(@Nullable IEntityJsonContext context, Throwable cause)
   {
     super(cause);
     context_ = context;
   }
 
   @Nullable
-  public EntityJsonContext getContext()
+  public IEntityJsonContext getContext()
   {
     return context_;
   }

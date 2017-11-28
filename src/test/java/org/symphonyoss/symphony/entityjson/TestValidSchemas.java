@@ -26,13 +26,13 @@ package org.symphonyoss.symphony.entityjson;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Scanner;
 
 import org.junit.Test;
-import org.symphonyoss.symphony.entityjson.EntityJsonException;
-import org.symphonyoss.symphony.entityjson.EntityJsonParser;
-import org.symphonyoss.symphony.entityjson.StructuredObject;
 
+/*
+ * Test various valid inputs, the validate method throws an exception if the input is invalid so
+ * completion of each method without an exception is sufficient to pass.
+ */
 public class TestValidSchemas
 {
   private EntityJsonParser getParser()
@@ -78,8 +78,6 @@ public class TestValidSchemas
     getParser().validate(EntityJsonParser.BOND_RFQ_SCHEMA_URL, EntityJsonParser.BOND_RFQ_EXAMPLE_URL);
   }
   
-
-  
   @Test
   public void testBondRfqObject() throws EntityJsonException, IOException
   {
@@ -87,7 +85,7 @@ public class TestValidSchemas
     
     System.err.println("obj=" + obj);
     
-    EntityJsonContext context = obj.validate(getParser());
+    IEntityJsonSchemaContext context = obj.validate(getParser());
     
     System.err.println("validate=" + context);
   }
@@ -106,7 +104,7 @@ public class TestValidSchemas
   
   private void test(String name) throws SchemaValidationException, InvalidInstanceException, IOException
   {
-    EntityJson entityJson = getParser().parseEntityJson(getPayload(name));
+    EntityJson entityJson = getParser().parseEntityJson("Unit Test Hard coded value", getPayload(name));
     
     System.err.println("entityJson=" + entityJson);
     

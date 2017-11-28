@@ -31,11 +31,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.load.configuration.LoadingConfiguration;
 import com.github.fge.jsonschema.core.load.configuration.LoadingConfigurationBuilder;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.main.JsonSchemaFactoryBuilder;
 
@@ -53,8 +54,8 @@ public class EntityJsonParser
   public static final URL ENTITY_JSON_SCHEMA_URL        = getURL("/schema/entity-json-v0_1.json");
   public static final URL ENTITY_JSON_EXAMPLE_URL       = getURL("/example/entity-json-01.json");
   public static final URL STRUCTURED_OBJECT_SCHEMA_URL  = getURL("/schema/structured-object-v0_1.json");
-  public static final URL BOND_RFQ_SCHEMA_URL           = getURL("/proposed/org/symphonyoss/fin/rfq/request/bond-v0_1.json");
-  public static final URL BOND_RFQ_EXAMPLE_URL          = getURL("/example/org/symphonyoss/fin/rfq/request/bond-01.json");
+  /* package */ static final URL BOND_RFQ_SCHEMA_URL    = getURL("/proposed/org/symphonyoss/fin/rfq/request/bond-v0_1.json");
+  /* package */ static final URL BOND_RFQ_EXAMPLE_URL   = getURL("/example/org/symphonyoss/fin/rfq/request/bond-01.json");
   
   private static URL getURL(String url)
   {
@@ -72,8 +73,9 @@ public class EntityJsonParser
   
   /* package */ EntityJsonParser(boolean unrestrictedSchemaLoad)
   {
-    if(unrestrictedSchemaLoad)
+    if(unrestrictedSchemaLoad) {
       factory_ = JsonSchemaFactory.byDefault();
+    }
     else
     {
       JsonSchemaFactoryBuilder builder = JsonSchemaFactory.newBuilder();
@@ -91,6 +93,18 @@ public class EntityJsonParser
     }
   }
   
+  /**
+   * Parse an EntityJSON instance from the given URL.
+   * 
+   * Callers may prefer to catch EntityJSONException and treat all failures in the same way.
+   * 
+   * @param instanceUrl A URL pointing to the JSON representation of an EntityJSON instance.
+   * 
+   * @return  An EntityJSON instance.
+   * 
+   * @throws SchemaValidationException  If the given instance does not meet the general EntityJSON schema.
+   * @throws InvalidInstanceException   If the given instance is structurally invalid.
+   */
   public EntityJson parseEntityJson(URL instanceUrl) throws SchemaValidationException, InvalidInstanceException
   {
     try
@@ -104,11 +118,25 @@ public class EntityJsonParser
     }
   }
   
-  public EntityJson parseEntityJson(Reader instanceReader) throws SchemaValidationException, InvalidInstanceException
+  /**
+   * Parse an EntityJSON instance from the given URL.
+   * 
+   * Callers may prefer to catch EntityJSONException and treat all failures in the same way.
+   * 
+   * @param instanceSource  An object describing the source of the instance, typically an instance
+   * of java.net.URL or java.io.File.
+   * @param instanceReader  A Reader containing the JSON representation of an EntityJSON instance.
+   * 
+   * @return  An EntityJSON instance.
+   * 
+   * @throws SchemaValidationException  If the given instance does not meet the general EntityJSON schema.
+   * @throws InvalidInstanceException   If the given instance is structurally invalid.
+   */
+  public EntityJson parseEntityJson(Object instanceSource, Reader instanceReader) throws SchemaValidationException, InvalidInstanceException
   {
     try
     {
-      return new EntityJson(validate(ENTITY_JSON_SCHEMA_URL, instanceReader));
+      return new EntityJson(validate(ENTITY_JSON_SCHEMA_URL, instanceSource, instanceReader));
     }
     catch (NoSchemaException | InvalidSchemaException e)
     {
@@ -117,11 +145,25 @@ public class EntityJsonParser
     }
   }
   
-  public EntityJson parseEntityJson(JsonNode instance) throws SchemaValidationException
+  /**
+   * Parse an EntityJSON instance from the given URL.
+   * 
+   * Callers may prefer to catch EntityJSONException and treat all failures in the same way.
+   * 
+   * @param instanceSource  An object describing the source of the instance, typically an instance
+   * of java.net.URL or java.io.File.
+   * @param instance        A JSON ObjectNode containing the JSON representation of an EntityJSON instance.
+   * 
+   * @return  An EntityJSON instance.
+   * 
+   * @throws SchemaValidationException  If the given instance does not meet the general EntityJSON schema.
+   * @throws InvalidInstanceException   If the given instance is structurally invalid.
+   */
+  public EntityJson parseEntityJson(Object instanceSource, ObjectNode instance) throws SchemaValidationException, InvalidInstanceException
   {
     try
     {
-      return new EntityJson(validate(ENTITY_JSON_SCHEMA_URL, instance));
+      return new EntityJson(validate(ENTITY_JSON_SCHEMA_URL, instanceSource, instance));
     }
     catch (NoSchemaException | InvalidSchemaException e)
     {
@@ -130,11 +172,23 @@ public class EntityJsonParser
     }
   }
   
+  /**
+   * Parse a single StructuredObject instance from the given URL.
+   * 
+   * Callers may prefer to catch EntityJSONException and treat all failures in the same way.
+   * 
+   * @param instanceUrl A URL pointing to the JSON representation of a StructuredObject instance.
+   * 
+   * @return  A StructuredObject instance.
+   * 
+   * @throws SchemaValidationException  If the given instance does not meet the general EntityJSON schema.
+   * @throws InvalidInstanceException   If the given instance is structurally invalid.
+   */
   public StructuredObject parseStructuredObject(URL instanceUrl) throws SchemaValidationException, InvalidInstanceException
   {
     try
     {
-      return new StructuredObject(validate(ENTITY_JSON_SCHEMA_URL, instanceUrl));
+      return new StructuredObject(validate(STRUCTURED_OBJECT_SCHEMA_URL, instanceUrl));
     }
     catch (NoSchemaException | InvalidSchemaException e)
     {
@@ -143,11 +197,25 @@ public class EntityJsonParser
     }
   }
   
-  public StructuredObject parseStructuredObject(Reader instanceReader) throws SchemaValidationException, InvalidInstanceException
+  /**
+   * Parse a single StructuredObject instance from the given URL.
+   * 
+   * Callers may prefer to catch EntityJSONException and treat all failures in the same way.
+   * 
+   * @param instanceSource  An object describing the source of the instance, typically an instance
+   * of java.net.URL or java.io.File.
+   * @param instanceReader  A Reader containing the JSON representation of a single StructuredObject instance.
+   * 
+   * @return  A StructuredObject instance.
+   * 
+   * @throws SchemaValidationException  If the given instance does not meet the general EntityJSON schema.
+   * @throws InvalidInstanceException   If the given instance is structurally invalid.
+   */
+  public StructuredObject parseStructuredObject(Object instanceSource, Reader instanceReader) throws SchemaValidationException, InvalidInstanceException
   {
     try
     {
-      return new StructuredObject(validate(ENTITY_JSON_SCHEMA_URL, instanceReader));
+      return new StructuredObject(validate(STRUCTURED_OBJECT_SCHEMA_URL, instanceSource, instanceReader));
     }
     catch (NoSchemaException | InvalidSchemaException e)
     {
@@ -156,11 +224,25 @@ public class EntityJsonParser
     }
   }
   
-  public StructuredObject parseStructuredObject(JsonNode instance) throws SchemaValidationException
+  /**
+   * Parse a single StructuredObject instance from the given URL.
+   * 
+   * Callers may prefer to catch EntityJSONException and treat all failures in the same way.
+   * 
+   * @param instanceSource  An object describing the source of the instance, typically an instance
+   * of java.net.URL or java.io.File.
+   * @param instance        A JSON ObjectNode containing the JSON representation of a single StructuredObject instance.
+   * 
+   * @return  An StructuredObject instance.
+   * 
+   * @throws SchemaValidationException  If the given instance does not meet the general EntityJSON schema.
+   * @throws InvalidInstanceException   If the given instance is structurally invalid.
+   */
+  public StructuredObject parseStructuredObject(Object instanceSource, ObjectNode instance) throws SchemaValidationException
   {
     try
     {
-      return new StructuredObject(validate(ENTITY_JSON_SCHEMA_URL, instance));
+      return new StructuredObject(validate(STRUCTURED_OBJECT_SCHEMA_URL, instanceSource, instance));
     }
     catch (NoSchemaException | InvalidSchemaException e)
     {
@@ -169,45 +251,55 @@ public class EntityJsonParser
     }
   }
   
-  public EntityJsonContext validate(JsonNode schema, JsonNode instance) throws SchemaValidationException
+  /* package */ IEntityJsonSchemaContext validate(Object schemaSource, ObjectNode schema, Object instanceSource, ObjectNode instance) throws SchemaValidationException
   {
-    return validate(new EntityJsonContext()
-        .withSchema(schema)
-        .withInstance(instance));
+    return validate(EntityJsonContext.newInstance()
+        .withInstance(instanceSource, instance)
+        .withSchema(schemaSource, schema)
+        );
   }
   
-  public EntityJsonContext validate(URL schemaUrl, JsonNode instance) throws SchemaValidationException, NoSchemaException, InvalidSchemaException
+  /* package */ IEntityJsonSchemaContext validate(URL schemaUrl, Object instanceSource, ObjectNode instance) throws SchemaValidationException, NoSchemaException, InvalidSchemaException
   {
-    EntityJsonContext context = new EntityJsonContext()
-        .withInstance(instance);
+    IEntityJsonInstanceContext context = EntityJsonContext.newInstance()
+        .withInstance(instanceSource, instance);
     
-    return validate(context.withSchema(getSchemaJsonNode(context, schemaUrl)));
+    return validate(context.withSchema(schemaUrl, getSchemaJsonNode(context, schemaUrl)));
   }
   
-  public EntityJsonContext validate(URL schemaUrl, URL instanceUrl) throws SchemaValidationException, InvalidInstanceException, NoSchemaException, InvalidSchemaException
+  /* package */ IEntityJsonSchemaContext validate(URL schemaUrl, URL instanceUrl) throws SchemaValidationException, InvalidInstanceException, NoSchemaException, InvalidSchemaException
   {
-    EntityJsonContext context = new EntityJsonContext();
-    
-    return validate(context
-        .withInstance(getInstanceJsonNode(context, instanceUrl))
-        .withSchema(getSchemaJsonNode(context, schemaUrl)));
-  }
-  
-  public EntityJsonContext validate(URL schemaUrl, Reader in) throws SchemaValidationException, InvalidInstanceException, NoSchemaException, InvalidSchemaException
-  {
-    EntityJsonContext context = new EntityJsonContext();
+    IEntityJsonContext context = EntityJsonContext.newInstance();
     
     return validate(context
-        .withInstance(getInstanceJsonNode(context, in))
-        .withSchema(getSchemaJsonNode(context, schemaUrl)));
+        .withInstance(instanceUrl, getInstanceJsonNode(context, instanceUrl))
+        .withSchema(schemaUrl, getSchemaJsonNode(context, schemaUrl)));
   }
   
-  private EntityJsonContext validate(EntityJsonContext context) throws SchemaValidationException
+  /* package */ IEntityJsonSchemaContext validate(URL schemaUrl, Object instanceSource, Reader in) throws SchemaValidationException, InvalidInstanceException, NoSchemaException, InvalidSchemaException
+  {
+    IEntityJsonContext context = EntityJsonContext.newInstance();
+    
+    return validate(context
+        .withInstance(instanceSource, getInstanceJsonNode(context, in))
+        .withSchema(schemaUrl, getSchemaJsonNode(context, schemaUrl)));
+  }
+  
+  private IEntityJsonSchemaContext validate(IEntityJsonSchemaContext context) throws SchemaValidationException
   {  
     try
     {
-      return context.withProcessingReport(factory_.getJsonSchema(context.getSchemaJsonNode())
-          .validate(context.getInstanceJsonNode(), true));
+      ProcessingReport validationResult = factory_.getJsonSchema(context.getSchemaJsonNode())
+          .validate(context.getInstanceJsonNode(), true);
+      
+      context.withValidationResult(validationResult);
+      
+      if(!validationResult.isSuccess())
+      {
+        throw new SchemaValidationException(context);
+      }
+      
+      return context.withValidationResult(validationResult);
     }
     catch(ProcessingException e)
     {
@@ -215,20 +307,20 @@ public class EntityJsonParser
     }
   }
   
-  private JsonNode getSchemaJsonNode(EntityJsonContext context, URL url) throws NoSchemaException, InvalidSchemaException
+  private ObjectNode getSchemaJsonNode(IEntityJsonContext context, URL url) throws NoSchemaException, InvalidSchemaException
   {
     try(Reader in = getSchemaReader(context, url))
     {
       ObjectMapper mapper = new ObjectMapper();
-      return mapper.readTree(in);
+      return (ObjectNode)mapper.readTree(in);
     }
-    catch (IOException e)
+    catch (IOException | ClassCastException e)
     {
       throw new InvalidSchemaException(context, e);
     }
   }
   
-  private Reader getSchemaReader(EntityJsonContext context, URL url) throws NoSchemaException, InvalidSchemaException
+  private Reader getSchemaReader(IEntityJsonContext context, URL url) throws NoSchemaException, InvalidSchemaException
   {
     try
     {
@@ -244,7 +336,7 @@ public class EntityJsonParser
     }
   }
   
-  private JsonNode getInstanceJsonNode(EntityJsonContext context, URL url) throws InvalidInstanceException
+  private ObjectNode getInstanceJsonNode(IEntityJsonContext context, URL url) throws InvalidInstanceException
   {
     try(Reader in = getInstanceReader(context, url))
     {
@@ -256,20 +348,20 @@ public class EntityJsonParser
     }
   }
   
-  private JsonNode getInstanceJsonNode(EntityJsonContext context, Reader in) throws InvalidInstanceException
+  private ObjectNode getInstanceJsonNode(IEntityJsonContext context, Reader in) throws InvalidInstanceException
   {
     try
     {
       ObjectMapper mapper = new ObjectMapper();
-      return mapper.readTree(in);
+      return (ObjectNode)mapper.readTree(in);
     }
-    catch (IOException e)
+    catch (IOException | ClassCastException e)
     {
       throw new InvalidInstanceException(context, e);
     }
   }
   
-  private Reader getInstanceReader(EntityJsonContext context, URL url) throws InvalidInstanceException
+  private Reader getInstanceReader(IEntityJsonContext context, URL url) throws InvalidInstanceException
   {
     try
     {

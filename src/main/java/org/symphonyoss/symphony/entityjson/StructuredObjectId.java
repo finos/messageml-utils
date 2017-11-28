@@ -26,7 +26,7 @@ package org.symphonyoss.symphony.entityjson;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Represents an id fr a structured object.
+ * Represents the id of a structured object.
  * 
  * @author Bruce Skingle
  *
@@ -36,7 +36,7 @@ public class StructuredObjectId
   private final String type_;
   private final String value_;
 
-  public StructuredObjectId(JsonNode node)
+  /* package */ StructuredObjectId(JsonNode node)
   {
     type_ = node.get("type").asText();
     value_ = node.get("value").asText();

@@ -42,28 +42,28 @@ public class UntrustedSchemaSourceException extends EntityJsonException
 {
   private static final long serialVersionUID = 1L;
 
-  public UntrustedSchemaSourceException(EntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
+  public UntrustedSchemaSourceException(IEntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
       boolean writableStackTrace)
   {
     super(context, message, cause, enableSuppression, writableStackTrace);
   }
 
-  public UntrustedSchemaSourceException(EntityJsonContext context, String message, Throwable cause)
+  public UntrustedSchemaSourceException(IEntityJsonContext context, String message, Throwable cause)
   {
     super(context, message, cause);
   }
 
-  public UntrustedSchemaSourceException(EntityJsonContext context, String message)
+  public UntrustedSchemaSourceException(IEntityJsonContext context, String message)
   {
     super(context, message);
   }
 
-  public UntrustedSchemaSourceException(EntityJsonContext context, Throwable cause)
+  public UntrustedSchemaSourceException(IEntityJsonContext context, Throwable cause)
   {
     super(context, cause);
   }
 
-  public UntrustedSchemaSourceException(EntityJsonContext context)
+  public UntrustedSchemaSourceException(IEntityJsonContext context)
   {
     super(context);
   }

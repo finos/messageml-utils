@@ -24,7 +24,7 @@
 package org.symphonyoss.symphony.entityjson;
 
 /**
- * The instance is not valid according to it's schema.
+ * The instance is not valid according to its schema.
  * 
  * @author Bruce Skingle
  *
@@ -33,28 +33,28 @@ public class SchemaValidationException extends EntityJsonException
 {
   private static final long serialVersionUID = 1L;
 
-  public SchemaValidationException(EntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
+  public SchemaValidationException(IEntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
       boolean writableStackTrace)
   {
     super(context, message, cause, enableSuppression, writableStackTrace);
   }
 
-  public SchemaValidationException(EntityJsonContext context, String message, Throwable cause)
+  public SchemaValidationException(IEntityJsonContext context, String message, Throwable cause)
   {
     super(context, message, cause);
   }
 
-  public SchemaValidationException(EntityJsonContext context, String message)
+  public SchemaValidationException(IEntityJsonContext context, String message)
   {
     super(context, message);
   }
 
-  public SchemaValidationException(EntityJsonContext context, Throwable cause)
+  public SchemaValidationException(IEntityJsonContext context, Throwable cause)
   {
     super(context, cause);
   }
 
-  public SchemaValidationException(EntityJsonContext context)
+  public SchemaValidationException(IEntityJsonContext context)
   {
     super(context);
   }

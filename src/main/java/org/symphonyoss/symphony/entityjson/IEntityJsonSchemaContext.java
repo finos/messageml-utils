@@ -23,46 +23,42 @@
 
 package org.symphonyoss.symphony.entityjson;
 
+import javax.annotation.Nullable;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
- * Builder for EntityJsonParser.
- * 
- * Fluent interface.
+ * A parser context containing an instance and a schema.
  * 
  * @author Bruce Skingle
  *
  */
-public class EntityJsonParserBuilder
+public interface IEntityJsonSchemaContext extends IEntityJsonInstanceContext
 {
-  private boolean unrestrictedSchemaLoad_;
-  
   /**
-   * @return The current value of the UnrestrictedSchemaLoad parameter.
-   */
-  public boolean isUnrestrictedSchemaLoad()
-  {
-    return unrestrictedSchemaLoad_;
-  }
-  
-  /**
-   * Set schema loading behavior. By default referenced schemas will only be loaded from known
-   * hosts. Setting this parameter to true allows referenced schemas to be loaded from anywhere.
+   * Set the validation result for this context.
    * 
-   * @param unrestrictedSchemaLoad  Allow schema loading from unknown hosts.
-   * @return this (fluent interface)
+   * It is not intended that this method will be called from outside the current
+   * package, it is declared public only by virture of being specified in an interface.
+   * 
+   * @param validationResult An object describing the result of validation.
+   * 
+   * @return  The current object (fluent interface)
    */
-  public EntityJsonParserBuilder withUnrestrictedSchemaLoad(boolean unrestrictedSchemaLoad)
-  {
-    unrestrictedSchemaLoad_ = unrestrictedSchemaLoad;
-    return this;
-  }
+  IEntityJsonSchemaContext  withValidationResult(Object validationResult);
   
   /**
-   * Create a parser from the current state of this builder.
-   * 
-   * @return and EntityJsonParser.
+   * @return  An object describing the source of the schema. Will not return null.
    */
-  EntityJsonParser  build()
-  {
-    return new EntityJsonParser(unrestrictedSchemaLoad_);
-  }
+  Object      getSchemaSource();
+  
+  /**
+   * @return  The schema. Will not return null.
+   */
+  ObjectNode  getSchemaJsonNode();
+  
+  /**
+   * @return  The validation result, will return null if the context is unvalidated.
+   */
+  @Nullable Object      getValidationResult();
 }

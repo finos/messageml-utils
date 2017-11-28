@@ -31,6 +31,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Represents a single Structured Object.
@@ -55,24 +56,26 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
  */
 public class StructuredObject
 {
-  private final EntityJsonContext        context_;
-  private final JsonNode                 jsonNode_;
-  private final String                   toString_;
-  private final String                   type_;
-  private final String                   version_;
-  private final int                      majorVersion_;
-  private final int                      minorVersion_;
+  private final IEntityJsonInstanceContext context_;
+  private final Object                     instanceSource_;
+  private final ObjectNode                 jsonNode_;
+  private final String                     toString_;
+  private final String                     type_;
+  private final String                     version_;
+  private final int                        majorVersion_;
+  private final int                        minorVersion_;
 
   private final List<StructuredObjectId> idList_;
       
-  /* package */ StructuredObject(EntityJsonContext context)
+  /* package */ StructuredObject(IEntityJsonInstanceContext context)
   {
-    this(context, context.getInstanceJsonNode());
+    this(context, context.getInstanceSource(), context.getInstanceJsonNode());
   }
   
-  /* package */ StructuredObject(EntityJsonContext context, JsonNode jsonNode)
+  /* package */ StructuredObject(IEntityJsonInstanceContext context, Object instanceSource, ObjectNode jsonNode)
   {
     context_ = context;
+    instanceSource_ = instanceSource;
     jsonNode_ = jsonNode;
     
     type_ = jsonNode.get("type").asText();
@@ -117,7 +120,13 @@ public class StructuredObject
     toString_ = s.toString();
   }
 
-  public EntityJsonContext getContext()
+  /**
+   * Return the parse context from which this object was created, which includes error reports
+   * if the input was invalid in some way.
+   * 
+   * @return The parse context from which this object was created.
+   */
+  public IEntityJsonInstanceContext getContext()
   {
     return context_;
   }
@@ -131,7 +140,7 @@ public class StructuredObject
    * @throws NoSchemaException          If there is no official schema for this type.
    * @throws InvalidSchemaException     If the schema exists but is not itself valid or cannot be read.
    */
-  public EntityJsonContext validate(EntityJsonParser parser) throws SchemaValidationException, NoSchemaException, InvalidSchemaException
+  public IEntityJsonSchemaContext validate(EntityJsonParser parser) throws SchemaValidationException, NoSchemaException, InvalidSchemaException
   {
     StringBuffer ubuf = new StringBuffer("https://symphonyosf.github.io/symphony-object/proposed");
     
@@ -149,7 +158,7 @@ public class StructuredObject
     
     try
     {
-      return parser.validate(new URL(ubuf.toString()), jsonNode_);
+      return parser.validate(new URL(ubuf.toString()), instanceSource_, jsonNode_);
     }
     catch (MalformedURLException e)
     {
@@ -157,26 +166,42 @@ public class StructuredObject
     }
   }
 
+  /**
+   * @return The type of this object.
+   */
   public String getType()
   {
     return type_;
   }
 
+  /**
+   * @return The Type Version of this object, guaranteed to be a string of the form
+   * [0-9]+.[0-9]+
+   */
   public String getVersion()
   {
     return version_;
   }
 
+  /**
+   * @return The first (major) element of the type version.
+   */
   public int getMajorVersion()
   {
     return majorVersion_;
   }
 
+  /**
+   * @return The second (minor) element of the type version.
+   */
   public int getMinorVersion()
   {
     return minorVersion_;
   }
 
+  /**
+   * @return The immutable list of ID objects for this object.
+   */
   public List<StructuredObjectId> getIdList()
   {
     return idList_;

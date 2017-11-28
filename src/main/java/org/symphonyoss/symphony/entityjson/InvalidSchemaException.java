@@ -33,28 +33,28 @@ public class InvalidSchemaException extends EntityJsonException
 {
   private static final long serialVersionUID = 1L;
 
-  public InvalidSchemaException(EntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
+  public InvalidSchemaException(IEntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
       boolean writableStackTrace)
   {
     super(context, message, cause, enableSuppression, writableStackTrace);
   }
 
-  public InvalidSchemaException(EntityJsonContext context, String message, Throwable cause)
+  public InvalidSchemaException(IEntityJsonContext context, String message, Throwable cause)
   {
     super(context, message, cause);
   }
 
-  public InvalidSchemaException(EntityJsonContext context, String message)
+  public InvalidSchemaException(IEntityJsonContext context, String message)
   {
     super(context, message);
   }
 
-  public InvalidSchemaException(EntityJsonContext context, Throwable cause)
+  public InvalidSchemaException(IEntityJsonContext context, Throwable cause)
   {
     super(context, cause);
   }
 
-  public InvalidSchemaException(EntityJsonContext context)
+  public InvalidSchemaException(IEntityJsonContext context)
   {
     super(context);
   }

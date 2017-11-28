@@ -23,39 +23,25 @@
 
 package org.symphonyoss.symphony.entityjson;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
- * The instance cannot be validated because no schema can be found.
+ * A generic parser context.
  * 
  * @author Bruce Skingle
  *
  */
-public class NoSchemaException extends EntityJsonException
+public interface IEntityJsonContext
 {
-  private static final long serialVersionUID = 1L;
-
-  public NoSchemaException(IEntityJsonContext context, String message, Throwable cause, boolean enableSuppression,
-      boolean writableStackTrace)
-  {
-    super(context, message, cause, enableSuppression, writableStackTrace);
-  }
-
-  public NoSchemaException(IEntityJsonContext context, String message, Throwable cause)
-  {
-    super(context, message, cause);
-  }
-
-  public NoSchemaException(IEntityJsonContext context, String message)
-  {
-    super(context, message);
-  }
-
-  public NoSchemaException(IEntityJsonContext context, Throwable cause)
-  {
-    super(context, cause);
-  }
-
-  public NoSchemaException(IEntityJsonContext context)
-  {
-    super(context);
-  }
+  /**
+   * Add the given instance and return the current object as an IEntityJsonInstanceContext.
+   * @param instanceSource    An object describing the source of the instance, typically an
+   * instance of java.net.URL or java.io.File.
+   * @param instanceJsonNode  The instance.
+   * 
+   * @return The current object as an IEntityJsonInstanceContext.
+   * 
+   * @throws NullPointerException if either parameter is null.
+   */
+  IEntityJsonInstanceContext  withInstance(Object instanceSource, ObjectNode instanceJsonNode);
 }
