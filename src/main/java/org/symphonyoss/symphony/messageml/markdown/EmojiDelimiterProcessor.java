@@ -4,8 +4,6 @@ import org.commonmark.node.Node;
 import org.commonmark.node.Text;
 import org.commonmark.parser.delimiter.DelimiterProcessor;
 import org.commonmark.parser.delimiter.DelimiterRun;
-import org.symphonyoss.symphony.messageml.elements.TextNode;
-import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 
 public class EmojiDelimiterProcessor implements DelimiterProcessor {
