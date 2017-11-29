@@ -115,6 +115,7 @@
     </contributors>
 
     <properties>
+        <json.schema.validator.version>2.2.8</json.schema.validator.version>
         <jackson.version>2.7.3</jackson.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.4</commons.lang3.version>
@@ -139,6 +140,11 @@
     </profiles>
 
     <dependencies>
+        <dependency>
+		        <groupId>com.github.java-json-tools</groupId>
+		        <artifactId>json-schema-validator</artifactId>
+		        <version>${json.schema.validator.version}</version>
+	      </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
