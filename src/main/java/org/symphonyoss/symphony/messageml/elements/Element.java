@@ -19,7 +19,6 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
-import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -406,7 +405,7 @@ public abstract class Element {
    * @param type the class of elements to find
    * @return found elements
    */
-  public List<Element> findElements(Class type) {
+  public List<Element> findElements(Class<?> type) {
     List<Element> result = new ArrayList<>();
     LinkedList<Element> stack = new LinkedList<>(this.getChildren());
 

@@ -35,7 +35,6 @@ import org.commonmark.node.Paragraph;
 import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.renderer.text.TextContentWriter;
-import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;

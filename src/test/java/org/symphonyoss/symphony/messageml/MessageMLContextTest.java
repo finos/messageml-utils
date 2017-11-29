@@ -851,7 +851,10 @@ public class MessageMLContextTest {
 
   private String getPayload(String filename) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
-    return new Scanner(classLoader.getResourceAsStream(filename)).useDelimiter("\\A").next();
+    try(Scanner scanner = new Scanner(classLoader.getResourceAsStream(filename)))
+    {
+      return scanner.useDelimiter("\\A").next();
+    }
   }
 
 }

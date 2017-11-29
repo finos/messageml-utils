@@ -270,6 +270,7 @@ public class IndentedPrintStream extends PrintStream {
   /**
    * Prints a linebreak
    */
+  @Override
   public void println() {
     super.println();
     startOfLine = true;
@@ -394,6 +395,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a boolean with no indent
    * @param b boolean to print
    */
+  @Override
   public void print(boolean b) {
     print(0, b);
   }
@@ -402,6 +404,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a character with no indent
    * @param c character to print
    */
+  @Override
   public void print(char c) {
     print(0, c);
   }
@@ -410,6 +413,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a character array with no indent
    * @param s character array to print
    */
+  @Override
   public void print(char[] s) {
     print(0, s);
   }
@@ -418,6 +422,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a double with no indent
    * @param d double to print
    */
+  @Override
   public void print(double d) {
     print(0, d);
   }
@@ -426,6 +431,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a floating point number with no indent
    * @param f floating point number to print
    */
+  @Override
   public void print(float f) {
     print(0, f);
   }
@@ -434,6 +440,7 @@ public class IndentedPrintStream extends PrintStream {
    * print an integer with no indent
    * @param i integer to print
    */
+  @Override
   public void print(int i) {
     print(0, i);
   }
@@ -442,6 +449,7 @@ public class IndentedPrintStream extends PrintStream {
    * print an object with no indent
    * @param obj object to print
    */
+  @Override
   public void print(Object obj) {
     print(0, obj);
   }
@@ -450,6 +458,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a string with no indent
    * @param s string to print
    */
+  @Override
   public void print(String s) {
     print(0, s);
   }
@@ -458,6 +467,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a long integer with no indent
    * @param l long integer to print
    */
+  @Override
   public void print(long l) {
     print(0, l);
   }
@@ -466,6 +476,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a boolean with no indent with a line break
    * @param x boolean to print
    */
+  @Override
   public void println(boolean x) {
     println(0, x);
   }
@@ -474,6 +485,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a character with no indent with a line break
    * @param x character to print
    */
+  @Override
   public void println(char x) {
     println(0, x);
   }
@@ -482,6 +494,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a character array with no indent with a line break
    * @param x character array to print
    */
+  @Override
   public void println(char[] x) {
     println(0, x);
   }
@@ -490,6 +503,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a double with no indent with a line break
    * @param x double to print
    */
+  @Override
   public void println(double x) {
     println(0, x);
   }
@@ -498,6 +512,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a floating point number with no indent with a line break
    * @param x floating point number to print
    */
+  @Override
   public void println(float x) {
     println(0, x);
   }
@@ -506,6 +521,7 @@ public class IndentedPrintStream extends PrintStream {
    * print an integer with no indent with a line break
    * @param x integer to print
    */
+  @Override
   public void println(int x) {
     println(0, x);
   }
@@ -514,6 +530,7 @@ public class IndentedPrintStream extends PrintStream {
    * print an object with no indent with a line break
    * @param x object to print
    */
+  @Override
   public void println(Object x) {
     println(0, x);
   }
@@ -522,6 +539,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a string with no indent with a line break
    * @param x string to print
    */
+  @Override
   public void println(String x) {
     println(0, x);
   }
@@ -538,6 +556,7 @@ public class IndentedPrintStream extends PrintStream {
    * print a long integer with no indent with a line break
    * @param x long integer to print
    */
+  @Override
   public void println(long x) {
     println(0, x);
   }
