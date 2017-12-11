@@ -19,6 +19,9 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -1424,6 +1427,72 @@ public class ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Invalid input: null must be a int64 value not \"bot.user1\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMentionByMarkdown() throws Exception {
+    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    ((DataProvider) dataProvider).setUserPresentation(user);
+
+    String markdown = "Hello @Bot User01!";
+    JsonNode entities = MAPPER.readTree("{\"userMentions\": [{"
+        + "        \"id\": 1,"
+        + "        \"screenName\": \"bot.user1\","
+        + "        \"prettyName\": \"Bot User02\","
+        + "        \"text\": \"@Bot User01\","
+        + "        \"indexStart\": 6,"
+        + "        \"indexEnd\": 17,"
+        + "        \"userType\": \"lc\","
+        + "        \"type\": \"USER_FOLLOW\""
+        + "    }]"
+        + "}");
+
+    context.parseMarkdown(markdown, entities, null);
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "Hello <span class=\"entity\" data-entity-id=\"mention1\">@Bot User01</span>!</div>";
+    JsonNode expectedEntityJSON = MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
+        + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
+
+    String presentationML = context.getPresentationML();
+    JsonNode entityJson = context.getEntityJson();
+    assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
+    assertEquals("Generated EntityJSON", expectedEntityJSON, entityJson);
+  }
+
+  @Test
+  public void testMentionByMarkdownInvalidUser() throws Exception {
+    IDataProvider mockDataProvider = mock(IDataProvider.class);
+    doThrow(new InvalidInputException("Expected")).when(mockDataProvider).getUserPresentation(1L);
+    MessageMLContext mockContext = spy(new MessageMLContext(mockDataProvider));
+
+    String markdown = "Hello @Bot User01!";
+    JsonNode entities = MAPPER.readTree("{\"userMentions\": [{"
+        + "        \"id\": 1,"
+        + "        \"screenName\": \"bot.user1\","
+        + "        \"prettyName\": \"Bot User02\","
+        + "        \"text\": \"@Bot User01\","
+        + "        \"indexStart\": 6,"
+        + "        \"indexEnd\": 17,"
+        + "        \"userType\": \"lc\","
+        + "        \"type\": \"USER_FOLLOW\""
+        + "    }]"
+        + "}");
+
+    mockContext.parseMarkdown(markdown, entities, null);
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "Hello <span class=\"entity\" data-entity-id=\"mention1\">1</span>!</div>";
+    JsonNode expectedEntityJSON = MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
+        + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
+    String expectedText = "Hello 1!";
+
+    String presentationML = mockContext.getPresentationML();
+    JsonNode entityJson = mockContext.getEntityJson();
+    assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
+    assertEquals("Generated EntityJSON", expectedEntityJSON, entityJson);
+    assertEquals("Geerated Markdown", expectedText, mockContext.getMarkdown());
+    assertEquals("Generated text", expectedText, mockContext.getText());
   }
 
   @Test

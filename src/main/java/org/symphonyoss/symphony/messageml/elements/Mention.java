@@ -86,7 +86,7 @@ public class Mention extends Entity {
         break;
 
       default:
-          super.buildAttribute(item);
+        super.buildAttribute(item);
     }
   }
 
@@ -94,12 +94,14 @@ public class Mention extends Entity {
   public void asPresentationML(XmlPrintStream out) {
     if (userPresentation != null) {
       out.printElement(presentationMLTag, asText(), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
-    } else if (prettyName != null) {
-      out.print(prettyName);
-    } else if (email != null) {
-      out.print(email);
-    } else if (uid != null) {
-      out.print(uid);
+    } else {
+      if (prettyName != null) {
+        out.printElement(presentationMLTag, prettyName, CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+      } else if (email != null) {
+        out.printElement(presentationMLTag, email, CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+      } else if (uid != null) {
+        out.printElement(presentationMLTag, String.valueOf(uid), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+      }
     }
   }
 
@@ -123,11 +125,11 @@ public class Mention extends Entity {
 
   @Override
   public ObjectNode asEntityJson(ObjectNode parent) {
-    if (userPresentation != null) {
+//    if (userPresentation != null) {
       return super.asEntityJson(parent);
-    } else {
-      return null;
-    }
+//    } else {
+//      return null;
+//    }
   }
 
   @Override
@@ -183,7 +185,7 @@ public class Mention extends Entity {
 
   @Override
   protected String getEntityValue() {
-    return String.valueOf(userPresentation.getId());
+    return String.valueOf(uid);
   }
 
   @Override
