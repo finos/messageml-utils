@@ -1388,8 +1388,10 @@ public class ElementTest {
     String invalidAttr = "<messageML>Hello <mention email=\"invalid@email.com\" strict=\"false\" />!</messageML>";
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
 
-    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello invalid@email.com!</div>",
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "Hello invalid@email.com!</div>",
         context.getPresentationML());
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Markdown", "Hello invalid@email.com!", context.getMarkdown());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
@@ -1414,8 +1416,13 @@ public class ElementTest {
     String invalidAttr = "<messageML>Hello <mention uid=\"0\" strict=\"false\" />!</messageML>";
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
 
-    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello 0!</div>",
+    JsonNode expectedJson = MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
+        + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}");
+
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "Hello <span class=\"entity\" data-entity-id=\"mention1\">0</span>!</div>",
         context.getPresentationML());
+    assertEquals("EntityJSON", expectedJson, context.getEntityJson());
     assertEquals("Markdown", "Hello 0!", context.getMarkdown());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }

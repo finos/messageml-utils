@@ -95,12 +95,12 @@ public class Mention extends Entity {
     if (userPresentation != null) {
       out.printElement(presentationMLTag, asText(), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
     } else {
-      if (prettyName != null) {
-        out.printElement(presentationMLTag, prettyName, CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
-      } else if (email != null) {
-        out.printElement(presentationMLTag, email, CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
-      } else if (uid != null) {
+      if (uid != null) {
         out.printElement(presentationMLTag, String.valueOf(uid), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+      } else if (prettyName != null) {
+        out.print(prettyName);
+      } else if (email != null) {
+        out.print(email);
       }
     }
   }
@@ -125,11 +125,11 @@ public class Mention extends Entity {
 
   @Override
   public ObjectNode asEntityJson(ObjectNode parent) {
-//    if (userPresentation != null) {
+    if (getEntityValue() != null) {
       return super.asEntityJson(parent);
-//    } else {
-//      return null;
-//    }
+    } else {
+      return null;
+    }
   }
 
   @Override
@@ -172,6 +172,12 @@ public class Mention extends Entity {
     } else if (email != null) {
       userPresentation = dataProvider.getUserPresentation(email);
     }
+
+    if (userPresentation != null) {
+      uid = (uid == null) ? userPresentation.getId() : uid;
+      email = (email == null) ? userPresentation.getEmail() : email;
+      prettyName = (prettyName == null) ? userPresentation.getPrettyName() : prettyName;
+    }
   }
 
   public IUserPresentation getUserPresentation() {
@@ -185,7 +191,7 @@ public class Mention extends Entity {
 
   @Override
   protected String getEntityValue() {
-    return String.valueOf(uid);
+    return (uid != null) ? String.valueOf(uid) : null;
   }
 
   @Override

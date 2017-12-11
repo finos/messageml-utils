@@ -68,7 +68,7 @@ public class MessageMLContextTest {
 
   @Before
   public void setUp() throws InvalidInputException, ProcessingException, ParserConfigurationException {
-    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    UserPresentation user = new UserPresentation(123456789L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
     when(dataProvider.getUserPresentation(anyLong())).thenReturn(user);
     when(dataProvider.getUserPresentation(anyString())).thenReturn(user);
     context = new MessageMLContext(dataProvider);
@@ -237,7 +237,7 @@ public class MessageMLContextTest {
         + "        \"type\": \"URL\"\n"
         + "    }],\n"
         + "    \"userMentions\": [{\n"
-        + "        \"id\": 1,\n"
+        + "        \"id\": 123456789,\n"
         + "        \"screenName\": \"bot.user1\",\n"
         + "        \"prettyName\": \"Bot User01\",\n"
         + "        \"text\": \"@Bot User01\",\n"
@@ -266,7 +266,7 @@ public class MessageMLContextTest {
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"com.symphony.user.userId\","
-        + "\"value\":\"1\""
+        + "\"value\":\"123456789\""
         + "}]},"
         + "\"keyword2\":{"
         + "\"type\":\"org.symphonyoss.taxonomy\","
@@ -408,7 +408,7 @@ public class MessageMLContextTest {
         + "        \"type\": \"KEYWORD\"\n"
         + "    }],\n"
         + "    \"userMentions\": [{\n"
-        + "        \"id\": 1,\n"
+        + "        \"id\": 123456789,\n"
         + "        \"screenName\": \"bot.user1\",\n"
         + "        \"prettyName\": \"Bot User01\",\n"
         + "        \"text\": \"@Bot User01\",\n"
@@ -447,7 +447,7 @@ public class MessageMLContextTest {
         + "\"version\":\"1.0\","
         + "\"id\":[{"
         + "\"type\":\"com.symphony.user.userId\","
-        + "\"value\":\"1\""
+        + "\"value\":\"123456789\""
         + "}]}"
         + "}";
     final JsonNode expectedEntityJson = MAPPER.readTree(generatedEntities);
@@ -477,7 +477,7 @@ public class MessageMLContextTest {
     assertEquals("Child #9 children", 0, children.get(8).getChildren().size());
 
     assertEquals("Child #11 class", Mention.class, children.get(10).getClass());
-    assertEquals("Child #11 user ID", 1, ((Mention) children.get(10)).getUserPresentation().getId());
+    assertEquals("Child #11 user ID", 123456789, ((Mention) children.get(10)).getUserPresentation().getId());
     assertEquals("Child #11 user email", "bot.user1@localhost.com",
         ((Mention) children.get(10)).getUserPresentation().getEmail());
     assertEquals("Child #11 user name", "bot.user1",

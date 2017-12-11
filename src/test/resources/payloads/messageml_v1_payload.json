@@ -27,7 +27,7 @@
     "userMentions": [
       {
         "type": "USER_FOLLOW",
-        "id": "68719476743",
+        "id": "123456789",
         "screenName": "bot.user1",
         "prettyName": "Local Bot01",
         "text": "@Local Bot01",
