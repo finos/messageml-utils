@@ -33,6 +33,6 @@ public class TableNode extends CustomBlock {
   }
 
   public String getClosingDelimiter() {
-    return DELIMITER;
+    return "\n" + DELIMITER + "\n";
   }
 }
