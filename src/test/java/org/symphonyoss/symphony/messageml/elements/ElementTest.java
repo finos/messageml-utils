@@ -301,7 +301,7 @@ public class ElementTest {
     assertEquals("Element children", Collections.<Element>emptyList(), hr.getChildren());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello<hr/>world!</div>",
         context.getPresentationML());
-    assertEquals("Markdown", "Hello\n---\nworld!", context.getMarkdown());
+    assertEquals("Markdown", "Hello\n\n---\n\nworld!", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
@@ -522,7 +522,7 @@ public class ElementTest {
     assertEquals("Child element text", "world", p.getChildren().get(0).asText());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello<p>world</p>!</div>",
         context.getPresentationML());
-    assertEquals("Markdown", "Hello\nworld\n!", context.getMarkdown());
+    assertEquals("Markdown", "Hello\n\nworld\n\n!", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
 
@@ -600,7 +600,7 @@ public class ElementTest {
     assertEquals("Child element text", "world", div.getChildren().get(0).asText());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello <div>world</div>!</div>",
         context.getPresentationML());
-    assertEquals("Markdown", "Hello \nworld\n!", context.getMarkdown());
+    assertEquals("Markdown", "Hello \n\nworld\n\n!", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
 
@@ -1963,7 +1963,7 @@ public class ElementTest {
     assertEquals("Element attributes", Collections.emptyMap(), body.getAttributes());
     assertEquals("Element children", 1, body.getChildren().size());
 
-    assertEquals("Markdown", "Hello\nworld!\n", context.getMarkdown());
+    assertEquals("Markdown", "Hello\n\nworld!\n\n", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
@@ -2090,7 +2090,7 @@ public class ElementTest {
         + "</div>"
         + "</div>";
 
-    String expectedMarkdown = "$ibm\n";
+    String expectedMarkdown = "$ibm\n\n";
 
     context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();

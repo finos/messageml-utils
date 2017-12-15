@@ -35,12 +35,14 @@ import org.commonmark.node.Paragraph;
 import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.renderer.text.TextContentWriter;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 /**
@@ -102,10 +104,10 @@ public class MarkdownRenderer extends AbstractVisitor {
 
   @Override
   public void visit(Paragraph paragraph) {
-    writer.line();
+    writer.doubleLine();
     if (paragraph.getFirstChild() != null) {
       visitChildren(paragraph);
-      writer.line();
+      writer.doubleLine();
     }
   }
 
@@ -193,6 +195,8 @@ public class MarkdownRenderer extends AbstractVisitor {
   public void visit(CustomBlock node) {
     if (node instanceof TableNode) {
       visit((TableNode) node);
+    } else if (node instanceof TableRowNode) {
+      visit((TableRowNode) node);
     } else if (node instanceof TableCellNode) {
       visit((TableCellNode) node);
     } else if (node instanceof PreformattedNode) {
@@ -241,7 +245,13 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(table.getOpeningDelimiter());
     visitChildren(table);
     writer.write(table.getClosingDelimiter());
-    writer.line();
+  }
+
+  private void visit(TableRowNode row) {
+    visitChildren(row);
+    if (row.getNext() != null) {
+      writer.write(row.getDelimiter());
+    }
   }
 
   private void visit(TableCellNode cell) {
@@ -284,7 +294,7 @@ public class MarkdownRenderer extends AbstractVisitor {
 
   /**
    * Get the JSON representation of the input document.
-   * @return JSON object containing entries for keywords (hashtags and cashtags), user menations and URLs in the
+   * @return JSON object containing entries for keywords (hashtags and cashtags), user mentions and URLs in the
    * input documents.
    */
   public ObjectNode getJson() {
@@ -302,6 +312,18 @@ public class MarkdownRenderer extends AbstractVisitor {
 
     int length() {
       return out.length();
+    }
+
+    char getLastChar() {
+      int length = length();
+      return (length != 0) ? out.charAt(length - 1) : 0;
+    }
+
+    void doubleLine() {
+      char lastChar = getLastChar();
+      if (lastChar != 0 && lastChar != '\n') {
+        write("\n\n");
+      }
     }
 
     @Override

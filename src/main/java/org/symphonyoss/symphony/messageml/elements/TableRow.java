@@ -17,8 +17,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
-import org.commonmark.node.Paragraph;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 
 import java.util.Arrays;
 
@@ -37,7 +37,7 @@ public class TableRow extends Element {
 
   @Override
   public Node asMarkdown() {
-    return new Paragraph();
+    return new TableRowNode();
   }
 
   @Override
