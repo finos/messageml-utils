@@ -817,6 +817,16 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testGetTestWhitespaceLogic() throws Exception {
+    String message = "<messageML><span>\nfoo</span>bar<span>\n</span> baz<span>qux\n</span></messageML>";
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("Message as text", " foobar  bazqux ", context.getText());
+    assertEquals("Message as text, preserve whitespace", " foo bar    baz qux ", context.getText(true));
+    assertEquals("Message as text, trim whitespace", "foo bar baz qux", context.getText(false));
+  }
+
+  @Test
   public void testEscapeReservedChars() throws Exception {
     String markdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ & * ( ) _ + { } | : \" < > ?";
     String messageML = "<messageML>½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : \" &lt; &gt; ?</messageML>";

@@ -18,6 +18,7 @@ package org.symphonyoss.symphony.messageml;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -26,6 +27,8 @@ import org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -160,6 +163,7 @@ public class MessageMLContext {
   /**
    * Retrieve a string representation of the message by getting the values of
    * its PresentationML elements.
+   * This method returns {@link Element#getTextContent()} of the top-level document tree.
    * @throws IllegalStateException thrown if the message hasn't been parsed yet
    */
   public String getText() throws InvalidInputException, ProcessingException, IllegalStateException {
@@ -171,6 +175,42 @@ public class MessageMLContext {
     String presentationML = getPresentationML();
     Element doc = messageMLParser.parseDocument(presentationML);
     return doc.getTextContent();
+  }
+
+  /**
+   * Retrieve a string representation of the message by getting the values of
+   * its PresentationML elements.
+   * This method returns {@link Element#getTextContent()} of each individual element of the tree,
+   * separated by a single space
+   * @param preserveWhitespace if false, trims the leading and trailing whitespce of each element
+   * @throws IllegalStateException thrown if the message hasn't been parsed yet
+   */
+  public String getText(boolean preserveWhitespace) throws InvalidInputException, ProcessingException, IllegalStateException {
+    if (messageML == null) {
+      throw new IllegalStateException("The message hasn't been parsed yet. "
+          + "Please call MessageMLContext.parse() first.");
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    String presentationML = getPresentationML();
+    Element doc = messageMLParser.parseDocument(presentationML);
+
+    NodeList nodes = doc.getChildNodes();
+
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node node = nodes.item(i);
+      String text = (preserveWhitespace) ? node.getTextContent() : node.getTextContent().trim();
+
+      // Prepend space unless we're at the first node or we trim whitespace and current text is blank
+      if (i > 0 && StringUtils.isNotEmpty(text)) {
+        sb.append(" ");
+      }
+
+      sb.append(text);
+    }
+
+    return sb.toString();
   }
 
 }
