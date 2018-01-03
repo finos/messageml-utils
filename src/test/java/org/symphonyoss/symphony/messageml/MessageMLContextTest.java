@@ -358,6 +358,17 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseFreemarkerResolvingAClass() throws Exception {
+    String message =
+        "<messageML><#assign ex=\"freemarker.template.utility.Execute\"?new()> ${ ex(\"pwd\") }</messageML>";
+    String data = "";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Error parsing Freemarker template: invalid input at line 1, column 12");
+    context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testParseFreemarkerInvalidContainerObject() throws Exception {
     String message = "<messageML>${obj['obj123'].value}</messageML>";
     String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
