@@ -842,20 +842,21 @@ public class MessageMLContextTest {
     String markdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ & * ( ) _ + { } | : \" < > ?";
     String messageML = "<messageML>½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : \" &lt; &gt; ?</messageML>";
     String escapedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ?";
+    String escapedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ & \\* ( ) \\_ + { } | : \" < > ?";
 
     context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
 
     assertEquals("Generated PresentationML",
         String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", escapedPresentationML),
         context.getPresentationML());
-    assertEquals("Generated Markdown", markdown, context.getMarkdown());
+    assertEquals("Generated Markdown", escapedMarkdown, context.getMarkdown());
 
     context.parseMarkdown(markdown, null, null);
 
     assertEquals("Generated PresentationML",
         String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", escapedPresentationML),
         context.getPresentationML());
-    assertEquals("Generated Markdown", markdown, context.getMarkdown());
+    assertEquals("Generated Markdown", escapedMarkdown, context.getMarkdown());
   }
 
   @Test

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BulletList;
 import org.commonmark.node.CustomBlock;
@@ -94,6 +95,10 @@ public class MarkdownRenderer extends AbstractVisitor {
     if (removeNewlines) {
       content = XmlPrintStream.removeNewLines(content);
     }
+
+    // Escape Markdown reserved characters in text nodes to prevent them being interpreted as MD
+    content = StringUtils.replaceEach(content, new String[]{"_","*"}, new String[]{"\\_","\\*"});;
+
     writer.write(content);
   }
 
