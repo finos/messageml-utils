@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -41,13 +40,12 @@ public class CodeTest {
   }
 
   @Test
-  @Ignore
   public void testCodeWithEmbeddedMarkdown() throws Exception {
     String input = "<messageML><code>_Hello_ **world!**</code></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<code>_Hello_ **world!**</code></div>";
-    String expectedMarkdown = "```\n_Hello_ **world!**\n```\n";
-    String expectedText = "System.out.println(\"Hello world!\");";
+    String expectedMarkdown = "```\n\\_Hello\\_ \\*\\*world!\\*\\*\n```\n";
+    String expectedText = "_Hello_ **world!**";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -63,7 +61,7 @@ public class CodeTest {
     String input = "<messageML><code><i>Hello</i> <b>world!</b></code></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<code><i>Hello</i> <b>world!</b></code></div>";
-    String expectedMarkdown = "```\n_Hello_ **world!**\n```\n";
+    String expectedMarkdown = "```\nHello world!\n```\n";
     String expectedText = "Hello world!";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -110,7 +108,7 @@ public class CodeTest {
     String input = "<messageML><code>&lt;html&gt;<i>Hello</i> <b>world!</b>&lt;/html&gt;</code></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<code>&lt;html&gt;<i>Hello</i> <b>world!</b>&lt;/html&gt;</code></div>";
-    String expectedMarkdown = "```\n<html>_Hello_ **world!**</html>\n```\n";
+    String expectedMarkdown = "```\n<html>Hello world!</html>\n```\n";
     String expectedText = "<html>Hello world!</html>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -167,12 +165,11 @@ public class CodeTest {
   }
 
   @Test
-  @Ignore
   public void testCodeWithEmbeddedMarkdownByPresentationML() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code>_Hello_ **world!**</code></div>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<code>_Hello_ **world!**</code></div>";
-    String expectedMarkdown = "```\n_Hello_ **world!**\n```\n";
+    String expectedMarkdown = "```\n\\_Hello\\_ \\*\\*world!\\*\\*\n```\n";
     String expectedText = "_Hello_ **world!**";
 
     context.parseMessageML(input, null, null);
@@ -202,7 +199,6 @@ public class CodeTest {
   }
 
   @Test
-  @Ignore
   public void testCodeByMarkdownNoNewlineDelimiters() throws Exception {
     String input = "```System.out.println(\"Hello world!\");```";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
@@ -220,7 +216,6 @@ public class CodeTest {
   }
 
   @Test
-  @Ignore
   public void testCodeByMarkdownSingleBacktick() throws Exception {
     String input = "`System.out.println(\"Hello world!\");`";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
@@ -237,13 +232,14 @@ public class CodeTest {
     assertEquals("Entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
 
+
   @Test
-  public void testCodeByMarkdownSingleTilde() throws Exception {
-    String input = "~System.out.println(\"Hello world!\");~";
+  public void testCodeByMarkdownDoubleBacktick() throws Exception {
+    String input = "``System.out.println(\"Hello`world!\");``";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "~System.out.println(&quot;Hello world!&quot;);~</div>";
-    String expectedMarkdown = "~System.out.println(\"Hello world!\");~";
-    String expectedText = "~System.out.println(\"Hello world!\");~";
+        + "`System.out.println(&quot;Hello world!&quot;);`</div>";
+    String expectedMarkdown = "`System.out.println(\"Hello world`!\");`";
+    String expectedText = "System.out.println(\"Hello world!\");";
 
     context.parseMarkdown(input, null, null);
 
@@ -255,7 +251,6 @@ public class CodeTest {
   }
 
   @Test
-  @Ignore
   public void testCodeByMarkdownTildeDelimitedBlock() throws Exception {
     String input = "\n~~~\nSystem.out.println(\"Hello world!\");\n~~~\n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
@@ -290,12 +285,11 @@ public class CodeTest {
   }
 
   @Test
-  @Ignore
   public void testCodeWithEmbeddedMarkdownByMarkdown() throws Exception {
     String input = "\n```\n_Hello_ **world!**\n```\n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<code>_Hello_ **world!**</code></div>";
-    String expectedMarkdown = "```\n_Hello_ **world!**\n```\n";
+    String expectedMarkdown = "```\n\\_Hello\\_ \\*\\*world!\\*\\*\n```\n";
     String expectedText = "_Hello_ **world!**";
 
     context.parseMarkdown(input, null, null);

@@ -28,8 +28,8 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 public class Code extends Element {
 
   public static final String MESSAGEML_TAG = "code";
-  private static final char MARKDOWN_DELIMITER_CHAR = '`';
-  private static final int MARKDOWN_DELIMITER_LENGTH = 3;
+  public static final char MARKDOWN_DELIMITER_CHAR = '`';
+  public static final int MARKDOWN_DELIMITER_LENGTH = 3;
   private static final int MARKDOWN_DELIMITER_INDENT = 0;
 
   public Code(Element parent) {

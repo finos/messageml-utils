@@ -192,17 +192,24 @@ public class MarkdownParser extends AbstractVisitor {
 
   @Override
   public void visit(FencedCodeBlock code) {
-    Code node = new Code(parent);
-    TextNode text = new TextNode(node, code.getLiteral().trim());
-    node.addChild(text);
-    visitChildren(node, code);
+    if (code.getFenceChar() == Code.MARKDOWN_DELIMITER_CHAR && code.getFenceLength() == Code.MARKDOWN_DELIMITER_LENGTH) {
+      Code node = new Code(parent);
+      TextNode text = new TextNode(node, code.getLiteral().trim());
+      node.addChild(text);
+      visitChildren(node, code);
+    } else {
+      String delimiter = StringUtils.repeat(code.getFenceChar(), code.getFenceLength());
+      Text node = new Text(delimiter + code.getLiteral().trim() + delimiter);
+      visit(node);
+    }
+
   }
 
-  @Override
-  public void visit(org.commonmark.node.Code code) {
-    TextNode node = new TextNode(parent, code.getLiteral().trim());
-    visitChildren(node, code);
-  }
+//  @Override
+//  public void visit(org.commonmark.node.Code code) {
+//    TextNode node = new TextNode(parent, code.getLiteral().trim());
+//    visitChildren(node, code);
+//  }
 
   @Override
   public void visit(CustomNode node) {
