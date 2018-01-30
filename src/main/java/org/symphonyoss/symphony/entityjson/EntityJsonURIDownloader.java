@@ -23,11 +23,11 @@
 
 package org.symphonyoss.symphony.entityjson;
 
+import com.github.fge.jsonschema.core.load.download.URIDownloader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-
-import com.github.fge.jsonschema.core.load.download.URIDownloader;
 
 /**
  * URIDownloader which restricts schema downloads to known hosts.

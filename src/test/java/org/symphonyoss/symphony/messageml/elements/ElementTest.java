@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -34,18 +35,15 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-import org.symphonyoss.symphony.messageml.util.DataProvider;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
+import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
 
 import java.util.Collections;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 public class ElementTest {
   private static final ObjectMapper MAPPER = new ObjectMapper();
-  private final IDataProvider dataProvider = new DataProvider();
+  private final IDataProvider dataProvider = new TestDataProvider();
 
   @Rule
   public final ExpectedException expectedException = ExpectedException.none();
@@ -53,7 +51,7 @@ public class ElementTest {
   private MessageMLContext context;
 
   @Before
-  public void setUp() throws InvalidInputException, ProcessingException, ParserConfigurationException {
+  public void setUp() {
     context = new MessageMLContext(dataProvider);
   }
 
@@ -1234,7 +1232,7 @@ public class ElementTest {
   @Test
   public void testMentionByUid() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String input = "<messageML>Hello <mention uid=\"1\"/>!</messageML>";
 
@@ -1258,7 +1256,7 @@ public class ElementTest {
   @Test
   public void testMentionByEmail() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String input = "<messageML>Hello <mention email=\"bot.user1@localhost.com\"/>!</messageML>";
 
@@ -1282,7 +1280,7 @@ public class ElementTest {
   @Test
   public void testMentionByPresentationMLDiv() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "Hello <div class=\"entity\" data-entity-id=\"mention123\">@Bot User01</div>!"
@@ -1310,7 +1308,7 @@ public class ElementTest {
   @Test
   public void testMentionByPresentationMLSpan() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "Hello <span class=\"entity\" data-entity-id=\"mention123\">@Bot User01</span>!"
@@ -1338,7 +1336,7 @@ public class ElementTest {
   @Test
   public void testMentionByPresentationMLInvalidUser() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String input = "<messageML>Hello "
         + "<span class=\"entity\" data-entity-id=\"mention1\">@Invalid user</span>"
@@ -1360,7 +1358,7 @@ public class ElementTest {
   @Test
   public void testMentionInvalidAttr() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String invalidAttr = "<messageML>Hello <mention uid=\"1\" class=\"label\"/>!</messageML>";
     expectedException.expect(InvalidInputException.class);
@@ -1371,7 +1369,7 @@ public class ElementTest {
   @Test
   public void testHardMentionInvalidEmail() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String invalidAttr = "<messageML>Hello <mention email=\"invalid@email.com\"/>!</messageML>";
 
@@ -1383,7 +1381,7 @@ public class ElementTest {
   @Test
   public void testSoftMentionInvalidEmail() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String invalidAttr = "<messageML>Hello <mention email=\"invalid@email.com\" strict=\"false\" />!</messageML>";
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
@@ -1399,7 +1397,7 @@ public class ElementTest {
   @Test
   public void testHardMentionInvalidUid() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String invalidAttr = "<messageML>Hello <mention uid=\"0\"/>!</messageML>";
 
@@ -1411,7 +1409,7 @@ public class ElementTest {
   @Test
   public void testSoftMentionInvalidUid() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String invalidAttr = "<messageML>Hello <mention uid=\"0\" strict=\"false\" />!</messageML>";
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
@@ -1439,7 +1437,7 @@ public class ElementTest {
   @Test
   public void testMentionByMarkdown() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((DataProvider) dataProvider).setUserPresentation(user);
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
 
     String markdown = "Hello @Bot User01!";
     JsonNode entities = MAPPER.readTree("{\"userMentions\": [{"
@@ -2127,6 +2125,19 @@ public class ElementTest {
     assertEquals("Legacy hashtag type", "KEYWORD", legacyHashtags.get(0).get("type").textValue());
     assertEquals("Legacy hashtag type", 0, legacyHashtags.get(0).get("indexStart").intValue());
     assertEquals("Legacy hashtag type", 4, legacyHashtags.get(0).get("indexEnd").intValue());
+  }
+
+  @Test
+  public void testBodyInvalidParent() {
+    String input = "<messageML><body>Hello world!</body></messageML>";
+
+    try {
+      context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+      fail("Should have thrown an exception");
+    } catch (Exception e) {
+      assertEquals("Exception class", InvalidInputException.class, e.getClass());
+      assertEquals("Exception message", "Element \"body\" is not allowed as a child of \"messageML\"", e.getMessage());
+    }
   }
 
   @Test

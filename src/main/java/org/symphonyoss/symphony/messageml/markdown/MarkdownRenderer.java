@@ -28,6 +28,7 @@ import org.commonmark.node.CustomNode;
 import org.commonmark.node.Delimited;
 import org.commonmark.node.Document;
 import org.commonmark.node.Emphasis;
+import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.HardLineBreak;
 import org.commonmark.node.Link;
 import org.commonmark.node.ListItem;
@@ -183,6 +184,17 @@ public class MarkdownRenderer extends AbstractVisitor {
       visitChildren(li);
       writer.line();
     }
+  }
+
+  @Override
+  public void visit(FencedCodeBlock code) {
+    writer.line();
+    writer.writeStripped(StringUtils.repeat(code.getFenceChar(), code.getFenceLength()));
+    writer.line();
+    visitChildren(code);
+    writer.line();
+    writer.writeStripped(StringUtils.repeat(code.getFenceChar(), code.getFenceLength()));
+    writer.line();
   }
 
   @Override

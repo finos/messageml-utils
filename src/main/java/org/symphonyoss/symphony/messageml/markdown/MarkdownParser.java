@@ -36,7 +36,6 @@ import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.HardLineBreak;
 import org.commonmark.node.Heading;
 import org.commonmark.node.HtmlInline;
-import org.commonmark.node.IndentedCodeBlock;
 import org.commonmark.node.ListBlock;
 import org.commonmark.node.Node;
 import org.commonmark.node.StrongEmphasis;
@@ -46,6 +45,7 @@ import org.commonmark.parser.Parser;
 import org.symphonyoss.symphony.messageml.elements.Bold;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.CashTag;
+import org.symphonyoss.symphony.messageml.elements.Code;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.Emoji;
 import org.symphonyoss.symphony.messageml.elements.FormatEnum;
@@ -97,7 +97,6 @@ public class MarkdownParser extends AbstractVisitor {
     enabledBlockTypes.add(Heading.class);
     enabledBlockTypes.add(ThematicBreak.class);
     enabledBlockTypes.add(FencedCodeBlock.class);
-    enabledBlockTypes.add(IndentedCodeBlock.class);
     enabledBlockTypes.add(BlockQuote.class);
     enabledBlockTypes.add(ListBlock.class);
 
@@ -189,6 +188,20 @@ public class MarkdownParser extends AbstractVisitor {
   public void visit(org.commonmark.node.ListItem li) {
     ListItem node = new ListItem(parent);
     visitChildren(node, li);
+  }
+
+  @Override
+  public void visit(FencedCodeBlock code) {
+    Code node = new Code(parent);
+    TextNode text = new TextNode(node, code.getLiteral().trim());
+    node.addChild(text);
+    visitChildren(node, code);
+  }
+
+  @Override
+  public void visit(org.commonmark.node.Code code) {
+    TextNode node = new TextNode(parent, code.getLiteral().trim());
+    visitChildren(node, code);
   }
 
   @Override

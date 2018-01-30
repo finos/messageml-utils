@@ -63,6 +63,7 @@ public class CardBody extends Element {
   @Override
   void validate() throws InvalidInputException {
     assertNoAttributes();
+    assertParent(Collections.<Class<? extends Element>>singleton(Card.class));
   }
 
 }

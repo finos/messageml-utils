@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -327,6 +328,16 @@ public abstract class Element {
         throw new InvalidInputException("Element \"" + child.getMessageMLTag() + "\" is not allowed in \""
             + this.getMessageMLTag() + "\"");
       }
+    }
+  }
+
+  /**
+   * Check that the element's allowed parents are limited to the specified element types.
+   */
+  void assertParent(Collection<Class<? extends Element>> permittedParents) throws InvalidInputException {
+    if (!permittedParents.contains(this.getParent().getClass())) {
+      throw new InvalidInputException("Element \"" + this.getMessageMLTag() + "\" is not allowed as a child of \""
+          + this.getParent().getMessageMLTag() + "\"");
     }
   }
 

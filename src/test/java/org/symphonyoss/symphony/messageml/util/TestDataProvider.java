@@ -27,11 +27,11 @@ import java.util.Set;
  * @author lukasz
  * @since 07/04/17
  */
-public class DataProvider implements IDataProvider {
+public class TestDataProvider implements IDataProvider {
   private static final Set<String> STANDARD_URI_SCHEMES = new HashSet<>();
   private UserPresentation user;
 
-  public DataProvider() {
+  public TestDataProvider() {
     STANDARD_URI_SCHEMES.add("http");
     STANDARD_URI_SCHEMES.add("https");
   }

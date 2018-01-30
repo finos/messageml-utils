@@ -23,9 +23,9 @@
 
 package org.symphonyoss.symphony.entityjson;
 
-import javax.annotation.Nullable;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import javax.annotation.Nullable;
 
 /**
  * A parser context containing an instance and a schema.
