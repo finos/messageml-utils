@@ -202,14 +202,15 @@ public class MarkdownParser extends AbstractVisitor {
       Text node = new Text(delimiter + code.getLiteral().trim() + delimiter);
       visit(node);
     }
-
   }
 
-//  @Override
-//  public void visit(org.commonmark.node.Code code) {
-//    TextNode node = new TextNode(parent, code.getLiteral().trim());
-//    visitChildren(node, code);
-//  }
+  @Override
+  public void visit(org.commonmark.node.Code code) {
+    Code node = new Code(parent);
+    TextNode text = new TextNode(node, code.getLiteral().trim());
+    node.addChild(text);
+    visitChildren(node, code);
+  }
 
   @Override
   public void visit(CustomNode node) {

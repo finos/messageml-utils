@@ -202,8 +202,8 @@ public class CodeTest {
   public void testCodeByMarkdownNoNewlineDelimiters() throws Exception {
     String input = "```System.out.println(\"Hello world!\");```";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "```System.out.println(&quot;Hello world!&quot;);```</div>";
-    String expectedMarkdown = "```System.out.println(\"Hello world!\");```";
+        + "<code>System.out.println(&quot;Hello world!&quot;);</code></div>";
+    String expectedMarkdown = "```\nSystem.out.println(\"Hello world!\");\n```\n";
     String expectedText = "System.out.println(\"Hello world!\");";
 
     context.parseMarkdown(input, null, null);
@@ -219,8 +219,8 @@ public class CodeTest {
   public void testCodeByMarkdownSingleBacktick() throws Exception {
     String input = "`System.out.println(\"Hello world!\");`";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "`System.out.println(&quot;Hello world!&quot;);`</div>";
-    String expectedMarkdown = "`System.out.println(\"Hello world!\");`";
+        + "<code>System.out.println(&quot;Hello world!&quot;);</code></div>";
+    String expectedMarkdown = "```\nSystem.out.println(\"Hello world!\");\n```\n";
     String expectedText = "System.out.println(\"Hello world!\");";
 
     context.parseMarkdown(input, null, null);
@@ -232,14 +232,13 @@ public class CodeTest {
     assertEquals("Entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
 
-
   @Test
   public void testCodeByMarkdownDoubleBacktick() throws Exception {
     String input = "``System.out.println(\"Hello`world!\");``";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "`System.out.println(&quot;Hello world!&quot;);`</div>";
-    String expectedMarkdown = "`System.out.println(\"Hello world`!\");`";
-    String expectedText = "System.out.println(\"Hello world!\");";
+        + "<code>System.out.println(&quot;Hello`world!&quot;);</code></div>";
+    String expectedMarkdown = "```\nSystem.out.println(\"Hello`world!\");\n```\n";
+    String expectedText = "System.out.println(\"Hello`world!\");";
 
     context.parseMarkdown(input, null, null);
 
