@@ -23,11 +23,11 @@
 
 package org.symphonyoss.symphony.entityjson;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.Objects;
 
 import javax.annotation.Nullable;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Represents the context of a parsing and validation operation.

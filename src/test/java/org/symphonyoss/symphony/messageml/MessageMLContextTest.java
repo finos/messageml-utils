@@ -336,6 +336,26 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseMessageUnescapeChars() throws Exception {
+    String mml = "<messageML>&lt;b&gt;Hello&lt;/b&gt; &lt;i&gt;world!&lt;/i&gt;</messageML>";
+    String pml = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "&lt;b&gt;Hello&lt;/b&gt; &lt;i&gt;world!&lt;/i&gt;</div>";
+    String md = "<b>Hello</b> <i>world!</i>";
+
+    context.parseMessageML(mml, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Expected PresentationML", pml, context.getPresentationML());
+    assertEquals("Expected Markdown", md, context.getMarkdown());
+
+    context.parseMessageML(pml, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Expected PresentationML", pml, context.getPresentationML());
+    assertEquals("Expected Markdown", md, context.getMarkdown());
+
+    context.parseMarkdown(md, null, null);
+    assertEquals("Expected PresentationML", pml, context.getPresentationML());
+    assertEquals("Expected Markdown", md, context.getMarkdown());
+  }
+
+  @Test
   public void testParseFreemarker() throws Exception {
     String message = "<messageML>${data['obj123'].value}</messageML>";
     String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
@@ -670,7 +690,14 @@ public class MessageMLContextTest {
     String presentationML = context.getPresentationML();
     assertEquals("PresentationML",
         "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello<br/>world!</div>", presentationML);
+  }
 
+  @Test
+  public void testParseMarkdownCode() throws Exception {
+    String message = "This is code:\n```\nval message: String = \"Hello world\"\nprintln message\n```\nThis is text";
+    context.parseMarkdown(message, null, null);
+    String presentationML = context.getPresentationML();
+    System.out.println(presentationML);
   }
 
   @Test
@@ -726,9 +753,9 @@ public class MessageMLContextTest {
 
   @Test
   public void testFailOnInvalidTag() throws Exception {
-    String invalidMarkup = "<messageML><code>Test</code></messageML>";
+    String invalidMarkup = "<messageML><script>Test</script></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Invalid MessageML content at element \"code\"");
+    expectedException.expectMessage("Invalid MessageML content at element \"script\"");
     context.parseMessageML(invalidMarkup, null, MessageML.MESSAGEML_VERSION);
   }
 

@@ -16,32 +16,38 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.Node;
-import org.commonmark.node.StrongEmphasis;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
- * Class representing bold text.
- *
+ * Class representing a block container for block or inline content.
  * @author lukasz
  * @since 3/27/17
  */
-public class Bold extends Element {
-  public static final String MESSAGEML_TAG = "b";
-  private static final String MARKDOWN = "**";
+public class Code extends Element {
 
-  public Bold(Element parent) {
+  public static final String MESSAGEML_TAG = "code";
+  public static final char MARKDOWN_DELIMITER_CHAR = '`';
+  public static final int MARKDOWN_DELIMITER_LENGTH = 3;
+  private static final int MARKDOWN_DELIMITER_INDENT = 0;
+
+  public Code(Element parent) {
     super(parent, MESSAGEML_TAG);
   }
 
   @Override
   public Node asMarkdown() {
-    return new StrongEmphasis(MARKDOWN);
+    FencedCodeBlock node = new FencedCodeBlock();
+    node.setFenceChar(MARKDOWN_DELIMITER_CHAR);
+    node.setFenceLength(MARKDOWN_DELIMITER_LENGTH);
+    node.setFenceIndent(MARKDOWN_DELIMITER_INDENT);
+    return node;
   }
 
   @Override
   public void validate() throws InvalidInputException {
+    assertNoAttributes();
     assertPhrasingContent();
   }
-
 }

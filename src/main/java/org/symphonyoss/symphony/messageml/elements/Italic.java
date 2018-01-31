@@ -18,6 +18,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Emphasis;
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
  * Class representing italics text.
@@ -36,6 +37,11 @@ public class Italic extends Element {
   @Override
   public Node asMarkdown() {
     return new Emphasis(MARKDOWN);
+  }
+
+  @Override
+  public void validate() throws InvalidInputException {
+    assertPhrasingContent();
   }
 
 }

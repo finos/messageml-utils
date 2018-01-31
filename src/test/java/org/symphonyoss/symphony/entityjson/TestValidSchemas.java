@@ -23,11 +23,11 @@
 
 package org.symphonyoss.symphony.entityjson;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
-import org.junit.Test;
 
 /*
  * Test various valid inputs, the validate method throws an exception if the input is invalid so

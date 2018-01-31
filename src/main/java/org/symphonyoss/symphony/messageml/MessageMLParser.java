@@ -21,6 +21,7 @@ import org.symphonyoss.symphony.messageml.elements.CardBody;
 import org.symphonyoss.symphony.messageml.elements.CardHeader;
 import org.symphonyoss.symphony.messageml.elements.CashTag;
 import org.symphonyoss.symphony.messageml.elements.Chime;
+import org.symphonyoss.symphony.messageml.elements.Code;
 import org.symphonyoss.symphony.messageml.elements.Div;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.Emoji;
@@ -406,6 +407,9 @@ public class MessageMLParser {
       case Card.MESSAGEML_TAG:
         validateFormat(tag);
         return new Card(parent, FormatEnum.MESSAGEML);
+
+      case Code.MESSAGEML_TAG:
+        return new Code(parent);
 
       case CardHeader.MESSAGEML_TAG:
         validateFormat(tag);
