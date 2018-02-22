@@ -588,35 +588,19 @@ public class MessageMLContextTest {
   }
 
   @Test
-  public void testParseMarkdownEmoji() throws Exception {
+  public void testIgnoreMarkdownEmoji() throws Exception {
     String message = "Hello :smiley:!";
     context.parseMarkdown(message, null, null);
 
-    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <span class=\"entity\" data-entity-id=\"emoji1\">\uD83D\uDE03</span>!"
-        + "</div>";
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello :smiley:!</div>";
     String expectedMarkdown = "Hello :smiley:!";
-    JsonNode expectedEntityJSON = MAPPER.readTree(
-        "{"+
-          "\"emoji1\":{"+
-            "\"type\":\"com.symphony.emoji\","+
-            "\"version\":\"1.0\","+
-            "\"data\":{"+
-              "\"shortcode\":\"smiley\","+
-              "\"size\":\"normal\","+
-              "\"unicode\":\"\uD83D\uDE03\""+
-            "}"+
-          "}"+
-        "}");
     JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
 
-    assertEquals("\\n", "Text(Hello )", context.getMessageML().getChildren().get(0).toString());
-    assertEquals("\\n", "Emoji(smiley)", context.getMessageML().getChildren().get(1).toString());
-    assertEquals("\\n", "Text(!)", context.getMessageML().getChildren().get(2).toString());
+    assertEquals("Parse tree", "Text(Hello :smiley:!)", context.getMessageML().getChildren().get(0).toString());
     assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
     assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
-    assertTrue("EntityJSON", context.getEntityJson().equals(expectedEntityJSON));
-    assertTrue("Legacy entities", context.getEntities().equals(expectedEntities));
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
+    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance) , context.getEntities());
   }
 
   @Test
