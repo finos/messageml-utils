@@ -47,7 +47,6 @@ import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.CashTag;
 import org.symphonyoss.symphony.messageml.elements.Code;
 import org.symphonyoss.symphony.messageml.elements.Element;
-import org.symphonyoss.symphony.messageml.elements.Emoji;
 import org.symphonyoss.symphony.messageml.elements.FormatEnum;
 import org.symphonyoss.symphony.messageml.elements.HashTag;
 import org.symphonyoss.symphony.messageml.elements.Italic;
@@ -62,7 +61,6 @@ import org.symphonyoss.symphony.messageml.elements.TableCell;
 import org.symphonyoss.symphony.messageml.elements.TableRow;
 import org.symphonyoss.symphony.messageml.elements.TextNode;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
@@ -103,7 +101,6 @@ public class MarkdownParser extends AbstractVisitor {
     MARKDOWN_PARSER = Parser.builder()
         .enabledBlockTypes(enabledBlockTypes)
         .customDelimiterProcessor(new EntityDelimiterProcessor())
-        .customDelimiterProcessor(new EmojiDelimiterProcessor())
         .build();
   }
 
@@ -218,8 +215,6 @@ public class MarkdownParser extends AbstractVisitor {
       visit((KeywordNode) node);
     } else if (node instanceof MentionNode) {
       visit((MentionNode) node);
-    } else if (node instanceof EmojiNode) {
-      visit((EmojiNode) node);
     }
   }
 
@@ -232,11 +227,6 @@ public class MarkdownParser extends AbstractVisitor {
     } else if (block instanceof TableCellNode) {
       visit((TableCellNode) block);
     }
-  }
-
-  private void visit(EmojiNode emoji){
-    Emoji node = new Emoji(parent, emoji.getShortcode(),  ++index);
-    parent.addChild(node);
   }
 
   private void visit(KeywordNode keyword) {
