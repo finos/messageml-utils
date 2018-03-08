@@ -40,6 +40,7 @@ import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
 
 import java.util.Collections;
+import java.util.HashMap;
 
 public class ElementTest {
   private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -1430,7 +1431,7 @@ public class ElementTest {
     String invalidAttr = "<messageML>Hello <mention uid=\"bot.user1\"/>!</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Invalid input: null must be a int64 value not \"bot.user1\"");
+    expectedException.expectMessage("Invalid input: uid must be a int64 value not \"bot.user1\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1676,7 +1677,7 @@ public class ElementTest {
   public void testTable() throws Exception {
     String input = "<messageML><table>"
         + "<thead><tr><th>It</th><th>was</th></tr></thead>"
-        + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
+        + "<tbody><tr><td colspan=\"6\" rowspan=\"7\">the</td><td>best</td></tr></tbody>"
         + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -1692,7 +1693,7 @@ public class ElementTest {
     assertEquals("Element children", 3, table.getChildren().size());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><table>"
             + "<thead><tr><th>It</th><th>was</th></tr></thead>"
-            + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
+            + "<tbody><tr><td colspan=\"6\" rowspan=\"7\">the</td><td>best</td></tr></tbody>"
             + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
             + "</table></div>",
         context.getPresentationML());
@@ -1729,7 +1730,10 @@ public class ElementTest {
     cell = row.getChildren().get(0);
     assertEquals("Element class", TableCell.class, cell.getClass());
     assertEquals("Element tag name", "td", cell.getMessageMLTag());
-    assertEquals("Element attributes", Collections.emptyMap(), cell.getAttributes());
+    final HashMap<String, String> expectedAttributeMap = new HashMap<>();
+    expectedAttributeMap.put("colspan", "6");
+    expectedAttributeMap.put("rowspan", "7");
+    assertEquals("Element attributes", expectedAttributeMap, cell.getAttributes());
     assertEquals("Element children", 1, cell.getChildren().size());
 
     text = cell.getChildren().get(0);
@@ -1789,6 +1793,26 @@ public class ElementTest {
         + "</table></messageML>";
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"style\" is not allowed in \"table\"");
+    context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTableCellInvalidColSpan() throws Exception {
+    String invalidAttr = "<messageML><table>"
+        + "<tbody><tr><td colspan=\"6 px\">the</td><td>best</td></tr></tbody>"
+        + "</table></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid input: colspan must be a int64 value not \"6 px\"");
+    context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTableCellInvalidRowSpan() throws Exception {
+    String invalidAttr = "<messageML><table>"
+        + "<tbody><tr><td rowspan=\"6 px\">the</td><td>best</td></tr></tbody>"
+        + "</table></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid input: rowspan must be a int64 value not \"6 px\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 

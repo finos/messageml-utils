@@ -239,7 +239,7 @@ public abstract class Element {
     try {
       return Long.parseLong(s);
     } catch (NumberFormatException e) {
-      throw new InvalidInputException("Invalid input: " + attribute.getLocalName()
+      throw new InvalidInputException("Invalid input: " + attribute.getNodeName()
           + " must be a int64 value not \"" + s + "\"");
     }
   }
