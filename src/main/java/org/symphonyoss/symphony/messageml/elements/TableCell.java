@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 
 /**
@@ -27,9 +28,25 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
  */
 public class TableCell extends Element {
   public static final String MESSAGEML_TAG = "td";
+  private static final String ATTR_ROWSPAN = "rowspan";
+  private static final String ATTR_COLSPAN = "colspan";
 
   public TableCell(Element parent) {
     super(parent, MESSAGEML_TAG);
+  }
+
+  @Override
+  void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+    switch (item.getNodeName()) {
+      case ATTR_ROWSPAN:
+        setAttribute(ATTR_ROWSPAN, getLongAttribute(item).toString());
+        break;
+      case ATTR_COLSPAN:
+        setAttribute(ATTR_COLSPAN, getLongAttribute(item).toString());
+        break;
+      default:
+        super.buildAttribute(item);
+    }
   }
 
   @Override
