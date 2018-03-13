@@ -1,10 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.HashSet;
@@ -141,10 +138,10 @@ public class Styles {
       final HashSet<String> inputStyleProperties = new HashSet<>(styleMap.keySet());
       inputStyleProperties.removeAll(ALLOWED_PROPERTIES);
       if (!inputStyleProperties.isEmpty()) {
-        throw new InvalidInputException("Invalid property(s):[" + Joiner.on(",").join(inputStyleProperties) + "] in the \"style\" attribute");
+        throw new InvalidInputException("Invalid property(s): [" + Joiner.on(",").join(inputStyleProperties) + "] in the \"style\" attribute");
       }
     } catch (IllegalArgumentException ex) {
-      throw new InvalidInputException("Unparseable \"style\" attribute:" + styleAttribute, ex);
+      throw new InvalidInputException("Unparseable \"style\" attribute: " + styleAttribute, ex);
     }
   }
 

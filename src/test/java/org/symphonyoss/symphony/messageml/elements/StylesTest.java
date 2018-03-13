@@ -11,21 +11,21 @@ public class StylesTest {
   @Test
   public void validateInvalidProperty() throws Exception {
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Invalid property(s):[back] in the \"style\" attribute");
+    expectedException.expectMessage("Invalid property(s): [back] in the \"style\" attribute");
     Styles.validate("back:c");
   }
 
   @Test
   public void validateInvalidPropertyValidProperty() throws Exception {
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Invalid property(s):[back] in the \"style\" attribute");
+    expectedException.expectMessage("Invalid property(s): [back] in the \"style\" attribute");
     Styles.validate("back:c;background:values values values;background-attachment:values");
   }
 
   @Test
   public void validate() throws Exception {
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Unparseable \"style\" attribute:color:green;back");
+    expectedException.expectMessage("Unparseable \"style\" attribute: color:green;back");
     Styles.validate("color:green;back");
 
   }
