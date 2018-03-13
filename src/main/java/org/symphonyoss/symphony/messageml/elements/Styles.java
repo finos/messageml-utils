@@ -130,7 +130,7 @@ public class Styles {
   }
 
   /**
-   * Validate that the input style attribute
+   * Validate that the input style attribute is allowed
    *
    * @param styleAttribute input style string
    * @throws InvalidInputException if the styleAttribute is allowed
