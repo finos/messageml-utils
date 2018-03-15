@@ -265,6 +265,19 @@ public class CodeTest {
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
+  
+  @Test
+  public void testCodeWithBreaks() throws Exception {
+    String inputMarkdown = "```\na\na\n```";
+    context.parseMarkdown(inputMarkdown, null, null);
+    context.getPresentationML();
+    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><code>a\na</code></div>", context.getPresentationML());
+
+    inputMarkdown = "```\na\n\na\n```"; //add more new lines
+    context.parseMarkdown(inputMarkdown, null, null);
+    context.getPresentationML();
+    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><code>a\n\na</code></div>", context.getPresentationML());
+  }
 
   @Test
   public void testCodeWithMessageMLTagsByMarkdown() throws Exception {

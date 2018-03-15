@@ -41,7 +41,7 @@ public class TextNode extends Element {
   @Override
   public void asPresentationML(XmlPrintStream out) {
     String content = this.text;
-    if (out.isRemoveNl()) {
+    if (out.isRemoveNl() && !(getParent() instanceof Code)) { // Do not remove newlines if the parent node is a code node
       content = XmlPrintStream.removeNewLines(content);
     }
     content = out.escape(content);
