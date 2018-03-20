@@ -33,7 +33,7 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
  * Class representing a MessageML document (i.e. a message).
  *
  * A MessageML document tree is constructed through one of parse() methods in
- * {@link MessageMLContext}.
+ * {@link org.symphonyoss.symphony.messageml.MessageMLContext}.
  * @author lukasz
  * @since 3/27/17
  */

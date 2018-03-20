@@ -42,7 +42,7 @@ import java.util.Map;
  * Base class for MessageML elements. Contains methods for constructing MessageML document trees and their
  * PresentationML and Markdown representation, overridden in subclasses if special treatment is required.
  *
- * By default all elements support the "class" attribute and translate to PresentationML as container elements
+ * By default all elements support the "class" and "style" attributes and translate to PresentationML as container elements
  * including their children. To override this behaviour (e.g. to make the element empty), overload the respective
  * methods in subclasses of this class.
  *
@@ -53,6 +53,7 @@ import java.util.Map;
  */
 public abstract class Element {
   public static final String CLASS_ATTR = "class";
+  public static final String STYLE_ATTR = "style";
   protected FormatEnum format = FormatEnum.PRESENTATIONML;
   private final Map<String, String> attributes = new LinkedHashMap<>();
   private final List<Element> children = new ArrayList<>();
@@ -98,6 +99,11 @@ public abstract class Element {
     switch (item.getNodeName()) {
       case CLASS_ATTR:
         attributes.put(CLASS_ATTR, getStringAttribute(item));
+        break;
+      case STYLE_ATTR:
+        final String styleAttribute = getStringAttribute(item);
+        Styles.validate(styleAttribute);
+        attributes.put(STYLE_ATTR, styleAttribute);
         break;
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
@@ -239,7 +245,7 @@ public abstract class Element {
     try {
       return Long.parseLong(s);
     } catch (NumberFormatException e) {
-      throw new InvalidInputException("Invalid input: " + attribute.getLocalName()
+      throw new InvalidInputException("Invalid input: " + attribute.getNodeName()
           + " must be a int64 value not \"" + s + "\"");
     }
   }

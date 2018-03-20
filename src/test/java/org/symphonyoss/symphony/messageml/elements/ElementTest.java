@@ -40,6 +40,7 @@ import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
 
 import java.util.Collections;
+import java.util.HashMap;
 
 public class ElementTest {
   private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -184,7 +185,7 @@ public class ElementTest {
   @Test
   public void testPresentationMLShorthandCard() throws Exception {
     String invalidElement = "<div class=\"com.symphony.presentationml\">"
-        + "<card iconSrc=\"icon.png\" class=\"barStyle\">invalid</card>"
+        + "<card iconSrc=\"icon.png\" class=\"bartitle\">invalid</card>"
         + "</div>";
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Shorthand tag \"card\" is not allowed in PresentationML");
@@ -269,9 +270,9 @@ public class ElementTest {
 
   @Test
   public void testLineBreakInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><br style=\"label\"/></messageML>";
+    String invalidAttr = "<messageML><br title=\"label\"/></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"br\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"br\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -306,9 +307,9 @@ public class ElementTest {
 
   @Test
   public void testHorizontalRuleInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><hr style=\"label\"/></messageML>";
+    String invalidAttr = "<messageML><hr title=\"label\"/></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"hr\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"hr\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -347,13 +348,19 @@ public class ElementTest {
     bold = context.getMessageML().getChildren().get(0);
     assertEquals("Attribute count", 1, bold.getAttributes().size());
     assertEquals("Attribute", "label", bold.getAttribute("class"));
+
+    String styleAttr = "<messageML><b style=\"color:green\">Hello world!</b></messageML>";
+    context.parseMessageML(styleAttr, null, MessageML.MESSAGEML_VERSION);
+    bold = context.getMessageML().getChildren().get(0);
+    assertEquals("Attribute count", 1, bold.getAttributes().size());
+    assertEquals("Attribute", "color:green", bold.getAttribute("style"));
   }
 
   @Test
   public void testBoldInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><b style=\"label\">Hello world!</b></messageML>";
+    String invalidAttr = "<messageML><b title=\"label\">Hello world!</b></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"b\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"b\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -384,13 +391,19 @@ public class ElementTest {
     italic = context.getMessageML().getChildren().get(0);
     assertEquals("Attribute count", 1, italic.getAttributes().size());
     assertEquals("Attribute", "label", italic.getAttribute("class"));
+
+    String styleAttr = "<messageML><i style=\"background:red\">Hello world!</i></messageML>";
+    context.parseMessageML(styleAttr, null, MessageML.MESSAGEML_VERSION);
+    italic = context.getMessageML().getChildren().get(0);
+    assertEquals("Attribute count", 1, italic.getAttributes().size());
+    assertEquals("Attribute", "background:red", italic.getAttribute("style"));
   }
 
   @Test
   public void testItalicInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><i style=\"label\">Hello world!</i></messageML>";
+    String invalidAttr = "<messageML><i title=\"label\">Hello world!</i></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"i\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"i\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -419,6 +432,52 @@ public class ElementTest {
     pre = context.getMessageML().getChildren().get(0);
     assertEquals("Attribute count", 1, pre.getAttributes().size());
     assertEquals("Attribute", "label", pre.getAttribute("class"));
+
+
+    String styleAttr = "<messageML><pre style=\"border-bottom:10 px;border-left-color:red\">Hello world!</pre></messageML>";
+    context.parseMessageML(styleAttr, null, MessageML.MESSAGEML_VERSION);
+    pre = context.getMessageML().getChildren().get(0);
+    assertEquals("Attribute count", 1, pre.getAttributes().size());
+    assertEquals("Attribute", "border-bottom:10 px;border-left-color:red", pre.getAttribute("style"));
+  }
+
+  @Test
+  public void testBoldWithShorthandHashtag() throws Exception {
+    String input = "<messageML><b>Hello <hash tag=\"world\"/>!</b></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<b>Hello <span class=\"entity\" data-entity-id=\"keyword1\">#world</span>!</b></div>",
+        context.getPresentationML());
+    assertEquals("Markdown", "**Hello #world!**", context.getMarkdown());
+    assertEquals("Plaintext", "Hello #world!", context.getText());
+  }
+
+  @Test
+  public void testItalicWithShorthandCashtag() throws Exception {
+    String input = "<messageML><i>Hello <cash tag=\"world\"/>!</i></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<i>Hello <span class=\"entity\" data-entity-id=\"keyword1\">$world</span>!</i></div>",
+        context.getPresentationML());
+    assertEquals("Markdown", "_Hello $world!_", context.getMarkdown());
+    assertEquals("Plaintext", "Hello $world!", context.getText());
+  }
+
+  @Test
+  public void testHeaderWithMention() throws Exception {
+    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
+
+    String input = "<messageML><h1>Hello <mention email=\"bot.user1@localhost.com\"/>!</h1></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<h1>Hello <span class=\"entity\" data-entity-id=\"mention1\">@Bot User01</span>!</h1></div>",
+        context.getPresentationML());
+    assertEquals("Markdown", "**Hello @Bot User01!**", context.getMarkdown());
+    assertEquals("Plaintext", "Hello @Bot User01!", context.getText());
   }
 
   @Test
@@ -462,9 +521,9 @@ public class ElementTest {
 
   @Test
   public void testPreformattedInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><pre style=\"invalid\">Hello world!</pre></messageML>";
+    String invalidAttr = "<messageML><pre title=\"invalid\">Hello world!</pre></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"pre\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"pre\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -512,14 +571,20 @@ public class ElementTest {
       header = context.getMessageML().getChildren().get(0);
       assertEquals("Attribute count", 1, header.getAttributes().size());
       assertEquals("Attribute", "label", header.getAttribute("class"));
+
+      String styleAttr = "<messageML><h" + level + " style=\"height:300px\">Hello world!</h" + level + "></messageML>";
+      context.parseMessageML(styleAttr, null, MessageML.MESSAGEML_VERSION);
+      header = context.getMessageML().getChildren().get(0);
+      assertEquals("Attribute count", 1, header.getAttributes().size());
+      assertEquals("Attribute", "height:300px", header.getAttribute("style"));
     }
   }
 
   @Test
   public void testHeadersInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><h1 style=\"label\">Hello world!</h1></messageML>";
+    String invalidAttr = "<messageML><h1 title=\"label\">Hello world!</h1></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"h1\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"h1\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -568,13 +633,19 @@ public class ElementTest {
     p = context.getMessageML().getChildren().get(1);
     assertEquals("Attribute count", 1, p.getAttributes().size());
     assertEquals("Attribute", "label", p.getAttribute("class"));
+
+    String styleAttr = "<messageML>Hello<p style=\"opacity:0.5\">world</p>!</messageML>";
+    context.parseMessageML(styleAttr, null, MessageML.MESSAGEML_VERSION);
+    p = context.getMessageML().getChildren().get(1);
+    assertEquals("Attribute count", 1, p.getAttributes().size());
+    assertEquals("Attribute", "opacity:0.5", p.getAttribute("style"));
   }
 
   @Test
   public void testParagraphInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML>Hello<p style=\"label\">world</p>!</messageML>";
+    String invalidAttr = "<messageML>Hello<p title=\"label\">world</p>!</messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"p\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"p\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -603,9 +674,9 @@ public class ElementTest {
 
   @Test
   public void testSpanInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML>Hello<span style=\"label\">world</span>!</messageML>";
+    String invalidAttr = "<messageML>Hello<span title=\"label\">world</span>!</messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"span\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"span\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -652,9 +723,9 @@ public class ElementTest {
 
   @Test
   public void testDivInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML>Hello<div style=\"label\">world</div>!</messageML>";
+    String invalidAttr = "<messageML>Hello<div title=\"label\">world</div>!</messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"div\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"div\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -782,9 +853,9 @@ public class ElementTest {
 
   @Test
   public void testImageInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><img style=\"label\" src=\"hello.png\"/></messageML>";
+    String invalidAttr = "<messageML><img title=\"label\" src=\"hello.png\"/></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"img\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"img\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -849,9 +920,9 @@ public class ElementTest {
 
   @Test
   public void testLinkInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML>Hello<a style=\"label\">world</a>!</messageML>";
+    String invalidAttr = "<messageML>Hello<a title=\"label\">world</a>!</messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"a\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"a\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1469,7 +1540,7 @@ public class ElementTest {
     String invalidAttr = "<messageML>Hello <mention uid=\"bot.user1\"/>!</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Invalid input: null must be a int64 value not \"bot.user1\"");
+    expectedException.expectMessage("Invalid input: uid must be a int64 value not \"bot.user1\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1612,17 +1683,17 @@ public class ElementTest {
 
   @Test
   public void testBulletListInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><ul style=\"label\"><li>hello</li><li>world</li></ul></messageML>";
+    String invalidAttr = "<messageML><ul title=\"label\"><li>hello</li><li>world</li></ul></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"ul\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"ul\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
   public void testBulletListItemInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><ul><li  style=\"label\">hello</li><li>world</li></ul></messageML>";
+    String invalidAttr = "<messageML><ul><li  title=\"label\">hello</li><li>world</li></ul></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"li\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"li\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1681,17 +1752,17 @@ public class ElementTest {
 
   @Test
   public void testOrderedListInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><ol style=\"label\"><li>hello</li><li>world</li></ol></messageML>";
+    String invalidAttr = "<messageML><ol title=\"label\"><li>hello</li><li>world</li></ol></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"ol\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"ol\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
   public void testOrderedListItemInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><ol><li  style=\"label\">hello</li><li>world</li></ol></messageML>";
+    String invalidAttr = "<messageML><ol><li  title=\"label\">hello</li><li>world</li></ol></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"li\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"li\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1715,7 +1786,7 @@ public class ElementTest {
   public void testTable() throws Exception {
     String input = "<messageML><table>"
         + "<thead><tr><th>It</th><th>was</th></tr></thead>"
-        + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
+        + "<tbody><tr><td colspan=\"6\" rowspan=\"7\">the</td><td>best</td></tr></tbody>"
         + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -1731,7 +1802,7 @@ public class ElementTest {
     assertEquals("Element children", 3, table.getChildren().size());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><table>"
             + "<thead><tr><th>It</th><th>was</th></tr></thead>"
-            + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
+            + "<tbody><tr><td colspan=\"6\" rowspan=\"7\">the</td><td>best</td></tr></tbody>"
             + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
             + "</table></div>",
         context.getPresentationML());
@@ -1768,7 +1839,10 @@ public class ElementTest {
     cell = row.getChildren().get(0);
     assertEquals("Element class", TableCell.class, cell.getClass());
     assertEquals("Element tag name", "td", cell.getMessageMLTag());
-    assertEquals("Element attributes", Collections.emptyMap(), cell.getAttributes());
+    final HashMap<String, String> expectedAttributeMap = new HashMap<>();
+    expectedAttributeMap.put("colspan", "6");
+    expectedAttributeMap.put("rowspan", "7");
+    assertEquals("Element attributes", expectedAttributeMap, cell.getAttributes());
     assertEquals("Element children", 1, cell.getChildren().size());
 
     text = cell.getChildren().get(0);
@@ -1821,13 +1895,33 @@ public class ElementTest {
 
   @Test
   public void testTableInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><table style=\"label\">"
+    String invalidAttr = "<messageML><table title=\"label\">"
         + "<thead><tr><th>It</th><th>was</th></tr></thead>"
         + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
         + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"table\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"table\"");
+    context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTableCellInvalidColSpan() throws Exception {
+    String invalidAttr = "<messageML><table>"
+        + "<tbody><tr><td colspan=\"6 px\">the</td><td>best</td></tr></tbody>"
+        + "</table></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid input: colspan must be a int64 value not \"6 px\"");
+    context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTableCellInvalidRowSpan() throws Exception {
+    String invalidAttr = "<messageML><table>"
+        + "<tbody><tr><td rowspan=\"6 px\">the</td><td>best</td></tr></tbody>"
+        + "</table></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid input: rowspan must be a int64 value not \"6 px\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1850,12 +1944,12 @@ public class ElementTest {
   @Test
   public void testTableHeaderInvalidAttr() throws Exception {
     String invalidAttr = "<messageML><table>"
-        + "<thead style=\"label\"><tr><th>It</th><th>was</th></tr></thead>"
+        + "<thead title=\"label\"><tr><th>It</th><th>was</th></tr></thead>"
         + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
         + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"thead\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"thead\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1879,11 +1973,11 @@ public class ElementTest {
   public void testTableBodyInvalidAttr() throws Exception {
     String invalidAttr = "<messageML><table>"
         + "<thead><tr><th>It</th><th>was</th></tr></thead>"
-        + "<tbody style=\"label\"><tr><td>the</td><td>best</td></tr></tbody>"
+        + "<tbody title=\"label\"><tr><td>the</td><td>best</td></tr></tbody>"
         + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"tbody\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"tbody\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1908,10 +2002,10 @@ public class ElementTest {
     String invalidAttr = "<messageML><table>"
         + "<thead><tr><th>It</th><th>was</th></tr></thead>"
         + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
-        + "<tfoot style=\"label\"><tr><th>of</th><td>times</td></tr></tfoot>"
+        + "<tfoot title=\"label\"><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"tfoot\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"tfoot\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1934,12 +2028,12 @@ public class ElementTest {
   @Test
   public void testTableRowInvalidAttr() throws Exception {
     String invalidAttr = "<messageML><table>"
-        + "<thead><tr style=\"label\"><th>It</th><th>was</th></tr></thead>"
+        + "<thead><tr title=\"label\"><th>It</th><th>was</th></tr></thead>"
         + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
         + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"tr\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"tr\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1962,12 +2056,12 @@ public class ElementTest {
   @Test
   public void testTableHeaderCellInvalidAttr() throws Exception {
     String invalidAttr = "<messageML><table>"
-        + "<thead><tr><th style=\"label\">It</th><th>was</th></tr></thead>"
+        + "<thead><tr><th title=\"label\">It</th><th>was</th></tr></thead>"
         + "<tbody><tr><td>the</td><td>best</td></tr></tbody>"
         + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"th\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"th\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -1975,11 +2069,11 @@ public class ElementTest {
   public void testTableCellInvalidAttr() throws Exception {
     String invalidAttr = "<messageML><table>"
         + "<thead><tr><th>It</th><th>was</th></tr></thead>"
-        + "<tbody><tr><td style=\"label\">the</td><td>best</td></tr></tbody>"
+        + "<tbody><tr><td title=\"label\">the</td><td>best</td></tr></tbody>"
         + "<tfoot><tr><th>of</th><td>times</td></tr></tfoot>"
         + "</table></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"td\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"td\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -2076,12 +2170,12 @@ public class ElementTest {
 
   @Test
   public void testCardInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><card style=\"label\">"
+    String invalidAttr = "<messageML><card title=\"label\">"
         + "<header>Hello</header>"
         + "<body>world!</body>"
         + "</card></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"style\" is not allowed in \"card\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"card\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
