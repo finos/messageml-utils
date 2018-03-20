@@ -481,6 +481,45 @@ public class ElementTest {
   }
 
   @Test
+  public void testBoldWithShorthandHashtag() throws Exception {
+    String input = "<messageML><b>Hello <hash tag=\"world\"/>!</b></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<b>Hello <span class=\"entity\" data-entity-id=\"keyword1\">#world</span>!</b></div>",
+        context.getPresentationML());
+    assertEquals("Markdown", "**Hello #world!**", context.getMarkdown());
+    assertEquals("Plaintext", "Hello #world!", context.getText());
+  }
+
+  @Test
+  public void testItalicWithShorthandCashtag() throws Exception {
+    String input = "<messageML><i>Hello <cash tag=\"world\"/>!</i></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<i>Hello <span class=\"entity\" data-entity-id=\"keyword1\">$world</span>!</i></div>",
+        context.getPresentationML());
+    assertEquals("Markdown", "_Hello $world!_", context.getMarkdown());
+    assertEquals("Plaintext", "Hello $world!", context.getText());
+  }
+
+  @Test
+  public void testHeaderWithMention() throws Exception {
+    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
+
+    String input = "<messageML><h1>Hello <mention email=\"bot.user1@localhost.com\"/>!</h1></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<h1>Hello <span class=\"entity\" data-entity-id=\"mention1\">@Bot User01</span>!</h1></div>",
+        context.getPresentationML());
+    assertEquals("Markdown", "**Hello @Bot User01!**", context.getMarkdown());
+    assertEquals("Plaintext", "Hello @Bot User01!", context.getText());
+  }
+
+  @Test
   public void testPreformattedInvalidAttr() throws Exception {
     String invalidAttr = "<messageML><pre title=\"invalid\">Hello world!</pre></messageML>";
     expectedException.expect(InvalidInputException.class);
