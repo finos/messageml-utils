@@ -310,7 +310,7 @@ public abstract class Element {
    */
   void assertPhrasingContent() throws InvalidInputException {
     assertContentModel(Arrays.asList(TextNode.class, Link.class, Chime.class, Bold.class, Italic.class, Image.class,
-        LineBreak.class, Span.class, Emoji.class));
+        LineBreak.class, Span.class, Emoji.class, HashTag.class, CashTag.class, Mention.class));
   }
 
   /**
