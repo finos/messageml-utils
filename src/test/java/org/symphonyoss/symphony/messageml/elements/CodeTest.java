@@ -268,15 +268,56 @@ public class CodeTest {
   
   @Test
   public void testCodeWithBreaks() throws Exception {
-    String inputMarkdown = "```\na\na\n```";
+    String inputMarkdown = "```\nfoo\nbar\n```";
     context.parseMarkdown(inputMarkdown, null, null);
-    context.getPresentationML();
-    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><code>a\na</code></div>", context.getPresentationML());
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><code>foo\nbar</code></div>",
+        context.getPresentationML());
+    assertEquals("Plaintext", "foo\nbar", context.getText());
 
-    inputMarkdown = "```\na\n\na\n```"; //add more new lines
+    inputMarkdown = "```\nfoo\n\nbar\n```"; //add more new lines
     context.parseMarkdown(inputMarkdown, null, null);
-    context.getPresentationML();
-    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><code>a\n\na</code></div>", context.getPresentationML());
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><code>foo\n\nbar</code></div>",
+        context.getPresentationML());
+    assertEquals("Plaintext", "foo\n\nbar", context.getText());
+
+    inputMarkdown = "\n```\nfoo\n\nbar\n```\n"; //add leading/trailing newlines
+    context.parseMarkdown(inputMarkdown, null, null);
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><code>foo\n\nbar</code></div>",
+        context.getPresentationML());
+    assertEquals("Plaintext", "foo\n\nbar", context.getText());
+
+    String inputPresentationMl = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code>foo\nbar</code></div>";
+    context.parseMessageML(inputPresentationMl, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", "```\nfoo bar\n```\n", context.getMarkdown());
+    assertEquals("Plaintext", "foo\nbar", context.getText());
+
+    inputPresentationMl = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code>\nfoo\n\nbar\n</code></div>";
+    context.parseMessageML(inputPresentationMl, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", "```\n foo bar \n```\n", context.getMarkdown());
+    assertEquals("Plaintext", "\nfoo\n\nbar\n", context.getText());
+
+    inputPresentationMl = "<div data-format=\"PresentationML\" data-version=\"2.0\">\n<code>\nfoo\n\nbar\n</code>\n</div>";
+    context.parseMessageML(inputPresentationMl, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", " \n```\n foo bar \n```\n ", context.getMarkdown());
+    assertEquals("Plaintext", " \nfoo\n\nbar\n ", context.getText());
+
+    String inputMesageML = "<messageML><code>foo\nbar</code></messageML>";
+    context.parseMessageML(inputMesageML, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", "```\nfoo bar\n```\n", context.getMarkdown());
+    assertEquals("Plaintext", "foo\nbar", context.getText());
+
+    inputMesageML = "<messageML><code>\nfoo\n\nbar\n</code></messageML>";
+    context.parseMessageML(inputMesageML, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", "```\n foo bar \n```\n", context.getMarkdown());
+    assertEquals("Plaintext", "\nfoo\n\nbar\n", context.getText());
+
+    inputMesageML = "<messageML>\n<code>\nfoo\n\nbar\n</code>\n</messageML>";
+    context.parseMessageML(inputMesageML, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", " \n```\n foo bar \n```\n ", context.getMarkdown());
+    assertEquals("Plaintext", " \nfoo\n\nbar\n ", context.getText());
   }
 
   @Test
