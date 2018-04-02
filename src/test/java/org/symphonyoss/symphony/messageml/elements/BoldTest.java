@@ -47,6 +47,53 @@ public class BoldTest extends ElementTest {
   }
 
   @Test
+  public void testBoldByMarkowd() throws Exception {
+    String input = "**Hello world!**";
+    String expectedPresentationMl = "<div data-format=\"PresentationML\" data-version=\"2.0\"><b>Hello world!</b></div>";
+    String expectedPlainText = "Hello world!";
+
+    context.parseMarkdown(input, null, null);
+
+    assertEquals("PresentationML", expectedPresentationMl, context.getPresentationML());
+    assertEquals("Plaintext", expectedPlainText, context.getText());
+    assertEquals("Markdown", input, context.getMarkdown());
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
+    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
+  }
+
+  @Test
+  public void testBoldWithLeadingWhitespace() throws Exception {
+    String input = "** Hello world!**";
+    String expectedPresentationMl = "<div data-format=\"PresentationML\" data-version=\"2.0\">** Hello world!**</div>";
+    String expectedPlainText = "** Hello world!**";
+    String expectedMarkdown = "\\*\\* Hello world!\\*\\*";
+
+    context.parseMarkdown(input, null, null);
+
+    assertEquals("PresentationML", expectedPresentationMl, context.getPresentationML());
+    assertEquals("Plaintext", expectedPlainText, context.getText());
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
+    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
+  }
+
+  @Test
+  public void testBoldWithTrailingWhitespace() throws Exception {
+    String input = "**Hello world! **";
+    String expectedPresentationMl = "<div data-format=\"PresentationML\" data-version=\"2.0\">**Hello world! **</div>";
+    String expectedPlainText = "**Hello world! **";
+    String expectedMarkdown = "\\*\\*Hello world! \\*\\*";
+
+    context.parseMarkdown(input, null, null);
+
+    assertEquals("PresentationML", expectedPresentationMl, context.getPresentationML());
+    assertEquals("Plaintext", expectedPlainText, context.getText());
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
+    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
+  }
+
+  @Test
   public void testBoldInvalidAttr() throws Exception {
     String invalidAttr = "<messageML><b title=\"label\">Hello world!</b></messageML>";
     expectedException.expect(InvalidInputException.class);
