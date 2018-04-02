@@ -5,22 +5,10 @@ import static org.junit.Assert.fail;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Before;
 import org.junit.Test;
-import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.util.IDataProvider;
-import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 
-public class CodeTest {
-
-  private final IDataProvider dataProvider = new TestDataProvider();
-  private MessageMLContext context;
-
-  @Before
-  public void setUp() {
-    context = new MessageMLContext(dataProvider);
-  }
+public class CodeTest extends ElementTest {
 
   @Test
   public void testCode() throws Exception {

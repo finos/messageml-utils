@@ -1,12 +1,9 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
-public class StylesTest {
-  @Rule public ExpectedException expectedException = ExpectedException.none();
+public class StylesTest extends ElementTest {
 
   @Test
   public void validateInvalidProperty() throws Exception {
