@@ -326,6 +326,14 @@ public class CodeTest extends ElementTest {
   }
 
   @Test
+  public void testParseMarkdownCode() throws Exception {
+    String message = "This is code:\n```\nval message: String = \"Hello world\"\nprintln message\n```\nThis is text";
+    context.parseMarkdown(message, null, null);
+    String presentationML = context.getPresentationML();
+    System.out.println(presentationML);
+  }
+
+  @Test
   public void testCodeWithEmbeddedMarkdownByMarkdown() throws Exception {
     String input = "\n```\n_Hello_ **world!**\n```\n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"

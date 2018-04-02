@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -26,7 +27,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
@@ -399,6 +399,36 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseFreemarkerEmptyTemplate() {
+    String message = "<messageML>${}</messageML>";
+
+    try {
+      context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+    fail("Should have thrown an exception");
+    } catch (Exception e) {
+      assertEquals("Exception class", InvalidInputException.class, e.getClass());
+      assertEquals("Exception message",
+              "Error parsing EntityJSON: Syntax error in template \"messageML\" in line 1, column 14:\n"
+              + "Encountered \"}\", but was expecting one of:\n"
+              + "    <STRING_LITERAL>\n"
+              + "    <RAW_STRING>\n"
+              + "    \"false\"\n"
+              + "    \"true\"\n"
+              + "    <INTEGER>\n"
+              + "    <DECIMAL>\n"
+              + "    \".\"\n"
+              + "    \"+\"\n"
+              + "    \"-\"\n"
+              + "    \"!\"\n"
+              + "    \"[\"\n"
+              + "    \"(\"\n"
+              + "    \"{\"\n"
+              + "    <ID>",
+          e.getMessage());
+    }
+  }
+
+  @Test
   public void testParseMarkdown() throws Exception {
     String message = getPayload("payloads/messageml_v1_payload.json");
     JsonNode messageNode = MAPPER.readTree(message);
@@ -549,61 +579,6 @@ public class MessageMLContextTest {
   }
 
   @Test
-  public void testParseMarkdownWithOnlyTable() throws Exception {
-    String markdown = "";
-    ObjectNode entities = new ObjectNode(JsonNodeFactory.instance);
-
-    ObjectNode media = new ObjectNode(JsonNodeFactory.instance);
-    media.put("mediaType", "JSON");
-
-    ArrayNode contentWrapper = new ArrayNode(JsonNodeFactory.instance);
-    ObjectNode content = new ObjectNode(JsonNodeFactory.instance);
-    content.put("index", 0);
-    content.put("type", "excel-rcp");
-
-    ArrayNode text = new ArrayNode(JsonNodeFactory.instance);
-    ArrayNode r1 = new ArrayNode(JsonNodeFactory.instance);
-    r1.add("A1");
-    r1.add("B1");
-    ArrayNode r2 = new ArrayNode(JsonNodeFactory.instance);
-    r2.add("A2");
-    r2.add("B2");
-
-    text.add(r1);
-    text.add(r2);
-    content.set("text", text);
-    contentWrapper.add(content);
-    media.set("content", content);
-
-    context.parseMarkdown(markdown, entities, media);
-
-    assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table></div>", context.getPresentationML());
-    assertEquals("Generated Markdown", "Table:\n"
-            + "---\n"
-            + "A1 | B1\n"
-            + "A2 | B2\n"
-            + "---\n",
-        context.getMarkdown());
-  }
-
-  @Test
-  public void testIgnoreMarkdownEmoji() throws Exception {
-    String message = "Hello :smiley:!";
-    context.parseMarkdown(message, null, null);
-
-    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello :smiley:!</div>";
-    String expectedMarkdown = "Hello :smiley:!";
-    JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
-
-    assertEquals("Parse tree", "Text(Hello :smiley:!)", context.getMessageML().getChildren().get(0).toString());
-    assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
-    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
-    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
-    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance) , context.getEntities());
-  }
-
-  @Test
   public void testParseMarkdownWithNbsp() throws Exception {
     String message = "Hello\u00A0world!";
     context.parseMarkdown(message, null, null);
@@ -664,24 +639,6 @@ public class MessageMLContextTest {
     expectedException.expectMessage("Invalid entity payload: "
         + "?AQB6QI3LzHsTHfacv2E9x4QFAAAAAAAAAAAAAAAAAAAAAK5saXEaylHzAK65LoYFTqRcsI+4Qrc= (start index: 0, end index: 0)");
     context.parseMarkdown(message, entities, null);
-  }
-
-  @Test
-  public void testParseMarkdownLineBreak() throws Exception {
-    String message = "Hello\n\nworld!";
-
-    context.parseMarkdown(message, null, null);
-    String presentationML = context.getPresentationML();
-    assertEquals("PresentationML",
-        "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello<br/>world!</div>", presentationML);
-  }
-
-  @Test
-  public void testParseMarkdownCode() throws Exception {
-    String message = "This is code:\n```\nval message: String = \"Hello world\"\nprintln message\n```\nThis is text";
-    context.parseMarkdown(message, null, null);
-    String presentationML = context.getPresentationML();
-    System.out.println(presentationML);
   }
 
   @Test

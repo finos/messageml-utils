@@ -3,6 +3,9 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -72,6 +75,22 @@ public class EmojiTest extends ElementTest{
 
     assertEquals("Emoji class", Emoji.class, emoji.getClass());
     verifyEmojiPresentation((Emoji) emoji, "surfer_tone3",null, "normal","\uD83C\uDFC4\uD83C\uDFFD");
+  }
+
+  @Test
+  public void testIgnoreMarkdownEmoji() throws Exception {
+    String message = "Hello :smiley:!";
+    context.parseMarkdown(message, null, null);
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello :smiley:!</div>";
+    String expectedMarkdown = "Hello :smiley:!";
+    JsonNode expectedEntities = new ObjectNode(JsonNodeFactory.instance);
+
+    assertEquals("Parse tree", "Text(Hello :smiley:!)", context.getMessageML().getChildren().get(0).toString());
+    assertEquals("Presentation ML", expectedPresentationML, context.getPresentationML());
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
+    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance) , context.getEntities());
   }
 
   private void verifyEmojiPresentation(Emoji emoji, String shortcode, String family, String size, String unicode) throws

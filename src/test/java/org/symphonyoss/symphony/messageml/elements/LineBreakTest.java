@@ -47,4 +47,14 @@ public class LineBreakTest extends ElementTest {
     expectedException.expectMessage("Element \"br\" may not have child elements or text content");
     context.parseMessageML(invalidContent, null, MessageML.MESSAGEML_VERSION);
   }
+
+  @Test
+  public void testParseMarkdownLineBreak() throws Exception {
+    String message = "Hello\n\nworld!";
+
+    context.parseMarkdown(message, null, null);
+    String presentationML = context.getPresentationML();
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello<br/>world!</div>", presentationML);
+  }
 }
