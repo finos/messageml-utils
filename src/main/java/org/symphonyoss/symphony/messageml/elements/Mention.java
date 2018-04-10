@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.commonmark.node.Link;
 import org.commonmark.node.Node;
 import org.commonmark.node.Text;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -40,6 +41,9 @@ public class Mention extends Entity {
   private static final String ATTR_STRICT = "strict";
   private static final String ENTITY_SUBTYPE = "com.symphony.user.userId";
   private static final String ENTITY_VERSION = "1.0";
+  private static final String MAILTO = "mailto:";
+  private static final String HTML_LINK = "a";
+  private static final String HREF_ATTRIBUTE = "href";
 
   private final IDataProvider dataProvider;
 
@@ -50,24 +54,32 @@ public class Mention extends Entity {
   private boolean fallback = false;
 
   public Mention(Element parent, int entityIndex, IDataProvider dataProvider) {
-    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, null, false, dataProvider, FormatEnum.MESSAGEML);
+    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, null, false, null, dataProvider,
+        FormatEnum.MESSAGEML);
   }
 
   public Mention(Element parent, int entityIndex, Long uid, IDataProvider dataProvider) {
-    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, uid, true, dataProvider, FormatEnum.MESSAGEML);
+    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, uid, true, null, dataProvider,
+        FormatEnum.MESSAGEML);
   }
 
   public Mention(Element parent, String presentationMlTag, Long uid, IDataProvider dataProvider) {
-    this(parent, presentationMlTag, 0, uid, false, dataProvider, FormatEnum.PRESENTATIONML);
+    this(parent, presentationMlTag, 0, uid, false, null, dataProvider, FormatEnum.PRESENTATIONML);
   }
 
-  private Mention(Element parent, String presentationMlTag, Integer entityIndex, Long uid, Boolean fallback,
+  public Mention(Element parent, int entityIndex, String prettyName, IDataProvider dataProvider) {
+    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, null, false, prettyName, dataProvider,
+        FormatEnum.MESSAGEML);
+  }
+
+  private Mention(Element parent, String presentationMlTag, Integer entityIndex, Long uid, Boolean fallback, String prettyName,
       IDataProvider dataProvider, FormatEnum format) {
     super(parent, MESSAGEML_TAG, presentationMlTag, format);
     this.dataProvider = dataProvider;
     this.uid = uid;
     this.fallback = fallback;
     this.entityId = getEntityId(entityIndex);
+    this.prettyName = prettyName;
   }
 
   @Override
@@ -93,14 +105,17 @@ public class Mention extends Entity {
   @Override
   public void asPresentationML(XmlPrintStream out) {
     if (userPresentation != null) {
-      out.printElement(presentationMLTag, asText(), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+      out.printElement(presentationMLTag, asText(), CLASS_ATTR, PRESENTATIONML_CLASS,
+          ENTITY_ID_ATTR, entityId);
     } else {
       if (uid != null) {
-        out.printElement(presentationMLTag, String.valueOf(uid), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
+        out.printElement(presentationMLTag, String.valueOf(uid), CLASS_ATTR, PRESENTATIONML_CLASS,
+            ENTITY_ID_ATTR, entityId);
       } else if (prettyName != null) {
         out.print(prettyName);
       } else if (email != null) {
-        out.print(email);
+        out.printElement(HTML_LINK, (prettyName != null) ? prettyName : email, HREF_ATTRIBUTE,
+            buildMailTo());
       }
     }
   }
@@ -111,7 +126,7 @@ public class Mention extends Entity {
       if (prettyName != null) {
         return new Text(prettyName);
       } else if (email != null) {
-        return new Text(email);
+        return new Link(buildMailTo(), (prettyName != null) ? prettyName: email);
       } else if (uid != null) {
         return new Text(String.valueOf(uid));
       } else {
@@ -178,6 +193,10 @@ public class Mention extends Entity {
       email = (email == null) ? userPresentation.getEmail() : email;
       prettyName = (prettyName == null) ? userPresentation.getPrettyName() : prettyName;
     }
+  }
+
+  private String buildMailTo() {
+    return MAILTO + email;
   }
 
   public IUserPresentation getUserPresentation() {

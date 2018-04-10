@@ -177,12 +177,16 @@ public class MentionTest extends ElementTest {
     String invalidAttr = "<messageML>Hello <mention email=\"invalid@email.com\" strict=\"false\" />!</messageML>";
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
 
+    String expectedJson = "{\"urls\":[{\"text\":\"mailto:invalid@email.com\","
+        + "\"id\":\"mailto:invalid@email.com\",\"expandedUrl\":\"mailto:invalid@email.com\","
+        + "\"indexStart\":6,\"indexEnd\":30,\"type\":\"URL\"}]}";
+
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "Hello invalid@email.com!</div>",
+            + "Hello <a href=\"mailto:invalid@email.com\">invalid@email.com</a>!</div>",
         context.getPresentationML());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
-    assertEquals("Markdown", "Hello invalid@email.com!", context.getMarkdown());
-    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
+    assertEquals("Markdown", "Hello mailto:invalid@email.com!", context.getMarkdown());
+    assertEquals("Legacy entities", expectedJson, MAPPER.writeValueAsString(context.getEntities()));
   }
 
   @Test

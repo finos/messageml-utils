@@ -244,7 +244,13 @@ public class MarkdownParser extends AbstractVisitor {
 
   private void visit(MentionNode mention) {
     try {
-      Mention node = new Mention(parent, ++index, mention.getUid(), dataProvider);
+      Mention node;
+      if (StringUtils.isEmpty(mention.getPrettyName())) {
+        node = new Mention(parent, ++index, mention.getUid(), dataProvider);
+      } else {
+        node = new Mention(parent, ++index, mention.getPrettyName(), dataProvider);
+      }
+
       node.validate();
       visitChildren(node, mention);
     } catch (InvalidInputException e) {
