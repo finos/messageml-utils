@@ -117,10 +117,10 @@ public class Mention extends Entity {
   @Override
   public Node asMarkdown() throws InvalidInputException {
     if (userPresentation == null) {
-      if (prettyName != null) {
+      if (email != null) {
+        return new org.commonmark.node.Link(MAILTO + email, (prettyName != null) ? prettyName : email);
+      } else if (prettyName != null) {
         return new Text(prettyName);
-      } else if (email != null) {
-        return new Text(MAILTO + email);
       } else if (uid != null) {
         return new Text(String.valueOf(uid));
       } else {
