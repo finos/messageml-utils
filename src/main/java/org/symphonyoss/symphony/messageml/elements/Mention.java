@@ -40,6 +40,7 @@ public class Mention extends Entity {
   private static final String ATTR_STRICT = "strict";
   private static final String ENTITY_SUBTYPE = "com.symphony.user.userId";
   private static final String ENTITY_VERSION = "1.0";
+  private static final String MAILTO = "mailto:";
 
   private final IDataProvider dataProvider;
 
@@ -94,13 +95,21 @@ public class Mention extends Entity {
   public void asPresentationML(XmlPrintStream out) {
     if (userPresentation != null) {
       out.printElement(presentationMLTag, asText(), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
-    } else {
-      if (uid != null) {
+    } else { //If we couldn't resolve the user, try to convert to a mailto: link with optional pretty name
+      if (email != null) {
+        try {
+          Link link = new Link(getParent(), MAILTO + email, dataProvider);
+          for (Element child : getChildren()) {
+            link.addChild(child);
+          }
+          link.asPresentationML(out);
+        } catch (InvalidInputException e) { // Thrown on unsupported protocol
+          out.print(email);
+        }
+      } else if (uid != null) {
         out.printElement(presentationMLTag, String.valueOf(uid), CLASS_ATTR, PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
       } else if (prettyName != null) {
         out.print(prettyName);
-      } else if (email != null) {
-        out.print(email);
       }
     }
   }
@@ -108,10 +117,10 @@ public class Mention extends Entity {
   @Override
   public Node asMarkdown() throws InvalidInputException {
     if (userPresentation == null) {
-      if (prettyName != null) {
+      if (email != null) {
+        return new org.commonmark.node.Link(MAILTO + email, (prettyName != null) ? prettyName : email);
+      } else if (prettyName != null) {
         return new Text(prettyName);
-      } else if (email != null) {
-        return new Text(email);
       } else if (uid != null) {
         return new Text(String.valueOf(uid));
       } else {
