@@ -17,7 +17,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.commonmark.node.Link;
 import org.commonmark.node.Node;
 import org.commonmark.node.Text;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -42,8 +41,6 @@ public class Mention extends Entity {
   private static final String ENTITY_SUBTYPE = "com.symphony.user.userId";
   private static final String ENTITY_VERSION = "1.0";
   private static final String MAILTO = "mailto:";
-  private static final String HTML_LINK = "a";
-  private static final String HREF_ATTRIBUTE = "href";
 
   private final IDataProvider dataProvider;
 
@@ -54,32 +51,26 @@ public class Mention extends Entity {
   private boolean fallback = false;
 
   public Mention(Element parent, int entityIndex, IDataProvider dataProvider) {
-    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, null, false, null, dataProvider,
+    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, null, false, dataProvider,
         FormatEnum.MESSAGEML);
   }
 
   public Mention(Element parent, int entityIndex, Long uid, IDataProvider dataProvider) {
-    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, uid, true, null, dataProvider,
+    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, uid, true, dataProvider,
         FormatEnum.MESSAGEML);
   }
 
   public Mention(Element parent, String presentationMlTag, Long uid, IDataProvider dataProvider) {
-    this(parent, presentationMlTag, 0, uid, false, null, dataProvider, FormatEnum.PRESENTATIONML);
+    this(parent, presentationMlTag, 0, uid, false, dataProvider, FormatEnum.PRESENTATIONML);
   }
 
-  public Mention(Element parent, int entityIndex, String prettyName, IDataProvider dataProvider) {
-    this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, null, false, prettyName, dataProvider,
-        FormatEnum.MESSAGEML);
-  }
-
-  private Mention(Element parent, String presentationMlTag, Integer entityIndex, Long uid, Boolean fallback, String prettyName,
-      IDataProvider dataProvider, FormatEnum format) {
+  private Mention(Element parent, String presentationMlTag, Integer entityIndex, Long uid,
+      Boolean fallback, IDataProvider dataProvider, FormatEnum format) {
     super(parent, MESSAGEML_TAG, presentationMlTag, format);
     this.dataProvider = dataProvider;
     this.uid = uid;
     this.fallback = fallback;
     this.entityId = getEntityId(entityIndex);
-    this.prettyName = prettyName;
   }
 
   @Override
@@ -114,8 +105,23 @@ public class Mention extends Entity {
       } else if (prettyName != null) {
         out.print(prettyName);
       } else if (email != null) {
-        out.printElement(HTML_LINK, (prettyName != null) ? prettyName : email, HREF_ATTRIBUTE,
-            buildMailTo());
+        try {
+          Link link = new Link(getParent(), buildMailTo(), dataProvider);
+
+          for (Element child : getChildren()) {
+            link.addChild(child);
+          }
+
+          // If there's no pretty text, adds only the email as the tag text
+          if(link.getChildren().isEmpty()) {
+            TextNode child = new TextNode(link, email);
+            link.addChild(child);
+          }
+
+          link.asPresentationML(out);
+        } catch (InvalidInputException e) { // Thrown on unsupported protocol
+          out.print(email);
+        }
       }
     }
   }
@@ -126,7 +132,7 @@ public class Mention extends Entity {
       if (prettyName != null) {
         return new Text(prettyName);
       } else if (email != null) {
-        return new Link(buildMailTo(), (prettyName != null) ? prettyName: email);
+        return new org.commonmark.node.Link(buildMailTo(), (prettyName != null) ? prettyName : email);
       } else if (uid != null) {
         return new Text(String.valueOf(uid));
       } else {
