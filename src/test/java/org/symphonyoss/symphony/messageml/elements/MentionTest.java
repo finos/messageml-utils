@@ -69,6 +69,34 @@ public class MentionTest extends ElementTest {
   }
 
   @Test
+  public void testMentionWithPrettyName() throws Exception {
+    UserPresentation user =
+        new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
+
+    String input =
+        "<messageML>Hello <mention email=\"bot.user1@localhost.com\">This will be "
+            + "ignored</mention>!</messageML>";
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "Hello <span class=\"entity\" data-entity-id=\"mention1\">@Bot User01</span>!"
+        + "</div>";
+    String expectedJson = "{\"mention1\":{"
+        + "\"type\":\"com.symphony.user.mention\","
+        + "\"version\":\"1.0\",\"id\":[{"
+        + "\"type\":\"com.symphony.user.userId\","
+        + "\"value\":\"1\""
+        + "}]}}";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    assertEquals("Element attributes", Collections.emptyMap(),
+        messageML.getChildren().get(1).getAttributes());
+    verifyMention(messageML, user, expectedPresentationML, expectedJson);
+  }
+
+  @Test
   public void testMentionByPresentationMLDiv() throws Exception {
     UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
     ((TestDataProvider) dataProvider).setUserPresentation(user);
@@ -177,12 +205,38 @@ public class MentionTest extends ElementTest {
     String invalidAttr = "<messageML>Hello <mention email=\"invalid@email.com\" strict=\"false\" />!</messageML>";
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
 
+    String expectedJson = "{\"urls\":[{\"text\":\"mailto:invalid@email.com\","
+        + "\"id\":\"mailto:invalid@email.com\",\"expandedUrl\":\"mailto:invalid@email.com\","
+        + "\"indexStart\":6,\"indexEnd\":30,\"type\":\"URL\"}]}";
+
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "Hello invalid@email.com!</div>",
+            + "Hello <a href=\"mailto:invalid@email.com\">invalid@email.com</a>!</div>",
         context.getPresentationML());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
-    assertEquals("Markdown", "Hello invalid@email.com!", context.getMarkdown());
-    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
+    assertEquals("Markdown", "Hello mailto:invalid@email.com!", context.getMarkdown());
+    assertEquals("Legacy entities", expectedJson, MAPPER.writeValueAsString(context.getEntities()));
+  }
+
+  @Test
+  public void testSoftMentionWithPrettyNameInvalidEmail() throws Exception {
+    UserPresentation user =
+        new UserPresentation(0L, "never.retrieved", "Never retrieved", "ignored@email.com");
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
+
+    String invalidAttr = "<messageML>Hello <mention email=\"invalid@email.com\" strict=\"false\">"
+        + "Bot User01</mention>!</messageML>";
+    context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
+
+    String expectedJson = "{\"urls\":[{\"text\":\"mailto:invalid@email.com\","
+        + "\"id\":\"mailto:invalid@email.com\",\"expandedUrl\":\"mailto:invalid@email.com\","
+        + "\"indexStart\":6,\"indexEnd\":30,\"type\":\"URL\"}]}";
+
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "Hello <a href=\"mailto:invalid@email.com\">Bot User01</a>!</div>",
+        context.getPresentationML());
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
+    assertEquals("Markdown", "Hello mailto:invalid@email.com!", context.getMarkdown());
+    assertEquals("Legacy entities", expectedJson, context.getEntities().toString());
   }
 
   @Test
