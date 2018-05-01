@@ -132,7 +132,7 @@ public class Mention extends Entity {
       if (prettyName != null) {
         return new Text(prettyName);
       } else if (email != null) {
-        return new org.commonmark.node.Link(buildMailTo(), (prettyName != null) ? prettyName : email);
+        return new Text((prettyName != null) ? prettyName : email);
       } else if (uid != null) {
         return new Text(String.valueOf(uid));
       } else {
