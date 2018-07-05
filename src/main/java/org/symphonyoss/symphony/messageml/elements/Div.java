@@ -71,6 +71,8 @@ public class Div extends Element {
 
   @Override
   public void validate() throws InvalidInputException {
+    String classAttr = getAttribute(CLASS_ATTR);
+
     if (getAttribute(ATTR_ENTITY_ID) != null && !"entity".equals(getAttribute(CLASS_ATTR))) {
       throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is only allowed if the element "
           + "class is \"entity\".");
@@ -82,9 +84,8 @@ public class Div extends Element {
     }
 
     if (getAttribute(ATTR_ICON_SRC) != null) {
-      String[] classes = getAttribute(CLASS_ATTR).split(" ");
-
-      if (classes.length == 0 || !"card".equals(classes[0])) {
+      String[] classes = (classAttr != null) ? classAttr.split(" ") : null;
+      if (classes == null || classes.length == 0 || !"card".equals(classes[0])) {
         throw new InvalidInputException("The attribute \"" + ATTR_ICON_SRC + "\" is only allowed if the element "
             + "class is \"card\".");
       }
