@@ -31,6 +31,7 @@ public class Div extends Element {
   public static final String MESSAGEML_TAG = "div";
   private static final String ATTR_ENTITY_ID = "data-entity-id";
   private static final String ATTR_ICON_SRC = "data-icon-src";
+  private static final String ATTR_ACCENT_COLOR = "data-accent-color";
 
   public Div(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -45,6 +46,10 @@ public class Div extends Element {
 
       case ATTR_ICON_SRC:
         setAttribute(ATTR_ICON_SRC, getStringAttribute(item));
+        break;
+
+      case ATTR_ACCENT_COLOR:
+        setAttribute(ATTR_ACCENT_COLOR, getStringAttribute(item));
         break;
 
       default:
@@ -73,21 +78,25 @@ public class Div extends Element {
   public void validate() throws InvalidInputException {
     String classAttr = getAttribute(CLASS_ATTR);
 
-    if (getAttribute(ATTR_ENTITY_ID) != null && !"entity".equals(getAttribute(CLASS_ATTR))) {
+    if (getAttribute(ATTR_ENTITY_ID) != null && !"entity".equals(classAttr)) {
       throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is only allowed if the element "
           + "class is \"entity\".");
     }
 
-    if ("entity".equals(getAttribute(CLASS_ATTR)) && getAttribute(ATTR_ENTITY_ID) == null)  {
+    if ("entity".equals(classAttr) && getAttribute(ATTR_ENTITY_ID) == null) {
       throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is required if the element "
           + "class is \"entity\".");
     }
 
-    if (getAttribute(ATTR_ICON_SRC) != null) {
-      String[] classes = (classAttr != null) ? classAttr.split(" ") : null;
-      if (classes == null || classes.length == 0 || !"card".equals(classes[0])) {
-        throw new InvalidInputException("The attribute \"" + ATTR_ICON_SRC + "\" is only allowed if the element "
-            + "class is \"card\".");
+    String[] classes = (classAttr != null) ? classAttr.split(" ") : null;
+
+    for (String attr : new String[] {ATTR_ICON_SRC, ATTR_ACCENT_COLOR}) {
+
+      if (getAttribute(attr) != null) {
+        if (classes == null || classes.length == 0 || !"card".equals(classes[0])) {
+          throw new InvalidInputException("The attribute \"" + attr + "\" is only allowed if the element "
+              + "class is \"card\".");
+        }
       }
     }
   }

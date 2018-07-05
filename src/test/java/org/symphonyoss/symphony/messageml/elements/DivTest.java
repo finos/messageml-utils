@@ -61,11 +61,20 @@ public class DivTest extends ElementTest {
   }
 
   @Test
-  public void testDivDInvalidataIconSrc() throws Exception {
+  public void testDivInvaliIconSrc() throws Exception {
     String div = "<messageML><div data-icon-src=\"attr\">txt</div></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"data-icon-src\" is only allowed if the element class is \"card\".");
+    context.parseMessageML(div, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testDivInvalidAccentColor() throws Exception {
+    String div = "<messageML><div data-accent-color=\"attr\">txt</div></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"data-accent-color\" is only allowed if the element class is \"card\".");
     context.parseMessageML(div, null, MessageML.MESSAGEML_VERSION);
   }
 }
