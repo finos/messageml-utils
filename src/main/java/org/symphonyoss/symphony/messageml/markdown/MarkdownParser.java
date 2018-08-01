@@ -34,7 +34,6 @@ import org.commonmark.node.Document;
 import org.commonmark.node.Emphasis;
 import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.HardLineBreak;
-import org.commonmark.node.Heading;
 import org.commonmark.node.HtmlInline;
 import org.commonmark.node.ListBlock;
 import org.commonmark.node.Node;
@@ -92,7 +91,6 @@ public class MarkdownParser extends AbstractVisitor {
 
   static {
     Set<Class<? extends Block>> enabledBlockTypes = new HashSet<>();
-    enabledBlockTypes.add(Heading.class);
     enabledBlockTypes.add(ThematicBreak.class);
     enabledBlockTypes.add(FencedCodeBlock.class);
     enabledBlockTypes.add(BlockQuote.class);

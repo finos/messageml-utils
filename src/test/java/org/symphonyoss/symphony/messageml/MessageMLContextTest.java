@@ -642,6 +642,17 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseMarkdownStandaloneHash() throws Exception {
+    String markdown = "# test";
+    context.parseMarkdown(markdown, null, null);
+
+    assertEquals("Text", "# test", context.getText());
+    assertEquals("Markdown", "# test", context.getMarkdown());
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"># test</div>", context.getPresentationML());
+  }
+
+  @Test
   public void testFailOnInvalidMessageML() throws Exception {
     String invalidMarkup = "<message></message>";
     expectedException.expect(InvalidInputException.class);
