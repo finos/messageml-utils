@@ -67,4 +67,7 @@ String entityJSON = context.getEntityJson();
 
 /* Get the Markdown representation of the message */
 String markdown = context.getMarkdown();
+
+/* Get the plain text of the message */
+String text = context.getText();
 ```
