@@ -71,14 +71,17 @@ public class MarkdownRenderer extends AbstractVisitor {
   private static final String USER_TYPE = "userType";
   private static final String USER_MENTIONS = "userMentions";
   private static final String HASHTAGS = "hashtags";
+  private static final String INDENT = "  ";
 
   private final TrackingWriter writer = new TrackingWriter(new StringBuilder());
   private final ObjectNode json = new ObjectNode(JsonNodeFactory.instance);
 
   private boolean removeNewlines = true;
   private Character bulletListMarker;
+  private int bulletListLevel = 0;
   private Integer orderedListCounter;
   private Character orderedListDelimiter;
+  private int orderedListLevel = 0;
 
   /**
    * Process the document tree and generate its text representation.
@@ -153,10 +156,17 @@ public class MarkdownRenderer extends AbstractVisitor {
   public void visit(BulletList ul) {
     writer.line();
 
+    Character previousMarker = bulletListMarker;
+    int previousLevel = bulletListLevel;
+
+    bulletListLevel += (ul.getParent() instanceof ListItem) ? 1 : 0;
+
     bulletListMarker = ul.getBulletMarker();
     visitChildren(ul);
     writer.line();
-    bulletListMarker = null;
+
+    bulletListMarker = previousMarker;
+    bulletListLevel = previousLevel;
 
     writer.line();
   }
@@ -165,12 +175,20 @@ public class MarkdownRenderer extends AbstractVisitor {
   public void visit(org.commonmark.node.OrderedList ol) {
     writer.line();
 
+    Integer previousCounter = orderedListCounter;
+    Character previousDelimiter = orderedListDelimiter;
+    int previousLevel = orderedListLevel;
+
+    orderedListLevel += (ol.getParent() instanceof ListItem) ? 1 : 0;
+
     orderedListCounter = ol.getStartNumber();
     orderedListDelimiter = ol.getDelimiter();
     visitChildren(ol);
     writer.line();
-    orderedListCounter = null;
-    orderedListDelimiter = null;
+
+    orderedListCounter = previousCounter;
+    orderedListDelimiter = previousDelimiter;
+    orderedListLevel = previousLevel;
 
     writer.line();
   }
@@ -178,12 +196,13 @@ public class MarkdownRenderer extends AbstractVisitor {
   @Override
   public void visit(ListItem li) {
     if (orderedListCounter != null) {
-      writer.write(String.valueOf(orderedListCounter) + orderedListDelimiter + " ");
+      writer.write(StringUtils.repeat(INDENT, orderedListLevel) + String.valueOf(orderedListCounter) +
+          orderedListDelimiter + " ");
       visitChildren(li);
       writer.line();
       orderedListCounter++;
     } else if (bulletListMarker != null) {
-      writer.write(bulletListMarker + " ");
+      writer.write( StringUtils.repeat(INDENT, bulletListLevel) + bulletListMarker + " ");
       visitChildren(li);
       writer.line();
     }

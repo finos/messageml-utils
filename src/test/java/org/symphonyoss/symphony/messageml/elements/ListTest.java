@@ -149,5 +149,69 @@ public class ListTest extends ElementTest {
     context.parseMessageML(invalidChild, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testNestedBulletList() throws Exception {
+    String input = "<messageML>"
+        + "<ul>"
+        +   "<li>top header"
+        +     "<ul>"
+        +       "<li>list header 1"
+        +         "<ul>"
+        +           "<li>item 1</li>"
+        +         "</ul>"
+        +       "</li>"
+        +       "<li>list header 2"
+        +         "<ul>"
+        +           "<li>item 2</li>"
+        +         "</ul>"
+        +       "</li>"
+        +     "</ul>"
+        +   "</li>"
+        + "</ul>"
+        + "</messageML>";
+
+    context.parseMessageML(input, null, null);
+
+    String expected = "- top header\n"
+        + "  - list header 1\n"
+        + "    - item 1\n"
+        + "  - list header 2\n"
+        + "    - item 2\n";
+
+    assertEquals("Markdown", expected, context.getMarkdown());
+  }
+
+  @Test
+  public void testNestedOrderedList() throws Exception {
+    String input = "<messageML>"
+        + "<ol>"
+        +   "<li>top header"
+        +     "<ol>"
+        +       "<li>list header 1"
+        +         "<ol>"
+        +           "<li>item 1</li>"
+        +         "</ol>"
+        +       "</li>"
+        +       "<li>list header 2"
+        +         "<ol>"
+        +           "<li>item 2</li>"
+        +         "</ol>"
+        +       "</li>"
+        +     "</ol>"
+        +   "</li>"
+        + "</ol>"
+        + "</messageML>";
+
+    context.parseMessageML(input, null, null);
+
+    String expected = "1. top header\n"
+        + "  1. list header 1\n"
+        + "    1. item 1\n"
+        + "  2. list header 2\n"
+        + "    1. item 2\n";
+
+    assertEquals("Markdown", expected, context.getMarkdown());
+  }
+
 
 }
