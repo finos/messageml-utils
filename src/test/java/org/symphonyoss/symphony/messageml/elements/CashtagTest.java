@@ -62,7 +62,35 @@ public class CashtagTest extends ElementTest {
     context.parseMessageML(expectedPresentationML, expectedJson, MessageML.MESSAGEML_VERSION);
     messageML = context.getMessageML();
     verifyCashTag(messageML, expectedPresentationML, expectedJson, expectedText, expectedMarkdown);
+  }
 
+  @Test
+  public void testCashTagMoreSpecialChars() throws Exception {
+    String input = "<messageML>Hello <cash tag=\"_hello#w-o-r-l-d_\"/>!</messageML>";
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">$_hello#w-o-r-l-d_</span>!"
+            + "</div>";
+    String expectedJson = "{\"keyword1\":{"
+            + "\"type\":\"org.symphonyoss.fin.security\","
+            + "\"version\":\"1.0\","
+            + "\"id\":[{"
+            + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
+            + "\"value\":\"_hello#w-o-r-l-d_\""
+            + "}]}}";
+    String expectedText = "_hello#w-o-r-l-d_";
+    String expectedMarkdown = "Hello $_hello#w-o-r-l-d_!";
+
+    // Verify by MessageML
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    Element messageML = context.getMessageML();
+    assertEquals("Element attributes", Collections.emptyMap(), messageML.getChildren().get(1).getAttributes());
+    verifyCashTag(messageML, expectedPresentationML, expectedJson, expectedText, expectedMarkdown);
+
+    // Verify by PresentationML
+    context.parseMessageML(expectedPresentationML, expectedJson, MessageML.MESSAGEML_VERSION);
+    messageML = context.getMessageML();
+    verifyCashTag(messageML, expectedPresentationML, expectedJson, expectedText, expectedMarkdown);
   }
 
   @Test
@@ -135,7 +163,7 @@ public class CashtagTest extends ElementTest {
     String input = "<messageML>Hello <cash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters, underscore, dot and dash");
+    expectedException.expectMessage(String.format("CashTag must match the following pattern : %s", CashTag.CASHTAG_PATTERN));
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -154,7 +182,7 @@ public class CashtagTest extends ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters");
+    expectedException.expectMessage(String.format("CashTag must match the following pattern : %s", CashTag.CASHTAG_PATTERN));
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
