@@ -156,7 +156,7 @@ public class HashtagTest extends ElementTest {
     String input = "<messageML>Hello <hash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("HashTag must match the following pattern : %s", HashTag.HASHTAG_PATTERN));
+    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s", HashTag.HASHTAG_PATTERN));
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -175,7 +175,7 @@ public class HashtagTest extends ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("HashTag must match the following pattern : %s", HashTag.HASHTAG_PATTERN));
+    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s", HashTag.HASHTAG_PATTERN));
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 

@@ -163,7 +163,7 @@ public class CashtagTest extends ElementTest {
     String input = "<messageML>Hello <cash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("CashTag must match the following pattern : %s", CashTag.CASHTAG_PATTERN));
+    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s", CashTag.CASHTAG_PATTERN));
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -182,7 +182,7 @@ public class CashtagTest extends ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("CashTag must match the following pattern : %s", CashTag.CASHTAG_PATTERN));
+    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s", CashTag.CASHTAG_PATTERN));
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
