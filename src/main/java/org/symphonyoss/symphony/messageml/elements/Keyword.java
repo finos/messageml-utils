@@ -29,7 +29,7 @@ abstract class Keyword extends Entity {
 
   private static final String ATTR_TAG = "tag";
   private static final String ENTITY_ID_PREFIX = "keyword";
-  private static final String KEYWORD_PATTERN = "[\\p{Alnum}_.-]*";
+  private static final String MSG_INVALID_TAG_PATTERN = "Values of the attribute 'tag' for the element '%s' must match the pattern %s.";
 
   protected String tag;
 
@@ -53,9 +53,9 @@ abstract class Keyword extends Entity {
     if (this.tag == null) {
       throw new InvalidInputException("The attribute \"tag\" is required");
     }
-
-    if (!this.tag.matches(KEYWORD_PATTERN)) {
-      throw new InvalidInputException("Keywords may only contain alphanumeric characters, underscore, dot and dash");
+    String pattern = getTagPattern();
+    if (!this.tag.matches(pattern)) {
+      throw new InvalidInputException(String.format(MSG_INVALID_TAG_PATTERN, this.getMessageMLTag(), pattern));
     }
 
     super.validate();
@@ -84,4 +84,10 @@ abstract class Keyword extends Entity {
   public String toString() {
     return "Keyword(" + getTag() + ")";
   }
+
+  /**
+   * a Keyword must provide its validation pattern
+   * @return
+   */
+  public abstract String getTagPattern();
 }

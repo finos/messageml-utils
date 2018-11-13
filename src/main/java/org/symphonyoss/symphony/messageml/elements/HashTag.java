@@ -29,6 +29,7 @@ public class HashTag extends Keyword {
   public static final String MESSAGEML_TAG = "hash";
   public static final String PREFIX = "#";
   public static final String ENTITY_TYPE = "org.symphonyoss.taxonomy";
+  public static final String HASHTAG_PATTERN = "[\\S]*[^\\s!@#$%^&*()+=<>,./?`~:;'\"\\\\|-]+[\\S]*$";
   private static final String ENTITY_SUBTYPE = "org.symphonyoss.taxonomy.hashtag";
   private static final String ENTITY_VERSION = "1.0";
 
@@ -61,6 +62,11 @@ public class HashTag extends Keyword {
   @Override
   public String toString() {
     return "HashTag(" + getTag() + ")";
+  }
+
+  @Override
+  public String getTagPattern() {
+    return HASHTAG_PATTERN;
   }
 
   @Override

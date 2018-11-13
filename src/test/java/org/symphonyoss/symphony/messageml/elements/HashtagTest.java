@@ -128,11 +128,35 @@ public class HashtagTest extends ElementTest {
   }
 
   @Test
+  public void testHashTagExtendedCharacters() throws Exception {
+    String input = "<messageML>Hello <hash tag=\"crazy#world\"/>!</messageML>";
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">#crazy#world</span>!"
+            + "</div>";
+    String expectedJson = "{\"keyword1\":{"
+            + "\"type\":\"org.symphonyoss.taxonomy\","
+            + "\"version\":\"1.0\","
+            + "\"id\":[{"
+            + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
+            + "\"value\":\"crazy#world\""
+            + "}]}}";
+    String expectedText = "crazy#world";
+    String expectedMarkdown = "Hello #crazy#world!";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    assertEquals("Element attributes", Collections.emptyMap(), messageML.getChildren().get(1).getAttributes());
+    verifyHashTag(messageML, expectedPresentationML, expectedJson, expectedText, expectedMarkdown);
+  }
+
+  @Test
   public void testHashTagInvalidCharacter() throws Exception {
     String input = "<messageML>Hello <hash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters, underscore, dot and dash");
+    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s", HashTag.HASHTAG_PATTERN));
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -151,7 +175,7 @@ public class HashtagTest extends ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Keywords may only contain alphanumeric characters");
+    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s", HashTag.HASHTAG_PATTERN));
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
