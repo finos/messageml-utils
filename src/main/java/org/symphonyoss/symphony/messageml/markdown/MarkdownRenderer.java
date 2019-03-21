@@ -37,14 +37,9 @@ import org.commonmark.node.Paragraph;
 import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.renderer.text.TextContentWriter;
+import org.symphonyoss.symphony.messageml.elements.Button;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
-import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.*;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Collection;
@@ -240,6 +235,10 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((TableCellNode) node);
     } else if (node instanceof PreformattedNode) {
       visit((PreformattedNode) node);
+    } else if (node instanceof FormNode) {
+      visit((FormNode) node);
+    } else if (node instanceof ButtonNode) {
+      visit((ButtonNode) node);
     }
   }
 
@@ -278,6 +277,18 @@ public class MarkdownRenderer extends AbstractVisitor {
     putJsonObject(USER_MENTIONS, node);
 
     writer.write(text);
+  }
+
+  private void visit(FormNode form) {
+    writer.write(form.getOpeningDelimiter());
+    visitChildren(form);
+    writer.write(form.getClosingDelimiter());
+  }
+
+  private void visit(ButtonNode button) {
+    writer.write(button.getOpeningDelimiter());
+    visitChildren(button);
+    writer.write(button.getClosingDelimiter());
   }
 
   private void visit(TableNode table) {
