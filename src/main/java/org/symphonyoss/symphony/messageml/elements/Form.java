@@ -22,6 +22,6 @@ public class Form extends Element {
   }
 
   /* TODO:  The code for this class is supposed to be implemented in task APP-2055.
-     This class was added here so the code for the Button class (APP-2058) could be complete.
+     This class was added here so the code for the Select class (APP-2056) could be complete.
   */
 }
