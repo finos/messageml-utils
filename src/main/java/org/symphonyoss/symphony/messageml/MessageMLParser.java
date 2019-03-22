@@ -39,9 +39,11 @@ import org.symphonyoss.symphony.messageml.elements.Link;
 import org.symphonyoss.symphony.messageml.elements.ListItem;
 import org.symphonyoss.symphony.messageml.elements.Mention;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.Option;
 import org.symphonyoss.symphony.messageml.elements.OrderedList;
 import org.symphonyoss.symphony.messageml.elements.Paragraph;
 import org.symphonyoss.symphony.messageml.elements.Preformatted;
+import org.symphonyoss.symphony.messageml.elements.Select;
 import org.symphonyoss.symphony.messageml.elements.Span;
 import org.symphonyoss.symphony.messageml.elements.Table;
 import org.symphonyoss.symphony.messageml.elements.TableBody;
@@ -448,6 +450,12 @@ public class MessageMLParser {
 
       case Form.MESSAGEML_TAG:
         return new Form(parent);
+
+      case Select.MESSAGEML_TAG:
+        return new Select(parent);
+
+      case Option.MESSAGEML_TAG:
+        return new Option(parent);
 
       case Button.MESSAGEML_TAG:
         return new Button(parent);
