@@ -18,13 +18,15 @@ public class Button extends Element {
   public static final String MESSAGEML_TAG = "button";
   public static final String NAME_ATTR = "name";
   public static final String TYPE_ATTR = "type";
+  public static final String ACTION_TYPE = "action";
+  public static final String RESET_TYPE = "reset";
   public static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
           "primary-destructive", "secondary-destructive"));
-  public static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList("action", "reset"));
+  public static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList(ACTION_TYPE, RESET_TYPE));
 
   public Button(Element parent) {
     super(parent, MESSAGEML_TAG);
-    setAttribute(TYPE_ATTR, "action");
+    setAttribute(TYPE_ATTR, ACTION_TYPE);
   }
 
   @Override
@@ -63,13 +65,12 @@ public class Button extends Element {
       throw new InvalidInputException("A \"button\" element can only be a child of a \"form\" element");
     }
     if (!VALID_TYPES.contains(type)) {
-      throw new InvalidInputException("Attribute \"type\" must be \"action\" or \"reset\"");
+      throw new InvalidInputException("Attribute \"type\" must be in " + VALID_TYPES);
     }
     if (clazz != null && !VALID_CLASSES.contains(clazz)) {
-      throw new InvalidInputException("Attribute \"class\" must be \"primary\", \"secondary\", " +
-              "\"primary-destructive\" or \"secondary-destructive\"");
+      throw new InvalidInputException("Attribute \"class\" must be in " + VALID_CLASSES);
     }
-    if (type.equals("action") && StringUtils.isBlank(name)) {
+    if (type.equals(ACTION_TYPE) && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for generic action buttons");
     }
     assertContentModel(Collections.<Class<? extends Element>>singleton(TextNode.class));
