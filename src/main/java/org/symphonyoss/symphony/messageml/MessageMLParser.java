@@ -451,8 +451,8 @@ public class MessageMLParser {
       case Form.MESSAGEML_TAG:
         return new Form(parent);
 
-      case Select.MESSAGEML_TAG:
-        return new Select(parent);
+      case Dropdown.MESSAGEML_TAG:
+        return new Dropdown(parent);
 
       case Option.MESSAGEML_TAG:
         return new Option(parent);
