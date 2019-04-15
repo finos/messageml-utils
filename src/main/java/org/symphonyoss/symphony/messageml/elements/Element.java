@@ -491,4 +491,14 @@ public abstract class Element {
     return result;
   }
 
+  public void toString(XmlPrintStream out) {
+    out.openElement(getMessageMLTag(), getAttributes());
+
+    for (Element child : getChildren()) {
+      child.toString(out);
+    }
+
+    out.closeElement();
+  }
+
 }

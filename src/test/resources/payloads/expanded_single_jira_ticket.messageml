@@ -1,4 +1,4 @@
-<div data-format="PresentationML" data-version="2.0">
+<messageML>
   <p>
     <img src="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg"/>
     <br/> Sample JIRA issue</p>
@@ -7,12 +7,12 @@
         <i>SAM-24</i>,<b>Sample Bug Blocker</b>
       </a>
     </h1>
-    <div class="card barStyle" data-icon-src="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg">
-      <div class="cardHeader">
+    <card class="barStyle" iconSrc="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg">
+      <header>
         <span class="label">Field</span>
         <span class="info">Old Value =&gt; New Value</span>
-      </div>
-      <div class="cardBody">
+      </header>
+      <body>
         <ol>
           <li>
             <span class="label">resolution</span>
@@ -23,8 +23,8 @@
             <span class="info">To Do =&gt; Done</span>
           </li>
         </ol>
-      </div>
-    </div>
+      </body>
+    </card>
     <hr/>
     <table>
       <thead>
@@ -37,7 +37,7 @@
         <tr>
           <td>Assignee</td>
           <td>
-            <span class="entity" data-entity-id="mention1">@Bot User01</span>
+            <mention uid="123456789"/>
           </td>
         </tr>
         <tr>
@@ -45,10 +45,10 @@
           <td>
             <ul>
               <li>
-                <span class="entity" data-entity-id="keyword2">#production</span>
+                <hash tag="production"/>
               </li>
               <li>
-                <span class="entity" data-entity-id="keyword3">#major</span>
+                <hash tag="major"/>
               </li>
             </ul>
           </td>
@@ -66,4 +66,4 @@
       </tfoot>
     </table>
   </div>
-</div>
+</messageML>

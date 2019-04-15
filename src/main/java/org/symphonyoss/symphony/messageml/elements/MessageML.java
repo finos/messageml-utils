@@ -108,18 +108,25 @@ public class MessageML extends Element {
   }
 
   @Override
+  public void toString(XmlPrintStream out) {
+    out.openElement(getMessageMLTag());
+
+    for (Element child : getChildren()) {
+      child.toString(out);
+    }
+
+    out.closeElement();
+  }
+
+  @Override
   public void validate() throws InvalidInputException {
     if (format == FormatEnum.MESSAGEML) {
-
       assertNoAttributes();
-
     } else if (format == FormatEnum.PRESENTATIONML) {
-
       if (!PRESENTATIONML_FORMAT.equalsIgnoreCase(getAttribute(ATTR_FORMAT)) || this.version == null) {
         throw new InvalidInputException("Malformed PresentationML. The attributes \"" + ATTR_FORMAT
             + "\" and \"" + ATTR_VERSION + "\" are required.");
       }
-
     }
 
     if (isChime()) {

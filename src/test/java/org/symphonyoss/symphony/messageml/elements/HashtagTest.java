@@ -86,7 +86,7 @@ public class HashtagTest extends ElementTest {
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
-    assertEquals("Element attributes", 1, messageML.getChildren().get(1).getAttributes().size());
+    assertEquals("Element attributes", 2, messageML.getChildren().get(1).getAttributes().size());
     assertEquals("Element class attribute", "entity", messageML.getChildren().get(1).getAttribute("class"));
     verifyHashTag(messageML, expectedPresentationML, entityJson, expectedText, expectedMarkdown);
   }
@@ -113,7 +113,7 @@ public class HashtagTest extends ElementTest {
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
-    assertEquals("Element attributes", 1, messageML.getChildren().get(1).getAttributes().size());
+    assertEquals("Element attributes", 2, messageML.getChildren().get(1).getAttributes().size());
     assertEquals("Element class attribute", "entity", messageML.getChildren().get(1).getAttribute("class"));
     verifyHashTag(messageML, expectedPresentationML, entityJson, expectedText, expectedMarkdown);
   }

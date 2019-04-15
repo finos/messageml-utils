@@ -122,6 +122,25 @@ public class MessageMLContext {
     return bout.toString();
   }
 
+  public String getMessageMLText() throws IllegalStateException {
+    if (messageML == null) {
+      throw new IllegalStateException("The message hasn't been parsed yet. "
+          + "Please call MessageMLContext.parse() first.");
+    }
+
+    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    XmlPrintStream out = new XmlPrintStream(bout);
+
+    out.setNoIndent(true);
+    out.setNoNl(true);
+
+    messageML.toString(out);
+
+    out.close();
+
+    return bout.toString();
+  }
+
   /**
    * Retrieve a JSON representation of entity data (EntityJSON).
    */

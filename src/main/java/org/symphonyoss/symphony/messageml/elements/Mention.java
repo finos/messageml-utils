@@ -145,6 +145,33 @@ public class Mention extends Entity {
   }
 
   @Override
+  public void toString(XmlPrintStream out) {
+    boolean fallback = false;
+
+    if (userPresentation != null) {
+      if (uid != null && uid != 0) {
+        out.printElement(getMessageMLTag(), null, ATTR_UID, String.valueOf(uid));
+      } else if (userPresentation.getEmail() != null) {
+        out.printElement(getMessageMLTag(), null, ATTR_EMAIL, email);
+      } else {
+        fallback = true;
+      }
+    } else {
+      fallback = true;
+    }
+
+    if (fallback) {
+      if (prettyName != null) {
+        out.print(prettyName);
+      } else if (email != null) {
+        out.print(email);
+      } else if (uid != null && uid != 0) {
+        out.print(uid);
+      }
+    }
+  }
+
+  @Override
   public ObjectNode asEntityJson(ObjectNode parent) {
     if (getEntityValue() != null) {
       return super.asEntityJson(parent);

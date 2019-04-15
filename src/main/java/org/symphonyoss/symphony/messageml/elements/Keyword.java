@@ -76,6 +76,11 @@ abstract class Keyword extends Entity {
   }
 
   @Override
+  public void toString(XmlPrintStream out) {
+    out.printElement(getMessageMLTag(), null, ATTR_TAG, tag);
+  }
+
+  @Override
   protected String getEntityValue() {
     return getTag();
   }

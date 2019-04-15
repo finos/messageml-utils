@@ -49,6 +49,11 @@ public class TextNode extends Element {
   }
 
   @Override
+  public void toString(XmlPrintStream out) {
+    asPresentationML(out);
+  }
+
+  @Override
   public Node asMarkdown() {
     return new org.commonmark.node.Text(this.text);
   }
