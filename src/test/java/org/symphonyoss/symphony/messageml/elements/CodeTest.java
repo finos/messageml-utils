@@ -225,7 +225,7 @@ public class CodeTest extends ElementTest {
     String input = "``System.out.println(\"Hello`world!\");``";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<code>System.out.println(&quot;Hello`world!&quot;);</code></div>";
-    String expectedMarkdown = "```\nSystem.out.println(\"Hello`world!\");\n```\n";
+    String expectedMarkdown = "```\nSystem.out.println(\"Hello\\`world!\");\n```\n";
     String expectedText = "System.out.println(\"Hello`world!\");";
 
     context.parseMarkdown(input, null, null);

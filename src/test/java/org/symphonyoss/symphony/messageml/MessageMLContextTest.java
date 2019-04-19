@@ -817,25 +817,109 @@ public class MessageMLContextTest {
   }
 
   @Test
-  public void testEscapeReservedChars() throws Exception {
-    String markdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ & * ( ) _ + { } | : \" < > ?";
-    String messageML = "<messageML>½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : \" &lt; &gt; ?</messageML>";
-    String escapedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ?";
-    String escapedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ & \\* ( ) \\_ + { } | : \" < > ?";
+  public void testEscapeReservedCharsFromMessageML() throws Exception {
+    String messageML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : \" &lt; &gt; ? "
+        + "<i>italic</i> <b>bold</b> <hash tag=\"hashtag\"/>";
+    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
+        + "_italic_ **bold** #hashtag";
+    JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
+        + "    {\n"
+        + "      \"id\": \"#hashtag\",\n"
+        + "      \"text\": \"#hashtag\",\n"
+        + "      \"indexStart\": 90,\n"
+        + "      \"indexEnd\": 98,\n"
+        + "      \"type\": \"KEYWORD\"\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}");
 
-    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML(String.format("<messageML>%s</messageML>", messageML), null, MessageML.MESSAGEML_VERSION);
 
     assertEquals("Generated PresentationML",
-        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", escapedPresentationML),
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", excpectedPresentationML),
         context.getPresentationML());
-    assertEquals("Generated Markdown", escapedMarkdown, context.getMarkdown());
+    assertEquals("Generated Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals("Generated entities", expectedEntities, context.getEntities());
+  }
 
-    context.parseMarkdown(markdown, null, null);
+  @Test
+  public void testEscapeReservedCharsFromMarkdown() throws Exception {
+    String markdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ & * ( ) _ + { } | : \" < > ? "
+        + "_italic_ **bold** #hashtag";
+    JsonNode entities = MAPPER.readTree("{\"hashtags\": [\n"
+        + "    {\n"
+        + "      \"id\": \"#hashtag\",\n"
+        + "      \"text\": \"#hashtag\",\n"
+        + "      \"indexStart\": 86,\n"
+        + "      \"indexEnd\": 94,\n"
+        + "      \"type\": \"KEYWORD\"\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}");
+    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
+        + "_italic_ **bold** #hashtag";
+    JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
+        + "    {\n"
+        + "      \"id\": \"#hashtag\",\n"
+        + "      \"text\": \"#hashtag\",\n"
+        + "      \"indexStart\": 90,\n"
+        + "      \"indexEnd\": 98,\n"
+        + "      \"type\": \"KEYWORD\"\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}");
+
+
+    context.parseMarkdown(markdown, entities, null);
 
     assertEquals("Generated PresentationML",
-        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", escapedPresentationML),
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", excpectedPresentationML),
         context.getPresentationML());
-    assertEquals("Generated Markdown", escapedMarkdown, context.getMarkdown());
+    assertEquals("Generated Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals("Generated entities", expectedEntities, context.getEntities());
+  }
+
+  @Test
+  public void testEscapeReservedCharsFromEscapedMarkdown() throws Exception {
+    String markdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
+        + "_italic_ **bold** #hashtag";
+    JsonNode entities = MAPPER.readTree("{\"hashtags\": [\n"
+        + "    {\n"
+        + "      \"id\": \"#hashtag\",\n"
+        + "      \"text\": \"#hashtag\",\n"
+        + "      \"indexStart\": 90,\n"
+        + "      \"indexEnd\": 98,\n"
+        + "      \"type\": \"KEYWORD\"\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}");
+    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
+        + "_italic_ **bold** #hashtag";
+    JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
+        + "    {\n"
+        + "      \"id\": \"#hashtag\",\n"
+        + "      \"text\": \"#hashtag\",\n"
+        + "      \"indexStart\": 90,\n"
+        + "      \"indexEnd\": 98,\n"
+        + "      \"type\": \"KEYWORD\"\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}");
+
+
+    context.parseMarkdown(markdown, entities, null);
+
+    assertEquals("Generated PresentationML",
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">%s</div>", excpectedPresentationML),
+        context.getPresentationML());
+    assertEquals("Generated Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals("Generated entities", expectedEntities, context.getEntities());
   }
 
   @Test

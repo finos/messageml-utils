@@ -117,15 +117,16 @@
     <properties>
         <json.schema.validator.version>2.2.8</json.schema.validator.version>
         <jackson.version>2.8.11</jackson.version>
-        <jackson.databind.version>2.8.11.2</jackson.databind.version>
+        <jackson.databind.version>2.8.11.3</jackson.databind.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.4</commons.lang3.version>
         <freemarker.version>2.3.23</freemarker.version>
-        <commonmark.version>0.10.0</commonmark.version>
+        <commonmark.version>0.12.1</commonmark.version>
         <junit.version>4.12</junit.version>
         <mockito.version>1.9.5</mockito.version>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <jsonassert.version>1.5.0</jsonassert.version>
     </properties>
 
     <profiles>
@@ -142,10 +143,10 @@
 
     <dependencies>
         <dependency>
-		        <groupId>com.github.java-json-tools</groupId>
-		        <artifactId>json-schema-validator</artifactId>
-		        <version>${json.schema.validator.version}</version>
-	      </dependency>
+            <groupId>com.github.java-json-tools</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${json.schema.validator.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -186,6 +187,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

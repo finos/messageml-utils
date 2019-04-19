@@ -47,7 +47,7 @@ public class BoldTest extends ElementTest {
   }
 
   @Test
-  public void testBoldByMarkowd() throws Exception {
+  public void testBoldByMarkdown() throws Exception {
     String input = "**Hello world!**";
     String expectedPresentationMl = "<div data-format=\"PresentationML\" data-version=\"2.0\"><b>Hello world!</b></div>";
     String expectedPlainText = "Hello world!";
