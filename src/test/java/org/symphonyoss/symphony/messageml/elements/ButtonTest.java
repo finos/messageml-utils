@@ -11,10 +11,10 @@ public class ButtonTest extends ElementTest{
   @Test
   public void testCompleteButton() throws Exception {
     String type = "action";
-    String id = "action-btn-id";
+    String name = "action-btn-name";
     String clazz = "primary";
     String innerText = "Complete";
-    String input = "<messageML><form><button type=\"" + type + "\" class=\"" + clazz + "\" id=\"" + id + "\">"
+    String input = "<messageML><form><button type=\"" + type + "\" class=\"" + clazz + "\" name=\"" + name + "\">"
             + innerText + "</button></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -23,7 +23,7 @@ public class ButtonTest extends ElementTest{
     Element button = form.getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-    verifyButtonPresentation((Button) button,id, type, clazz, innerText);
+    verifyButtonPresentation((Button) button, name, type, clazz, innerText);
   }
 
   @Test
@@ -42,10 +42,10 @@ public class ButtonTest extends ElementTest{
   }
 
   @Test
-  public void testTypelessButtonWithId() throws Exception {
-    String innerText = "Typeless Button With Id";
-    String id = "btn-id";
-    String input = "<messageML><form><button id=\"" + id + "\">" + innerText + "</button></form></messageML>";
+  public void testTypelessButtonWithName() throws Exception {
+    String innerText = "Typeless Button With Name";
+    String name = "btn-name";
+    String input = "<messageML><form><button name=\"" + name + "\">" + innerText + "</button></form></messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -54,15 +54,15 @@ public class ButtonTest extends ElementTest{
     Element button = form.getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-    verifyButtonPresentation((Button) button, id, "action", null, innerText);
+    verifyButtonPresentation((Button) button, name, "action", null, innerText);
   }
 
   @Test
-  public void testActionButtonWithId() throws Exception {
+  public void testActionButtonWithName() throws Exception {
     String type = "action";
-    String id = "btn-id";
-    String innerText = "Action Button With Id";
-    String input = "<messageML><form><button type=\"" + type + "\" id=\"" + id + "\">" + innerText
+    String name = "btn-name";
+    String innerText = "Action Button With Name";
+    String input = "<messageML><form><button type=\"" + type + "\" name=\"" + name + "\">" + innerText
             + "</button></form></messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -72,7 +72,7 @@ public class ButtonTest extends ElementTest{
     Element button = form.getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-    verifyButtonPresentation((Button) button, id, type, null, innerText);
+    verifyButtonPresentation((Button) button, name, type, null, innerText);
   }
 
   @Test
@@ -95,31 +95,31 @@ public class ButtonTest extends ElementTest{
   }
 
   @Test
-  public void testTypelessButtonWithoutId() throws Exception {
-    String innerText = "Typeless Button Without Id";
+  public void testTypelessButtonWithoutName() throws Exception {
+    String innerText = "Typeless Button Without Name";
     String input = "<messageML><form><button>" + innerText + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-      fail("Should have thrown an exception on  typeless button without ID");
+      fail("Should have thrown an exception on typeless button without name");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"id\" is required for generic action buttons", e.getMessage());
+      assertEquals("Exception message", "Attribute \"name\" is required for generic action buttons", e.getMessage());
     }
   }
 
   @Test
-  public void testActionButtonWithoutId() throws Exception {
+  public void testActionButtonWithoutName() throws Exception {
     String type = "action";
-    String innerText = "Typeless Button Without Id";
+    String innerText = "Typeless Button Without Name";
     String input = "<messageML><form><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-      fail("Should have thrown an exception on  typeless button without ID");
+      fail("Should have thrown an exception on action button without name");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"id\" is required for generic action buttons", e.getMessage());
+      assertEquals("Exception message", "Attribute \"name\" is required for generic action buttons", e.getMessage());
     }
   }
 
@@ -131,7 +131,7 @@ public class ButtonTest extends ElementTest{
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-      fail("Should have thrown an exception on  typeless button without ID");
+      fail("Should have thrown an exception on button out of a form tag");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message", "A \"button\" element can only be a child of a \"form\" element", e.getMessage());
@@ -146,7 +146,7 @@ public class ButtonTest extends ElementTest{
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-      fail("Should have thrown an exception on  typeless button without ID");
+      fail("Should have thrown an exception on invalid type button");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message", "Attribute \"type\" must be \"action\" or \"reset\"", e.getMessage());
@@ -163,7 +163,7 @@ public class ButtonTest extends ElementTest{
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-      fail("Should have thrown an exception on  typeless button without ID");
+      fail("Should have thrown an exception on invalid class button");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message", "Attribute \"class\" must be \"primary\", \"secondary\", " +
@@ -181,7 +181,7 @@ public class ButtonTest extends ElementTest{
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-      fail("Should have thrown an exception on  typeless button without ID");
+      fail("Should have thrown an exception on invalid attribute of button");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message", "Attribute \"" + invalidAttribute + "\" is not allowed in \""
@@ -189,9 +189,9 @@ public class ButtonTest extends ElementTest{
     }
   }
 
-  private String getIdPresentationML(String id) {
-    if (id != null) {
-      return " id=\"" + id + "\"";
+  private String getNamePresentationML(String name) {
+    if (name != null) {
+      return " name=\"" + name + "\"";
     } else {
       return "";
     }
@@ -205,23 +205,23 @@ public class ButtonTest extends ElementTest{
     }
   }
 
-  private String getExpectedButtonPresentation(String id, String type, String clazz, String innerText) {
+  private String getExpectedButtonPresentation(String name, String type, String clazz, String innerText) {
     return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form><button type=\"" + type + "\""
-            + getClassPresentationML(clazz) + getIdPresentationML(id) + ">" + innerText + "</button></form></div>";
+            + getClassPresentationML(clazz) + getNamePresentationML(name) + ">" + innerText + "</button></form></div>";
   }
 
   private String getExpectedButtonMarkdown(String innerText) {
     return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")\n---\n";
   }
 
-  private void verifyButtonPresentation(Button button, String id, String type, String clazz, String innerText) {
-    assertEquals("Button id attribute", id, button.getAttribute(Button.ID_ATTR));
+  private void verifyButtonPresentation(Button button, String name, String type, String clazz, String innerText) {
+    assertEquals("Button name attribute", name, button.getAttribute(Button.NAME_ATTR));
     assertEquals("Button type attribute", type, button.getAttribute(Button.TYPE_ATTR));
     assertEquals("Button clazz attribute", clazz, button.getAttribute(Button.CLASS_ATTR));
     assertEquals("Button inner text", innerText, button.getChild(0).asText());
 
     assertEquals("Button markdown", getExpectedButtonMarkdown(innerText), context.getMarkdown());
-    assertEquals("Button presentationML", getExpectedButtonPresentation(id, type, clazz, innerText),
+    assertEquals("Button presentationML", getExpectedButtonPresentation(name, type, clazz, innerText),
             context.getPresentationML());
   }
 }

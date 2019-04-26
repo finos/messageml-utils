@@ -16,7 +16,7 @@ import java.util.*;
 public class Button extends Element {
 
   public static final String MESSAGEML_TAG = "button";
-  public static final String ID_ATTR = "id";
+  public static final String NAME_ATTR = "name";
   public static final String TYPE_ATTR = "type";
   public static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
           "primary-destructive", "secondary-destructive"));
@@ -30,8 +30,8 @@ public class Button extends Element {
   @Override
   public void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case ID_ATTR:
-        setAttribute(ID_ATTR, getStringAttribute(item).toLowerCase());
+      case NAME_ATTR:
+        setAttribute(NAME_ATTR, getStringAttribute(item).toLowerCase());
         break;
 
       case TYPE_ATTR:
@@ -56,7 +56,7 @@ public class Button extends Element {
   @Override
   public void validate() throws InvalidInputException {
     String type = getAttribute(TYPE_ATTR);
-    String id = getAttribute(ID_ATTR);
+    String name = getAttribute(NAME_ATTR);
     String clazz = getAttribute(CLASS_ATTR);
 
     if (this.getParent().getClass() != Form.class) {
@@ -69,8 +69,8 @@ public class Button extends Element {
       throw new InvalidInputException("Attribute \"class\" must be \"primary\", \"secondary\", " +
               "\"primary-destructive\" or \"secondary-destructive\"");
     }
-    if (type.equals("action") && StringUtils.isBlank(id)) {
-      throw new InvalidInputException("Attribute \"id\" is required for generic action buttons");
+    if (type.equals("action") && StringUtils.isBlank(name)) {
+      throw new InvalidInputException("Attribute \"name\" is required for generic action buttons");
     }
     assertContentModel(Collections.<Class<? extends Element>>singleton(TextNode.class));
   }
