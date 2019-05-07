@@ -55,11 +55,6 @@ public class TestDataProvider implements IDataProvider {
   }
 
   @Override
-  public IUserPresentation getSenderPresentation() throws InvalidInputException {
-    return new UserPresentation(user.getId(), user.getScreenName(), user.getPrettyName(), user.getEmail(), user.getInteractionUrl());
-  }
-
-  @Override
   public void validateURI(URI uri) throws InvalidInputException {
     if (!STANDARD_URI_SCHEMES.contains(uri.getScheme().toLowerCase())) {
       throw new InvalidInputException(

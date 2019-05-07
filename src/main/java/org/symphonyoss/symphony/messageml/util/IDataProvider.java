@@ -44,13 +44,6 @@ public interface IDataProvider {
   IUserPresentation getUserPresentation(Long uid) throws InvalidInputException;
 
   /**
-   * Retrieve user information of the sender of the message
-   * It needs to be populated by the implementing class
-   * @return User presentation object
-   */
-  IUserPresentation getSenderPresentation() throws InvalidInputException;
-
-  /**
    * Check an URI against a whitelist of supported protocols.
    * @param uri the URI to check
    * @throws InvalidInputException thrown if the URI protocol is not supported

@@ -28,11 +28,4 @@ public interface IUserPresentation {
   String getScreenName();
   String getPrettyName();
   String getEmail();
-
-  /**
-   * Gets the "bot interaction URL" associated to a service account.
-   * This is used in Symphony Elements as the form interaction information payload destination
-   * @return Interaction Url for this user
-   */
-  String getInteractionUrl();
 }

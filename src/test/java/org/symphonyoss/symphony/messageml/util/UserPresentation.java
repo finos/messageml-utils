@@ -28,22 +28,16 @@ public class UserPresentation implements IUserPresentation {
   private final String screenName;
   private final String prettyName;
   private final String email;
-  private final String interactionUrl;
 
   public UserPresentation(long id, String screenName, String prettyName) {
-    this(id, screenName, prettyName, null, null);
+    this(id, screenName, prettyName, null);
   }
 
   public UserPresentation(long id, String screenName, String prettyName, String email) {
-    this(id, screenName, prettyName, email, null);
-  }
-
-  public UserPresentation(long id, String screenName, String prettyName, String email, String interactionUrl) {
     this.id = id;
     this.screenName = screenName;
     this.prettyName = prettyName;
     this.email = email;
-    this.interactionUrl = interactionUrl;
   }
 
   @Override
@@ -65,8 +59,5 @@ public class UserPresentation implements IUserPresentation {
   public String getEmail() {
     return email;
   }
-
-  @Override
-  public String getInteractionUrl() { return interactionUrl; }
 
 }
