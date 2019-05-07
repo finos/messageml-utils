@@ -390,7 +390,7 @@ public class MessageMLParser {
         return new Emoji(parent, ++index);
 
       case Form.MESSAGEML_TAG:
-        return new Form(parent);
+        return new Form(parent, dataProvider);
 
       case Button.MESSAGEML_TAG:
         return new Button(parent);
