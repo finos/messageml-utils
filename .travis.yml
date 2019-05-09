@@ -29,7 +29,7 @@ script:
 - "if [[ \"$TRAVIS_PULL_REQUEST\" != \"false\" ]]; then mvn clean install ; fi"
 
 jdk:
-  - oraclejdk8
+  - openjdk11
 
 env:
   global:

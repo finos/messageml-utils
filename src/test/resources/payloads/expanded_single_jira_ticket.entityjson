@@ -1,0 +1,86 @@
+{
+  "jiraUpdated": {
+    "type": "com.symphony.integration.jira.event.updated",
+    "version": "1.0",
+    "user": {
+      "type": "com.symphony.integration.jira.user",
+      "version": "1.0",
+      "username": "bot.user1",
+      "emailAddress": "bot.user1@localhost.com",
+      "displayName": "Bot User01"
+    },
+    "labels": [
+      "production",
+      "major"
+    ],
+    "issue": {
+      "type": "com.symphony.integration.jira.issue",
+      "version": "1.0",
+      "project": "Sample 1",
+      "key": "SAM-24",
+      "subject": "Sample Bug Blocker",
+      "issueType": "Bug",
+      "link": "https://whiteam1.atlassian.net/browse/SAM-24",
+      "priority": "Highest",
+      "status": "Done",
+      "logo": "https://symphony.com/images/web/logo/symphony-logo-nav-light.svg",
+      "assignee": {
+        "type": "com.symphony.integration.jira.user",
+        "version": "1.0",
+        "username": "bot.user1",
+        "emailAddress": "bot.user1@localhost.com",
+        "displayName": "Bot User01"
+      },
+      "changelog": {
+        "type": "com.symphony.integration.jira.changelog",
+        "version": "1.0",
+        "change": [
+          {
+            "type": "com.symphony.integration.jira.change",
+            "version": "1.0",
+            "fieldName": "resolution",
+            "oldValue": "Open",
+            "newValue": "Done"
+          },
+          {
+            "type": "com.symphony.integration.jira.change",
+            "version": "1.0",
+            "fieldName": "status",
+            "oldValue": "To Do",
+            "newValue": "Done"
+          }
+        ]
+      }
+    },
+    "mention1": {
+      "type": "com.symphony.user.mention",
+      "version": "1.0",
+      "id": [
+        {
+          "type": "com.symphony.user.userId",
+          "value": "123456789"
+        }
+      ]
+    },
+    "keyword2": {
+      "type": "org.symphonyoss.taxonomy",
+      "version": "1.0",
+      "id": [
+        {
+          "type": "org.symphonyoss.taxonomy.hashtag",
+          "value": "production"
+        }
+      ]
+    },
+    "keyword3": {
+      "type": "org.symphonyoss.taxonomy",
+      "version": "1.0",
+      "id": [
+        {
+          "type": "org.symphonyoss.taxonomy.hashtag",
+          "value": "major"
+        }
+      ]
+    }
+  }
+}
