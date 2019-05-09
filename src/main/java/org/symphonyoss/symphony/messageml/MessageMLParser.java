@@ -14,7 +14,42 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.symphonyoss.symphony.messageml.elements.*;
+import org.symphonyoss.symphony.messageml.elements.Bold;
+import org.symphonyoss.symphony.messageml.elements.BulletList;
+import org.symphonyoss.symphony.messageml.elements.Button;
+import org.symphonyoss.symphony.messageml.elements.Card;
+import org.symphonyoss.symphony.messageml.elements.CardBody;
+import org.symphonyoss.symphony.messageml.elements.CardHeader;
+import org.symphonyoss.symphony.messageml.elements.CashTag;
+import org.symphonyoss.symphony.messageml.elements.Chime;
+import org.symphonyoss.symphony.messageml.elements.Code;
+import org.symphonyoss.symphony.messageml.elements.Div;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.Emoji;
+import org.symphonyoss.symphony.messageml.elements.Entity;
+import org.symphonyoss.symphony.messageml.elements.Form;
+import org.symphonyoss.symphony.messageml.elements.FormatEnum;
+import org.symphonyoss.symphony.messageml.elements.HashTag;
+import org.symphonyoss.symphony.messageml.elements.Header;
+import org.symphonyoss.symphony.messageml.elements.HorizontalRule;
+import org.symphonyoss.symphony.messageml.elements.Image;
+import org.symphonyoss.symphony.messageml.elements.Italic;
+import org.symphonyoss.symphony.messageml.elements.LineBreak;
+import org.symphonyoss.symphony.messageml.elements.Link;
+import org.symphonyoss.symphony.messageml.elements.ListItem;
+import org.symphonyoss.symphony.messageml.elements.Mention;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.OrderedList;
+import org.symphonyoss.symphony.messageml.elements.Paragraph;
+import org.symphonyoss.symphony.messageml.elements.Preformatted;
+import org.symphonyoss.symphony.messageml.elements.Span;
+import org.symphonyoss.symphony.messageml.elements.Table;
+import org.symphonyoss.symphony.messageml.elements.TableBody;
+import org.symphonyoss.symphony.messageml.elements.TableCell;
+import org.symphonyoss.symphony.messageml.elements.TableFooter;
+import org.symphonyoss.symphony.messageml.elements.TableHeader;
+import org.symphonyoss.symphony.messageml.elements.TableHeaderCell;
+import org.symphonyoss.symphony.messageml.elements.TableRow;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -28,8 +63,11 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -261,6 +299,26 @@ public class MessageMLParser {
     }
   }
 
+  private boolean containsAttribute(String input, String attribute) {
+    String[] splitInput = input.split("\\s+");
+
+    return Arrays.asList(splitInput).contains(attribute);
+  }
+
+  private void removeAttribute(org.w3c.dom.Element element, String input, String attribute) {
+    if (element.hasAttribute(input)) {
+      String newAttribute = Arrays.stream(element.getAttribute(input).split("\\s+"))
+          .filter(it -> !it.equalsIgnoreCase(attribute))
+          .collect(Collectors.joining(" "));
+
+      if (StringUtils.isNotBlank(newAttribute)) {
+        element.setAttribute(input, newAttribute);
+      } else {
+        element.removeAttribute(input);
+      }
+    }
+  }
+
   /**
    * Create a MessageML element based on the DOM element's name and attributes.
    */
@@ -272,6 +330,7 @@ public class MessageMLParser {
       return new Header(parent, tag);
     }
 
+    String elementClass = element.getAttribute(CLASS_ATTR);
     switch (tag) {
       case Chime.MESSAGEML_TAG:
         validateFormat(tag);
@@ -290,27 +349,25 @@ public class MessageMLParser {
         return new HorizontalRule(parent);
 
       case Span.MESSAGEML_TAG:
-        switch (element.getAttribute(CLASS_ATTR)) {
-          case Entity.PRESENTATIONML_CLASS:
+        if (containsAttribute(elementClass, Entity.PRESENTATIONML_CLASS)) {
             return createEntity(element, parent);
-          default:
+        } else {
             return new Span(parent);
         }
 
       case Div.MESSAGEML_TAG:
-        switch (element.getAttribute(CLASS_ATTR)) {
-          case Entity.PRESENTATIONML_CLASS:
+        if (containsAttribute(elementClass, Entity.PRESENTATIONML_CLASS)) {
             return createEntity(element, parent);
-          case Card.PRESENTATIONML_CLASS:
-            element.removeAttribute(CLASS_ATTR);
+        } else if (containsAttribute(elementClass, Card.PRESENTATIONML_CLASS)) {
+          removeAttribute(element, CLASS_ATTR, Card.PRESENTATIONML_CLASS);
             return new Card(parent, FormatEnum.PRESENTATIONML);
-          case CardBody.PRESENTATIONML_CLASS:
-            element.removeAttribute(CLASS_ATTR);
+        } else if (containsAttribute(elementClass, CardBody.PRESENTATIONML_CLASS)) {
+          removeAttribute(element, CLASS_ATTR, CardBody.PRESENTATIONML_CLASS);
             return new CardBody(parent, FormatEnum.PRESENTATIONML);
-          case CardHeader.PRESENTATIONML_CLASS:
-            element.removeAttribute(CLASS_ATTR);
+        } else if (containsAttribute(elementClass, CardHeader.PRESENTATIONML_CLASS)) {
+          removeAttribute(element, CLASS_ATTR, CardHeader.PRESENTATIONML_CLASS);
             return new CardHeader(parent, FormatEnum.PRESENTATIONML);
-          default:
+        } else {
             return new Div(parent);
         }
 
@@ -403,13 +460,17 @@ public class MessageMLParser {
   private Element createEntity(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
     String entityId = element.getAttribute(Entity.ENTITY_ID_ATTR);
     String tag = element.getNodeName();
-    JsonNode entity = entityJson.path(entityId);
+    List<JsonNode> entityList = entityJson.findValues(entityId);
+
+    if (entityList.isEmpty()) {
+      throw new InvalidInputException("The attribute \"data-entity-id\" is required");
+    } else if (entityList.size() > 1) {
+      throw new InvalidInputException("Duplicate \"data-entity-id\"=\"" + entityId + "\" in entityJSON");
+    }
+
+    JsonNode entity = entityList.get(0);
     JsonNode type = entity.path(Entity.TYPE_FIELD);
     JsonNode value = entity.path(Entity.ID_FIELD).path(0).path(Entity.VALUE_FIELD);
-
-    if (entity.isMissingNode()) {
-      throw new InvalidInputException("The attribute \"data-entity-id\" is required");
-    }
 
     if (!type.isMissingNode() && !value.isMissingNode()) {
     switch (type.textValue()) {

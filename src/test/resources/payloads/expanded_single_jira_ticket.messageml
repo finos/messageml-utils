@@ -1,0 +1,69 @@
+<messageML>
+  <p>
+    <img src="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg"/>
+    <br/> Sample JIRA issue</p>
+  <div class="entity" data-entity-id="jiraUpdated">
+    <h1>Bot User01 updated Bug <a href="https://whiteam1.atlassian.net/browse/SAM-24">
+        <i>SAM-24</i>,<b>Sample Bug Blocker</b>
+      </a>
+    </h1>
+    <card class="barStyle" iconSrc="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg">
+      <header>
+        <span class="label">Field</span>
+        <span class="info">Old Value =&gt; New Value</span>
+      </header>
+      <body>
+        <ol>
+          <li>
+            <span class="label">resolution</span>
+            <span class="info">Open =&gt; Done</span>
+          </li>
+          <li>
+            <span class="label">status</span>
+            <span class="info">To Do =&gt; Done</span>
+          </li>
+        </ol>
+      </body>
+    </card>
+    <hr/>
+    <table>
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Assignee</td>
+          <td>
+            <mention uid="123456789"/>
+          </td>
+        </tr>
+        <tr>
+          <td>Labels</td>
+          <td>
+            <ul>
+              <li>
+                <hash tag="production"/>
+              </li>
+              <li>
+                <hash tag="major"/>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>Priority</th>
+          <td>Highest</td>
+        </tr>
+        <tr>
+          <th>Status</th>
+          <td>Done</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</messageML>

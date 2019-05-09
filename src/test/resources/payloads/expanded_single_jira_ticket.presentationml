@@ -1,37 +1,61 @@
 <div data-format="PresentationML" data-version="2.0">
-    <div class="entity" data-entity-id="jiraIssueCreated">
-        <div class="card barStyle">
-            <div class="cardHeader">
-                <img src="https://whiteam1.atlassian.net/images/icons/priorities/highest.svg" />
-                <a href="https://whiteam1.atlassian.net/browse/SAM-25/">SAM-25</a>
-                <span>Issue Test - </span>
-                <span class="entity" data-entity-id="mention123">@Bot User01</span>
-                <span class="action">Created</span>
-            </div>
-            <div class="cardBody">
-                <div class="entity" data-entity-id="jiraIssueCreated">
-                    <div class="labelBackground badge">
-                        <p>
-                            <span class="label">Description:</span>
-                            <span>Only for test</span>
-                        </p>
-                        <p>
-                            <span class="label">Assignee:</span>
-                            <span class="entity" data-entity-id="mention456">@Bot User02</span>
-                        </p>
-                    </div>
-                    <div class="labelBackground badge">
-                        <p>
-                            <span class="label">Type:</span>
-                            <img src="Story" />
-                            <span class="label">Priority:</span>
-                            <img src="https://whiteam1.atlassian.net/images/icons/priorities/highest.svg" />
-                            <span>Highest</span> <span class="label">Labels:</span>
-                            <span class="entity" data-entity-id="hash789">#production</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<p>
+<img src="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg"/><br/> Sample JIRA issue</p>
+<div class="entity" data-entity-id="jiraUpdated">
+<h1>Bot User01 updated Bug <a href="https://whiteam1.atlassian.net/browse/SAM-24">
+<i>SAM-24</i>,<b>Sample Bug Blocker</b>
+</a>
+</h1>
+<div class="card barStyle" data-icon-src="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg">
+<div class="cardHeader">
+<span class="label">Field</span><span class="info">Old Value =&gt; New Value</span>
+</div>
+<div class="cardBody">
+<ol>
+<li>
+<span class="label">resolution</span>
+<span class="info">Open =&gt; Done</span>
+</li>
+<li>
+<span class="label">status</span>
+<span class="info">To Do =&gt; Done</span>
+</li>
+</ol>
+</div>
+</div>
+<hr/>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Assignee</td>
+<td><span class="entity" data-entity-id="mention1">@Bot User01</span></td>
+</tr>
+<tr>
+<td>Labels</td>
+<td>
+<ul>
+<li><span class="entity" data-entity-id="keyword2">#production</span></li>
+<li><span class="entity" data-entity-id="keyword3">#major</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th>Priority</th>
+<td>Highest</td>
+</tr>
+<tr>
+<th>Status</th>
+<td>Done</td>
+</tr>
+</tfoot>
+</table>
+</div>
 </div>
