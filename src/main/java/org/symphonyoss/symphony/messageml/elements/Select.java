@@ -26,13 +26,13 @@ import java.util.Collections;
  * @author lumoura
  * @since 3/22/18
  */
-public class Dropdown extends Element {
+public class Select extends Element {
 
-  public static final String MESSAGEML_TAG = "dropdown";
+  public static final String MESSAGEML_TAG = "select";
   public static final String ID_ATTR = "id";
   public static final String REQUIRED_ATTR = "required";
 
-  public Dropdown(Element parent) {
+  public Select(Element parent) {
     super(parent, MESSAGEML_TAG);
   }
 
