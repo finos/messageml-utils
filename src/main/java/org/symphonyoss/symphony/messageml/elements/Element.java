@@ -348,16 +348,6 @@ public abstract class Element {
   }
 
   /**
-   * Check that the element's allowed parent is limited to one specific element type.
-   */
-  void assertSingleParent(Element permittedParent) throws InvalidInputException {
-    if (!this.getParent().getClass().equals(permittedParent.getClass())) {
-      throw new InvalidInputException(String.format("Element \"%s\" can only be a child of \"%s\"",
-          this.getMessageMLTag(), permittedParent.getMessageMLTag()));
-    }
-  }
-
-  /**
    * Return the element's MessageML tag.
    */
   public String getMessageMLTag() {

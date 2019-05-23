@@ -16,7 +16,7 @@ import java.util.Set;
  * @author lumoura
  * @since 03/21/19
  */
-public class Button extends Element {
+public class Button extends FormElement {
 
   public static final String MESSAGEML_TAG = "button";
   public static final String NAME_ATTR = "name";
@@ -58,13 +58,12 @@ public class Button extends Element {
 
   @Override
   public void validate() throws InvalidInputException {
+    super.validate();
+
     String type = getAttribute(TYPE_ATTR);
     String name = getAttribute(NAME_ATTR);
     String clazz = getAttribute(CLASS_ATTR);
 
-    if (this.getParent().getClass() != Form.class) {
-      throw new InvalidInputException("A \"button\" element can only be a child of a \"form\" element");
-    }
     if (!VALID_TYPES.contains(type)) {
       throw new InvalidInputException("Attribute \"type\" must be \"action\" or \"reset\"");
     }
@@ -75,6 +74,6 @@ public class Button extends Element {
     if (type.equals("action") && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for generic action buttons");
     }
-    assertContentModel(Collections.<Class<? extends Element>>singleton(TextNode.class));
+    assertContentModel(Collections.singleton(TextNode.class));
   }
 }

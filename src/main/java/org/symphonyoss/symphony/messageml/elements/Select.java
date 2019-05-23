@@ -20,6 +20,7 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.SelectNode;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +31,7 @@ import java.util.Set;
  * @author lumoura
  * @since 3/22/18
  */
-public class Select extends Element {
+public class Select extends FormElement {
 
   public static final String MESSAGEML_TAG = "select";
   private static final String NAME_ATTR = "name";
@@ -48,11 +49,12 @@ public class Select extends Element {
 
   @Override
   public void validate() throws InvalidInputException {
+    super.validate();
+
     if (getAttribute(NAME_ATTR) == null) {
       throw new InvalidInputException("The attribute \"name\" is required");
     }
 
-    assertSingleParent(new Form(null));
     assertContentModel(Collections.singleton(Option.class));
     assertAtLeastOneOptionChild();
     validateRequiredAttribute(getAttribute(REQUIRED_ATTR));

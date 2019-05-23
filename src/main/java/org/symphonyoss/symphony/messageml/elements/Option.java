@@ -3,6 +3,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.OptionNode;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Collections;
  * @author lumoura
  * @since 03/22/19
  */
-public class Option extends Element {
+public class Option extends FormElement {
 
   public static final String MESSAGEML_TAG = "option";
   public static final String VALUE_ATTR = "value";
@@ -24,15 +25,13 @@ public class Option extends Element {
   public org.commonmark.node.Node asMarkdown() {
     return new OptionNode();
   }
-
-
   @Override
   public void validate() throws InvalidInputException {
     if (getAttribute(VALUE_ATTR) == null) {
       throw new InvalidInputException("The attribute \"value\" is required");
     }
 
-    assertSingleParent(new Select(null));
+    assertParent(Collections.singleton(Select.class));
     assertContentModel(Collections.singleton(TextNode.class));
   }
 
