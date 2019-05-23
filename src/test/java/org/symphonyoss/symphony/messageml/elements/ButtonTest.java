@@ -134,7 +134,7 @@ public class ButtonTest extends ElementTest{
       fail("Should have thrown an exception on button out of a form tag");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "A \"button\" element can only be a child of a \"form\" element", e.getMessage());
+      assertEquals("Exception message", "Element \"button\" can only be a child of the following elements: \"form\"", e.getMessage());
     }
   }
 

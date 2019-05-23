@@ -43,7 +43,9 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.FormNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.OptionNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.SelectNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
@@ -238,6 +240,8 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((EmojiNode) node);
     } else if (node instanceof MentionNode) {
       visit((MentionNode) node);
+    } else if (node instanceof OptionNode) {
+      visit((OptionNode) node);
     }
   }
 
@@ -255,6 +259,8 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((FormNode) node);
     } else if (node instanceof ButtonNode) {
       visit((ButtonNode) node);
+    } else if (node instanceof SelectNode) {
+      visit((SelectNode) node);
     }
   }
 
@@ -262,6 +268,19 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(emoji.getOpeningDelimiter());
     writer.write(emoji.getShortcode());
     writer.write(emoji.getClosingDelimiter());
+  }
+
+  private void visit(SelectNode select){
+    writer.write(select.getOpeningDelimiter());
+    writer.write(select.getName());
+    writer.write(select.getClosingDelimiter());
+    visitChildren(select);
+  }
+
+  private void visit(OptionNode option) {
+    writer.write(option.getOpeningDelimiter());
+    visitChildren(option);
+    writer.write(option.getClosingDelimiter());
   }
 
   private void visit(KeywordNode keyword) {
