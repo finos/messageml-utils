@@ -21,16 +21,6 @@ public class Option extends Element {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
-    if (item.getNodeName().equals(VALUE_ATTR)) {
-      setAttribute(VALUE_ATTR, getStringAttribute(item));
-    } else {
-      throw new InvalidInputException("Attribute \"" + item.getNodeName()
-              + "\" is not allowed in \"" + getMessageMLTag() + "\"");
-    }
-  }
-
-  @Override
   public org.commonmark.node.Node asMarkdown() {
     return new OptionNode();
   }
@@ -38,13 +28,21 @@ public class Option extends Element {
 
   @Override
   public void validate() throws InvalidInputException {
-    if (this.getParent().getClass() != Select.class) {
-      throw new InvalidInputException("An \"" + getMessageMLTag() + "\" element can only be a child of a \"" +
-              "select\" element");
-    }
     if (getAttribute(VALUE_ATTR) == null) {
       throw new InvalidInputException("The attribute \"value\" is required");
     }
-    assertContentModel(Collections.<Class<? extends Element>>singleton(TextNode.class));
+
+    assertParent(Collections.singleton(Select.class));
+    assertContentModel(Collections.singleton(TextNode.class));
+  }
+
+  @Override
+  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+    if (item.getNodeName().equals(VALUE_ATTR)) {
+      setAttribute(VALUE_ATTR, getStringAttribute(item));
+    } else {
+      throw new InvalidInputException("Attribute \"" + item.getNodeName()
+          + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+    }
   }
 }
