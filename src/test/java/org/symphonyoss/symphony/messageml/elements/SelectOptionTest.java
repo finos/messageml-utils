@@ -6,7 +6,10 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
-public class SelectOptionTest extends ElementTest{
+public class SelectOptionTest extends ElementTest {
+
+  private static final String NAME_ATTR = "name";
+  private static final String REQUIRED_ATTR = "required";
 
   @Test
   public void testCompleteRequiredSelect() throws Exception {
@@ -21,7 +24,7 @@ public class SelectOptionTest extends ElementTest{
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, required);
+    verifySelectPresentation((Select) select, name, true, required);
   }
 
   @Test
@@ -37,7 +40,7 @@ public class SelectOptionTest extends ElementTest{
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, required);
+    verifySelectPresentation((Select) select, name, true, required);
   }
 
   @Test
@@ -51,7 +54,7 @@ public class SelectOptionTest extends ElementTest{
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false);
+    verifySelectPresentation((Select) select, name, false,false);
   }
 
   @Test
@@ -66,7 +69,7 @@ public class SelectOptionTest extends ElementTest{
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false);
+    verifySelectPresentation((Select) select, name, false,false);
   }
 
   @Test
@@ -118,7 +121,7 @@ public class SelectOptionTest extends ElementTest{
     String input = "<messageML><form><select name=\"" + name + "\" required=\"potato\"><option value=\"\">Option 1</option></select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"required\" must be either \"true\" or \"false\"");
+    expectedException.expectMessage("Attribute \"required\" must have one of the following values: [true, false]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -151,7 +154,7 @@ public class SelectOptionTest extends ElementTest{
     String input = "<messageML><select name=\"" + name + "\"><option value=\"\">Option 1</option></select></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("A \"select\" element can only be a child of a \"form\" element");
+    expectedException.expectMessage("Element \"select\" can only be a child of \"form\"");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -161,7 +164,7 @@ public class SelectOptionTest extends ElementTest{
     String input = "<messageML><option value=\"\">Option 1</option></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("An \"option\" element can only be a child of a \"select\" element");
+    expectedException.expectMessage("Element \"option\" is not allowed as a child of \"messageML\"");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -189,17 +192,19 @@ public class SelectOptionTest extends ElementTest{
   }
 
   private String getRequiredPresentationML(String required) {
-    if (required != null && required.equals("true")) {
-      return " required=\"true\"";
-    } else {
-      return "";
+    if(required != null) {
+      if(required.equals("true") || required.equals("false")) {
+        return String.format(" required=\"%s\"", required);
+      }
     }
+
+    return "";
   }
 
   private String getExpectedSelectMarkdown(Select select) {
     String FORM_MARKDOWN_HEADER = "Form (log into desktop client to answer):\n---\n";
     String FORM_MARKDOWN_FOOTER = "---\n";
-    String selectMarkdown = "(Dropdown:" + select.getAttribute(Select.NAME_ATTR) + "):\n";
+    String selectMarkdown = "(Dropdown:" + select.getAttribute(NAME_ATTR) + "):\n";
 
     for (Element option : select.getChildren()) {
       if (option instanceof Option) {
@@ -211,7 +216,7 @@ public class SelectOptionTest extends ElementTest{
 
   private String getExpectedSelectPresentation(Select select) {
     String selectOpeningTag = "<div data-format=\"PresentationML\" data-version=\"2.0\"><form><select name=\"" +
-            select.getAttribute(Select.NAME_ATTR) + "\"" + getRequiredPresentationML(select.getAttribute(Select.REQUIRED_ATTR)) + ">";
+            select.getAttribute(NAME_ATTR) + "\"" + getRequiredPresentationML(select.getAttribute(REQUIRED_ATTR)) + ">";
     String selectClosingTag = "</select></form></div>";
     String selectChildren = "";
 
@@ -224,12 +229,12 @@ public class SelectOptionTest extends ElementTest{
     return selectOpeningTag + selectChildren + selectClosingTag;
   }
 
-  private void verifySelectPresentation(Select select, String name, boolean required) {
-    assertEquals("Select name attribute", name, select.getAttribute(Select.NAME_ATTR));
-    if (required) {
-      assertEquals("Select required attribute", "true", select.getAttribute(Select.REQUIRED_ATTR));
+  private void verifySelectPresentation(Select select, String name, boolean requiredAttrProvided, boolean requiredvalue) {
+    assertEquals("Select name attribute", name, select.getAttribute(NAME_ATTR));
+    if (requiredAttrProvided) {
+      assertEquals("Select required attribute", String.valueOf(requiredvalue), select.getAttribute(REQUIRED_ATTR));
     } else {
-      assertNull("Select required attribute", select.getAttribute(Select.REQUIRED_ATTR));
+      assertNull("Select required attribute", select.getAttribute(REQUIRED_ATTR));
     }
 
     assertEquals("Select presentationML", getExpectedSelectPresentation(select),

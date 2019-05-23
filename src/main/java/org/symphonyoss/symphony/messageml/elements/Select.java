@@ -52,7 +52,7 @@ public class Select extends Element {
       throw new InvalidInputException("The attribute \"name\" is required");
     }
 
-    assertParent(Collections.singleton(Form.class));
+    assertSingleParent(new Form(null));
     assertContentModel(Collections.singleton(Option.class));
     assertAtLeastOneOptionChild();
     validateRequiredAttribute(getAttribute(REQUIRED_ATTR));
@@ -86,7 +86,7 @@ public class Select extends Element {
 
   private void validateRequiredAttribute(String requiredAttrValue) throws InvalidInputException {
     if (requiredAttrValue != null && !VALID_VALUES_FOR_REQUIRED_ATTR.contains(requiredAttrValue)) {
-      throw new InvalidInputException(String.format("Attribute \"%s\" must be one of the following values (%s)",
+      throw new InvalidInputException(String.format("Attribute \"%s\" must have one of the following values: %s",
           REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR));
     }
   }
