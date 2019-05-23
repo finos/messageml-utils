@@ -32,7 +32,7 @@ public class Option extends Element {
       throw new InvalidInputException("The attribute \"value\" is required");
     }
 
-    assertParent(Collections.singleton(Select.class));
+    assertSingleParent(new Select(null));
     assertContentModel(Collections.singleton(TextNode.class));
   }
 

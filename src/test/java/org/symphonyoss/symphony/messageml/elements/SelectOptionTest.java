@@ -164,7 +164,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><option value=\"\">Option 1</option></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"option\" is not allowed as a child of \"messageML\"");
+    expectedException.expectMessage("Element \"option\" can only be a child of \"select\"");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
