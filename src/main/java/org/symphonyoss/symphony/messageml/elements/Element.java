@@ -291,8 +291,10 @@ public abstract class Element {
   void assertAttributeHasBooleanValue(String attributeName) throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
 
-    if (!(Boolean.TRUE.toString().equalsIgnoreCase(attributeValue) ||
-        Boolean.FALSE.toString().equalsIgnoreCase(attributeValue))) {
+    boolean isBooleanValue = Boolean.TRUE.toString().equalsIgnoreCase(attributeValue) ||
+        Boolean.FALSE.toString().equalsIgnoreCase(attributeValue);
+
+    if (!isBooleanValue) {
       throw new InvalidInputException(String.format("Attribute \"%s\" of element \"%s\" can only be true/false.", attributeName, this.getMessageMLTag()));
     }
   }
