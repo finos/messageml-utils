@@ -121,7 +121,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><form><select name=\"" + name + "\" required=\"potato\"><option value=\"\">Option 1</option></select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"required\" must have one of the following values: [true, false]");
+    expectedException.expectMessage("Attribute \"required\" of element \"select\" can only be true/false.");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }

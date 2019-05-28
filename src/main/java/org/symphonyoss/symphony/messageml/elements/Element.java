@@ -281,11 +281,18 @@ public abstract class Element {
     }
   }
 
+  /**
+   * Checks if attribute has Boolean values
+   * This is done in cases we want to enforce valid values for the Boolean attributes.
+   *
+   * @param attributeName name of attribute that will be checked.
+   * @throws InvalidInputException
+   */
   void assertAttributeHasBooleanValue(String attributeName) throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
 
-    if(Boolean.TRUE.toString().equalsIgnoreCase(attributeValue) ||
-        Boolean.FALSE.toString().equalsIgnoreCase(attributeValue)){
+    if (!(Boolean.TRUE.toString().equalsIgnoreCase(attributeValue) ||
+        Boolean.FALSE.toString().equalsIgnoreCase(attributeValue))) {
       throw new InvalidInputException(String.format("Attribute \"%s\" of element \"%s\" can only be true/false.", attributeName, this.getMessageMLTag()));
     }
   }

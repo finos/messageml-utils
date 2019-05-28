@@ -6,4 +6,9 @@ public class ButtonNode extends FormElementNode {
   public ButtonNode() {
     super(TAG_REPRESENTATION_ON_MARKDOWN);
   }
+
+  @Override
+  public String getClosingDelimiter() {
+    return RIGHT_DELIMITER;
+  }
 }

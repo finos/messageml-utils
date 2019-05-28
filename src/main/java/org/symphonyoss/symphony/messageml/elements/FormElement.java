@@ -32,11 +32,15 @@ public class FormElement extends Element {
   protected void assertContainsElement(Class<? extends Element> childElement) throws InvalidInputException {
     boolean hasElementAsChild = this.getChildren()
         .stream()
-        .anyMatch(child -> child.getClass().equals(childElement.getClass()));
+        .anyMatch(child -> child.getClass().equals(childElement));
 
     if (!hasElementAsChild) {
       throw new InvalidInputException(String.format("The \"%s\" element must have at least one \"%s\" as its child.",
-          getMessageMLTag(), childElement.getSimpleName().toLowerCase()));
+          getMessageMLTag(), getElementName(childElement)));
     }
+  }
+
+  private String getElementName(Class<? extends Element> element) {
+    return element.getClass().equals(TextNode.class) ? "text" : element.getSimpleName().toLowerCase();
   }
 }
