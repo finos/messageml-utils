@@ -1,6 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import org.symphonyoss.symphony.messageml.markdown.nodes.FormNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 
 /**
  * Class representing a Symphony Elements form

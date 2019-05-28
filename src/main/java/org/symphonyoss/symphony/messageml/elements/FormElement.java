@@ -6,16 +6,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class FormElement extends Element {
-  FormElement(Element parent) {
-    super(parent);
-  }
+  protected static final String NAME_ATTR = "name";
 
   FormElement(Element parent, String messageMLTag) {
     super(parent, messageMLTag);
-  }
-
-  FormElement(Element parent, String messageMLTag, FormatEnum format) {
-    super(parent, messageMLTag, format);
   }
 
   @Override
@@ -32,6 +26,17 @@ public class FormElement extends Element {
           .orElse("");
       throw new InvalidInputException(String.format("Element \"%s\" can only be a child of the following elements: \"%s\"",
           this.getMessageMLTag(), permittedParentsClassAsString));
+    }
+  }
+
+  protected void assertContainsElement(Class<? extends Element> childElement) throws InvalidInputException {
+    boolean hasElementAsChild = this.getChildren()
+        .stream()
+        .anyMatch(child -> child.getClass().equals(childElement.getClass()));
+
+    if (!hasElementAsChild) {
+      throw new InvalidInputException(String.format("The \"%s\" element must have at least one \"%s\" as its child.",
+          getMessageMLTag(), childElement.getSimpleName().toLowerCase()));
     }
   }
 }

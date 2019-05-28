@@ -1,9 +1,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.OptionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
 
-import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -25,6 +24,7 @@ public class Option extends FormElement {
   public org.commonmark.node.Node asMarkdown() {
     return new OptionNode();
   }
+
   @Override
   public void validate() throws InvalidInputException {
     if (getAttribute(VALUE_ATTR) == null) {
@@ -33,6 +33,7 @@ public class Option extends FormElement {
 
     assertParent(Collections.singleton(Select.class));
     assertContentModel(Collections.singleton(TextNode.class));
+    assertContainsElement(TextNode.class);
   }
 
   @Override

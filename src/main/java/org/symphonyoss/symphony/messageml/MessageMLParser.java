@@ -14,44 +14,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.symphonyoss.symphony.messageml.elements.Bold;
-import org.symphonyoss.symphony.messageml.elements.BulletList;
-import org.symphonyoss.symphony.messageml.elements.Button;
-import org.symphonyoss.symphony.messageml.elements.Card;
-import org.symphonyoss.symphony.messageml.elements.CardBody;
-import org.symphonyoss.symphony.messageml.elements.CardHeader;
-import org.symphonyoss.symphony.messageml.elements.CashTag;
-import org.symphonyoss.symphony.messageml.elements.Chime;
-import org.symphonyoss.symphony.messageml.elements.Code;
-import org.symphonyoss.symphony.messageml.elements.Div;
-import org.symphonyoss.symphony.messageml.elements.Element;
-import org.symphonyoss.symphony.messageml.elements.Emoji;
-import org.symphonyoss.symphony.messageml.elements.Entity;
-import org.symphonyoss.symphony.messageml.elements.Form;
-import org.symphonyoss.symphony.messageml.elements.FormatEnum;
-import org.symphonyoss.symphony.messageml.elements.HashTag;
-import org.symphonyoss.symphony.messageml.elements.Header;
-import org.symphonyoss.symphony.messageml.elements.HorizontalRule;
-import org.symphonyoss.symphony.messageml.elements.Image;
-import org.symphonyoss.symphony.messageml.elements.Italic;
-import org.symphonyoss.symphony.messageml.elements.LineBreak;
-import org.symphonyoss.symphony.messageml.elements.Link;
-import org.symphonyoss.symphony.messageml.elements.ListItem;
-import org.symphonyoss.symphony.messageml.elements.Mention;
-import org.symphonyoss.symphony.messageml.elements.MessageML;
-import org.symphonyoss.symphony.messageml.elements.Option;
-import org.symphonyoss.symphony.messageml.elements.OrderedList;
-import org.symphonyoss.symphony.messageml.elements.Paragraph;
-import org.symphonyoss.symphony.messageml.elements.Preformatted;
-import org.symphonyoss.symphony.messageml.elements.Select;
-import org.symphonyoss.symphony.messageml.elements.Span;
-import org.symphonyoss.symphony.messageml.elements.Table;
-import org.symphonyoss.symphony.messageml.elements.TableBody;
-import org.symphonyoss.symphony.messageml.elements.TableCell;
-import org.symphonyoss.symphony.messageml.elements.TableFooter;
-import org.symphonyoss.symphony.messageml.elements.TableHeader;
-import org.symphonyoss.symphony.messageml.elements.TableHeaderCell;
-import org.symphonyoss.symphony.messageml.elements.TableRow;
+import org.symphonyoss.symphony.messageml.elements.*;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -459,6 +422,9 @@ public class MessageMLParser {
 
       case Button.MESSAGEML_TAG:
         return new Button(parent);
+
+      case Checkbox.MESSAGEML_TAG:
+        return new Checkbox(parent);
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");

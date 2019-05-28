@@ -17,13 +17,9 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.SelectNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Class representing dropdown menu - Symphony Elements.
@@ -34,9 +30,7 @@ import java.util.Set;
 public class Select extends FormElement {
 
   public static final String MESSAGEML_TAG = "select";
-  private static final String NAME_ATTR = "name";
   private static final String REQUIRED_ATTR = "required";
-  private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
 
   public Select(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -56,8 +50,11 @@ public class Select extends FormElement {
     }
 
     assertContentModel(Collections.singleton(Option.class));
-    assertAtLeastOneOptionChild();
-    validateRequiredAttribute(getAttribute(REQUIRED_ATTR));
+    assertContainsElement(Option.class);
+
+    if(getAttribute(REQUIRED_ATTR) != null) {
+      assertAttributeHasBooleanValue(REQUIRED_ATTR);
+    }
   }
 
   @Override
@@ -72,24 +69,6 @@ public class Select extends FormElement {
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
             + "\" is not allowed in \"" + getMessageMLTag() + "\"");
-    }
-  }
-
-  private void assertAtLeastOneOptionChild() throws InvalidInputException {
-    boolean hasOptionElementAsChild = this.getChildren()
-        .stream()
-        .anyMatch(child -> child.getClass().equals(Option.class));
-
-    if (!hasOptionElementAsChild) {
-      throw new InvalidInputException(String.format("The \"%s\" element must have at least one \"%s\" as its child.",
-          MESSAGEML_TAG, Option.MESSAGEML_TAG));
-    }
-  }
-
-  private void validateRequiredAttribute(String requiredAttrValue) throws InvalidInputException {
-    if (requiredAttrValue != null && !VALID_VALUES_FOR_REQUIRED_ATTR.contains(requiredAttrValue)) {
-      throw new InvalidInputException(String.format("Attribute \"%s\" must have one of the following values: %s",
-          REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR));
     }
   }
 }
