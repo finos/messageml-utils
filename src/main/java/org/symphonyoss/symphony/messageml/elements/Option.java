@@ -31,6 +31,10 @@ public class Option extends FormElement {
       throw new InvalidInputException("The attribute \"value\" is required");
     }
 
+    if (getAttribute(SELECTED_ATTR) != null) {
+      assertAttributeHasBooleanValue(SELECTED_ATTR);
+    }
+
     assertParent(Collections.singleton(Select.class));
     assertContentModel(Collections.singleton(TextNode.class));
     assertContainsElement(TextNode.class);

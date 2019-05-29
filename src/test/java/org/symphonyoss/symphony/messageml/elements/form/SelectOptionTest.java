@@ -107,6 +107,18 @@ public class SelectOptionTest extends ElementTest {
   }
 
   @Test
+  public void testOptionWithInvalidValueForSelectedAttr() throws Exception {
+    String name = "simple-id";
+    String input = "<messageML><form><select name=\"" + name + "\"><option value=\"1\" selected=\"something\">Option 1</option><option selected=\"true\" value=\"2\">" +
+        "Option 2</option></select></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"selected\" of element \"option\" can only be true/false.");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testChildlessSelect() throws Exception {
     String name = "childless-select";
     String input = "<messageML><form><select name=\"" + name + "\"></select></form></messageML>";
