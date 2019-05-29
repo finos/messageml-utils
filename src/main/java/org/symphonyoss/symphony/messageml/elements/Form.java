@@ -9,7 +9,6 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
  * @since 03/21/19
  */
 public class Form extends Element {
-
   public static final String MESSAGEML_TAG = "form";
 
   public Form(Element parent) {

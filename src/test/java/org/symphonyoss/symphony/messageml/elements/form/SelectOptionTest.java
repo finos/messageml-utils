@@ -1,15 +1,21 @@
-package org.symphonyoss.symphony.messageml.elements;
+package org.symphonyoss.symphony.messageml.elements.form;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.ElementTest;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.Option;
+import org.symphonyoss.symphony.messageml.elements.Select;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class SelectOptionTest extends ElementTest {
 
   private static final String NAME_ATTR = "name";
   private static final String REQUIRED_ATTR = "required";
+  private static final String VALUE_ATTR = "value";
 
   @Test
   public void testCompleteRequiredSelect() throws Exception {
@@ -222,7 +228,7 @@ public class SelectOptionTest extends ElementTest {
 
     for (Element option : select.getChildren()) {
       if (option instanceof Option) {
-        selectChildren = selectChildren + "<option value=\"" + option.getAttribute(Option.VALUE_ATTR) + "\">" +
+        selectChildren = selectChildren + "<option value=\"" + option.getAttribute(VALUE_ATTR) + "\">" +
                 option.getChild(0).asText() + "</option>";
       }
     }

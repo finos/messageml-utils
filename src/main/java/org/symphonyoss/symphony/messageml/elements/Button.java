@@ -17,12 +17,11 @@ import java.util.Set;
  * @since 03/21/19
  */
 public class Button extends FormElement {
-
   public static final String MESSAGEML_TAG = "button";
-  public static final String TYPE_ATTR = "type";
-  public static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
-          "primary-destructive", "secondary-destructive"));
 
+  private static final String TYPE_ATTR = "type";
+  private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
+          "primary-destructive", "secondary-destructive"));
   private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList("action", "reset"));
 
   public Button(Element parent) {

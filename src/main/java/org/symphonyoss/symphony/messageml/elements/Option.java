@@ -12,9 +12,8 @@ import java.util.Collections;
  * @since 03/22/19
  */
 public class Option extends FormElement {
-
   public static final String MESSAGEML_TAG = "option";
-  public static final String VALUE_ATTR = "value";
+  private static final String VALUE_ATTR = "value";
 
   public Option(Element parent) {
     super(parent, MESSAGEML_TAG);

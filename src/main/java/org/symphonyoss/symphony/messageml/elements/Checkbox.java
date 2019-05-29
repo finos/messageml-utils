@@ -7,6 +7,7 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Checkbox extends FormElement {
@@ -32,7 +33,10 @@ public class Checkbox extends FormElement {
       throw new InvalidInputException("The attribute \"name\" is required");
     }
 
-    assertAttributeHasBooleanValue(CHECKED_ATTR);
+    if (getAttribute(CHECKED_ATTR) != null) {
+      assertAttributeHasBooleanValue(CHECKED_ATTR);
+    }
+
     assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
   }
 
@@ -70,10 +74,8 @@ public class Checkbox extends FormElement {
       presentationAttrs.put(VALUE_ATTR, PRESENTATIONML_DEFAULT_CHECKBOX_VALUE);
     }
 
-    out.openElement(PRESENTATIONML_INPUT_TAG, presentationAttrs);
-    out.closeElement();
-
-    out.openElement(PRESENTATIONML_LABEL_TAG, presentationAttrs);
+    out.printElement(PRESENTATIONML_INPUT_TAG, null, presentationAttrs);
+    out.openElement(PRESENTATIONML_LABEL_TAG);
     for (Element child : getChildren()) {
       child.asPresentationML(out);
     }
@@ -82,6 +84,8 @@ public class Checkbox extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    return new CheckboxNode();
+    List<Element> children = getChildren();
+    boolean hasText = children != null && !children.isEmpty();
+    return new CheckboxNode(hasText, getAttribute(NAME_ATTR));
   }
 }
