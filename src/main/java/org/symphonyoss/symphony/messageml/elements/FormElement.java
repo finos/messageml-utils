@@ -41,6 +41,6 @@ public class FormElement extends Element {
   }
 
   private String getElementName(Class<? extends Element> element) {
-    return element.getClass().equals(TextNode.class) ? "text" : element.getSimpleName().toLowerCase();
+    return element.equals(TextNode.class) ? "text content" : element.getSimpleName().toLowerCase();
   }
 }

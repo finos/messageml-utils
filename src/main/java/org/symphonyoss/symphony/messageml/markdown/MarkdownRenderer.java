@@ -296,13 +296,7 @@ public class MarkdownRenderer extends AbstractVisitor {
 
   private void visit(CheckboxNode checkbox) {
     writer.write(checkbox.getOpeningDelimiter());
-
-    if (checkbox.hasText()) {
-      visitChildren(checkbox);
-    } else {
-      writer.write(checkbox.getText());
-    }
-
+    visitChildren(checkbox);
     writer.write(checkbox.getClosingDelimiter());
   }
 

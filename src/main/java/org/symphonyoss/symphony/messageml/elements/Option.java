@@ -14,6 +14,7 @@ import java.util.Collections;
 public class Option extends FormElement {
   public static final String MESSAGEML_TAG = "option";
   private static final String VALUE_ATTR = "value";
+  private static final String SELECTED_ATTR = "selected";
 
   public Option(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -37,11 +38,16 @@ public class Option extends FormElement {
 
   @Override
   protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
-    if (item.getNodeName().equals(VALUE_ATTR)) {
-      setAttribute(VALUE_ATTR, getStringAttribute(item));
-    } else {
-      throw new InvalidInputException("Attribute \"" + item.getNodeName()
-          + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+    switch (item.getNodeName()) {
+      case VALUE_ATTR:
+        setAttribute(VALUE_ATTR, getStringAttribute(item));
+        break;
+      case SELECTED_ATTR:
+        setAttribute(SELECTED_ATTR, getStringAttribute(item));
+        break;
+      default:
+        throw new InvalidInputException("Attribute \"" + item.getNodeName()
+            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
   }
 }

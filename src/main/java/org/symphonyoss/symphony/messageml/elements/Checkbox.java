@@ -5,11 +5,16 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class representing a Checkbox inside a Form.
+ * @author Cristiano Faustino
+ * @since 05/29/2019
+ */
 public class Checkbox extends FormElement {
   public static final String MESSAGEML_TAG = "checkbox";
   private static final String VALUE_ATTR = "value";
@@ -37,7 +42,8 @@ public class Checkbox extends FormElement {
       assertAttributeHasBooleanValue(CHECKED_ATTR);
     }
 
-    assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+    assertContentModel(Collections.singleton(TextNode.class));
+    assertContainsElement(TextNode.class);
   }
 
   @Override
@@ -74,7 +80,7 @@ public class Checkbox extends FormElement {
       presentationAttrs.put(VALUE_ATTR, PRESENTATIONML_DEFAULT_CHECKBOX_VALUE);
     }
 
-    out.printElement(PRESENTATIONML_INPUT_TAG, null, presentationAttrs);
+    out.printElement(PRESENTATIONML_INPUT_TAG, presentationAttrs);
     out.openElement(PRESENTATIONML_LABEL_TAG);
     for (Element child : getChildren()) {
       child.asPresentationML(out);
@@ -84,8 +90,6 @@ public class Checkbox extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    List<Element> children = getChildren();
-    boolean hasText = children != null && !children.isEmpty();
-    return new CheckboxNode(hasText, getAttribute(NAME_ATTR));
+    return new CheckboxNode();
   }
 }

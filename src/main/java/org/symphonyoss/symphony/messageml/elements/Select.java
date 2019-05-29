@@ -31,6 +31,8 @@ public class Select extends FormElement {
 
   public static final String MESSAGEML_TAG = "select";
   private static final String REQUIRED_ATTR = "required";
+  private static final String OPTION_SELECTED_ATTR = "selected";
+
 
   public Select(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -55,6 +57,8 @@ public class Select extends FormElement {
     if(getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeHasBooleanValue(REQUIRED_ATTR);
     }
+
+    assertOnlyOneOptionSelected();
   }
 
   @Override
@@ -69,6 +73,17 @@ public class Select extends FormElement {
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
             + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+    }
+  }
+
+  private void assertOnlyOneOptionSelected() throws InvalidInputException {
+    long numberOfSelectedOptions = getChildren().stream()
+        .map(child -> child.getAttribute(OPTION_SELECTED_ATTR))
+        .filter(selectedAttr -> selectedAttr != null && selectedAttr.equalsIgnoreCase(Boolean.TRUE.toString()))
+        .count();
+
+    if(numberOfSelectedOptions > 1) {
+      throw new InvalidInputException("Element \"select\" can only have one selected \"option\"");
     }
   }
 }

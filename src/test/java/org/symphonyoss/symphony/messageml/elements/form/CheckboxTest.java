@@ -64,21 +64,12 @@ public class CheckboxTest extends ElementTest {
   }
 
   @Test
-  public void testNoTextParameterCheckbox() throws Exception {
-    String input = buildMessageMLFromParameters(name, value, null, checked, true);
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, value, null, checked, true);
-    verifyCheckboxMarkdown(context, null, name);
-  }
-
-  @Test
   public void testSimplerCheckbox() throws Exception {
-    String input = buildMessageMLFromParameters(name, null, null, checked, false);
+    String input = buildMessageMLFromParameters(name, null, text, checked, false);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, null, null, checked, false);
-    verifyCheckboxMarkdown(context, null, name);
+    verifyCheckboxPresentationML(context, name, null, text, checked, false);
+    verifyCheckboxMarkdown(context, text, name);
   }
 
   @Test
@@ -97,6 +88,25 @@ public class CheckboxTest extends ElementTest {
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testCheckboxWithNonTextContent() throws Exception {
+    String input = "<messageML><form><checkbox name=\"name\" value=\"value\"><i>Value</i></checkbox></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"i\" is not allowed in \"checkbox\"");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testNoTextParameterCheckbox() throws Exception {
+    String input = buildMessageMLFromParameters(name, value, null, checked, true);
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The \"checkbox\" element must have at least one \"text content\" as its child.");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
