@@ -166,13 +166,13 @@ public class CheckboxTest extends ElementTest {
   }
 
   private String buildExpectedPresentationMLForCheckbox(String name, String value, String text, String checked, boolean shouldShowChecked) {
-    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form><input type=\"checkbox\"" +
+    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form><div class=\"checkbox-group\"><input type=\"checkbox\"" +
         String.format(" name=\"%s\"", name) +
         (shouldShowChecked ? String.format(" checked=\"%s\"", checked) : "") +
         (value != null ? String.format(" value=\"%s\"", value) : " value=\"on\"") +
         "/><label>" +
         (text != null ? text : "") +
-        "</label></form></div>";
+        "</label></div></form></div>";
   }
 
   private void verifyCheckboxMarkdown(MessageMLContext context, String text, String name) {

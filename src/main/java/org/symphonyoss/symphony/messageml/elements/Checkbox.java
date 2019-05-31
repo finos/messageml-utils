@@ -20,11 +20,16 @@ public class Checkbox extends FormElement {
   private static final String VALUE_ATTR = "value";
   private static final String CHECKED_ATTR = "checked";
 
+  private static final String PRESENTATIONML_DIV_TAG = "div";
+  private static final String PRESENTATIONML_CLASS_ATTR = "class";
+  private static final String PRESENTATIONML_DIV_CLASS = "checkbox-group";
+
   private static final String PRESENTATIONML_INPUT_TAG = "input";
-  private static final String PRESENTATIONML_LABEL_TAG = "label";
-  private static final String PRESENTATIONML_INPUT_TYPE = "checkbox";
   private static final String PRESENTATIONML_TYPE_ATTR = "type";
+  private static final String PRESENTATIONML_INPUT_TYPE = "checkbox";
   private static final String PRESENTATIONML_DEFAULT_CHECKBOX_VALUE = "on";
+
+  private static final String PRESENTATIONML_LABEL_TAG = "label";
 
   public Checkbox(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -66,6 +71,26 @@ public class Checkbox extends FormElement {
 
   @Override
   public void asPresentationML(XmlPrintStream out) {
+    out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, PRESENTATIONML_DIV_CLASS);
+
+    Map<String, String> presentationAttrs = buildCheckboxInputAttributes();
+    out.printElement(PRESENTATIONML_INPUT_TAG, presentationAttrs);
+
+    out.openElement(PRESENTATIONML_LABEL_TAG);
+    for (Element child : getChildren()) {
+      child.asPresentationML(out);
+    }
+    out.closeElement(); // Closing label
+
+    out.closeElement(); // Closing div
+  }
+
+  @Override
+  public Node asMarkdown() {
+    return new CheckboxNode();
+  }
+
+  private Map<String, String> buildCheckboxInputAttributes() {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
     presentationAttrs.put(PRESENTATIONML_TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
     presentationAttrs.put(NAME_ATTR, getAttribute(NAME_ATTR));
@@ -79,17 +104,6 @@ public class Checkbox extends FormElement {
     } else {
       presentationAttrs.put(VALUE_ATTR, PRESENTATIONML_DEFAULT_CHECKBOX_VALUE);
     }
-
-    out.printElement(PRESENTATIONML_INPUT_TAG, presentationAttrs);
-    out.openElement(PRESENTATIONML_LABEL_TAG);
-    for (Element child : getChildren()) {
-      child.asPresentationML(out);
-    }
-    out.closeElement();
-  }
-
-  @Override
-  public Node asMarkdown() {
-    return new CheckboxNode();
+    return presentationAttrs;
   }
 }
