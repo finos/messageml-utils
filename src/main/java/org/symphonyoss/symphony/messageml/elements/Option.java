@@ -3,6 +3,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -32,12 +33,12 @@ public class Option extends FormElement {
     }
 
     if (getAttribute(SELECTED_ATTR) != null) {
-      assertAttributeHasBooleanValue(SELECTED_ATTR);
+      assertAttributeValue(SELECTED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
     assertParent(Collections.singleton(Select.class));
     assertContentModel(Collections.singleton(TextNode.class));
-    assertContainsElement(TextNode.class);
+    assertContainsChildOfType(Collections.singleton(TextNode.class));
   }
 
   @Override

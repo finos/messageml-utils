@@ -37,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Base class for MessageML elements. Contains methods for constructing MessageML document trees and their
@@ -282,20 +283,19 @@ public abstract class Element {
   }
 
   /**
-   * Checks if attribute has Boolean values
-   * This is done in cases we want to enforce valid values for the Boolean attributes.
+   * Checks if attribute has one of the allowed values
+   * This is done in cases we want to enforce specific valid values for attributes.
    *
    * @param attributeName name of attribute that will be checked.
+   * @param permittedValues list of values that are allowed for the specified attribute
    * @throws InvalidInputException
    */
-  void assertAttributeHasBooleanValue(String attributeName) throws InvalidInputException {
+  void assertAttributeValue(String attributeName, Collection<String> permittedValues) throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
 
-    boolean isBooleanValue = Boolean.TRUE.toString().equalsIgnoreCase(attributeValue) ||
-        Boolean.FALSE.toString().equalsIgnoreCase(attributeValue);
-
-    if (!isBooleanValue) {
-      throw new InvalidInputException(String.format("Attribute \"%s\" of element \"%s\" can only be true/false.", attributeName, this.getMessageMLTag()));
+    if (!permittedValues.contains(attributeValue.toLowerCase())) {
+      throw new InvalidInputException(String.format("Attribute \"%s\" of element \"%s\" can only be one of the following values: [%s].", attributeName,
+          this.getMessageMLTag(), String.join(", ", permittedValues)));
     }
   }
 
@@ -360,8 +360,28 @@ public abstract class Element {
    */
   void assertParent(Collection<Class<? extends Element>> permittedParents) throws InvalidInputException {
     if (!permittedParents.contains(this.getParent().getClass())) {
-      throw new InvalidInputException("Element \"" + this.getMessageMLTag() + "\" is not allowed as a child of \""
-          + this.getParent().getMessageMLTag() + "\"");
+      String permittedParentsClassAsString = permittedParents.stream()
+          .map(permittedParentClass -> permittedParentClass.getSimpleName().toLowerCase())
+          .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
+          .orElse("");
+      throw new InvalidInputException(String.format("Element \"%s\" can only be a child of the following elements: [%s]",
+          this.getMessageMLTag(), permittedParentsClassAsString));
+    }
+  }
+
+  /**
+   * This is to enforce that at least one child of the element has one of the types informed.
+   *
+   * @param elementTypes list of element types to check
+   * @throws InvalidInputException
+   */
+  void assertContainsChildOfType(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
+    boolean hasPermittedElementAsChild = this.getChildren().stream()
+        .anyMatch(element -> elementTypes.contains(element.getClass()));
+
+    if (!hasPermittedElementAsChild) {
+      throw new InvalidInputException(String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
+          getMessageMLTag(), getElementsNameByClassName(elementTypes)));
     }
   }
 
@@ -509,4 +529,13 @@ public abstract class Element {
     return result;
   }
 
+  private String getElementsNameByClassName(Collection<Class<? extends Element>> elementsClasses) {
+    return elementsClasses.stream()
+        .map(this::getElementNameByClass)
+        .collect(Collectors.joining(", "));
+  }
+
+  private String getElementNameByClass(Class<? extends Element> element) {
+    return element.equals(TextNode.class) ? "text content" : element.getSimpleName().toLowerCase();
+  }
 }

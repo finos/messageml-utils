@@ -5,9 +5,8 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,11 +43,11 @@ public class Checkbox extends FormElement {
     }
 
     if (getAttribute(CHECKED_ATTR) != null) {
-      assertAttributeHasBooleanValue(CHECKED_ATTR);
+      assertAttributeValue(CHECKED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
-    assertContentModel(Collections.singleton(TextNode.class));
-    assertContainsElement(TextNode.class);
+    assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+    assertContainsChildOfType(Arrays.asList(TextNode.class, Bold.class, Italic.class));
   }
 
   @Override

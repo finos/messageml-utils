@@ -113,7 +113,7 @@ public class SelectOptionTest extends ElementTest {
         "Option 2</option></select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"selected\" of element \"option\" can only be true/false.");
+    expectedException.expectMessage("Attribute \"selected\" of element \"option\" can only be one of the following values: [true, false].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -124,7 +124,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><form><select name=\"" + name + "\"></select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"select\" element must have at least one \"option\" as its child.");
+    expectedException.expectMessage("The \"select\" element must have at least one child that is any of the following elements: [option].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -135,7 +135,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><form><select name=\"" + name + "\"> </select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"select\" element must have at least one \"option\" as its child.");
+    expectedException.expectMessage("The \"select\" element must have at least one child that is any of the following elements: [option].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -167,7 +167,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><form><select name=\"" + name + "\" required=\"potato\"><option value=\"\">Option 1</option></select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"required\" of element \"select\" can only be true/false.");
+    expectedException.expectMessage("Attribute \"required\" of element \"select\" can only be one of the following values: [true, false].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -200,7 +200,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><select name=\"" + name + "\"><option value=\"\">Option 1</option></select></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"select\" can only be a child of the following elements: \"form\"");
+    expectedException.expectMessage("Element \"select\" can only be a child of the following elements: [form]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -210,7 +210,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><option value=\"\">Option 1</option></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"option\" can only be a child of the following elements: \"select\"");
+    expectedException.expectMessage("Element \"option\" can only be a child of the following elements: [select]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }

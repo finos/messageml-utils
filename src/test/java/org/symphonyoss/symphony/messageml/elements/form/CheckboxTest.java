@@ -94,10 +94,10 @@ public class CheckboxTest extends ElementTest {
 
   @Test
   public void testCheckboxWithNonTextContent() throws Exception {
-    String input = "<messageML><form><checkbox name=\"name\" value=\"value\"><i>Value</i></checkbox></form></messageML>";
+    String input = "<messageML><form><checkbox name=\"name\" value=\"value\"><div>Value</div></checkbox></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"i\" is not allowed in \"checkbox\"");
+    expectedException.expectMessage("Element \"div\" is not allowed in \"checkbox\"");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -106,7 +106,7 @@ public class CheckboxTest extends ElementTest {
   public void testNoTextParameterCheckbox() throws Exception {
     String input = buildMessageMLFromParameters(name, value, null, checked, true);
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"checkbox\" element must have at least one \"text content\" as its child.");
+    expectedException.expectMessage("The \"checkbox\" element must have at least one child that is any of the following elements: [text content, bold, italic].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -116,7 +116,7 @@ public class CheckboxTest extends ElementTest {
     String input = buildMessageMLFromParameters(name, value, text, "somethingElse", true);
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"checked\" of element \"checkbox\" can only be true/false.");
+    expectedException.expectMessage("Attribute \"checked\" of element \"checkbox\" can only be one of the following values: [true, false].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -126,7 +126,7 @@ public class CheckboxTest extends ElementTest {
     String input = "<messageML><checkbox value=\"value\">Value</checkbox></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"checkbox\" can only be a child of the following elements: \"form\"");
+    expectedException.expectMessage("Element \"checkbox\" can only be a child of the following elements: [form]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }

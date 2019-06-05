@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -52,10 +53,10 @@ public class Select extends FormElement {
     }
 
     assertContentModel(Collections.singleton(Option.class));
-    assertContainsElement(Option.class);
+    assertContainsChildOfType(Collections.singleton(Option.class));
 
     if(getAttribute(REQUIRED_ATTR) != null) {
-      assertAttributeHasBooleanValue(REQUIRED_ATTR);
+      assertAttributeValue(REQUIRED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
     assertOnlyOneOptionSelected();

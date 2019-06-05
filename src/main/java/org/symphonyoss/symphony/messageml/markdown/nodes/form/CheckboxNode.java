@@ -6,9 +6,9 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
  * @since 05/28/2019
  */
 public class CheckboxNode extends FormElementNode {
-  private final static String TAG_REPRESENTATION_ON_MARKDOWN = "Checkbox:";
+  private final static String MARKDOWN = "Checkbox:";
 
   public CheckboxNode() {
-    super(TAG_REPRESENTATION_ON_MARKDOWN);
+    super(MARKDOWN);
   }
 }
