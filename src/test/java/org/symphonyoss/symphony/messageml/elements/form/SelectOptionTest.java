@@ -1,15 +1,22 @@
-package org.symphonyoss.symphony.messageml.elements;
+package org.symphonyoss.symphony.messageml.elements.form;
+
+import org.junit.Test;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.ElementTest;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.Option;
+import org.symphonyoss.symphony.messageml.elements.Select;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
-import org.junit.Test;
-import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class SelectOptionTest extends ElementTest {
 
   private static final String NAME_ATTR = "name";
   private static final String REQUIRED_ATTR = "required";
+  private static final String VALUE_ATTR = "value";
+  private static final String SELECTED_ATTR = "selected";
 
   @Test
   public void testCompleteRequiredSelect() throws Exception {
@@ -73,12 +80,51 @@ public class SelectOptionTest extends ElementTest {
   }
 
   @Test
+  public void testOptionWithSelectedAttr() throws Exception {
+    String name = "simple-id";
+    String input = "<messageML><form><select name=\"" + name + "\"><option selected=\"true\" value=\"1\">Option 1</option><option value=\"2\">" +
+        "Option 2</option></select></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element select = form.getChildren().get(0);
+
+    assertEquals("Select class", Select.class, select.getClass());
+    verifySelectPresentation((Select) select, name, false,false);
+  }
+
+  @Test
+  public void testDoubleOptionWithSelectedAttrAsTrue() throws Exception {
+    String name = "simple-id";
+    String input = "<messageML><form><select name=\"" + name + "\"><option value=\"1\" selected=\"true\">Option 1</option><option selected=\"true\" value=\"2\">" +
+        "Option 2</option></select></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"select\" can only have one selected \"option\"");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testOptionWithInvalidValueForSelectedAttr() throws Exception {
+    String name = "simple-id";
+    String input = "<messageML><form><select name=\"" + name + "\"><option value=\"1\" selected=\"something\">Option 1</option><option selected=\"true\" value=\"2\">" +
+        "Option 2</option></select></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"selected\" of element \"option\" can only be one of the following values: [true, false].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testChildlessSelect() throws Exception {
     String name = "childless-select";
     String input = "<messageML><form><select name=\"" + name + "\"></select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"select\" element must have at least one \"option\" as its child.");
+    expectedException.expectMessage("The \"select\" element must have at least one child that is any of the following elements: [option].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -89,7 +135,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><form><select name=\"" + name + "\"> </select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"select\" element must have at least one \"option\" as its child.");
+    expectedException.expectMessage("The \"select\" element must have at least one child that is any of the following elements: [option].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -121,7 +167,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><form><select name=\"" + name + "\" required=\"potato\"><option value=\"\">Option 1</option></select></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"required\" must have one of the following values: [true, false]");
+    expectedException.expectMessage("Attribute \"required\" of element \"select\" can only be one of the following values: [true, false].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -154,7 +200,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><select name=\"" + name + "\"><option value=\"\">Option 1</option></select></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"select\" can only be a child of the following elements: \"form\"");
+    expectedException.expectMessage("Element \"select\" can only be a child of the following elements: [form]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -164,7 +210,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><option value=\"\">Option 1</option></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"option\" can only be a child of the following elements: \"select\"");
+    expectedException.expectMessage("Element \"option\" can only be a child of the following elements: [select]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -222,11 +268,15 @@ public class SelectOptionTest extends ElementTest {
 
     for (Element option : select.getChildren()) {
       if (option instanceof Option) {
-        selectChildren = selectChildren + "<option value=\"" + option.getAttribute(Option.VALUE_ATTR) + "\">" +
-                option.getChild(0).asText() + "</option>";
+        selectChildren = selectChildren + "<option" + getOptionSelectedExpectedText(option) + " value=\"" + option.getAttribute(VALUE_ATTR) + "\">" +
+            option.getChild(0).asText() + "</option>";
       }
     }
     return selectOpeningTag + selectChildren + selectClosingTag;
+  }
+
+  private String getOptionSelectedExpectedText(Element option) {
+    return option.getAttribute(SELECTED_ATTR) != null ? " selected=\"" + option.getAttribute(SELECTED_ATTR) + "\"" : "";
   }
 
   private void verifySelectPresentation(Select select, String name, boolean requiredAttrProvided, boolean requiredvalue) {

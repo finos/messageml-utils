@@ -1,12 +1,26 @@
-package org.symphonyoss.symphony.messageml.elements;
+package org.symphonyoss.symphony.messageml.elements.form;
+
+import org.junit.Test;
+import org.symphonyoss.symphony.messageml.elements.Button;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.ElementTest;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.junit.Test;
-import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+public class ButtonTest extends ElementTest {
 
-public class ButtonTest extends ElementTest{
+  private static final String NAME_ATTR = "name";
+  private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
+      "primary-destructive", "secondary-destructive"));
+  private static final String TYPE_ATTR = "type";
+  private static final String CLASS_ATTR = "class";
 
   @Test
   public void testCompleteButton() throws Exception {
@@ -80,7 +94,7 @@ public class ButtonTest extends ElementTest{
     String type = "reset";
     String innerText = "Class Test";
 
-    for (String clazz : Button.VALID_CLASSES) {
+    for (String clazz : VALID_CLASSES) {
       String input = "<messageML><form><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
               + "</button></form></messageML>";
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -134,7 +148,7 @@ public class ButtonTest extends ElementTest{
       fail("Should have thrown an exception on button out of a form tag");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Element \"button\" can only be a child of the following elements: \"form\"", e.getMessage());
+      assertEquals("Exception message", "Element \"button\" can only be a child of the following elements: [form]", e.getMessage());
     }
   }
 
@@ -215,9 +229,9 @@ public class ButtonTest extends ElementTest{
   }
 
   private void verifyButtonPresentation(Button button, String name, String type, String clazz, String innerText) {
-    assertEquals("Button name attribute", name, button.getAttribute(Button.NAME_ATTR));
-    assertEquals("Button type attribute", type, button.getAttribute(Button.TYPE_ATTR));
-    assertEquals("Button clazz attribute", clazz, button.getAttribute(Button.CLASS_ATTR));
+    assertEquals("Button name attribute", name, button.getAttribute(NAME_ATTR));
+    assertEquals("Button type attribute", type, button.getAttribute(TYPE_ATTR));
+    assertEquals("Button clazz attribute", clazz, button.getAttribute(CLASS_ATTR));
     assertEquals("Button inner text", innerText, button.getChild(0).asText());
 
     assertEquals("Button markdown", getExpectedButtonMarkdown(innerText), context.getMarkdown());

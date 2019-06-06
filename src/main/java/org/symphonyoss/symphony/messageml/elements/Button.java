@@ -2,7 +2,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.apache.commons.lang3.StringUtils;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.ButtonNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,13 +17,12 @@ import java.util.Set;
  * @since 03/21/19
  */
 public class Button extends FormElement {
-
   public static final String MESSAGEML_TAG = "button";
-  public static final String NAME_ATTR = "name";
-  public static final String TYPE_ATTR = "type";
-  public static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
+
+  private static final String TYPE_ATTR = "type";
+  private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
           "primary-destructive", "secondary-destructive"));
-  public static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList("action", "reset"));
+  private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList("action", "reset"));
 
   public Button(Element parent) {
     super(parent, MESSAGEML_TAG);
