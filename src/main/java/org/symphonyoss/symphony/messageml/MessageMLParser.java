@@ -52,6 +52,7 @@ import org.symphonyoss.symphony.messageml.elements.TableFooter;
 import org.symphonyoss.symphony.messageml.elements.TableHeader;
 import org.symphonyoss.symphony.messageml.elements.TableHeaderCell;
 import org.symphonyoss.symphony.messageml.elements.TableRow;
+import org.symphonyoss.symphony.messageml.elements.TextField;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -459,6 +460,9 @@ public class MessageMLParser {
 
       case Button.MESSAGEML_TAG:
         return new Button(parent);
+        
+      case TextField.MESSAGEML_TAG:  
+        return new TextField(parent);
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");

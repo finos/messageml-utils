@@ -38,17 +38,7 @@ import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.renderer.text.TextContentWriter;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
-import org.symphonyoss.symphony.messageml.markdown.nodes.ButtonNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.FormNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.OptionNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.SelectNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.*;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Collection;
@@ -261,7 +251,10 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((ButtonNode) node);
     } else if (node instanceof SelectNode) {
       visit((SelectNode) node);
+    } else if (node instanceof TextFieldNode) { //this error will be removed after Cris' PR is merged
+      visit((TextFieldNode) node)
     }
+    
   }
 
   private void visit(EmojiNode emoji){
@@ -281,6 +274,13 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(option.getOpeningDelimiter());
     visitChildren(option);
     writer.write(option.getClosingDelimiter());
+  }
+  
+  private void visit(TextFieldNode textField) {
+    writer.write(textField.getOpeningDelimiter());
+    visitChildren(textField);
+    writer.write(textField.getClosingDelimiter());
+    
   }
 
   private void visit(KeywordNode keyword) {
