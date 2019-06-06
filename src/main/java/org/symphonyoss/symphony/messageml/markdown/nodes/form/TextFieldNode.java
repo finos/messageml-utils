@@ -1,4 +1,4 @@
-package org.symphonyoss.symphony.messageml.markdown.nodes;
+package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 
 public class TextFieldNode extends FormElementNode {
   private final static String TAG_REPRESENTATION_ON_MARKDOWN = "Text Field:";

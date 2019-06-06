@@ -124,6 +124,17 @@ public class XmlPrintStream extends IndentedPrintStream {
   }
 
   /**
+   * Output a complete element with the given attributes.
+   * @param elementName Name of element.
+   * @param attributes A map of name value pairs which will be used to add attributes to
+   * the element.
+   */
+  public void printElement(String elementName, Map<String, String> attributes) {
+    printElement(elementName, null, attributes);
+  }
+
+
+  /**
    * Output a complete element with the given content and attributes.
    * @param elementName Name of element.
    * @param value Content of element.

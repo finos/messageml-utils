@@ -1,6 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import org.symphonyoss.symphony.messageml.markdown.nodes.FormNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 
 /**
  * Class representing a Symphony Elements form
@@ -9,7 +9,6 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.FormNode;
  * @since 03/21/19
  */
 public class Form extends Element {
-
   public static final String MESSAGEML_TAG = "form";
 
   public Form(Element parent) {

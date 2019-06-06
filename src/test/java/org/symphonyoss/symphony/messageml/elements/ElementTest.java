@@ -286,7 +286,7 @@ public class ElementTest {
       fail("Should have thrown an exception");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Element \"body\" is not allowed as a child of \"messageML\"", e.getMessage());
+      assertEquals("Exception message", "Element \"body\" can only be a child of the following elements: [card]", e.getMessage());
     }
   }
 

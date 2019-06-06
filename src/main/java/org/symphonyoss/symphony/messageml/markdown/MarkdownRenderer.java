@@ -21,24 +21,23 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.commonmark.node.AbstractVisitor;
-import org.commonmark.node.BulletList;
-import org.commonmark.node.CustomBlock;
-import org.commonmark.node.CustomNode;
-import org.commonmark.node.Delimited;
-import org.commonmark.node.Document;
-import org.commonmark.node.Emphasis;
-import org.commonmark.node.FencedCodeBlock;
-import org.commonmark.node.HardLineBreak;
-import org.commonmark.node.Link;
-import org.commonmark.node.ListItem;
-import org.commonmark.node.Node;
-import org.commonmark.node.Paragraph;
-import org.commonmark.node.StrongEmphasis;
-import org.commonmark.node.Text;
+import org.commonmark.node.*;
 import org.commonmark.renderer.text.TextContentWriter;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
-import org.symphonyoss.symphony.messageml.markdown.nodes.*;
+import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Collection;
@@ -230,8 +229,6 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((EmojiNode) node);
     } else if (node instanceof MentionNode) {
       visit((MentionNode) node);
-    } else if (node instanceof OptionNode) {
-      visit((OptionNode) node);
     }
   }
 
@@ -247,12 +244,18 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((PreformattedNode) node);
     } else if (node instanceof FormNode) {
       visit((FormNode) node);
-    } else if (node instanceof ButtonNode) {
-      visit((ButtonNode) node);
     } else if (node instanceof SelectNode) {
       visit((SelectNode) node);
     } else if (node instanceof TextFieldNode) { //this error will be removed after Cris' PR is merged
-      visit((TextFieldNode) node)
+      visit((TextFieldNode) node);
+    } else if (node instanceof OptionNode) {
+      visit((OptionNode) node);
+    } else if (node instanceof ButtonNode) {
+      visit((ButtonNode) node);
+    } else if (node instanceof CheckboxNode) {
+      visit((CheckboxNode) node);
+    } else if (node instanceof FormElementNode) {
+      visit((FormElementNode) node);
     }
     
   }
@@ -263,9 +266,28 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(emoji.getClosingDelimiter());
   }
 
-  private void visit(SelectNode select){
+  private void visit(FormElementNode formElement) {
+    writer.write(formElement.getOpeningDelimiter());
+    writer.write(formElement.getText());
+    writer.write(formElement.getClosingDelimiter());
+    visitChildren(formElement);
+  }
+
+  private void visit(FormNode form) {
+    writer.write(form.getOpeningDelimiter());
+    visitChildren(form);
+    writer.write(form.getClosingDelimiter());
+  }
+
+  private void visit(ButtonNode button) {
+    writer.write(button.getOpeningDelimiter());
+    visitChildren(button);
+    writer.write(button.getClosingDelimiter());
+  }
+
+  private void visit(SelectNode select) {
     writer.write(select.getOpeningDelimiter());
-    writer.write(select.getName());
+    writer.write(select.getText());
     writer.write(select.getClosingDelimiter());
     visitChildren(select);
   }
@@ -281,6 +303,12 @@ public class MarkdownRenderer extends AbstractVisitor {
     visitChildren(textField);
     writer.write(textField.getClosingDelimiter());
     
+  }
+
+  private void visit(CheckboxNode checkbox) {
+    writer.write(checkbox.getOpeningDelimiter());
+    visitChildren(checkbox);
+    writer.write(checkbox.getClosingDelimiter());
   }
 
   private void visit(KeywordNode keyword) {
@@ -312,18 +340,6 @@ public class MarkdownRenderer extends AbstractVisitor {
     putJsonObject(USER_MENTIONS, node);
 
     writer.write(text);
-  }
-
-  private void visit(FormNode form) {
-    writer.write(form.getOpeningDelimiter());
-    visitChildren(form);
-    writer.write(form.getClosingDelimiter());
-  }
-
-  private void visit(ButtonNode button) {
-    writer.write(button.getOpeningDelimiter());
-    visitChildren(button);
-    writer.write(button.getClosingDelimiter());
   }
 
   private void visit(TableNode table) {
