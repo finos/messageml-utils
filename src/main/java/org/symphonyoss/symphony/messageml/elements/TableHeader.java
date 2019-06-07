@@ -16,7 +16,9 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TableSelectHeaderNode;
 
 import java.util.Collections;
 
@@ -42,5 +44,16 @@ public class TableHeader extends Element {
   public void validate() throws InvalidInputException {
     assertNoText();
     assertContentModel(Collections.<Class<? extends Element>>singleton(TableRow.class));
+  }
+
+  @Override
+  public Node asMarkdown() throws InvalidInputException {
+    Element parent = getParent();
+    if (TableSelect.class.equals(parent.getClass())) {
+      TableSelect tableSelect = (TableSelect) getParent();
+      return new TableSelectHeaderNode(tableSelect.getPosition(), tableSelect.getHeaderText());
+    }
+    return super.asMarkdown();
+
   }
 }

@@ -426,6 +426,9 @@ public class MessageMLParser {
       case Checkbox.MESSAGEML_TAG:
         return new Checkbox(parent);
 
+      case TableSelect.MESSAGEML_TAG:
+        return new TableSelect(parent);
+
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
     }

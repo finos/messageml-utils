@@ -37,6 +37,9 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TableSelectHeaderNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TableSelectNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TableSelectRowNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Collection;
@@ -251,6 +254,12 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((ButtonNode) node);
     } else if (node instanceof CheckboxNode) {
       visit((CheckboxNode) node);
+    } else if (node instanceof TableSelectNode) {
+      visit((TableSelectNode) node);
+    } else if (node instanceof TableSelectHeaderNode) {
+      visit((TableSelectHeaderNode) node);
+    } else if (node instanceof TableSelectRowNode) {
+      visit((TableSelectRowNode) node);
     } else if (node instanceof FormElementNode) {
       visit((FormElementNode) node);
     }
@@ -298,6 +307,24 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(checkbox.getOpeningDelimiter());
     visitChildren(checkbox);
     writer.write(checkbox.getClosingDelimiter());
+  }
+
+  private void visit(TableSelectNode tableSelect) {
+    writer.write(tableSelect.getOpeningDelimiter());
+    visitChildren(tableSelect);
+    writer.write(tableSelect.getClosingDelimiter());
+  }
+
+  private void visit(TableSelectHeaderNode tableSelectHeaderNode) {
+    writer.write(tableSelectHeaderNode.getOpeningDelimiter());
+    visitChildren(tableSelectHeaderNode);
+    writer.write(tableSelectHeaderNode.getClosingDelimiter());
+  }
+
+  private void visit(TableSelectRowNode tableSelectRowNode) {
+    writer.write(tableSelectRowNode.getOpeningDelimiter());
+    visitChildren(tableSelectRowNode);
+    writer.write(tableSelectRowNode.getClosingDelimiter());
   }
 
   private void visit(KeywordNode keyword) {
