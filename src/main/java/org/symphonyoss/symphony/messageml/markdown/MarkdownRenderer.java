@@ -254,7 +254,6 @@ public class MarkdownRenderer extends AbstractVisitor {
     } else if (node instanceof FormElementNode) {
       visit((FormElementNode) node);
     }
-    
   }
 
   private void visit(EmojiNode emoji){
