@@ -423,7 +423,7 @@ public class MessageMLParser {
       case Button.MESSAGEML_TAG:
         return new Button(parent);
         
-      case TextField.MESSAGEML_TAG:  
+      case TextField.MESSAGEML_TAG:
         return new TextField(parent);
 
       case Checkbox.MESSAGEML_TAG:

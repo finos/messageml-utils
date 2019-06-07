@@ -37,7 +37,6 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Collection;
@@ -246,8 +245,6 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((FormNode) node);
     } else if (node instanceof SelectNode) {
       visit((SelectNode) node);
-    } else if (node instanceof TextFieldNode) { //this error will be removed after Cris' PR is merged
-      visit((TextFieldNode) node);
     } else if (node instanceof OptionNode) {
       visit((OptionNode) node);
     } else if (node instanceof ButtonNode) {
@@ -296,13 +293,6 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(option.getOpeningDelimiter());
     visitChildren(option);
     writer.write(option.getClosingDelimiter());
-  }
-  
-  private void visit(TextFieldNode textField) {
-    writer.write(textField.getOpeningDelimiter());
-    visitChildren(textField);
-    writer.write(textField.getClosingDelimiter());
-    
   }
 
   private void visit(CheckboxNode checkbox) {
