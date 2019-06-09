@@ -85,6 +85,17 @@
                 <role>Software Developer</role>
             </roles>
         </developer>
+        <developer>
+            <id>lmacedodaitan</id>
+            <name>Lucas Macedo</name>
+            <email>lucas.macedo@symphony.com</email>
+            <url>http://github.com/lmacedodaitan</url>
+            <organization>Symphony Communication Services LLC</organization>
+            <organizationUrl>http://symphony.com</organizationUrl>
+            <roles>
+                <role>Software Developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <contributors>

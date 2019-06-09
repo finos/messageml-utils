@@ -6,6 +6,12 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.*;
 
+
+/**
+ * Class representing a Text Field inside a Form.
+ * @author Lucas Macedo
+ * @since 06/07/2019
+ */
 public class TextField extends FormElement {
   
   public static final String MESSAGEML_TAG = "text-field";
@@ -14,7 +20,6 @@ public class TextField extends FormElement {
   private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
 
   private final static String MARKDOWN = "Text Field";
-
 
   private static final String PRESENTATIONML_INPUT_TAG = "input";
   private static final String PRESENTATIONML_TYPE_ATTR = "type";
@@ -59,7 +64,6 @@ public class TextField extends FormElement {
   public void asPresentationML(XmlPrintStream out) {
     Map<String, String> presentationAttrs = buildTextFieldInputAttributes();
     out.printElement(PRESENTATIONML_INPUT_TAG, presentationAttrs);
-    
   }
 
   @Override

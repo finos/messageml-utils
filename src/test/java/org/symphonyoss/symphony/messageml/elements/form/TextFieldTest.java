@@ -24,8 +24,8 @@ public class TextFieldTest extends ElementTest {
     Element form = messageML.getChildren().get(0);
     Element textField = form.getChildren().get(0);
 
-    assertEquals("TextField class", Form.class, form.getClass());
-    assertEquals("TextField class", TextField.class, textField.getClass());
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
 
     verifyTextFieldPresentation((TextField) textField, name, false, false,false, null);
     verifyTextFieldMarkdown(null);
@@ -43,8 +43,8 @@ public class TextFieldTest extends ElementTest {
     Element form = messageML.getChildren().get(0);
     Element textField = form.getChildren().get(0);
 
-    assertEquals("TextField class", Form.class, form.getClass());
-    assertEquals("TextField class", TextField.class, textField.getClass());
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
 
     verifyTextFieldPresentation((TextField) textField, name, true, required,true, placeholder);
     verifyTextFieldMarkdown(placeholder);
@@ -61,8 +61,8 @@ public class TextFieldTest extends ElementTest {
     Element form = messageML.getChildren().get(0);
     Element textField = form.getChildren().get(0);
 
-    assertEquals("TextField class", Form.class, form.getClass());
-    assertEquals("TextField class", TextField.class, textField.getClass());
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
 
     verifyTextFieldPresentation((TextField) textField, name, true, required,false, null);
     verifyTextFieldMarkdown(null);
@@ -79,8 +79,8 @@ public class TextFieldTest extends ElementTest {
     Element form = messageML.getChildren().get(0);
     Element textField = form.getChildren().get(0);
 
-    assertEquals("TextField class", Form.class, form.getClass());
-    assertEquals("TextField class", TextField.class, textField.getClass());
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
 
     verifyTextFieldPresentation((TextField) textField, name, false, false,true, placeholder);
     verifyTextFieldMarkdown(placeholder);
@@ -130,18 +130,18 @@ public class TextFieldTest extends ElementTest {
   private void verifyTextFieldPresentation(TextField textField, String name, boolean shouldShowRequired, boolean expectedRequired, boolean shouldShowPlaceholder, String expectedPlaceholder) {
     assertEquals("TextField name attribute", name, textField.getAttribute(NAME_ATTR));
     if (shouldShowRequired) {
-      assertEquals("TextField required attribute", String.valueOf(expectedRequired), textField.getAttribute(REQUIRED_ATTR));
+      assertEquals(String.valueOf(expectedRequired), textField.getAttribute(REQUIRED_ATTR));
     } else {
-      assertNull("TextField required attribute", textField.getAttribute(REQUIRED_ATTR));
+      assertNull(textField.getAttribute(REQUIRED_ATTR));
     }
 
     if (shouldShowPlaceholder) {
-      assertEquals("TextField placeholder attribute", String.valueOf(expectedPlaceholder), textField.getAttribute(PLACEHOLDER_ATTR));
+      assertEquals(String.valueOf(expectedPlaceholder), textField.getAttribute(PLACEHOLDER_ATTR));
     } else {
-      assertNull("TextField placeholder attribute", textField.getAttribute(PLACEHOLDER_ATTR));
+      assertNull(textField.getAttribute(PLACEHOLDER_ATTR));
     }
 
-    assertEquals("TextField presentationML", getExpectedTextFieldPresentationML(textField, shouldShowRequired, shouldShowPlaceholder), context.getPresentationML());
+    assertEquals(getExpectedTextFieldPresentationML(textField, shouldShowRequired, shouldShowPlaceholder), context.getPresentationML());
   }
 
   private String getExpectedTextFieldMarkdown(String placeholder) {
