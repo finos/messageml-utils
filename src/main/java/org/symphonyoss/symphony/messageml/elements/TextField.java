@@ -72,7 +72,7 @@ public class TextField extends FormElement {
       return new FormElementNode(MARKDOWN, ":" + getAttribute(PLACEHOLDER_ATTR));
     }
     else {
-      return new FormElementNode(MARKDOWN);
+      return new FormElementNode(MARKDOWN, "");
     }
   }
 
