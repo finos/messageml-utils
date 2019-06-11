@@ -28,11 +28,7 @@ public class Checkbox extends FormElement {
 
   private static final String PRESENTATIONML_DIV_TAG = "div";
   private static final String PRESENTATIONML_CLASS_ATTR = "class";
-
-  private static final String PRESENTATIONML_INPUT_TAG = "input";
-  private static final String PRESENTATIONML_TYPE_ATTR = "type";
   private static final String PRESENTATIONML_DEFAULT_CHECKBOX_VALUE = "on";
-
   private static final String PRESENTATIONML_LABEL_TAG = "label";
   private static final int PRESENTATIONML_DIV_NUMBER_OF_CHILDREN = 2;
 
@@ -94,7 +90,7 @@ public class Checkbox extends FormElement {
     out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, PRESENTATIONML_DIV_CLASS);
 
     Map<String, String> presentationAttrs = buildCheckboxInputAttributes();
-    out.printElement(PRESENTATIONML_INPUT_TAG, presentationAttrs);
+    out.printElement(INPUT_TAG, presentationAttrs);
 
     out.openElement(PRESENTATIONML_LABEL_TAG);
     for (Element child : getChildren()) {
@@ -117,13 +113,20 @@ public class Checkbox extends FormElement {
       throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
     }
 
+    String firstNodeName = "";
     for (int i = 0; i < PRESENTATIONML_DIV_NUMBER_OF_CHILDREN; i++) {
+      if(firstNodeName.equals(children.item(i).getNodeName())) {
+        throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
+      }
+
       switch (children.item(i).getNodeName()) {
-        case PRESENTATIONML_INPUT_TAG:
+        case INPUT_TAG:
           buildCheckboxAttrFromInputTag(children.item(i));
+          firstNodeName = INPUT_TAG;
           break;
         case PRESENTATIONML_LABEL_TAG:
           buildCheckboxTextFromLabelTag(context, children.item(i));
+          firstNodeName = PRESENTATIONML_LABEL_TAG;
           break;
         default:
           throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
@@ -144,7 +147,7 @@ public class Checkbox extends FormElement {
 
   private void buildCheckboxAttrFromInputTag(org.w3c.dom.Node inputElement) throws InvalidInputException {
     NamedNodeMap inputAttributes = inputElement.getAttributes();
-    inputAttributes.removeNamedItem(INPUT_TAG_TYPE_ATTR);
+    inputAttributes.removeNamedItem(TYPE_ATTR);
 
     for (int i = 0; i < inputAttributes.getLength(); i++) {
       buildAttribute(inputAttributes.item(i));
@@ -153,7 +156,7 @@ public class Checkbox extends FormElement {
 
   private Map<String, String> buildCheckboxInputAttributes() {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
-    presentationAttrs.put(PRESENTATIONML_TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
+    presentationAttrs.put(TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
     presentationAttrs.put(NAME_ATTR, getAttribute(NAME_ATTR));
 
     if (getAttribute(CHECKED_ATTR) != null) {

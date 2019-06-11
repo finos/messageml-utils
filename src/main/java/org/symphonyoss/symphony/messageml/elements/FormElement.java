@@ -6,7 +6,7 @@ import java.util.Collections;
 
 public class FormElement extends Element {
   public static final String INPUT_TAG = "input";
-  public static final String INPUT_TAG_TYPE_ATTR = "type";
+  public static final String TYPE_ATTR = "type";
 
   protected static final String NAME_ATTR = "name";
 

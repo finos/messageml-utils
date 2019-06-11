@@ -430,10 +430,10 @@ public class MessageMLParser {
   }
 
   private Element createElementFromInput(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
-    String elementType = element.getAttribute(FormElement.INPUT_TAG_TYPE_ATTR);
+    String elementType = element.getAttribute(FormElement.TYPE_ATTR);
 
     if (containsAttribute(elementType, TextField.PRESENTATIONML_INPUT_TYPE)) {
-      removeAttribute(element, FormElement.INPUT_TAG_TYPE_ATTR, TextField.PRESENTATIONML_INPUT_TYPE);
+      removeAttribute(element, FormElement.TYPE_ATTR, TextField.PRESENTATIONML_INPUT_TYPE);
       return new TextField(parent);
     } else {
       throw new InvalidInputException("The input type \"%s\" is not allowed on PresentationML");
