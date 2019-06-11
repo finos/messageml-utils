@@ -25,6 +25,7 @@ public class FormElementNode extends CustomBlock {
 
   public FormElementNode(String tagRepresentationOnMarkdown) {
     this.tagRepresentationOnMarkdown = tagRepresentationOnMarkdown;
+    this.text = "";
   }
 
   public String getOpeningDelimiter() {

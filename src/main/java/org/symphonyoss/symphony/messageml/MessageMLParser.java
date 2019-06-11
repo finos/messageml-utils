@@ -429,6 +429,12 @@ public class MessageMLParser {
       case Checkbox.MESSAGEML_TAG:
         return new Checkbox(parent);
 
+      case PersonSelector.MESSAGEML_TAG:
+        return new PersonSelector(parent);
+
+      case DateSelector.MESSAGEML_TAG:
+        return new DateSelector(parent);
+
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
     }

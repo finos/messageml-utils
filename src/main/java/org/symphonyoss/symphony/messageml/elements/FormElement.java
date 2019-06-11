@@ -2,7 +2,6 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
-import java.util.Collection;
 import java.util.Collections;
 
 public class FormElement extends Element {
