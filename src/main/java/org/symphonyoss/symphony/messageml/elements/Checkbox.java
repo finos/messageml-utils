@@ -1,9 +1,13 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -16,22 +20,39 @@ import java.util.Map;
  */
 public class Checkbox extends FormElement {
   public static final String MESSAGEML_TAG = "checkbox";
+  public static final String PRESENTATIONML_INPUT_TYPE = "checkbox";
+  public static final String PRESENTATIONML_DIV_CLASS = "checkbox-group";
+
   private static final String VALUE_ATTR = "value";
   private static final String CHECKED_ATTR = "checked";
 
   private static final String PRESENTATIONML_DIV_TAG = "div";
   private static final String PRESENTATIONML_CLASS_ATTR = "class";
-  private static final String PRESENTATIONML_DIV_CLASS = "checkbox-group";
 
   private static final String PRESENTATIONML_INPUT_TAG = "input";
   private static final String PRESENTATIONML_TYPE_ATTR = "type";
-  private static final String PRESENTATIONML_INPUT_TYPE = "checkbox";
   private static final String PRESENTATIONML_DEFAULT_CHECKBOX_VALUE = "on";
 
   private static final String PRESENTATIONML_LABEL_TAG = "label";
+  private static final int PRESENTATIONML_DIV_NUMBER_OF_CHILDREN = 2;
 
-  public Checkbox(Element parent) {
-    super(parent, MESSAGEML_TAG);
+  public Checkbox(Element parent, FormatEnum messageFormat) {
+    super(parent, MESSAGEML_TAG, messageFormat);
+  }
+
+  @Override
+  public void buildAll(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+    switch (getFormat()) {
+      case MESSAGEML:
+        super.buildAll(context, element);
+        break;
+      case PRESENTATIONML:
+        buildElementFromGroupDiv(context, element);
+        this.validate();
+        break;
+      default:
+        throw new InvalidInputException(String.format("Invalid message format for \"%s\" element", MESSAGEML_TAG));
+    }
   }
 
   @Override
@@ -87,6 +108,47 @@ public class Checkbox extends FormElement {
   @Override
   public Node asMarkdown() {
     return new CheckboxNode();
+  }
+
+  private void buildElementFromGroupDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+    NodeList children = element.getChildNodes();
+
+    if (children.getLength() != PRESENTATIONML_DIV_NUMBER_OF_CHILDREN) {
+      throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
+    }
+
+    for (int i = 0; i < PRESENTATIONML_DIV_NUMBER_OF_CHILDREN; i++) {
+      switch (children.item(i).getNodeName()) {
+        case PRESENTATIONML_INPUT_TAG:
+          buildCheckboxAttrFromInputTag(children.item(i));
+          break;
+        case PRESENTATIONML_LABEL_TAG:
+          buildCheckboxTextFromLabelTag(context, children.item(i));
+          break;
+        default:
+          throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
+      }
+    }
+  }
+
+  private void buildCheckboxTextFromLabelTag(MessageMLParser context, org.w3c.dom.Node labelElement) throws InvalidInputException, ProcessingException {
+    NodeList childNodes = labelElement.getChildNodes();
+    if(childNodes == null || childNodes.getLength() <= 0) {
+      throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
+    }
+
+    for (int i = 0; i < childNodes.getLength(); i++) {
+      buildNode(context, childNodes.item(i));
+    }
+  }
+
+  private void buildCheckboxAttrFromInputTag(org.w3c.dom.Node inputElement) throws InvalidInputException {
+    NamedNodeMap inputAttributes = inputElement.getAttributes();
+    inputAttributes.removeNamedItem(INPUT_TAG_TYPE_ATTR);
+
+    for (int i = 0; i < inputAttributes.getLength(); i++) {
+      buildAttribute(inputAttributes.item(i));
+    }
   }
 
   private Map<String, String> buildCheckboxInputAttributes() {

@@ -27,6 +27,21 @@ public class CheckboxTest extends ElementTest {
   }
 
   @Test
+  public void testPresentationMLCheckbox() throws Exception {
+    String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form>" +
+        "<div class=\"checkbox-group\">" +
+        "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
+        "<label>%s</label>" +
+        "</div></form></div>", this.name, this.value, this.text);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    verifyMessageMLObjectsForCheckbox(context);
+    verifyCheckboxPresentationML(context, name, value, text, null, false);
+    verifyCheckboxMarkdown(context, text, name);
+  }
+
+  @Test
   public void testCompleteFilledCheckbox() throws Exception {
     checked = "true";
     String input = buildMessageMLFromParameters(name, value, text, checked, true);

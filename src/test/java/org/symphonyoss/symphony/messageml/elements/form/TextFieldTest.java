@@ -49,6 +49,25 @@ public class TextFieldTest extends ElementTest {
     verifyTextFieldPresentation((TextField) textField, name, true, required,true, placeholder);
     verifyTextFieldMarkdown(placeholder);
   }
+
+  @Test
+  public void testTextFieldWithAllAttributesPresentationML() throws Exception {
+    String name = "text-field";
+    boolean required = true;
+    String placeholder = "Input some text here";
+    String input = "<messageML><form><input type=\"text\" name=\"" + name + "\" placeholder=\"" + placeholder + "\" required=\"" + required + "\"/></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textField = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
+
+    verifyTextFieldPresentation((TextField) textField, name, true, required,true, placeholder);
+    verifyTextFieldMarkdown(placeholder);
+  }
   
   @Test
   public void testRequiredTextField() throws Exception {

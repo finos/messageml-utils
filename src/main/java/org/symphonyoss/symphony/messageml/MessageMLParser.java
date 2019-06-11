@@ -1,7 +1,5 @@
 package org.symphonyoss.symphony.messageml;
 
-import static org.symphonyoss.symphony.messageml.elements.Element.CLASS_ATTR;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +23,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -34,14 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import static org.symphonyoss.symphony.messageml.elements.Element.CLASS_ATTR;
 
 /**
  * Converts a string representation of the message and optional entity data into a MessageMLV2 document tree.
@@ -321,20 +320,10 @@ public class MessageMLParser {
         }
 
       case Div.MESSAGEML_TAG:
-        if (containsAttribute(elementClass, Entity.PRESENTATIONML_CLASS)) {
-            return createEntity(element, parent);
-        } else if (containsAttribute(elementClass, Card.PRESENTATIONML_CLASS)) {
-          removeAttribute(element, CLASS_ATTR, Card.PRESENTATIONML_CLASS);
-            return new Card(parent, FormatEnum.PRESENTATIONML);
-        } else if (containsAttribute(elementClass, CardBody.PRESENTATIONML_CLASS)) {
-          removeAttribute(element, CLASS_ATTR, CardBody.PRESENTATIONML_CLASS);
-            return new CardBody(parent, FormatEnum.PRESENTATIONML);
-        } else if (containsAttribute(elementClass, CardHeader.PRESENTATIONML_CLASS)) {
-          removeAttribute(element, CLASS_ATTR, CardHeader.PRESENTATIONML_CLASS);
-            return new CardHeader(parent, FormatEnum.PRESENTATIONML);
-        } else {
-            return new Div(parent);
-        }
+        return createElementFromDiv(element, parent);
+
+      case FormElement.INPUT_TAG:
+        return createElementFromInput(element, parent);
 
       case Bold.MESSAGEML_TAG:
         return new Bold(parent);
@@ -427,7 +416,7 @@ public class MessageMLParser {
         return new TextField(parent);
 
       case Checkbox.MESSAGEML_TAG:
-        return new Checkbox(parent);
+        return new Checkbox(parent, FormatEnum.MESSAGEML);
 
       case PersonSelector.MESSAGEML_TAG:
         return new PersonSelector(parent);
@@ -437,6 +426,44 @@ public class MessageMLParser {
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
+    }
+  }
+
+  private Element createElementFromInput(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
+    String elementType = element.getAttribute(FormElement.INPUT_TAG_TYPE_ATTR);
+
+    if (containsAttribute(elementType, TextField.PRESENTATIONML_INPUT_TYPE)) {
+      removeAttribute(element, FormElement.INPUT_TAG_TYPE_ATTR, TextField.PRESENTATIONML_INPUT_TYPE);
+      return new TextField(parent);
+    } else {
+      throw new InvalidInputException("The input type \"%s\" is not allowed on PresentationML");
+    }
+  }
+
+  private Element createElementFromDiv(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
+    String elementClass = element.getAttribute(CLASS_ATTR);
+    if (containsAttribute(elementClass, Entity.PRESENTATIONML_CLASS)) {
+      return createEntity(element, parent);
+    } else if (containsAttribute(elementClass, Card.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, Card.PRESENTATIONML_CLASS);
+      return new Card(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, CardBody.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, CardBody.PRESENTATIONML_CLASS);
+      return new CardBody(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, CardHeader.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, CardHeader.PRESENTATIONML_CLASS);
+      return new CardHeader(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, PersonSelector.MESSAGEML_TAG)) {
+      removeAttribute(element, CLASS_ATTR, PersonSelector.MESSAGEML_TAG);
+      return new PersonSelector(parent);
+    } else if (containsAttribute(elementClass, DateSelector.MESSAGEML_TAG)) {
+      removeAttribute(element, CLASS_ATTR, DateSelector.MESSAGEML_TAG);
+      return new DateSelector(parent);
+    } else if (containsAttribute(elementClass, Checkbox.PRESENTATIONML_DIV_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, Checkbox.PRESENTATIONML_DIV_CLASS);
+      return new Checkbox(parent, FormatEnum.PRESENTATIONML);
+    } else {
+      return new Div(parent);
     }
   }
 

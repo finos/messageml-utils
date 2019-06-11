@@ -12,6 +12,12 @@ import static org.junit.Assert.assertEquals;
 
 public class DateSelectorTest extends ElementTest {
   @Test
+  public void sendValidDateSelectorOnPresentationML() throws Exception {
+    context.parseMessageML("<messageML><form><div class=\"date-selector\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag();
+  }
+
+  @Test
   public void sendValidDateSelector() throws Exception {
     context.parseMessageML("<messageML><form><date-selector/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
     assertDataFromValidParsedTag();

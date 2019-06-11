@@ -12,6 +12,12 @@ import static org.junit.Assert.assertEquals;
 
 public class PersonSelectorTest extends ElementTest {
   @Test
+  public void sendValidPersonSelectorOnPresentationML() throws Exception {
+    context.parseMessageML("<messageML><form><div class=\"person-selector\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag();
+  }
+
+  @Test
   public void sendValidPersonSelector() throws Exception {
     context.parseMessageML("<messageML><form><person-selector/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
     assertDataFromValidParsedTag();

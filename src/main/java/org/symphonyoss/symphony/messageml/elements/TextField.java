@@ -15,6 +15,8 @@ import java.util.*;
 public class TextField extends FormElement {
   
   public static final String MESSAGEML_TAG = "text-field";
+  public static final String PRESENTATIONML_INPUT_TYPE = "text";
+
   private static final String REQUIRED_ATTR = "required";
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
@@ -23,7 +25,6 @@ public class TextField extends FormElement {
 
   private static final String PRESENTATIONML_INPUT_TAG = "input";
   private static final String PRESENTATIONML_TYPE_ATTR = "type";
-  private static final String PRESENTATIONML_INPUT_TYPE = "text";
 
   public TextField(Element parent) {
     super(parent, MESSAGEML_TAG);
