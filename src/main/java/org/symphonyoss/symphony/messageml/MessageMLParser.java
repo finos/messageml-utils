@@ -424,6 +424,9 @@ public class MessageMLParser {
       case DateSelector.MESSAGEML_TAG:
         return new DateSelector(parent);
 
+      case TextArea.MESSAGEML_TAG:
+        return new TextArea(parent);
+
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
     }
