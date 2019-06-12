@@ -28,16 +28,15 @@ public class TextAreaTest extends ElementTest {
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
 
-    verifyTextAreaPresentationML((TextArea) textArea, NAME_VALUE, false, false, false, false, null);
+    verifyTextAreaPresentationML((TextArea) textArea, false, false, false);
     verifyTextAreaMarkdown(null);
   }
 
   @Test
   public void testTextAreaWithAllAttributes() throws Exception {
-    boolean requiredValue = true;
     String input =
-        String.format("<messageML><form><textarea name=\"%s\" placeholder=\"%s\" required=\"%s\">%s</textarea></form></messageML>",
-            NAME_VALUE, PLACEHOLDER_VALUE, requiredValue, INITIAL_VALUE);
+        String.format("<messageML><form><textarea name=\"%s\" placeholder=\"%s\" required=\"true\">%s</textarea></form></messageML>",
+            NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -47,7 +46,7 @@ public class TextAreaTest extends ElementTest {
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
 
-    verifyTextAreaPresentationML((TextArea) textArea, NAME_VALUE, true, true, requiredValue, true, PLACEHOLDER_VALUE);
+    verifyTextAreaPresentationML((TextArea) textArea, true, true, true);
     verifyTextAreaMarkdown(PLACEHOLDER_VALUE);
   }
 
@@ -63,7 +62,7 @@ public class TextAreaTest extends ElementTest {
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
 
-    verifyTextAreaPresentationML((TextArea) textArea, NAME_VALUE, true, false, false, false, null);
+    verifyTextAreaPresentationML((TextArea) textArea, true, false, false);
     verifyTextAreaMarkdown(null);
   }
 
@@ -71,7 +70,7 @@ public class TextAreaTest extends ElementTest {
   public void testTextAreaRequiredAttribute() throws Exception {
     boolean requiredValue = true;
     String input =
-        String.format("<messageML><form><textarea name=\"%s\" required=\"%s\"></textarea></form></messageML>", NAME_VALUE, requiredValue);
+        String.format("<messageML><form><textarea name=\"%s\" required=\"true\"></textarea></form></messageML>", NAME_VALUE);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -81,7 +80,7 @@ public class TextAreaTest extends ElementTest {
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
 
-    verifyTextAreaPresentationML((TextArea) textArea, NAME_VALUE, false, true, requiredValue, false, null);
+    verifyTextAreaPresentationML((TextArea) textArea, false, true, false);
     verifyTextAreaMarkdown(null);
   }
 
@@ -98,7 +97,7 @@ public class TextAreaTest extends ElementTest {
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
 
-    verifyTextAreaPresentationML((TextArea) textArea, NAME_VALUE, false, false, false, true, PLACEHOLDER_VALUE);
+    verifyTextAreaPresentationML((TextArea) textArea, false, false, true);
     verifyTextAreaMarkdown(PLACEHOLDER_VALUE);
   }
 
@@ -147,16 +146,17 @@ public class TextAreaTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
-  private void verifyTextAreaPresentationML(TextArea textArea, String name, boolean shouldRenderInitialValue, boolean shouldRenderRequired,
-      boolean expectedRequired, boolean shouldRenderPlaceholder, String expectedPlaceholder) {
+  private void verifyTextAreaPresentationML(TextArea textArea, boolean shouldRenderInitialValue, boolean shouldRenderRequired,
+      boolean shouldRenderPlaceholder) {
 
     String nameValue = String.format(" name=\"%s\"", textArea.getAttribute(NAME_ATTR));
     String placeholderValue = shouldRenderPlaceholder ? String.format(" placeholder=\"%s\"", textArea.getAttribute(PLACEHOLDER_ATTR)) : "";
     String requiredValue = shouldRenderRequired ? getRequiredTextAreaPresentationML(textArea.getAttribute(REQUIRED_ATTR)) : "";
     String initialValue = shouldRenderInitialValue ? INITIAL_VALUE : "";
 
-    String expectedPresentationML =  String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form><textarea%s%s%s>%s</textarea></form></div>",
-        nameValue, placeholderValue, requiredValue, initialValue);
+    String expectedPresentationML =
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form><textarea%s%s%s>%s</textarea></form></div>",
+            nameValue, placeholderValue, requiredValue, initialValue);
 
     assertEquals(expectedPresentationML, context.getPresentationML());
   }
