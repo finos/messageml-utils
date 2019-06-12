@@ -57,6 +57,21 @@ public class CheckboxTest extends ElementTest {
   }
 
   @Test
+  public void testInvalidAttrPresentationMLCheckbox() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form>" +
+        "<div class=\"checkbox-group\">" +
+        "<input id=\"id1\" type=\"checkbox\" name=\"name2\" value=\"value1\"/>" +
+        "<label>Text 1</label>" +
+        "</div></form></div>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"id\" is not allowed in \"checkbox\"");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testInvalidPresentationMLCheckboxTwoInputs() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form>" +

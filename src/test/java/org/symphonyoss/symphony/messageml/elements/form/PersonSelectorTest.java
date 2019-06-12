@@ -18,6 +18,20 @@ public class PersonSelectorTest extends ElementTest {
   }
 
   @Test
+  public void sendInvalidAttrPersonSelectorOnPresentationML() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"id\" is not allowed in \"person-selector\"");
+    context.parseMessageML("<messageML><form><div id=\"idOne\" class=\"person-selector\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void sendInvalidContentPersonSelectorOnPresentationML() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"person-selector\" may not have child elements or text content");
+    context.parseMessageML("<messageML><form><div class=\"person-selector\"><div>hey</div></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void sendValidPersonSelector() throws Exception {
     context.parseMessageML("<messageML><form><person-selector/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
     assertDataFromValidParsedTag();

@@ -18,6 +18,20 @@ public class DateSelectorTest extends ElementTest {
   }
 
   @Test
+  public void sendInvalidAttrDateSelectorOnPresentationML() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"id\" is not allowed in \"date-selector\"");
+    context.parseMessageML("<messageML><form><div id=\"idOne\" class=\"date-selector\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void sendInvalidContentDateSelectorOnPresentationML() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"date-selector\" may not have child elements or text content");
+    context.parseMessageML("<messageML><form><div class=\"date-selector\"><div>hey</div></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void sendValidDateSelector() throws Exception {
     context.parseMessageML("<messageML><form><date-selector/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
     assertDataFromValidParsedTag();
