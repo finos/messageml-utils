@@ -3,21 +3,25 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
-import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class representing a Text Area inside a Form.
+ * @author Sandro Ribeiro
+ * @since 06/12/2019
+ */
 public class TextArea extends FormElement {
 
   public static final String MESSAGEML_TAG = "textarea";
 
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
-  private static final List<String>
-      VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
+  private static final List<String> VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
 
   private final static String MARKDOWN = "Text Area";
 
@@ -36,6 +40,8 @@ public class TextArea extends FormElement {
     if (getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
     }
+
+    assertContentModel(Collections.singleton(TextNode.class));
   }
 
   @Override
@@ -51,19 +57,8 @@ public class TextArea extends FormElement {
         setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
         break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throw new InvalidInputException("Attribute \"" + item.getNodeName() + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
-  }
-
-  @Override
-  public void asPresentationML(XmlPrintStream out) {
-    Map<String, String> presentationAttrs = buildTextAreaAttributes();
-    out.openElement(getMessageMLTag(), presentationAttrs);
-    for (Element child : getChildren()) {
-      child.asPresentationML(out);
-    }
-    out.closeElement();
   }
 
   @Override
