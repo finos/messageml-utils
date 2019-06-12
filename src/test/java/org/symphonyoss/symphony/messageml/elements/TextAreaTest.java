@@ -136,13 +136,13 @@ public class TextAreaTest extends ElementTest {
 
   @Test
   public void testTextAreaWithChildren() throws Exception {
-    String childrenElement = "div";
-    String initialValueWithChildren = String.format("<%s>%s</%s>", childrenElement, INITIAL_VALUE, childrenElement);
+    String childElement = "div";
+    String initialValueWithChildren = String.format("<%s>%s</%s>", childElement, INITIAL_VALUE, childElement);
     String input = String.format("<messageML><form><textarea name=\"%s\">%s</textarea></form></messageML>", NAME_VALUE,
         initialValueWithChildren);
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"" + childrenElement + "\" is not allowed in \"textarea\"");
+    expectedException.expectMessage("Element \"" + childElement + "\" is not allowed in \"textarea\"");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
