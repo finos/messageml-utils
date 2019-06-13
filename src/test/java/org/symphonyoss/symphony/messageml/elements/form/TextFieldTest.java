@@ -12,12 +12,13 @@ public class TextFieldTest extends ElementTest {
   private static final String NAME_ATTR = "name";
   private static final String REQUIRED_ATTR = "required";
   private static final String PLACEHOLDER_ATTR = "placeholder";
+  private static final String FORM_ID_ATTR = "text-field-form";
 
 
   @Test
   public void testTextField() throws Exception {
     String name = "text-field";
-    String input = "<messageML><form><text-field name=\"" + name + "\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\"/></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -36,7 +37,7 @@ public class TextFieldTest extends ElementTest {
     String name = "text-field";
     boolean required = true;
     String placeholder = "Input some text here";
-    String input = "<messageML><form><text-field name=\"" + name + "\" placeholder=\"" + placeholder + "\" required=\"" + required + "\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" placeholder=\"" + placeholder + "\" required=\"" + required + "\"/></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -54,7 +55,7 @@ public class TextFieldTest extends ElementTest {
   public void testRequiredTextField() throws Exception {
     String name = "required-text-field";
     boolean required = true;
-    String input = "<messageML><form><text-field name=\"" + name + "\" required=\"" + required + "\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" required=\"" + required + "\"/></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     
     Element messageML = context.getMessageML();
@@ -72,7 +73,7 @@ public class TextFieldTest extends ElementTest {
   public void testPlaceholderTextField() throws Exception {
     String name = "placeholder-text-field";
     String placeholder = "Input some text here";
-    String input = "<messageML><form><text-field name=\"" + name + "\" placeholder=\"" + placeholder + "\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" placeholder=\"" + placeholder + "\"/></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -88,7 +89,7 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testTextFieldWithoutName() throws Exception {
-    String input = "<messageML><form><text-field/></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field/></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"name\" is required");
@@ -100,13 +101,24 @@ public class TextFieldTest extends ElementTest {
   public void testRequiredTextFieldWithInvalidValue() throws Exception {
     String name = "invalid-required";
     String invalidRequired = "invalidRequired";
-    String input = "<messageML><form><text-field name=\"" + name + "\" required=\"" + invalidRequired + "\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" required=\"" + invalidRequired + "\"/></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"required\" of element \"text-field\" can only be one of the following values: [true, false].");
     
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-  }  
+  }
+
+  @Test
+  public void testTextFieldWithInvalidAttribute() throws Exception {
+    String name = "required-text-field";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" invalid=\"true\"/></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"invalid\" is not allowed in \"text-field\"");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
 
   private String getRequiredPresentationML(String required) {
     if(required != null) {
@@ -119,7 +131,7 @@ public class TextFieldTest extends ElementTest {
   }
   
   private String getExpectedTextFieldPresentationML(TextField textField, boolean shouldShowRequired, boolean shouldShowPlaceholder) {
-    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form><input type=\"text\"" +
+    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR + "\"><input type=\"text\"" +
         String.format(" name=\"%s\"", textField.getAttribute(NAME_ATTR)) +
         (shouldShowPlaceholder ? String.format(" placeholder=\"%s\"", textField.getAttribute(PLACEHOLDER_ATTR)) : "") +
         (shouldShowRequired ? getRequiredPresentationML(textField.getAttribute(REQUIRED_ATTR)) : "") +
@@ -128,7 +140,7 @@ public class TextFieldTest extends ElementTest {
   
   
   private void verifyTextFieldPresentation(TextField textField, String name, boolean shouldShowRequired, boolean expectedRequired, boolean shouldShowPlaceholder, String expectedPlaceholder) {
-    assertEquals("TextField name attribute", name, textField.getAttribute(NAME_ATTR));
+    assertEquals(name, textField.getAttribute(NAME_ATTR));
     if (shouldShowRequired) {
       assertEquals(String.valueOf(expectedRequired), textField.getAttribute(REQUIRED_ATTR));
     } else {

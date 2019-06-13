@@ -13,6 +13,7 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import static org.junit.Assert.assertEquals;
 
 public class CheckboxTest extends ElementTest {
+  private String formId;
   private String name;
   private String value;
   private String text;
@@ -20,6 +21,7 @@ public class CheckboxTest extends ElementTest {
 
   @Before
   public void beforeEach() {
+    this.formId = "checkbox-form";
     this.name = "checkbox-name";
     this.value = "checkbox-value";
     this.text = "Checkbox Text";
@@ -94,7 +96,7 @@ public class CheckboxTest extends ElementTest {
 
   @Test
   public void testCheckboxWithNonTextContent() throws Exception {
-    String input = "<messageML><form><checkbox name=\"name\" value=\"value\"><div>Value</div></checkbox></form></messageML>";
+    String input = "<messageML><form id=\"" + formId + "\"><checkbox name=\"name\" value=\"value\"><div>Value</div></checkbox></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"div\" is not allowed in \"checkbox\"");
@@ -133,7 +135,7 @@ public class CheckboxTest extends ElementTest {
 
   @Test
   public void testCheckboxWithInvalidAttribute() throws Exception {
-    String input = "<messageML><form><checkbox invalid=\"true\" value=\"value\">Value</checkbox></form></messageML>";
+    String input = "<messageML><form id=\"" + formId + "\"><checkbox invalid=\"true\" value=\"value\">Value</checkbox></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"invalid\" is not allowed in \"checkbox\"");
@@ -142,7 +144,7 @@ public class CheckboxTest extends ElementTest {
   }
 
   private String buildMessageMLFromParameters(String name, String value, String text, String checked, boolean shouldSendCheckedAttribute) {
-    return "<messageML><form><checkbox" +
+    return "<messageML><form id=\"" + formId + "\"><checkbox" +
         (name != null ? String.format(" name=\"%s\"", name) : "") +
         (value != null ? String.format(" value=\"%s\"", value) : "") +
         (shouldSendCheckedAttribute ? String.format(" checked=\"%s\"", checked) : "") +
@@ -166,7 +168,7 @@ public class CheckboxTest extends ElementTest {
   }
 
   private String buildExpectedPresentationMLForCheckbox(String name, String value, String text, String checked, boolean shouldShowChecked) {
-    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form><div class=\"checkbox-group\"><input type=\"checkbox\"" +
+    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + formId + "\"><div class=\"checkbox-group\"><input type=\"checkbox\"" +
         String.format(" name=\"%s\"", name) +
         (shouldShowChecked ? String.format(" checked=\"%s\"", checked) : "") +
         (value != null ? String.format(" value=\"%s\"", value) : " value=\"on\"") +
