@@ -17,10 +17,9 @@ public class TextArea extends FormElement {
 
   public static final String MESSAGEML_TAG = "textarea";
 
-  static final List<String> VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
-
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
+  private static final List<String> VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
 
   private static final String MARKDOWN = "Text Area";
 
