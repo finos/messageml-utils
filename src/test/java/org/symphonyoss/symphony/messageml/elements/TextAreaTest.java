@@ -1,6 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.symphonyoss.symphony.messageml.elements.TextArea.VALID_VALUES_FOR_REQUIRED_ATTR;
 
 import org.junit.Test;
@@ -16,6 +17,10 @@ public class TextAreaTest extends ElementTest {
   private static final String PLACEHOLDER_VALUE = "A placeholder";
   private static final String INITIAL_VALUE = "An initial value";
 
+  private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
+  private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER =
+      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n\n---\n", PLACEHOLDER_VALUE);
+
   @Test
   public void testTextAreaWithRequiredAttributesOnly() throws Exception {
     String input = String.format("<messageML><form><textarea name=\"%s\"></textarea></form></messageML>", NAME_VALUE);
@@ -30,8 +35,8 @@ public class TextAreaTest extends ElementTest {
 
     verifyTextAreaPresentationML((TextArea) textArea, false, false, false);
 
-    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
-    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals(EXPECTED_MARKDOWN, context.getMarkdown());
+    assertTrue("Text should be empty", context.getText().isEmpty());
   }
 
   @Test
@@ -50,8 +55,8 @@ public class TextAreaTest extends ElementTest {
 
     verifyTextAreaPresentationML((TextArea) textArea, true, true, true);
 
-    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n\n---\n", PLACEHOLDER_VALUE);
-    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals(EXPECTED_MARKDOWN_WITH_PLACEHOLDER, context.getMarkdown());
+    assertEquals("Text should be the initial value", INITIAL_VALUE, context.getText());
   }
 
   @Test
@@ -68,13 +73,12 @@ public class TextAreaTest extends ElementTest {
 
     verifyTextAreaPresentationML((TextArea) textArea, true, false, false);
 
-    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
-    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals(EXPECTED_MARKDOWN, context.getMarkdown());
+    assertEquals("Text should be the initial value", INITIAL_VALUE, context.getText());
   }
 
   @Test
   public void testTextAreaRequiredAttribute() throws Exception {
-    boolean requiredValue = true;
     String input =
         String.format("<messageML><form><textarea name=\"%s\" required=\"true\"></textarea></form></messageML>", NAME_VALUE);
 
@@ -88,8 +92,8 @@ public class TextAreaTest extends ElementTest {
 
     verifyTextAreaPresentationML((TextArea) textArea, false, true, false);
 
-    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
-    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals(EXPECTED_MARKDOWN, context.getMarkdown());
+    assertTrue("Text should be empty", context.getText().isEmpty());
   }
 
   @Test
@@ -107,8 +111,8 @@ public class TextAreaTest extends ElementTest {
 
     verifyTextAreaPresentationML((TextArea) textArea, false, false, true);
 
-    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n\n---\n", PLACEHOLDER_VALUE);
-    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertEquals(EXPECTED_MARKDOWN_WITH_PLACEHOLDER, context.getMarkdown());
+    assertTrue("Text should be empty", context.getText().isEmpty());
   }
 
   @Test
@@ -158,7 +162,6 @@ public class TextAreaTest extends ElementTest {
 
   private void verifyTextAreaPresentationML(TextArea textArea, boolean shouldRenderInitialValue, boolean shouldRenderRequired,
       boolean shouldRenderPlaceholder) {
-
     String nameValue = String.format(" name=\"%s\"", textArea.getAttribute(NAME_ATTR));
     String placeholderValue = shouldRenderPlaceholder ? String.format(" placeholder=\"%s\"", textArea.getAttribute(PLACEHOLDER_ATTR)) : "";
     String requiredValue = shouldRenderRequired ? getRequiredTextAreaPresentationML(textArea.getAttribute(REQUIRED_ATTR)) : "";

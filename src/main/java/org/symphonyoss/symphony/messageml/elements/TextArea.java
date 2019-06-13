@@ -6,9 +6,7 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Class representing a Text Area inside a Form.
@@ -24,7 +22,7 @@ public class TextArea extends FormElement {
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
 
-  private final static String MARKDOWN = "Text Area";
+  private static final String MARKDOWN = "Text Area";
 
   public TextArea(Element parent) {
     super(parent, MESSAGEML_TAG);
