@@ -2,10 +2,6 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
-import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Class representing a Symphony Elements form
@@ -17,8 +13,6 @@ public class Form extends Element {
   public static final String MESSAGEML_TAG = "form";
   private static final String ID_ATTR = "id";
   
-  private static final String PRESENTATIONML_TAG = "form";
-
   public Form(Element parent) {
     super(parent, MESSAGEML_TAG);
   }
