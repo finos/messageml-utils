@@ -43,18 +43,6 @@ public class Form extends Element {
             + "\" is not allowed in \"" + getMessageMLTag() + "\"");  
     }
   }
-
-  @Override
-  public void asPresentationML(XmlPrintStream out) {
-    Map<String, String> presentationAttrs = new LinkedHashMap<>();
-    presentationAttrs.put(ID_ATTR, getAttribute(ID_ATTR));
-    
-    out.openElement(PRESENTATIONML_TAG, presentationAttrs);
-    for (Element child : getChildren()) {
-      child.asPresentationML(out);
-    }
-    out.closeElement();
-  }
   
   @Override
   public org.commonmark.node.Node asMarkdown() {

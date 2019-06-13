@@ -168,17 +168,6 @@ public class TextFieldTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
-  @Test
-  public void testTextFieldWithInvalidAttribute() throws Exception {
-    String name = "required-text-field";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" invalid=\"true\"/></form></messageML>";
-
-    expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"invalid\" is not allowed in \"text-field\"");
-
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-  }
-
   private String getRequiredPresentationML(String required) {
     if(required != null) {
       if(required.equals("true") || required.equals("false")) {
