@@ -67,14 +67,14 @@ public class TextArea extends FormElement {
     if (getAttribute(PLACEHOLDER_ATTR) != null) {
       return new FormElementNode(MARKDOWN, ":" + getAttribute(PLACEHOLDER_ATTR));
     } else {
-      return new FormElementNode(MARKDOWN, "");
+      return new FormElementNode(MARKDOWN);
     }
   }
 
-  // Inner content should be not rendered in the Markdown output
-  @Override
-  public void buildMarkdown(Node parent) {
-  }
+//  // Inner content should be not rendered in the Markdown output
+//  @Override
+//  public void buildMarkdown(Node parent) {
+//  }
 
   private Map<String, String> buildTextAreaAttributes() {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
