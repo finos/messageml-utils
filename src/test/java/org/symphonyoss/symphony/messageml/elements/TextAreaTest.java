@@ -29,7 +29,9 @@ public class TextAreaTest extends ElementTest {
     assertEquals(TextArea.class, textArea.getClass());
 
     verifyTextAreaPresentationML((TextArea) textArea, false, false, false);
-    verifyTextAreaMarkdown(null);
+
+    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
   }
 
   @Test
@@ -47,7 +49,9 @@ public class TextAreaTest extends ElementTest {
     assertEquals(TextArea.class, textArea.getClass());
 
     verifyTextAreaPresentationML((TextArea) textArea, true, true, true);
-    verifyTextAreaMarkdown(PLACEHOLDER_VALUE);
+
+    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n\n---\n", PLACEHOLDER_VALUE);
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
   }
 
   @Test
@@ -63,7 +67,9 @@ public class TextAreaTest extends ElementTest {
     assertEquals(TextArea.class, textArea.getClass());
 
     verifyTextAreaPresentationML((TextArea) textArea, true, false, false);
-    verifyTextAreaMarkdown(null);
+
+    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
   }
 
   @Test
@@ -81,7 +87,9 @@ public class TextAreaTest extends ElementTest {
     assertEquals(TextArea.class, textArea.getClass());
 
     verifyTextAreaPresentationML((TextArea) textArea, false, true, false);
-    verifyTextAreaMarkdown(null);
+
+    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
   }
 
   @Test
@@ -98,7 +106,9 @@ public class TextAreaTest extends ElementTest {
     assertEquals(TextArea.class, textArea.getClass());
 
     verifyTextAreaPresentationML((TextArea) textArea, false, false, true);
-    verifyTextAreaMarkdown(PLACEHOLDER_VALUE);
+
+    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n\n---\n", PLACEHOLDER_VALUE);
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
   }
 
   @Test
@@ -161,13 +171,6 @@ public class TextAreaTest extends ElementTest {
     assertEquals(expectedPresentationML, context.getPresentationML());
   }
 
-  private void verifyTextAreaMarkdown(String placeholder) {
-    String innerValue = (placeholder != null) ? ":" + placeholder : "";
-    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Text Area%s)\n\n---\n", innerValue);
-
-    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
-  }
-
   private String getRequiredTextAreaPresentationML(String requiredValue) {
     if (VALID_VALUES_FOR_REQUIRED_ATTR.contains(requiredValue)) {
       return String.format(" required=\"%s\"", requiredValue);
@@ -175,5 +178,4 @@ public class TextAreaTest extends ElementTest {
 
     return "";
   }
-
 }
