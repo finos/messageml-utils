@@ -19,7 +19,6 @@ import java.util.Set;
 public class Button extends FormElement {
   public static final String MESSAGEML_TAG = "button";
 
-  private static final String TYPE_ATTR = "type";
   private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
           "primary-destructive", "secondary-destructive"));
   private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList("action", "reset"));
