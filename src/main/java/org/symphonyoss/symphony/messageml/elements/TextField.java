@@ -38,7 +38,7 @@ public class TextField extends FormElement {
     if(getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
     }
-
+    
     assertNoContent();
   }
 

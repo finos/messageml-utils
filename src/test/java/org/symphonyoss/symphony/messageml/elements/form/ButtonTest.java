@@ -21,6 +21,7 @@ public class ButtonTest extends ElementTest {
       "primary-destructive", "secondary-destructive"));
   private static final String TYPE_ATTR = "type";
   private static final String CLASS_ATTR = "class";
+  private static final String FORM_ID_ATTR = "text-field-form";
 
   @Test
   public void testCompleteButton() throws Exception {
@@ -28,7 +29,7 @@ public class ButtonTest extends ElementTest {
     String name = "action-btn-name";
     String clazz = "primary";
     String innerText = "Complete";
-    String input = "<messageML><form><button type=\"" + type + "\" class=\"" + clazz + "\" name=\"" + name + "\">"
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\" name=\"" + name + "\">"
             + innerText + "</button></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -44,7 +45,7 @@ public class ButtonTest extends ElementTest {
   public void testResetButton() throws Exception {
     String type = "reset";
     String innerText = "Reset";
-    String input = "<messageML><form><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -59,7 +60,7 @@ public class ButtonTest extends ElementTest {
   public void testTypelessButtonWithName() throws Exception {
     String innerText = "Typeless Button With Name";
     String name = "btn-name";
-    String input = "<messageML><form><button name=\"" + name + "\">" + innerText + "</button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button name=\"" + name + "\">" + innerText + "</button></form></messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -76,7 +77,7 @@ public class ButtonTest extends ElementTest {
     String type = "action";
     String name = "btn-name";
     String innerText = "Action Button With Name";
-    String input = "<messageML><form><button type=\"" + type + "\" name=\"" + name + "\">" + innerText
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\">" + innerText
             + "</button></form></messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -95,7 +96,7 @@ public class ButtonTest extends ElementTest {
     String innerText = "Class Test";
 
     for (String clazz : VALID_CLASSES) {
-      String input = "<messageML><form><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
+      String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
               + "</button></form></messageML>";
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -111,7 +112,7 @@ public class ButtonTest extends ElementTest {
   @Test
   public void testTypelessButtonWithoutName() throws Exception {
     String innerText = "Typeless Button Without Name";
-    String input = "<messageML><form><button>" + innerText + "</button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button>" + innerText + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -126,7 +127,7 @@ public class ButtonTest extends ElementTest {
   public void testActionButtonWithoutName() throws Exception {
     String type = "action";
     String innerText = "Typeless Button Without Name";
-    String input = "<messageML><form><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -156,7 +157,7 @@ public class ButtonTest extends ElementTest {
   public void testBadTypeButton() throws Exception {
     String innerText = "Invalid Type Button";
     String type = "potato";
-    String input = "<messageML><form><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -172,7 +173,7 @@ public class ButtonTest extends ElementTest {
     String innerText = "Invalid Class Button";
     String type = "reset";
     String clazz = "outclassed";
-    String input = "<messageML><form><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
             + "</button></form></messageML>";
 
     try {
@@ -190,7 +191,7 @@ public class ButtonTest extends ElementTest {
     String innerText = "Invalid Attribute Button";
     String type = "reset";
     String invalidAttribute = "invalid-attribute";
-    String input = "<messageML><form><button type=\"" + type + "\" " + invalidAttribute + "=\"invalid\">" + innerText
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" " + invalidAttribute + "=\"invalid\">" + innerText
             + "</button></form></messageML>";
 
     try {
@@ -220,7 +221,7 @@ public class ButtonTest extends ElementTest {
   }
 
   private String getExpectedButtonPresentation(String name, String type, String clazz, String innerText) {
-    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form><button type=\"" + type + "\""
+    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\""
             + getClassPresentationML(clazz) + getNamePresentationML(name) + ">" + innerText + "</button></form></div>";
   }
 
