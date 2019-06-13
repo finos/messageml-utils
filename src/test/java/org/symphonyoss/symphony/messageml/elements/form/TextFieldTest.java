@@ -56,7 +56,7 @@ public class TextFieldTest extends ElementTest {
     String name = "text-field";
     boolean required = true;
     String placeholder = "Input some text here";
-    String input = "<messageML><form><input type=\"text\" name=\"" + name + "\" placeholder=\"" + placeholder + "\" required=\"" + required + "\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><input type=\"text\" name=\"" + name + "\" placeholder=\"" + placeholder + "\" required=\"" + required + "\"/></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();

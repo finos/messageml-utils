@@ -31,7 +31,7 @@ public class CheckboxTest extends ElementTest {
   @Test
   public void testPresentationMLCheckbox() throws Exception {
     String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
-        "<form>" +
+        "<form id=\"" + formId + "\">" +
         "<div class=\"checkbox-group\">" +
         "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
         "<label>%s</label>" +
@@ -46,7 +46,7 @@ public class CheckboxTest extends ElementTest {
   @Test
   public void testInvalidPresentationMLCheckbox() throws Exception {
     String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
-        "<form>" +
+        "<form id=\"" + formId + "\">" +
         "<div class=\"checkbox-group\">" +
         "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
         "<label>%s</label><label>other</label>" +
@@ -61,7 +61,7 @@ public class CheckboxTest extends ElementTest {
   @Test
   public void testInvalidAttrPresentationMLCheckbox() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
-        "<form>" +
+        "<form id=\"" + formId + "\">" +
         "<div class=\"checkbox-group\">" +
         "<input id=\"id1\" type=\"checkbox\" name=\"name2\" value=\"value1\"/>" +
         "<label>Text 1</label>" +
@@ -76,7 +76,7 @@ public class CheckboxTest extends ElementTest {
   @Test
   public void testInvalidPresentationMLCheckboxTwoInputs() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
-        "<form>" +
+        "<form id=\"" + formId + "\">" +
         "<div class=\"checkbox-group\">" +
         "<input type=\"checkbox\" name=\"name2\" value=\"value1\"/>" +
         "<input type=\"checkbox\" name=\"name2\" value=\"value2\"/>" +
@@ -91,7 +91,7 @@ public class CheckboxTest extends ElementTest {
   @Test
   public void testInvalidPresentationMLCheckboxTwoLabels() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
-        "<form>" +
+        "<form id=\"" + formId + "\">" +
         "<div class=\"checkbox-group\">" +
         "<label>Text 1</label>" +
         "<label>Text 2</label>" +
