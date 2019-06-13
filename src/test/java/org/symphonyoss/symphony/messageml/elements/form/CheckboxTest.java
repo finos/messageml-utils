@@ -27,6 +27,81 @@ public class CheckboxTest extends ElementTest {
   }
 
   @Test
+  public void testPresentationMLCheckbox() throws Exception {
+    String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form>" +
+        "<div class=\"checkbox-group\">" +
+        "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
+        "<label>%s</label>" +
+        "</div></form></div>", this.name, this.value, this.text);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    verifyMessageMLObjectsForCheckbox(context);
+    verifyCheckboxPresentationML(context, name, value, text, null, false);
+    verifyCheckboxMarkdown(context, text, name);
+  }
+
+  @Test
+  public void testInvalidPresentationMLCheckbox() throws Exception {
+    String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form>" +
+        "<div class=\"checkbox-group\">" +
+        "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
+        "<label>%s</label><label>other</label>" +
+        "</div></form></div>", this.name, this.value, this.text);
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid PresentationML for the \"checkbox\" element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testInvalidAttrPresentationMLCheckbox() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form>" +
+        "<div class=\"checkbox-group\">" +
+        "<input id=\"id1\" type=\"checkbox\" name=\"name2\" value=\"value1\"/>" +
+        "<label>Text 1</label>" +
+        "</div></form></div>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"id\" is not allowed in \"checkbox\"");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testInvalidPresentationMLCheckboxTwoInputs() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form>" +
+        "<div class=\"checkbox-group\">" +
+        "<input type=\"checkbox\" name=\"name2\" value=\"value1\"/>" +
+        "<input type=\"checkbox\" name=\"name2\" value=\"value2\"/>" +
+        "</div></form></div>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid PresentationML for the \"checkbox\" element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testInvalidPresentationMLCheckboxTwoLabels() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form>" +
+        "<div class=\"checkbox-group\">" +
+        "<label>Text 1</label>" +
+        "<label>Text 2</label>" +
+        "</div></form></div>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid PresentationML for the \"checkbox\" element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testCompleteFilledCheckbox() throws Exception {
     checked = "true";
     String input = buildMessageMLFromParameters(name, value, text, checked, true);

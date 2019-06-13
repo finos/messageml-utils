@@ -49,6 +49,65 @@ public class TextFieldTest extends ElementTest {
     verifyTextFieldPresentation((TextField) textField, name, true, required,true, placeholder);
     verifyTextFieldMarkdown(placeholder);
   }
+
+  @Test
+  public void testTextFieldWithAllAttributesPresentationML() throws Exception {
+    String name = "text-field";
+    boolean required = true;
+    String placeholder = "Input some text here";
+    String input = "<messageML><form><input type=\"text\" name=\"" + name + "\" placeholder=\"" + placeholder + "\" required=\"" + required + "\"/></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textField = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
+
+    verifyTextFieldPresentation((TextField) textField, name, true, required,true, placeholder);
+    verifyTextFieldMarkdown(placeholder);
+  }
+
+  @Test
+  public void testTextFieldInvalidAttrPresentationML() throws Exception {
+    String input = "<messageML><form><input type=\"text\" name=\"name1\" id=\"id1\" placeholder=\"placeholder1\" required=\"true\"/></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"id\" is not allowed in \"text-field\"");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldInvalidContent() throws Exception {
+    String input = "<messageML><form><text-field name=\"name1\" placeholder=\"placeholder1\" required=\"true\">value</text-field></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"text-field\" may not have child elements or text content");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldInvalidAttribute() throws Exception {
+    String input = "<messageML><form><text-field name=\"name1\" id=\"id1\" placeholder=\"placeholder1\" required=\"true\" /></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"id\" is not allowed in \"text-field\"");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldInvalidContentPresentationML() throws Exception {
+    String input = "<messageML><form><input type=\"text\" name=\"name1\" placeholder=\"placeholder1\" required=\"true\">value</input></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"text-field\" may not have child elements or text content");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
   
   @Test
   public void testRequiredTextField() throws Exception {

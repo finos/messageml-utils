@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 public abstract class Element {
   public static final String CLASS_ATTR = "class";
   public static final String STYLE_ATTR = "style";
-  protected FormatEnum format = FormatEnum.PRESENTATIONML;
+  protected FormatEnum format;
   private final Map<String, String> attributes = new LinkedHashMap<>();
   private final List<Element> children = new ArrayList<>();
   private final Element parent;
@@ -115,7 +115,7 @@ public abstract class Element {
   /**
    * Build a text node or a MessageML element based on the provided DOM node.
    */
-  private void buildNode(MessageMLParser context, org.w3c.dom.Node node) throws InvalidInputException, ProcessingException {
+  protected void buildNode(MessageMLParser context, org.w3c.dom.Node node) throws InvalidInputException, ProcessingException {
     switch (node.getNodeType()) {
       case org.w3c.dom.Node.TEXT_NODE:
         buildText((Text) node);

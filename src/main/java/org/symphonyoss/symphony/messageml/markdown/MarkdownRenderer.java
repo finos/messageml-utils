@@ -266,7 +266,6 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(formElement.getOpeningDelimiter());
     writer.write(formElement.getText());
     writer.write(formElement.getClosingDelimiter());
-    visitChildren(formElement);
   }
 
   private void visit(FormNode form) {

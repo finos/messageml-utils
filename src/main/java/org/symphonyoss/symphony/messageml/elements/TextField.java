@@ -15,15 +15,13 @@ import java.util.*;
 public class TextField extends FormElement {
   
   public static final String MESSAGEML_TAG = "text-field";
+  public static final String PRESENTATIONML_INPUT_TYPE = "text";
+
   private static final String REQUIRED_ATTR = "required";
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
 
   private final static String MARKDOWN = "Text Field";
-
-  private static final String PRESENTATIONML_INPUT_TAG = "input";
-  private static final String PRESENTATIONML_TYPE_ATTR = "type";
-  private static final String PRESENTATIONML_INPUT_TYPE = "text";
 
   public TextField(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -40,6 +38,8 @@ public class TextField extends FormElement {
     if(getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
     }
+
+    assertNoContent();
   }
 
   @Override
@@ -63,7 +63,7 @@ public class TextField extends FormElement {
   @Override
   public void asPresentationML(XmlPrintStream out) {
     Map<String, String> presentationAttrs = buildTextFieldInputAttributes();
-    out.printElement(PRESENTATIONML_INPUT_TAG, presentationAttrs);
+    out.printElement(INPUT_TAG, presentationAttrs);
   }
 
   @Override
@@ -72,14 +72,14 @@ public class TextField extends FormElement {
       return new FormElementNode(MARKDOWN, ":" + getAttribute(PLACEHOLDER_ATTR));
     }
     else {
-      return new FormElementNode(MARKDOWN, "");
+      return new FormElementNode(MARKDOWN);
     }
   }
 
   private Map<String, String> buildTextFieldInputAttributes() {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
     
-    presentationAttrs.put(PRESENTATIONML_TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
+    presentationAttrs.put(TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
     presentationAttrs.put(NAME_ATTR, getAttribute(NAME_ATTR));
     
     if(getAttribute(PLACEHOLDER_ATTR) != null) {
