@@ -123,35 +123,33 @@ public class Password extends FormElement {
     int minLength = 0;
 
     if (getAttribute(MAXLENGTH_ATTR) != null) {
-      String errorMessage = String.format("The attribute \"maxlength\" must be between %s and %s", MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
-
-      try {
-        maxLength = Integer.parseInt(getAttribute(MAXLENGTH_ATTR));
-        if (maxLength < MIN_ALLOWED_LENGTH || maxLength > MAX_ALLOWED_LENGTH) {
-          throw new InvalidInputException(errorMessage);
-        }
-      } catch(NumberFormatException e) {
-        throw new InvalidInputException(errorMessage);
+      maxLength = getLengthAttributeAsInt(MAXLENGTH_ATTR);
+      if (maxLength < MIN_ALLOWED_LENGTH || maxLength > MAX_ALLOWED_LENGTH) {
+        throw new InvalidInputException(getLengthErrorMessage(MAXLENGTH_ATTR));
       }
     }
-
     if (getAttribute(MINLENGTH_ATTR) != null) {
-      String errorMessage = String.format("The attribute \"minlength\" must be between %s and %s", MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
-
-      try {
-        minLength = Integer.parseInt(getAttribute(MINLENGTH_ATTR));
-        if (minLength < MIN_ALLOWED_LENGTH || minLength > MAX_ALLOWED_LENGTH) {
-          throw new InvalidInputException(String.format("The attribute \"minlength\" must be between %s and %s", MIN_ALLOWED_LENGTH,
-              MAX_ALLOWED_LENGTH));
-        }
-      } catch(NumberFormatException e) {
-        throw new InvalidInputException(errorMessage);
+      minLength = getLengthAttributeAsInt(MINLENGTH_ATTR);
+      if (minLength < MIN_ALLOWED_LENGTH || minLength > MAX_ALLOWED_LENGTH) {
+        throw new InvalidInputException(getLengthErrorMessage(MINLENGTH_ATTR));
       }
     }
-
     if (maxLength > 0 && (minLength > maxLength)) {
       throw new InvalidInputException("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
     }
+  }
+
+  private int getLengthAttributeAsInt(String attributeName) throws InvalidInputException {
+    try {
+      return Integer.parseInt(getAttribute(attributeName));
+    } catch (NumberFormatException e) {
+      throw new InvalidInputException(getLengthErrorMessage(attributeName));
+    }
+  }
+
+  private String getLengthErrorMessage(String attributeName) {
+    return String.format("The attribute \"" + attributeName + "\" must be between %s and %s", MIN_ALLOWED_LENGTH,
+        MAX_ALLOWED_LENGTH);
   }
 
 }
