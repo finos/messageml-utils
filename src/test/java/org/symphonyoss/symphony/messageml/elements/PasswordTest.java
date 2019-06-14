@@ -143,6 +143,29 @@ public class PasswordTest extends ElementTest {
   }
 
   @Test
+  public void testPasswordFieldUsingInputTag() throws Exception {
+    String input = String.format("<messageML><form id=\"form-id\"><input type=\"password\" name=\"%s\" placeholder=\"%s\" "
+            + "required=\"%s\" minlength=\"%s\" maxlength=\"%s\"/></form></messageML>",
+        NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
+            + "<input type=\"password\" name=\"%s\" placeholder=\"%s\" required=\"%s\" minlength=\"%s\" maxlength=\"%s\"/></form></div>",
+        NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
+    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n\n---\n",
+        PLACEHOLDER_VALUE);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element password = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(Password.class, password.getClass());
+    assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
+    assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
+    assertTrue("Text should be empty", context.getText().isEmpty());
+  }
+
+  @Test
   public void testPasswordFieldWithoutRequiredAttributes() throws Exception {
     String input = "<messageML><form id=\"form-id\"><password/></form></messageML>";
 

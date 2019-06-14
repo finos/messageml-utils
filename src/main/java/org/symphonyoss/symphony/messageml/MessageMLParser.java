@@ -441,8 +441,11 @@ public class MessageMLParser {
     if (containsAttribute(elementType, TextField.PRESENTATIONML_INPUT_TYPE)) {
       removeAttribute(element, FormElement.TYPE_ATTR, TextField.PRESENTATIONML_INPUT_TYPE);
       return new TextField(parent);
+    } else if (containsAttribute(elementType, Password.PRESENTATIONML_INPUT_TYPE)) {
+        removeAttribute(element, FormElement.TYPE_ATTR, Password.PRESENTATIONML_INPUT_TYPE);
+        return new Password(parent);
     } else {
-      throw new InvalidInputException("The input type \"%s\" is not allowed on PresentationML");
+      throw new InvalidInputException(String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
     }
   }
 
