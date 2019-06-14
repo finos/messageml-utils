@@ -119,34 +119,33 @@ public class Password extends FormElement {
   }
 
   private void validateMinAndMaxLengths() throws InvalidInputException {
-    int maxLength = 0;
-    int minLength = 0;
-
-    if (getAttribute(MAXLENGTH_ATTR) != null) {
-      maxLength = getLengthAttributeAsInt(MAXLENGTH_ATTR);
-      if (isLengthIsOutOfRange(maxLength)) {
-        throw new InvalidInputException(getLengthErrorMessage(MAXLENGTH_ATTR));
-      }
+    int maxLength = getLengthAttributeAsInt(MAXLENGTH_ATTR);
+    if (isLengthIsOutOfRange(maxLength)) {
+      throw new InvalidInputException(getLengthErrorMessage(MAXLENGTH_ATTR));
     }
 
-    if (getAttribute(MINLENGTH_ATTR) != null) {
-      minLength = getLengthAttributeAsInt(MINLENGTH_ATTR);
-      if (isLengthIsOutOfRange(minLength)) {
-        throw new InvalidInputException(getLengthErrorMessage(MINLENGTH_ATTR));
-      }
+    int minLength = getLengthAttributeAsInt(MINLENGTH_ATTR);
+    if (isLengthIsOutOfRange(minLength)) {
+      throw new InvalidInputException(getLengthErrorMessage(MINLENGTH_ATTR));
     }
 
-    if (maxLength > 0 && (minLength > maxLength)) {
+    if (minLength > maxLength) {
       throw new InvalidInputException("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
     }
   }
 
   private int getLengthAttributeAsInt(String attributeName) throws InvalidInputException {
-    try {
-      return Integer.parseInt(getAttribute(attributeName));
-    } catch (NumberFormatException e) {
-      throw new InvalidInputException(getLengthErrorMessage(attributeName));
+    int length = 1;
+
+    if (getAttribute(attributeName) != null) {
+      try {
+        length = Integer.parseInt(getAttribute(attributeName));
+      } catch (NumberFormatException e) {
+        throw new InvalidInputException(getLengthErrorMessage(attributeName));
+      }
     }
+
+    return length;
   }
 
   private boolean isLengthIsOutOfRange(int length) {
