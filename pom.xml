@@ -96,6 +96,17 @@
                 <role>Software Developer</role>
             </roles>
         </developer>
+        <developer>
+            <id>sribeiro-daitan</id>
+            <name>Sandro Ribeiro</name>
+            <email>sandro.ribeiro@symphony.com</email>
+            <url>http://github.com/sribeiro-daitan</url>
+            <organization>Symphony Communication Services LLC</organization>
+            <organizationUrl>http://symphony.com</organizationUrl>
+            <roles>
+                <role>Software Developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <contributors>
