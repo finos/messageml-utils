@@ -427,6 +427,9 @@ public class MessageMLParser {
       case TextArea.MESSAGEML_TAG:
         return new TextArea(parent);
 
+      case Password.MESSAGEML_TAG:
+        return new Password(parent);
+
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
     }
