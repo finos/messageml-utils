@@ -124,15 +124,11 @@ public class Password extends FormElement {
 
     if (getAttribute(MAXLENGTH_ATTR) != null) {
       maxLength = getLengthAttributeAsInt(MAXLENGTH_ATTR);
-      if (maxLength < MIN_ALLOWED_LENGTH || maxLength > MAX_ALLOWED_LENGTH) {
-        throw new InvalidInputException(getLengthErrorMessage(MAXLENGTH_ATTR));
-      }
+      validateLengthIsWithinRange(maxLength, MAXLENGTH_ATTR);
     }
     if (getAttribute(MINLENGTH_ATTR) != null) {
       minLength = getLengthAttributeAsInt(MINLENGTH_ATTR);
-      if (minLength < MIN_ALLOWED_LENGTH || minLength > MAX_ALLOWED_LENGTH) {
-        throw new InvalidInputException(getLengthErrorMessage(MINLENGTH_ATTR));
-      }
+      validateLengthIsWithinRange(minLength, MINLENGTH_ATTR);
     }
     if (maxLength > 0 && (minLength > maxLength)) {
       throw new InvalidInputException("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
@@ -144,6 +140,12 @@ public class Password extends FormElement {
       return Integer.parseInt(getAttribute(attributeName));
     } catch (NumberFormatException e) {
       throw new InvalidInputException(getLengthErrorMessage(attributeName));
+    }
+  }
+
+  private void validateLengthIsWithinRange(int length, String maxlengthAttr) throws InvalidInputException {
+    if (length < MIN_ALLOWED_LENGTH || length > MAX_ALLOWED_LENGTH) {
+      throw new InvalidInputException(getLengthErrorMessage(maxlengthAttr));
     }
   }
 
