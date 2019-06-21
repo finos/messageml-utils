@@ -39,8 +39,8 @@ public class Radio extends FormElement {
   public static final String MESSAGEML_TAG = "radio";
 
   private static final String PRESENTATIONML_INPUT_TYPE = "radio";
-  private static final String PRESENTATIONML_DIV_CLASS = "radio-group";
-  private static final String PRESENTATIONML_LABEL_TAG = "label";
+  public static final String PRESENTATIONML_DIV_CLASS = "radio-group";
+  public static final String PRESENTATIONML_LABEL_TAG = "label";
   private static final int PRESENTATIONML_DIV_NUMBER_OF_CHILDREN = 2;
   private static final String PRESENTATIONML_DIV_TAG = "div";
   private static final String PRESENTATIONML_CLASS_ATTR = "class";
@@ -94,7 +94,7 @@ public class Radio extends FormElement {
   @Override
   public void validate() throws InvalidInputException {
     super.validate();
-    assertRequired(NAME_ATTR);
+    assertAttributeNotBlank(NAME_ATTR);
 
     if(getAttribute(CHECKED_ATTR) != null) {
       assertAttributeValue(CHECKED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));

@@ -305,7 +305,7 @@ public abstract class Element {
    * @param attributeName name of attribute that will be checked.
    * @throws InvalidInputException
    */
-  void assertRequired(String attributeName) throws InvalidInputException {
+  void assertAttributeNotBlank(String attributeName) throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
 
     if (attributeValue == null || attributeValue.trim().isEmpty()) {

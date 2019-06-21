@@ -4,18 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.Radio;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 public class RadioTest extends ElementTest {
   private String formId;
@@ -27,17 +21,45 @@ public class RadioTest extends ElementTest {
 
   @Test
   public void testPresentationMLRadio() throws Exception {
-    Set<RadioModel> radios = new HashSet<>();
-    radios.add(new RadioModel("value01", "First"));
-    radios.add(new RadioModel("value02", "Second"));
-    radios.add(new RadioModel("value03", "Third"));
+    StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
+    input.append("<radio name=\"groupId\" value=\"value01\">First</radio>");
+    input.append("<radio name=\"groupId\" value=\"value02\">Second</radio>");
+    input.append("<radio name=\"groupId\" value=\"value03\">Third</radio>");
+    input.append("</form></messageML>");
 
-    String input = buildPresentationMLForRadio(radios, Boolean.FALSE);
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
 
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    verifyMessageMLObjectsForRadio(context);
-    verifyRadioMarkdown(context, radios);
-    verifyRadioPresentationML(context, radios);
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:First)");
+    expectedMarkdown.append("\n(Radio Button:Second)");
+    expectedMarkdown.append("\n(Radio Button:Third)");
+    expectedMarkdown.append("\n\n---\n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
+
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value01\"/>" +
+        "<label>First</label></div>" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value02\"/>" +
+        "<label>Second</label></div>" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value03\"/>" +
+        "<label>Third</label></div>" +
+        "</form></div>");
+
+    String presentationML = context.getPresentationML();
+    assertEquals(expectedPresentationML, presentationML);
   }
 
   @Test
@@ -49,8 +71,11 @@ public class RadioTest extends ElementTest {
         "<label>one</label><label>other</label>" +
         "</div></form></div>");
 
-    assertException(input, InvalidInputException.class, "Invalid PresentationML for the \"radio\""
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid PresentationML for the \"radio\""
         + " element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -62,7 +87,10 @@ public class RadioTest extends ElementTest {
         "<label>Text 1</label>" +
         "</div></form></div>";
 
-    assertException(input, InvalidInputException.class, "Attribute \"id\" is not allowed in \"radio\"");
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"id\" is not allowed in \"radio\"");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -74,7 +102,10 @@ public class RadioTest extends ElementTest {
         "<input type=\"radio\" name=\"name2\" value=\"value2\"/>" +
         "</div></form></div>";
 
-    assertException(input, InvalidInputException.class, "Invalid PresentationML for the \"radio\" element");
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid PresentationML for the \"radio\" element");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -86,72 +117,175 @@ public class RadioTest extends ElementTest {
         "<label>Text 2</label>" +
         "</div></form></div>";
 
-    assertException(input, InvalidInputException.class, "Invalid PresentationML for the \"radio\" element");
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Invalid PresentationML for the \"radio\" element");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
   public void testCompleteFilledRadio() throws Exception {
-    Set<RadioModel> radios = new HashSet<>();
-    radios.add(new RadioModel("value01", "First", Boolean.TRUE));
+    StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
+    input.append("<radio name=\"groupId\" value=\"value01\" checked=\"true\">First</radio>");
+    input.append("</form></messageML>");
 
-    String input = buildMessageMLForRadio(radios);
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
 
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    verifyMessageMLObjectsForRadio(context);
-    verifyRadioPresentationML(context, radios);
-    verifyRadioMarkdown(context, radios);
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:First)");
+    expectedMarkdown.append("\n\n---\n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
+
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value01\" checked=\"true\"/>" +
+        "<label>First</label></div>" +
+        "</form></div>");
+
+    String presentationML = context.getPresentationML();
+    assertEquals(expectedPresentationML, presentationML);
   }
 
   @Test
   public void testNonCheckedCompleteRadio() throws Exception {
-    Set<RadioModel> radios = new HashSet<>();
-    radios.add(new RadioModel("value01", "First", Boolean.FALSE));
+    StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
+    input.append("<radio name=\"groupId\" value=\"value01\" checked=\"false\">First</radio>");
+    input.append("</form></messageML>");
 
-    String input = buildMessageMLForRadio(radios);
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
 
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    verifyMessageMLObjectsForRadio(context);
-    verifyRadioPresentationML(context, radios);
-    verifyRadioMarkdown(context, radios);
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:First)");
+    expectedMarkdown.append("\n\n---\n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
+
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value01\" checked=\"false\"/>" +
+        "<label>First</label></div>" +
+        "</form></div>");
+
+    String presentationML = context.getPresentationML();
+    assertEquals(expectedPresentationML, presentationML);
   }
 
   @Test
   public void testNoCheckedParameterRadio() throws Exception {
-    Set<RadioModel> radios = new HashSet<>();
-    radios.add(new RadioModel("value01", "First"));
+    StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
+    input.append("<radio name=\"groupId\" value=\"value01\">First</radio>");
+    input.append("</form></messageML>");
 
-    String input = buildMessageMLForRadio(radios);
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
 
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    verifyMessageMLObjectsForRadio(context);
-    verifyRadioPresentationML(context, radios);
-    verifyRadioMarkdown(context, radios);
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:First)");
+    expectedMarkdown.append("\n\n---\n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
+
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value01\"/>" +
+        "<label>First</label></div>" +
+        "</form></div>");
+
+    String presentationML = context.getPresentationML();
+    assertEquals(expectedPresentationML, presentationML);
   }
 
   @Test
   public void testNoValueParameterRadio() throws Exception {
-    Set<RadioModel> radios = new HashSet<>();
-    radios.add(new RadioModel(null, "First", Boolean.TRUE));
+    StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
+    input.append("<radio name=\"groupId\" checked=\"true\">First</radio>");
+    input.append("</form></messageML>");
 
-    String input = buildMessageMLForRadio(radios);
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
 
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    verifyMessageMLObjectsForRadio(context);
-    verifyRadioPresentationML(context, radios);
-    verifyRadioMarkdown(context, radios);
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:First)");
+    expectedMarkdown.append("\n\n---\n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
+
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"on\" checked=\"true\"/>" +
+        "<label>First</label></div>" +
+        "</form></div>");
+
+    String presentationML = context.getPresentationML();
+    assertEquals(expectedPresentationML, presentationML);
   }
 
   @Test
   public void testSimplerRadio() throws Exception {
-    Set<RadioModel> radios = new HashSet<>();
-    radios.add(new RadioModel(null, "First"));
+    StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
+    input.append("<radio name=\"groupId\">First</radio>");
+    input.append("</form></messageML>");
 
-    String input = buildMessageMLForRadio(radios);
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
 
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    verifyMessageMLObjectsForRadio(context);
-    verifyRadioPresentationML(context, radios);
-    verifyRadioMarkdown(context, radios);
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:First)");
+    expectedMarkdown.append("\n\n---\n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
+
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"on\"/>" +
+        "<label>First</label></div>" +
+        "</form></div>");
+
+    String presentationML = context.getPresentationML();
+    assertEquals(expectedPresentationML, presentationML);
   }
 
   @Test
@@ -160,7 +294,10 @@ public class RadioTest extends ElementTest {
     input.append("<radio value=\"value01\">First</radio>");
     input.append("</form></messageML>");
 
-    assertException(input.toString(), InvalidInputException.class, "The attribute \"name\" is required");
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -169,7 +306,10 @@ public class RadioTest extends ElementTest {
     input.append("<radio></radio>");
     input.append("</form></messageML>");
 
-    assertException(input.toString(), InvalidInputException.class, "The attribute \"name\" is required");
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -178,8 +318,11 @@ public class RadioTest extends ElementTest {
     input.append("<radio name=\"groupId\"><div>First</div></radio>");
     input.append("</form></messageML>");
 
-    assertException(input.toString(), InvalidInputException.class, "Element \"div\" is not "
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"div\" is not "
         + "allowed in \"radio\"");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -188,9 +331,12 @@ public class RadioTest extends ElementTest {
     input.append("<radio name=\"groupId\"></radio>");
     input.append("</form></messageML>");
 
-    assertException(input.toString(), InvalidInputException.class, "The \"radio\" element must "
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The \"radio\" element must "
         + "have at least one child that is any of the following elements: [text content, bold, "
         + "italic].");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -199,8 +345,11 @@ public class RadioTest extends ElementTest {
     input.append("<radio name=\"groupId\" checked=\"somethingElse\">First</radio>");
     input.append("</form></messageML>");
 
-    assertException(input.toString(), InvalidInputException.class, "Attribute \"checked\" of element \"radio\" can only be "
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"checked\" of element \"radio\" can only be "
         + "one of the following values: [true, false].");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -208,8 +357,11 @@ public class RadioTest extends ElementTest {
     StringBuilder input = new StringBuilder("<messageML><radio name=\"groupId\">First</radio>");
     input.append("</messageML>");
 
-    assertException(input.toString(), InvalidInputException.class, "Element \"radio\" can only be a child of the following "
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"radio\" can only be a child of the following "
         + "elements: [form]");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -218,137 +370,10 @@ public class RadioTest extends ElementTest {
     input.append("<radio name=\"groupId\" invalid=\"true\">First</radio>");
     input.append("</form></messageML>");
 
-    assertException(input.toString(), InvalidInputException.class, "Attribute \"invalid\" is not allowed in \"radio\"");
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"invalid\" is not allowed in \"radio\"");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
-  private void assertException(String input, Class<? extends Exception> exceptionClass, String exceptionMessage)
-      throws InvalidInputException, IOException, ProcessingException {
-    expectedException.expect(exceptionClass);
-    expectedException.expectMessage(exceptionMessage);
-
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-  }
-
-  private void verifyMessageMLObjectsForRadio(MessageMLContext context) {
-    MessageML messageML = context.getMessageML();
-    Element form = messageML.getChildren().get(0);
-    Element radio = form.getChildren().get(0);
-    assertEquals(form.getClass(), Form.class);
-    assertEquals(radio.getClass(), Radio.class);
-  }
-
-  private void verifyRadioMarkdown(MessageMLContext context, Set<RadioModel> radios) {
-    String markdown = context.getMarkdown();
-    String expectedMarkdown  = buildMarkdownForRadio(radios);
-    assertEquals(expectedMarkdown, markdown);
-  }
-
-  private String buildMarkdownForRadio(Set<RadioModel> radios) {
-    StringBuilder markDown = new StringBuilder("Form (log into desktop client to answer):\n---");
-
-    for (RadioModel radio: radios) {
-      markDown.append("\n(Radio Button:");
-      markDown.append(radio.getLabel());
-      markDown.append(")");
-    }
-    markDown.append("\n\n---\n");
-
-
-    return markDown.toString();
-  }
-
-  private void verifyRadioPresentationML(MessageMLContext context, Set<RadioModel> radios) {
-    String presentationML = context.getPresentationML();
-    String expectedPresentationML = buildPresentationMLForRadio(radios, Boolean.TRUE);
-    assertEquals(expectedPresentationML, presentationML);
-  }
-
-  private String buildMessageMLForRadio(Set<RadioModel> radios) {
-    StringBuilder presentationML = new StringBuilder("<messageML><form id=\"" + formId + "\">");
-
-    for (RadioModel radio: radios) {
-      presentationML.append("<radio name=\"groupId\"");
-
-      if(radio.getValue() != null) {
-        presentationML.append(" value=\"").append(radio.getValue()).append("\"");
-      }
-
-      if (radio.isChecked()) {
-        presentationML.append(" checked=\"true\"");
-      }
-
-      presentationML.append(">");
-
-      if(radio.getLabel() != null) {
-        presentationML.append(radio.getLabel());
-      }
-      presentationML.append("</radio>");
-    }
-
-    presentationML.append("</form></messageML>");
-
-    return presentationML.toString();
-  }
-
-  private String buildPresentationMLForRadio(Set<RadioModel> radios, Boolean expected) {
-    StringBuilder presentationML = new StringBuilder("<div data-format=\"PresentationML\" data-version=\"2.0\">");
-    presentationML.append("<form id=\"" + formId + "\">");
-
-    for (RadioModel radio: radios) {
-      presentationML.append("<div class=\"radio-group\">");
-
-      presentationML.append("<input type=\"radio\" name=\"groupId\" value=\"");
-
-      if (expected && radio.getValue() == null) {
-        presentationML.append("on");
-      } else {
-        presentationML.append(radio.getValue());
-      }
-
-      if (radio.isChecked()) {
-        presentationML.append("\" checked=\"true");
-      }
-
-      presentationML.append("\"/>");
-
-      presentationML.append("<label>");
-      presentationML.append(radio.label);
-      presentationML.append("</label>");
-      presentationML.append("</div>");
-    }
-
-    presentationML.append("</form></div>");
-
-    return presentationML.toString();
-  }
-
-  private class RadioModel {
-    private String value;
-
-    private String label;
-
-    private Boolean checked;
-
-    public RadioModel(String value, String label, Boolean checked) {
-      this.value = value;
-      this.label = label;
-      this.checked = checked;
-    }
-
-    public RadioModel(String value, String label) {
-      this(value, label, Boolean.FALSE);
-    }
-
-    public String getValue() {
-      return this.value;
-    }
-
-    public String getLabel() {
-      return this.label;
-    }
-
-    public Boolean isChecked() {
-      return this.checked;
-    }
-  }
 }
