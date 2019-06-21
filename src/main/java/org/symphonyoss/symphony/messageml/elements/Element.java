@@ -300,7 +300,7 @@ public abstract class Element {
   }
 
   /**
-   * Checks if a required attribute is not null or empty
+   * Checks if an attribute is not null or empty
    *
    * @param attributeName name of attribute that will be checked.
    * @throws InvalidInputException
