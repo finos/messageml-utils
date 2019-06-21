@@ -418,6 +418,9 @@ public class MessageMLParser {
       case Checkbox.MESSAGEML_TAG:
         return new Checkbox(parent, FormatEnum.MESSAGEML);
 
+      case Radio.MESSAGEML_TAG:
+        return new Radio(parent, FormatEnum.MESSAGEML);
+
       case PersonSelector.MESSAGEML_TAG:
         return new PersonSelector(parent);
 
@@ -462,6 +465,9 @@ public class MessageMLParser {
     } else if (containsAttribute(elementClass, Checkbox.PRESENTATIONML_DIV_CLASS)) {
       removeAttribute(element, CLASS_ATTR, Checkbox.PRESENTATIONML_DIV_CLASS);
       return new Checkbox(parent, FormatEnum.PRESENTATIONML);
+    }  else if (containsAttribute(elementClass, Radio.PRESENTATIONML_DIV_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, Radio.PRESENTATIONML_DIV_CLASS);
+      return new Radio(parent, FormatEnum.PRESENTATIONML);
     } else {
       return new Div(parent);
     }

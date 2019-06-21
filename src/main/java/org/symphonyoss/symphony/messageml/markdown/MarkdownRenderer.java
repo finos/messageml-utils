@@ -36,6 +36,7 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.RadioNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
@@ -251,6 +252,8 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((ButtonNode) node);
     } else if (node instanceof CheckboxNode) {
       visit((CheckboxNode) node);
+    } else if (node instanceof RadioNode) {
+      visit((RadioNode) node);
     } else if (node instanceof FormElementNode) {
       visit((FormElementNode) node);
     }
@@ -297,6 +300,12 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(checkbox.getOpeningDelimiter());
     visitChildren(checkbox);
     writer.write(checkbox.getClosingDelimiter());
+  }
+
+  private void visit(RadioNode radio) {
+    writer.write(radio.getOpeningDelimiter());
+    visitChildren(radio);
+    writer.write(radio.getClosingDelimiter());
   }
 
   private void visit(KeywordNode keyword) {

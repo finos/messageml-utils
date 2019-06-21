@@ -300,6 +300,20 @@ public abstract class Element {
   }
 
   /**
+   * Checks if a required attribute is not null or empty
+   *
+   * @param attributeName name of attribute that will be checked.
+   * @throws InvalidInputException
+   */
+  void assertRequired(String attributeName) throws InvalidInputException {
+    String attributeValue = getAttribute(attributeName);
+
+    if (attributeValue == null || attributeValue.trim().isEmpty()) {
+      throw new InvalidInputException("The attribute \"" + attributeName + "\" is required");
+    }
+  }
+
+  /**
    * Check that the element is an empty element.
    */
   void assertNoContent() throws InvalidInputException {
