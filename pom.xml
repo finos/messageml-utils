@@ -143,7 +143,7 @@
         <jackson.databind.version>2.9.9</jackson.databind.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.4</commons.lang3.version>
-        <freemarker.version>2.3.23</freemarker.version>
+        <freemarker.version>2.3.28</freemarker.version>
         <commonmark.version>0.12.1</commonmark.version>
         <junit.version>4.12</junit.version>
         <mockito.version>1.9.5</mockito.version>

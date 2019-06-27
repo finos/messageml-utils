@@ -16,16 +16,6 @@
 
 package org.symphonyoss.symphony.messageml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -34,14 +24,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.symphonyoss.symphony.messageml.elements.BulletList;
-import org.symphonyoss.symphony.messageml.elements.CashTag;
-import org.symphonyoss.symphony.messageml.elements.Element;
-import org.symphonyoss.symphony.messageml.elements.HashTag;
-import org.symphonyoss.symphony.messageml.elements.Link;
-import org.symphonyoss.symphony.messageml.elements.Mention;
-import org.symphonyoss.symphony.messageml.elements.MessageML;
-import org.symphonyoss.symphony.messageml.elements.TextNode;
+import org.symphonyoss.symphony.messageml.elements.*;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
@@ -49,13 +32,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-import java.util.List;
-import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -66,6 +42,18 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URI;
+import java.util.List;
+import java.util.Scanner;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MessageMLContextTest {
 
@@ -751,6 +739,84 @@ public class MessageMLContextTest {
     assertEquals("Hashtag count", 2, hashtags.size());
     assertEquals("Label count", 3, labels.size());
 
+  }
+
+  @Test
+  public void testFreemarkerTableSelectLeftCheckbox() throws Exception {
+    MessageMLParser parser = new MessageMLParser(dataProvider);
+
+    String mmlTemplate = getPayload("payloads/freemarker_tableselect.messageml");
+    String templateData = getPayload("payloads/freemarker_tableselect_leftcheckbox.json");
+
+    String out = parser.expandTemplates(mmlTemplate,  MAPPER.readTree(templateData));
+
+    String expectedMML = "<messageML>\n" +
+            "  <form id=\"example\">\n" +
+            "    <table>\n" +
+            "          <tbody>\n" +
+            "            <tr>\n" +
+            "      <td><input type=\"checkbox\" name=\"tablesel-header-1\" /></td>\n" +
+            "                  <td>A1</td>\n" +
+            "                  <td>B1</td>\n" +
+            "                  <td>C1</td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "      <td><input type=\"checkbox\" name=\"tablesel-header-2\" /></td>\n" +
+            "                  <td>A2</td>\n" +
+            "                  <td>B2</td>\n" +
+            "                  <td>C2</td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "      <td><input type=\"checkbox\" name=\"tablesel-header-3\" /></td>\n" +
+            "                  <td>A3</td>\n" +
+            "                  <td>B3</td>\n" +
+            "                  <td>C3</td>\n" +
+            "            </tr>\n" +
+            "          </tbody>\n" +
+            "    </table>\n" +
+            "  </form>\n" +
+            "</messageML>";
+
+    assertEquals("Expanded MessageML with checkboxes on the left", expectedMML, out);
+  }
+
+  @Test
+  public void testFreemarkerTableSelectRightButton() throws Exception {
+    MessageMLParser parser = new MessageMLParser(dataProvider);
+
+    String mmlTemplate = getPayload("payloads/freemarker_tableselect.messageml");
+    String templateData = getPayload("payloads/freemarker_tableselect_rightbutton.json");
+
+    String out = parser.expandTemplates(mmlTemplate,  MAPPER.readTree(templateData));
+
+    String expectedMML = "<messageML>\n" +
+            "  <form id=\"example\">\n" +
+            "    <table>\n" +
+            "          <tbody>\n" +
+            "            <tr>\n" +
+            "                  <td>A1</td>\n" +
+            "                  <td>B1</td>\n" +
+            "                  <td>C1</td>\n" +
+            "      <td><button name=\"tablesel-row-{$index}\">SELECT</button></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                  <td>A2</td>\n" +
+            "                  <td>B2</td>\n" +
+            "                  <td>C2</td>\n" +
+            "      <td><button name=\"tablesel-row-{$index}\">SELECT</button></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                  <td>A3</td>\n" +
+            "                  <td>B3</td>\n" +
+            "                  <td>C3</td>\n" +
+            "      <td><button name=\"tablesel-row-{$index}\">SELECT</button></td>\n" +
+            "            </tr>\n" +
+            "          </tbody>\n" +
+            "    </table>\n" +
+            "  </form>\n" +
+            "</messageML>";
+
+    assertEquals("Expanded MessageML with buttons on the right", expectedMML, out);
   }
 
   private String getPayload(String filename) throws IOException {

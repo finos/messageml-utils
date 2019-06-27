@@ -1,0 +1,30 @@
+<#macro createSelect index>
+    <#if data.select.type == 'checkbox'>
+      <td><input type="checkbox" name="tablesel-header-${index}" /></td>
+    <#elseif data.select.type = 'button'>
+      <td><button name="tablesel-row-{$index}">SELECT</button></td>
+    </#if>
+</#macro>
+<messageML>
+  <form id="example">
+    <table>
+        <#list data.body>
+          <tbody>
+          <#items as row>
+            <tr>
+                <#if data.select.position == 'left'>
+                    <@createSelect index="${row?counter}"/>
+                </#if>
+                <#list row as cell>
+                  <td>${cell}</td>
+                </#list>
+                <#if data.select.position == 'right'>
+                    <@createSelect index="${row?counter}"/>
+                </#if>
+            </tr>
+          </#items>
+          </tbody>
+        </#list>
+    </table>
+  </form>
+</messageML>

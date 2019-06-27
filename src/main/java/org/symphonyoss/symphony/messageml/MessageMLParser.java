@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.annotations.VisibleForTesting;
 import freemarker.core.TemplateClassResolver;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -26,11 +27,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -181,7 +178,8 @@ public class MessageMLParser {
   /**
    * Expand Freemarker templates.
    */
-  private String expandTemplates(String message, JsonNode entityJson) throws IOException, TemplateException {
+  @VisibleForTesting
+  public String expandTemplates(String message, JsonNode entityJson) throws IOException, TemplateException {
     // Read entityJSON data
     Map<String, Object> data = new HashMap<>();
     data.put("data", MAPPER.convertValue(entityJson, Map.class));
