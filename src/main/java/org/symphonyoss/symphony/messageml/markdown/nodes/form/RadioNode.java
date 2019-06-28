@@ -9,7 +9,7 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 public class RadioNode extends FormElementNode {
   private final static String MARKDOWN = "Radio Button:";
 
-  public RadioNode() {
-    super(MARKDOWN);
+  public RadioNode(String name) {
+    super(MARKDOWN + name);
   }
 }

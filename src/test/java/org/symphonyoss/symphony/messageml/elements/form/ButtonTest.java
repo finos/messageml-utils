@@ -203,6 +203,27 @@ public class ButtonTest extends ElementTest {
               + Button.MESSAGEML_TAG + "\"", e.getMessage());
     }
   }
+  
+  @Test
+  public void testNotDirectParent() throws Exception {
+    String input = "<messageML><form id=\"example\"><div><button name=\"div-button\">SELECT</button></div></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element button = form.getChildren().get(0).getChildren().get(0);
+
+    assertEquals("Button class", Button.class, button.getClass());
+    
+    assertEquals("Button name attribute", "div-button", button.getAttribute(NAME_ATTR));
+    assertEquals("Button type attribute", "action", button.getAttribute(TYPE_ATTR));
+    assertEquals("Button clazz attribute", null, button.getAttribute(CLASS_ATTR));
+    assertEquals("Button inner text", "SELECT", button.getChild(0).asText());
+
+    assertEquals("Button markdown", getExpectedButtonMarkdown("SELECT"), context.getMarkdown());
+    assertEquals("Button presentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"example\"><div><button type=\"action\" name=\"div-button\">SELECT</button></div></form></div>",
+        context.getPresentationML());
+  }
 
   private String getNamePresentationML(String name) {
     if (name != null) {
@@ -226,7 +247,7 @@ public class ButtonTest extends ElementTest {
   }
 
   private String getExpectedButtonMarkdown(String innerText) {
-    return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")\n---\n";
+    return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")\n\n---\n";
   }
 
   private void verifyButtonPresentation(Button button, String name, String type, String clazz, String innerText) {

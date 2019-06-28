@@ -6,9 +6,5 @@ public class ButtonNode extends FormElementNode {
   public ButtonNode() {
     super(MARKDOWN);
   }
-
-  @Override
-  public String getClosingDelimiter() {
-    return RIGHT_DELIMITER;
-  }
+  
 }

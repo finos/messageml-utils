@@ -72,23 +72,32 @@ public class Radio extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new RadioNode();
+    return new RadioNode(getAttribute(NAME_ATTR));
   }
 
   @Override
   public void asPresentationML(XmlPrintStream out) {
-    out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, PRESENTATIONML_DIV_CLASS);
-
     Map<String, String> presentationAttrs = buildRadioInputAttributes();
-    out.printElement(INPUT_TAG, presentationAttrs);
 
-    out.openElement(PRESENTATIONML_LABEL_TAG);
-    for (Element child : getChildren()) {
-      child.asPresentationML(out);
+    if (getChildren().isEmpty()) {
+      out.printElement(INPUT_TAG, presentationAttrs);
     }
-    out.closeElement(); // Closing label
+    
+    else {
+      out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, PRESENTATIONML_DIV_CLASS);
 
-    out.closeElement(); // Closing div
+      out.printElement(INPUT_TAG, presentationAttrs);
+
+      out.openElement(PRESENTATIONML_LABEL_TAG);
+      for (Element child : getChildren()) {
+        child.asPresentationML(out);
+      }
+      out.closeElement(); // Closing label
+
+      out.closeElement(); // Closing div
+    }
+    
+    
   }
 
   @Override
@@ -99,9 +108,11 @@ public class Radio extends FormElement {
     if(getAttribute(CHECKED_ATTR) != null) {
       assertAttributeValue(CHECKED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
-
-    assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
-    assertContainsChildOfType(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+    
+    if (!getChildren().isEmpty()) {
+      assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+      assertContainsChildOfType(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+    }
   }
 
   @Override

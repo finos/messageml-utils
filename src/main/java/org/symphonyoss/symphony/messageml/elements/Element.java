@@ -373,7 +373,7 @@ public abstract class Element {
    * Check that the element's allowed parents are limited to the specified element types.
    */
   void assertParent(Collection<Class<? extends Element>> permittedParents) throws InvalidInputException {
-    if (!permittedParents.contains(this.getParent().getClass())) {
+    if (!assertAboveParents(this, permittedParents)) {
       String permittedParentsClassAsString = permittedParents.stream()
           .map(permittedParentClass -> permittedParentClass.getSimpleName().toLowerCase())
           .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
@@ -381,6 +381,21 @@ public abstract class Element {
       throw new InvalidInputException(String.format("Element \"%s\" can only be a child of the following elements: [%s]",
           this.getMessageMLTag(), permittedParentsClassAsString));
     }
+  }
+
+  /**
+   * Check in above levels if an element has a permitted parent.
+   */
+  Boolean assertAboveParents(Element element, Collection<Class<? extends Element>> permittedParents) {
+    while(element.getParent() != null) {
+      if (permittedParents.contains(element.getParent().getClass())) {
+        return true;
+      }
+      else {
+        element = element.getParent();
+      }
+    }
+    return false;
   }
 
   /**

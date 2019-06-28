@@ -63,8 +63,10 @@ public class Checkbox extends FormElement {
       assertAttributeValue(CHECKED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
-    assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
-    assertContainsChildOfType(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+    if (!getChildren().isEmpty()) {
+      assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+      assertContainsChildOfType(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+    }    
   }
 
   @Override
@@ -87,23 +89,29 @@ public class Checkbox extends FormElement {
 
   @Override
   public void asPresentationML(XmlPrintStream out) {
-    out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, PRESENTATIONML_DIV_CLASS);
-
     Map<String, String> presentationAttrs = buildCheckboxInputAttributes();
-    out.printElement(INPUT_TAG, presentationAttrs);
-
-    out.openElement(PRESENTATIONML_LABEL_TAG);
-    for (Element child : getChildren()) {
-      child.asPresentationML(out);
+    
+    if (getChildren().isEmpty()) {
+      out.printElement(INPUT_TAG, presentationAttrs);
     }
-    out.closeElement(); // Closing label
+    else {
+      out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, PRESENTATIONML_DIV_CLASS);
+      
+      out.printElement(INPUT_TAG, presentationAttrs);
 
-    out.closeElement(); // Closing div
+      out.openElement(PRESENTATIONML_LABEL_TAG);
+      for (Element child : getChildren()) {
+        child.asPresentationML(out);
+      }
+      out.closeElement(); // Closing label
+
+      out.closeElement(); // Closing div
+    }
   }
 
   @Override
   public Node asMarkdown() {
-    return new CheckboxNode();
+    return new CheckboxNode(getAttribute(NAME_ATTR));
   }
 
   private void buildElementFromGroupDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
