@@ -4,7 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.symphonyoss.symphony.messageml.elements.*;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.ElementTest;
+import org.symphonyoss.symphony.messageml.elements.Form;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class TextAreaTest extends ElementTest {

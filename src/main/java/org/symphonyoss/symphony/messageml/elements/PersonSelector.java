@@ -6,6 +6,8 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,7 +26,7 @@ public class PersonSelector extends FormElement {
   private static final String PRESENTATIONML_TAG = "div";
   private static final String PRESENTATIONML_PLACEHOLDER_ATTR = "data-placeholder";
 
-  private final static String MARKDOWN = "Person Selector";
+  private final static String MARKDOWN = "Person Selector:";
   private static final String CLASS_ATTR = "class";
   private static final String PRESENTATIONML_NAME_ATTR = "data-name";
 
@@ -32,28 +34,19 @@ public class PersonSelector extends FormElement {
     super(parent, MESSAGEML_TAG);
   }
 
-  /*@Override
+  @Override
   public void buildAll(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
     switch (getFormat()) {
       case MESSAGEML:
         super.buildAll(context, element);
         break;
       case PRESENTATIONML:
-        buildElementFromDiv(context, element);
+        buildElementFromPresentationML(context, element);
         this.validate();
         break;
       default:
         throw new InvalidInputException(String.format("Invalid message format for \"%s\" element", MESSAGEML_TAG));
     }
-  }*/
-
-  private void buildElementFromDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
-    if(!PRESENTATIONML_TAG.equals(element.getNodeName())) {
-      throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
-    }
-    buildNode(context, element.getAttributeNode(PRESENTATIONML_NAME_ATTR));
-    buildNode(context, element.getAttributeNode(PRESENTATIONML_PLACEHOLDER_ATTR));
-    
   }
 
   @Override
@@ -70,12 +63,12 @@ public class PersonSelector extends FormElement {
   @Override
   public void asPresentationML(XmlPrintStream out) {
     Map<String, String> presentationAttrs = buildPersonSelectorInputAttributes();
-    out.printElement(PRESENTATIONML_TAG, null, presentationAttrs);
+    out.printElement(PRESENTATIONML_TAG, presentationAttrs);
   }
 
   @Override
   public Node asMarkdown() {
-    return new FormElementNode(MARKDOWN);
+    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
   }
 
   @Override
@@ -86,7 +79,7 @@ public class PersonSelector extends FormElement {
         break;
       case PLACEHOLDER_ATTR:
         setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
-        break;  
+        break;
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
             + "\" is not allowed in \"" + getMessageMLTag() + "\"");
@@ -104,5 +97,33 @@ public class PersonSelector extends FormElement {
     }
     
     return presentationAttrs;
+  }
+
+  void buildElementFromPresentationML(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+    
+    if (!"".equals(element.getAttribute(PRESENTATIONML_NAME_ATTR))) {
+      String nameValue = element.getAttribute(PRESENTATIONML_NAME_ATTR);
+      element.setAttribute(NAME_ATTR, nameValue);
+      element.removeAttribute(PRESENTATIONML_NAME_ATTR);
+    }
+
+    if (!"".equals(element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR))) {
+      String placeholderValue = element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
+      element.setAttribute(PLACEHOLDER_ATTR, placeholderValue);
+      element.removeAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
+    }
+
+    NamedNodeMap attributes = element.getAttributes();
+
+    for (int i = 0; i < attributes.getLength(); i++) {
+      buildAttribute(attributes.item(i));
+    }
+
+    NodeList children = element.getChildNodes();
+
+    for (int i = 0; i < children.getLength(); i++) {
+      buildNode(context, children.item(i));
+    }
+    
   }
 }

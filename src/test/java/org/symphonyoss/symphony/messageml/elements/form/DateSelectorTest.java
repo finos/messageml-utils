@@ -15,22 +15,22 @@ public class DateSelectorTest extends ElementTest {
   
   @Test
   public void sendValidDateSelectorOnPresentationML() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"date-selector\" name=\"some-name\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag("some-name", null);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"date-selector\" data-name=\"some-name\" data-placeholder=\"some-placeholder\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag("some-name", "some-placeholder");
   }
 
   @Test
   public void sendInvalidAttrDateSelectorOnPresentationML() throws Exception {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"id\" is not allowed in \"date-selector\"");
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div id=\"idOne\" class=\"date-selector\" name=\"some-name\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div id=\"idOne\" class=\"date-selector\" data-name=\"some-name\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
   public void sendInvalidContentDateSelectorOnPresentationML() throws Exception {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"date-selector\" may not have child elements or text content");
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"date-selector\" name=\"some-name\"><div>hey</div></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"date-selector\" data-name=\"some-name\"><div>hey</div></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -61,8 +61,6 @@ public class DateSelectorTest extends ElementTest {
 
   @Test
   public void sendDateSelectorOutsideForm() throws Exception {
-    //expectedException.expect(InvalidInputException.class);
-    //expectedException.expectMessage("Element \"date-selector\" can only be a child of the following elements: [form]");
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div><date-selector name=\"some-name\"/></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
     
     MessageML messageML = context.getMessageML();
@@ -72,7 +70,7 @@ public class DateSelectorTest extends ElementTest {
     assertEquals(dateSelector.getClass(), DateSelector.class);
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
         "\"><div><div class=\"date-selector\" data-name=\"some-name\"/></div></form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector)\n\n---\n", context.getMarkdown());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector:some-name)\n\n---\n", context.getMarkdown());
   }
 
   private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder) {
@@ -84,6 +82,6 @@ public class DateSelectorTest extends ElementTest {
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
         "\"><div class=\"date-selector\" data-name=\"" + dataName + "\"" + (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
         "/></form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector)\n\n---\n", context.getMarkdown());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector:" + dataName + ")\n\n---\n", context.getMarkdown());
   }
 }

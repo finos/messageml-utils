@@ -1,9 +1,13 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,11 +27,26 @@ public class DateSelector extends FormElement {
   private static final String PRESENTATIONML_PLACEHOLDER_ATTR = "data-placeholder";
   
   private static final String PRESENTATIONML_TAG = "div";
-  private static final String MARKDOWN = "Date Selector";
+  private static final String MARKDOWN = "Date Selector:";
   private static final String CLASS_ATTR = "class";
 
   public DateSelector(Element parent) {
     super(parent, MESSAGEML_TAG);
+  }
+
+  @Override
+  public void buildAll(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+    switch (getFormat()) {
+      case MESSAGEML:
+        super.buildAll(context, element);
+        break;
+      case PRESENTATIONML:
+        buildElementFromPresentationML(context, element);
+        this.validate();
+        break;
+      default:
+        throw new InvalidInputException(String.format("Invalid message format for \"%s\" element", MESSAGEML_TAG));
+    }
   }
 
   @Override
@@ -44,12 +63,12 @@ public class DateSelector extends FormElement {
   @Override
   public void asPresentationML(XmlPrintStream out) {
     Map<String, String> presentationAttrs = buildDateSelectorInputAttributes();
-    out.printElement(PRESENTATIONML_TAG, null, presentationAttrs);
+    out.printElement(PRESENTATIONML_TAG, presentationAttrs);
   }
 
   @Override
   public Node asMarkdown() {
-    return new FormElementNode(MARKDOWN);
+    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
   }
 
   @Override
@@ -78,5 +97,33 @@ public class DateSelector extends FormElement {
     }
 
     return presentationAttrs;
+  }
+
+  void buildElementFromPresentationML(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+
+    if (!"".equals(element.getAttribute(PRESENTATIONML_NAME_ATTR))) {
+      String nameValue = element.getAttribute(PRESENTATIONML_NAME_ATTR);
+      element.setAttribute(NAME_ATTR, nameValue);
+      element.removeAttribute(PRESENTATIONML_NAME_ATTR);
+    }
+
+    if (!"".equals(element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR))) {
+      String placeholderValue = element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
+      element.setAttribute(PLACEHOLDER_ATTR, placeholderValue);
+      element.removeAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
+    }
+
+    NamedNodeMap attributes = element.getAttributes();
+
+    for (int i = 0; i < attributes.getLength(); i++) {
+      buildAttribute(attributes.item(i));
+    }
+
+    NodeList children = element.getChildNodes();
+
+    for (int i = 0; i < children.getLength(); i++) {
+      buildNode(context, children.item(i));
+    }
+
   }
 }

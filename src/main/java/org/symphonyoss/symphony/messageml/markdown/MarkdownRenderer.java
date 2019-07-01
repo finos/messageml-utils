@@ -32,7 +32,6 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;

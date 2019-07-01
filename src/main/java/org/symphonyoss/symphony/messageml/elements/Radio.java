@@ -19,7 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.RadioNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -50,6 +50,8 @@ public class Radio extends FormElement {
   private static final String VALUE_ATTR = "value";
   private static final String CHECKED_ATTR = "checked";
 
+  private static final String MARKDOWN = "Radio Button:";
+
   public Radio(Element parent, FormatEnum messageFormat) {
     super(parent, MESSAGEML_TAG, messageFormat);
   }
@@ -72,7 +74,7 @@ public class Radio extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new RadioNode(getAttribute(NAME_ATTR));
+    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
   }
 
   @Override
@@ -111,7 +113,6 @@ public class Radio extends FormElement {
     
     if (!getChildren().isEmpty()) {
       assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
-      assertContainsChildOfType(Arrays.asList(TextNode.class, Bold.class, Italic.class));
     }
   }
 
