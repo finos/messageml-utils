@@ -30,8 +30,8 @@ public class PersonSelector extends FormElement {
   private static final String CLASS_ATTR = "class";
   private static final String PRESENTATIONML_NAME_ATTR = "data-name";
 
-  public PersonSelector(Element parent) {
-    super(parent, MESSAGEML_TAG);
+  public PersonSelector(Element parent, FormatEnum messageFormat) {
+    super(parent, MESSAGEML_TAG, messageFormat);
   }
 
   @Override
@@ -106,7 +106,7 @@ public class PersonSelector extends FormElement {
       element.removeAttribute(PRESENTATIONML_NAME_ATTR);
     }
 
-    if (!"".equals(element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR))) {
+    if (!element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR).isEmpty()) {
       element.setAttribute(PLACEHOLDER_ATTR, element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR));
       element.removeAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
     }

@@ -30,8 +30,8 @@ public class DateSelector extends FormElement {
   private static final String MARKDOWN = "Date Selector:";
   private static final String CLASS_ATTR = "class";
 
-  public DateSelector(Element parent) {
-    super(parent, MESSAGEML_TAG);
+  public DateSelector(Element parent, FormatEnum messageFormat) {
+    super(parent, MESSAGEML_TAG, messageFormat);
   }
 
   @Override
