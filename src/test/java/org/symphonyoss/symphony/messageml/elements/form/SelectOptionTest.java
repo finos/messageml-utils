@@ -201,7 +201,7 @@ public class SelectOptionTest extends ElementTest {
     String input = "<messageML><select name=\"" + name + "\"><option value=\"\">Option 1</option></select></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"select\" can only be a child of the following elements: [form]");
+    expectedException.expectMessage("Element \"select\" can only be a inner child of the following elements: [form]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }

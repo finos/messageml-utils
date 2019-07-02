@@ -373,7 +373,7 @@ public class RadioTest extends ElementTest {
     input.append("</messageML>");
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"radio\" can only be a child of the following "
+    expectedException.expectMessage("Element \"radio\" can only be a inner child of the following "
         + "elements: [form]");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);

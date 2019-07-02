@@ -41,7 +41,7 @@ public class PersonSelector extends FormElement {
         super.buildAll(context, element);
         break;
       case PRESENTATIONML:
-        buildElementFromPresentationML(context, element);
+        buildElementFromDiv(context, element);
         this.validate();
         break;
       default:
@@ -99,17 +99,15 @@ public class PersonSelector extends FormElement {
     return presentationAttrs;
   }
 
-  void buildElementFromPresentationML(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+  void buildElementFromDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
     
-    if (!"".equals(element.getAttribute(PRESENTATIONML_NAME_ATTR))) {
-      String nameValue = element.getAttribute(PRESENTATIONML_NAME_ATTR);
-      element.setAttribute(NAME_ATTR, nameValue);
+    if (!element.getAttribute(PRESENTATIONML_NAME_ATTR).isEmpty()) {
+      element.setAttribute(NAME_ATTR, element.getAttribute(PRESENTATIONML_NAME_ATTR));
       element.removeAttribute(PRESENTATIONML_NAME_ATTR);
     }
 
     if (!"".equals(element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR))) {
-      String placeholderValue = element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
-      element.setAttribute(PLACEHOLDER_ATTR, placeholderValue);
+      element.setAttribute(PLACEHOLDER_ATTR, element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR));
       element.removeAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
     }
 

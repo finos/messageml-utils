@@ -208,7 +208,7 @@ public class CheckboxTest extends ElementTest {
     String input = "<messageML><checkbox value=\"value\">Value</checkbox></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"checkbox\" can only be a child of the following elements: [form]");
+    expectedException.expectMessage("Element \"checkbox\" can only be a inner child of the following elements: [form]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }

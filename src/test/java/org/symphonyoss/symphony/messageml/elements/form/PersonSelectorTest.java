@@ -15,8 +15,8 @@ public class PersonSelectorTest extends ElementTest {
   
   @Test
   public void sendValidPersonSelectorOnPresentationML() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\" data-name=\"one-name\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag("one-name", null);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\" data-name=\"one-name\" data-placeholder=\"some-placeholder\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag("one-name", "some-placeholder");
   }
 
   @Test

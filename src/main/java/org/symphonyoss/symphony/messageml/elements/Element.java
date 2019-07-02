@@ -404,7 +404,7 @@ public abstract class Element {
           .map(permittedParentClass -> permittedParentClass.getSimpleName().toLowerCase())
           .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
           .orElse("");
-      throw new InvalidInputException(String.format("Element \"%s\" can only be a child of the following elements: [%s]",
+      throw new InvalidInputException(String.format("Element \"%s\" can only be a inner child of the following elements: [%s]",
           this.getMessageMLTag(), permittedParentsClassAsString));
     }
   }
