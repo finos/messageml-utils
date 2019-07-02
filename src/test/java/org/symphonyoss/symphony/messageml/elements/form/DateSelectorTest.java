@@ -15,8 +15,8 @@ public class DateSelectorTest extends ElementTest {
   
   @Test
   public void sendValidDateSelectorOnPresentationML() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"date-selector\" data-name=\"some-name\" data-placeholder=\"some-placeholder\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag("some-name", "some-placeholder");
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"date-selector\" data-name=\"some-name\" data-placeholder=\"some-placeholder\" data-required=\"true\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag("some-name", "some-placeholder", true);
   }
 
   @Test
@@ -35,14 +35,14 @@ public class DateSelectorTest extends ElementTest {
 
   @Test
   public void sendValidDateSelector() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><date-selector name=\"some-name\" placeholder=\"Date placeholder\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag("some-name", "Date placeholder");
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><date-selector name=\"some-name\" placeholder=\"Date placeholder\" required=\"false\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag("some-name", "Date placeholder", false);
   }
 
   @Test
   public void sendValidDateSelectorWithClosingTag() throws Exception {
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><date-selector name=\"some-name\"></date-selector></form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag("some-name",null);
+    assertDataFromValidParsedTag("some-name", null, null);
   }
 
   @Test
@@ -50,6 +50,13 @@ public class DateSelectorTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"date-selector\" may not have child elements or text content");
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><date-selector name=\"some-name\">a</date-selector></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void sendDateSelectorWithInvalidRequiredAttribute() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"required\" of element \"date-selector\" can only be one of the following values: [true, false]");
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><date-selector name=\"some-name\" placeholder=\"Date placeholder\" required=\"invalid\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -73,14 +80,16 @@ public class DateSelectorTest extends ElementTest {
     assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector:some-name)\n\n---\n", context.getMarkdown());
   }
 
-  private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder) {
+  private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {
     MessageML messageML = context.getMessageML();
     Element form = messageML.getChildren().get(0);
     Element dateSelector = form.getChildren().get(0);
     assertEquals(form.getClass(), Form.class);
     assertEquals(dateSelector.getClass(), DateSelector.class);
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
-        "\"><div class=\"date-selector\" data-name=\"" + dataName + "\"" + (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
+        "\"><div class=\"date-selector\" data-name=\"" + dataName + "\"" + 
+        (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
+        (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
         "/></form></div>", context.getPresentationML());
     assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector:" + dataName + ")\n\n---\n", context.getMarkdown());
   }
