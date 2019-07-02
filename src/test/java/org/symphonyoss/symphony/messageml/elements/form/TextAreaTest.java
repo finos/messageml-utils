@@ -17,9 +17,9 @@ public class TextAreaTest extends ElementTest {
   private static final String PLACEHOLDER_VALUE = "A placeholder";
   private static final String INITIAL_VALUE = "An initial value";
 
-  private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
+  private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)\n---\n";
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n\n---\n", PLACEHOLDER_VALUE);
+      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n---\n", PLACEHOLDER_VALUE);
 
   @Test
   public void testTextAreaWithRequiredAttributesOnly() throws Exception {

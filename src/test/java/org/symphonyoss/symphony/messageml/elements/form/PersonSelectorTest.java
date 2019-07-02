@@ -79,7 +79,7 @@ public class PersonSelectorTest extends ElementTest {
     assertEquals(personSelector.getClass(), PersonSelector.class);
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
         "\"><div><div class=\"person-selector\" data-name=\"some-name\"></div></div></form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:some-name)\n\n---\n", context.getMarkdown());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:some-name)\n\n\n---\n", context.getMarkdown());
   }
 
   private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {
@@ -93,6 +93,6 @@ public class PersonSelectorTest extends ElementTest {
         (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
         "></div></form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:" + dataName + ")\n\n---\n", context.getMarkdown());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:" + dataName + ")\n---\n", context.getMarkdown());
   }
 }

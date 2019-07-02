@@ -33,7 +33,7 @@ public class FormElementNode extends CustomBlock {
   }
 
   public String getClosingDelimiter() {
-    return RIGHT_DELIMITER + "\n";
+    return RIGHT_DELIMITER;
   }
 
   public String getText() {

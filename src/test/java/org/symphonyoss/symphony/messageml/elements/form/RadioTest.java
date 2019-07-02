@@ -37,9 +37,9 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("(Radio Button:groupId)");
+    expectedMarkdown.append("(Radio Button:groupId)");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -83,7 +83,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:radio-name)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -167,7 +167,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -200,7 +200,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -233,7 +233,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -266,7 +266,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -299,7 +299,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -376,7 +376,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n---\n");
     
     String markdown = context.getMarkdown();
     assertEquals(expectedMarkdown.toString(), markdown);

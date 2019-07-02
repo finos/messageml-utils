@@ -281,6 +281,6 @@ public class CheckboxTest extends ElementTest {
   }
 
   private String buildExpectedMarkdownForCheckbox(String name) {
-    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)\n\n---\n", name);
+    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)\n---\n", name);
   }
 }
