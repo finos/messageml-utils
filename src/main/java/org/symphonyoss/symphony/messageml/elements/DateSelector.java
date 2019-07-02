@@ -73,7 +73,8 @@ public class DateSelector extends FormElement {
   @Override
   public void asPresentationML(XmlPrintStream out) {
     Map<String, String> presentationAttrs = buildDateSelectorInputAttributes();
-    out.printElement(PRESENTATIONML_TAG, presentationAttrs);
+    out.openElement(PRESENTATIONML_TAG, presentationAttrs);
+    out.closeElement();
   }
 
   @Override
