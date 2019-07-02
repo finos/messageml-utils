@@ -101,12 +101,10 @@ public class PersonSelector extends FormElement {
 
   void buildElementFromDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
     
-    if (!element.getAttribute(PRESENTATIONML_NAME_ATTR).isEmpty()) {
-      element.setAttribute(NAME_ATTR, element.getAttribute(PRESENTATIONML_NAME_ATTR));
-      element.removeAttribute(PRESENTATIONML_NAME_ATTR);
-    }
+    element.setAttribute(NAME_ATTR, element.getAttribute(PRESENTATIONML_NAME_ATTR));
+    element.removeAttribute(PRESENTATIONML_NAME_ATTR);
 
-    if (!element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR).isEmpty()) {
+    if (element.hasAttribute(PRESENTATIONML_PLACEHOLDER_ATTR)) {
       element.setAttribute(PLACEHOLDER_ATTR, element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR));
       element.removeAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
     }

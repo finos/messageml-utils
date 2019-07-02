@@ -100,13 +100,11 @@ public class DateSelector extends FormElement {
   }
 
   void buildElementFromDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+    
+    element.setAttribute(NAME_ATTR, element.getAttribute(PRESENTATIONML_NAME_ATTR));
+    element.removeAttribute(PRESENTATIONML_NAME_ATTR);
 
-    if (!"".equals(element.getAttribute(PRESENTATIONML_NAME_ATTR))) {
-      element.setAttribute(NAME_ATTR, element.getAttribute(PRESENTATIONML_NAME_ATTR));
-      element.removeAttribute(PRESENTATIONML_NAME_ATTR);
-    }
-
-    if (!"".equals(element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR))) {
+    if (element.hasAttribute(PRESENTATIONML_PLACEHOLDER_ATTR)) {
       element.setAttribute(PLACEHOLDER_ATTR, element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR));
       element.removeAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
     }
