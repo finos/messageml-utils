@@ -20,6 +20,6 @@ public class FormElement extends Element {
 
   @Override
   public void validate() throws InvalidInputException {
-    assertParent(Collections.singleton(Form.class));
+    assertParentAtAnyLevel(Collections.singleton(Form.class));
   }
 }

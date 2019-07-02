@@ -149,7 +149,7 @@ public class ButtonTest extends ElementTest {
       fail("Should have thrown an exception on button out of a form tag");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Element \"button\" can only be a child of the following elements: [form]", e.getMessage());
+      assertEquals("Exception message", "Element \"button\" can only be a inner child of the following elements: [form]", e.getMessage());
     }
   }
 
@@ -202,6 +202,27 @@ public class ButtonTest extends ElementTest {
       assertEquals("Exception message", "Attribute \"" + invalidAttribute + "\" is not allowed in \""
               + Button.MESSAGEML_TAG + "\"", e.getMessage());
     }
+  }
+  
+  @Test
+  public void testNotDirectParent() throws Exception {
+    String input = "<messageML><form id=\"example\"><div><button name=\"div-button\">SELECT</button></div></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element button = form.getChildren().get(0).getChildren().get(0);
+
+    assertEquals("Button class", Button.class, button.getClass());
+    
+    assertEquals("Button name attribute", "div-button", button.getAttribute(NAME_ATTR));
+    assertEquals("Button type attribute", "action", button.getAttribute(TYPE_ATTR));
+    assertEquals("Button clazz attribute", null, button.getAttribute(CLASS_ATTR));
+    assertEquals("Button inner text", "SELECT", button.getChild(0).asText());
+
+    assertEquals("Button markdown", "Form (log into desktop client to answer):\n---\n(Button:SELECT)\n\n\n---\n", context.getMarkdown());
+    assertEquals("Button presentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"example\"><div><button type=\"action\" name=\"div-button\">SELECT</button></div></form></div>",
+        context.getPresentationML());
   }
 
   private String getNamePresentationML(String name) {

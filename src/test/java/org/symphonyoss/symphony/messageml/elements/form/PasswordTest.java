@@ -1,9 +1,14 @@
-package org.symphonyoss.symphony.messageml.elements;
+package org.symphonyoss.symphony.messageml.elements.form;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.ElementTest;
+import org.symphonyoss.symphony.messageml.elements.Form;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.Password;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class PasswordTest extends ElementTest {
@@ -24,7 +29,7 @@ public class PasswordTest extends ElementTest {
     String input = String.format("<messageML><form id=\"form-id\"><password name=\"%s\"/></form></messageML>", NAME_VALUE);
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
         + "<input type=\"password\" name=\"%s\"/></form></div>", NAME_VALUE);
-    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Password Field)\n\n---\n";
+    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Password Field)\n---\n";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -46,7 +51,7 @@ public class PasswordTest extends ElementTest {
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
             + "<input type=\"password\" name=\"%s\" placeholder=\"%s\" required=\"%s\" minlength=\"%s\" maxlength=\"%s\"/></form></div>",
         NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
-    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n\n---\n",
+    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n---\n",
         PLACEHOLDER_VALUE);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -67,7 +72,7 @@ public class PasswordTest extends ElementTest {
         NAME_VALUE, PLACEHOLDER_VALUE);
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
             + "<input type=\"password\" name=\"%s\" placeholder=\"%s\"/></form></div>", NAME_VALUE, PLACEHOLDER_VALUE);
-    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n\n---\n",
+    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n---\n",
         PLACEHOLDER_VALUE);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -88,7 +93,7 @@ public class PasswordTest extends ElementTest {
         REQUIRED_VALUE);
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
             + "<input type=\"password\" name=\"%s\" required=\"%s\"/></form></div>", NAME_VALUE, REQUIRED_VALUE);
-    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Password Field)\n\n---\n";
+    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Password Field)\n---\n";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -108,7 +113,7 @@ public class PasswordTest extends ElementTest {
         NAME_VALUE, MIN_ALLOWED_LENGTH);
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
             + "<input type=\"password\" name=\"%s\" minlength=\"%s\"/></form></div>", NAME_VALUE, MIN_ALLOWED_LENGTH);
-    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Password Field)\n\n---\n";
+    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Password Field)\n---\n";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -128,7 +133,7 @@ public class PasswordTest extends ElementTest {
         NAME_VALUE, MAX_ALLOWED_LENGTH);
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
             + "<input type=\"password\" name=\"%s\" maxlength=\"%s\"/></form></div>", NAME_VALUE, MAX_ALLOWED_LENGTH);
-    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Password Field)\n\n---\n";
+    String expectedMarkdown = "Form (log into desktop client to answer):\n---\n(Password Field)\n---\n";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -150,7 +155,7 @@ public class PasswordTest extends ElementTest {
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
             + "<input type=\"password\" name=\"%s\" placeholder=\"%s\" required=\"%s\" minlength=\"%s\" maxlength=\"%s\"/></form></div>",
         NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
-    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n\n---\n",
+    String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n---\n",
         PLACEHOLDER_VALUE);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);

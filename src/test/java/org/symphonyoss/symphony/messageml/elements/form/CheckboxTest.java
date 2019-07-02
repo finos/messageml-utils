@@ -40,7 +40,24 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, null, false);
-    verifyCheckboxMarkdown(context, text, name);
+    verifyCheckboxMarkdown(context, name);
+  }
+
+  @Test
+  public void testPresentationMLCheckboxWithOnlyNameAttribute() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"checkbox-form\">" +
+        "<input type=\"checkbox\" name=\"checkbox-name\"/>" +
+        "</form></div>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    verifyMessageMLObjectsForCheckbox(context);
+    String presentationML = context.getPresentationML();
+    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" value=\"on\"/></form></div>";
+    assertEquals(expectedPresentationML, presentationML);
+
+    verifyCheckboxMarkdown(context, name);
   }
 
   @Test
@@ -110,7 +127,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, checked, true);
-    verifyCheckboxMarkdown(context, text, name);
+    verifyCheckboxMarkdown(context, name);
   }
 
   @Test
@@ -119,7 +136,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, checked, true);
-    verifyCheckboxMarkdown(context, text, name);
+    verifyCheckboxMarkdown(context, name);
   }
 
   @Test
@@ -128,7 +145,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, checked, false);
-    verifyCheckboxMarkdown(context, text, name);
+    verifyCheckboxMarkdown(context, name);
   }
 
   @Test
@@ -137,7 +154,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, null, text, checked, true);
-    verifyCheckboxMarkdown(context, text, name);
+    verifyCheckboxMarkdown(context, name);
   }
 
   @Test
@@ -146,7 +163,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, null, text, checked, false);
-    verifyCheckboxMarkdown(context, text, name);
+    verifyCheckboxMarkdown(context, name);
   }
 
   @Test
@@ -182,10 +199,15 @@ public class CheckboxTest extends ElementTest {
   @Test
   public void testNoTextParameterCheckbox() throws Exception {
     String input = buildMessageMLFromParameters(name, value, null, checked, true);
-    expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"checkbox\" element must have at least one child that is any of the following elements: [text content, bold, italic].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    verifyMessageMLObjectsForCheckbox(context);
+    String presentationML = context.getPresentationML();
+    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" checked=\"false\" value=\"checkbox-value\"/></form></div>";
+    assertEquals(expectedPresentationML, presentationML);
+
+    verifyCheckboxMarkdown(context, name);
   }
 
   @Test
@@ -203,7 +225,7 @@ public class CheckboxTest extends ElementTest {
     String input = "<messageML><checkbox value=\"value\">Value</checkbox></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"checkbox\" can only be a child of the following elements: [form]");
+    expectedException.expectMessage("Element \"checkbox\" can only be a inner child of the following elements: [form]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -252,13 +274,13 @@ public class CheckboxTest extends ElementTest {
         "</label></div></form></div>";
   }
 
-  private void verifyCheckboxMarkdown(MessageMLContext context, String text, String name) {
+  private void verifyCheckboxMarkdown(MessageMLContext context, String name) {
     String markdown = context.getMarkdown();
-    String expectedMarkdown  = buildExpectedMarkdownForCheckbox(text, name);
+    String expectedMarkdown  = buildExpectedMarkdownForCheckbox(name);
     assertEquals(expectedMarkdown, markdown);
   }
 
-  private String buildExpectedMarkdownForCheckbox(String text, String name) {
-    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)\n\n---\n", (text != null) ? text : name);
+  private String buildExpectedMarkdownForCheckbox(String name) {
+    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)\n---\n", name);
   }
 }

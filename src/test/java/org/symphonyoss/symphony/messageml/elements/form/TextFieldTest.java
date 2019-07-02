@@ -205,7 +205,7 @@ public class TextFieldTest extends ElementTest {
   }
 
   private String getExpectedTextFieldMarkdown(String placeholder) {
-    return String.format("Form (log into desktop client to answer):\n---\n(Text Field%s)\n\n---\n", (placeholder != null) ? ":" + placeholder : "");
+    return String.format("Form (log into desktop client to answer):\n---\n(Text Field%s)\n---\n", (placeholder != null) ? ":" + placeholder : "");
   }
 
   private void verifyTextFieldMarkdown(String placeholder) {

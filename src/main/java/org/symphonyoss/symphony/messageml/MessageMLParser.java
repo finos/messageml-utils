@@ -422,10 +422,10 @@ public class MessageMLParser {
         return new Radio(parent, FormatEnum.MESSAGEML);
 
       case PersonSelector.MESSAGEML_TAG:
-        return new PersonSelector(parent);
+        return new PersonSelector(parent, FormatEnum.MESSAGEML);
 
       case DateSelector.MESSAGEML_TAG:
-        return new DateSelector(parent);
+        return new DateSelector(parent, FormatEnum.MESSAGEML);
 
       case TextArea.MESSAGEML_TAG:
         return new TextArea(parent);
@@ -447,6 +447,10 @@ public class MessageMLParser {
     } else if (containsAttribute(elementType, Password.PRESENTATIONML_INPUT_TYPE)) {
         removeAttribute(element, FormElement.TYPE_ATTR, Password.PRESENTATIONML_INPUT_TYPE);
         return new Password(parent);
+    } else if (containsAttribute(elementType, Checkbox.PRESENTATIONML_INPUT_TYPE)) {
+      return new Checkbox(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementType, Radio.PRESENTATIONML_INPUT_TYPE)) { 
+      return new Radio(parent, FormatEnum.PRESENTATIONML);
     } else {
       throw new InvalidInputException(String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
     }
@@ -467,10 +471,10 @@ public class MessageMLParser {
       return new CardHeader(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementClass, PersonSelector.MESSAGEML_TAG)) {
       removeAttribute(element, CLASS_ATTR, PersonSelector.MESSAGEML_TAG);
-      return new PersonSelector(parent);
+      return new PersonSelector(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementClass, DateSelector.MESSAGEML_TAG)) {
       removeAttribute(element, CLASS_ATTR, DateSelector.MESSAGEML_TAG);
-      return new DateSelector(parent);
+      return new DateSelector(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementClass, Checkbox.PRESENTATIONML_DIV_CLASS)) {
       removeAttribute(element, CLASS_ATTR, Checkbox.PRESENTATIONML_DIV_CLASS);
       return new Checkbox(parent, FormatEnum.PRESENTATIONML);

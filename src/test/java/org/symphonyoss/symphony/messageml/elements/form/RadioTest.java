@@ -36,10 +36,10 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
-    expectedMarkdown.append("\n(Radio Button:Second)");
-    expectedMarkdown.append("\n(Radio Button:Third)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("(Radio Button:groupId)");
+    expectedMarkdown.append("(Radio Button:groupId)");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -60,6 +60,34 @@ public class RadioTest extends ElementTest {
 
     String presentationML = context.getPresentationML();
     assertEquals(expectedPresentationML, presentationML);
+  }
+
+  @Test
+  public void testPresentationMLCheckboxWithOnlyNameAttribute() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"radio-form\">" +
+        "<input type=\"radio\" name=\"radio-name\"/>" +
+        "</form></div>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+    
+    String presentationML = context.getPresentationML();
+    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"radio-form\"><input type=\"radio\" name=\"radio-name\" value=\"on\"/></form></div>";
+    assertEquals(expectedPresentationML, presentationML);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:radio-name)");
+    expectedMarkdown.append("\n---\n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
   }
 
   @Test
@@ -138,8 +166,8 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -171,8 +199,8 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -204,8 +232,8 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -237,8 +265,8 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -270,8 +298,8 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
-    expectedMarkdown.append("\n\n---\n");
+    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
 
@@ -331,12 +359,27 @@ public class RadioTest extends ElementTest {
     input.append("<radio name=\"groupId\"></radio>");
     input.append("</form></messageML>");
 
-    expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"radio\" element must "
-        + "have at least one child that is any of the following elements: [text content, bold, "
-        + "italic].");
-
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
+    
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element checkbox = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(checkbox.getClass(), Radio.class);
+    String presentationML = context.getPresentationML();
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"on\"/>" +
+        "</form></div>");    
+    
+    assertEquals(expectedPresentationML, presentationML);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n---\n");
+    
+    String markdown = context.getMarkdown();
+    assertEquals(expectedMarkdown.toString(), markdown);
   }
 
   @Test
@@ -358,7 +401,7 @@ public class RadioTest extends ElementTest {
     input.append("</messageML>");
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"radio\" can only be a child of the following "
+    expectedException.expectMessage("Element \"radio\" can only be a inner child of the following "
         + "elements: [form]");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);

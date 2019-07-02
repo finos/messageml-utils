@@ -13,7 +13,7 @@ The following components are provided under the Apache License 2.0. See project 
      Jackson Databind (com.fasterxml.jackson.core<.jackson-databind:2.7.3) - https://github.com/FasterXML/jackson-databind
      Commons IO (org.apache.commons.commons-io:3.4) - https://commons.apache.org/proper/commons-io/
      Commons Lang (org.apache.commons.commons-lang3:2.4) - https://commons.apache.org/proper/commons-lang/
-     FreeMarker (org.freemarker.freemarker:2.3.23) - http://freemarker.org/
+     FreeMarker (org.freemarker.freemarker:2.3.28) - http://freemarker.org/
 
 ========================================================================
 The MIT License

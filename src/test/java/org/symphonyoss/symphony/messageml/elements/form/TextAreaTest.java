@@ -1,9 +1,14 @@
-package org.symphonyoss.symphony.messageml.elements;
+package org.symphonyoss.symphony.messageml.elements.form;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.ElementTest;
+import org.symphonyoss.symphony.messageml.elements.Form;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class TextAreaTest extends ElementTest {
@@ -12,9 +17,9 @@ public class TextAreaTest extends ElementTest {
   private static final String PLACEHOLDER_VALUE = "A placeholder";
   private static final String INITIAL_VALUE = "An initial value";
 
-  private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)\n\n---\n";
+  private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)\n---\n";
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n\n---\n", PLACEHOLDER_VALUE);
+      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)\n---\n", PLACEHOLDER_VALUE);
 
   @Test
   public void testTextAreaWithRequiredAttributesOnly() throws Exception {

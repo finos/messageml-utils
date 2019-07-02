@@ -1,9 +1,19 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class representing a person selector inside a Symphony Elements form.
@@ -14,28 +24,125 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 public class PersonSelector extends FormElement {
   public static final String MESSAGEML_TAG = "person-selector";
 
-  private static final String PRESENTATIONML_TAG = "div";
-  private final static String MARKDOWN = "Person Selector";
-  private static final String CLASS_ATTR = "class";
+  private static final String PLACEHOLDER_ATTR = "placeholder";
+  private static final String REQUIRED_ATTR = "required";
+  private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
 
-  public PersonSelector(Element parent) {
-    super(parent, MESSAGEML_TAG);
+  private static final String PRESENTATIONML_TAG = "div";
+  private static final String PRESENTATIONML_PLACEHOLDER_ATTR = "data-placeholder";
+  private static final String PRESENTATIONML_REQUIRED_ATTR = "data-required";
+
+  private final static String MARKDOWN = "Person Selector:";
+  private static final String CLASS_ATTR = "class";
+  private static final String PRESENTATIONML_NAME_ATTR = "data-name";
+
+  public PersonSelector(Element parent, FormatEnum messageFormat) {
+    super(parent, MESSAGEML_TAG, messageFormat);
+  }
+
+  @Override
+  public void buildAll(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+    switch (getFormat()) {
+      case MESSAGEML:
+        super.buildAll(context, element);
+        break;
+      case PRESENTATIONML:
+        buildElementFromDiv(context, element);
+        this.validate();
+        break;
+      default:
+        throw new InvalidInputException(String.format("Invalid message format for \"%s\" element", MESSAGEML_TAG));
+    }
   }
 
   @Override
   public void validate() throws InvalidInputException {
     super.validate();
-    assertNoAttributes();
+
+    if (getAttribute(NAME_ATTR) == null) {
+      throw new InvalidInputException("The attribute \"name\" is required");
+    }
+
+    if(getAttribute(REQUIRED_ATTR) != null) {
+      assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
+    }
+    
     assertNoContent();
   }
 
   @Override
   public void asPresentationML(XmlPrintStream out) {
-    out.printElement(PRESENTATIONML_TAG, null, CLASS_ATTR, MESSAGEML_TAG);
+    Map<String, String> presentationAttrs = buildPersonSelectorInputAttributes();
+    out.openElement(PRESENTATIONML_TAG, presentationAttrs);
+    out.closeElement();
   }
 
   @Override
   public Node asMarkdown() {
-    return new FormElementNode(MARKDOWN);
+    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
+  }
+
+  @Override
+  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+    switch (item.getNodeName()) {
+      case NAME_ATTR:
+        setAttribute(NAME_ATTR, getStringAttribute(item));
+        break;
+      case PLACEHOLDER_ATTR:
+        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
+        break;
+      case REQUIRED_ATTR:
+        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
+        break;
+      default:
+        throw new InvalidInputException("Attribute \"" + item.getNodeName()
+            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+    }
+  }
+
+  private Map<String, String> buildPersonSelectorInputAttributes() {
+    Map<String, String> presentationAttrs = new LinkedHashMap<>();
+    
+    presentationAttrs.put(CLASS_ATTR, MESSAGEML_TAG);
+    presentationAttrs.put(PRESENTATIONML_NAME_ATTR, getAttribute(NAME_ATTR));
+    
+    if(getAttribute(PLACEHOLDER_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_PLACEHOLDER_ATTR, getAttribute(PLACEHOLDER_ATTR));
+    }
+
+    if(getAttribute(REQUIRED_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
+    }
+    
+    return presentationAttrs;
+  }
+
+  void buildElementFromDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+    
+    element.setAttribute(NAME_ATTR, element.getAttribute(PRESENTATIONML_NAME_ATTR));
+    element.removeAttribute(PRESENTATIONML_NAME_ATTR);
+
+    if (element.hasAttribute(PRESENTATIONML_PLACEHOLDER_ATTR)) {
+      element.setAttribute(PLACEHOLDER_ATTR, element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR));
+      element.removeAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
+    }
+
+    if (element.hasAttribute(PRESENTATIONML_REQUIRED_ATTR)) {
+      element.setAttribute(REQUIRED_ATTR, element.getAttribute(PRESENTATIONML_REQUIRED_ATTR));
+      element.removeAttribute(PRESENTATIONML_REQUIRED_ATTR);
+    }
+
+    NamedNodeMap attributes = element.getAttributes();
+
+    for (int i = 0; i < attributes.getLength(); i++) {
+      buildAttribute(attributes.item(i));
+    }
+
+    NodeList children = element.getChildNodes();
+
+    for (int i = 0; i < children.getLength(); i++) {
+      buildNode(context, children.item(i));
+    }
+    
   }
 }

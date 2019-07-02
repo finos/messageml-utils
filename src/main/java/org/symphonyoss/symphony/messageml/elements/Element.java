@@ -384,6 +384,32 @@ public abstract class Element {
   }
 
   /**
+   * Check in above levels if an element has a permitted parent.
+   */
+  void assertParentAtAnyLevel(Collection<Class<? extends Element>> permittedParents) throws InvalidInputException {
+    Element element = this;
+    Boolean permittedParentFound=false;
+    
+    while(!permittedParentFound && element.getParent() != null) {
+      if (permittedParents.contains(element.getParent().getClass())) {
+        permittedParentFound = true;
+      }
+      else {
+        element = element.getParent();
+      }
+    }
+
+    if (!permittedParentFound) {
+      String permittedParentsClassAsString = permittedParents.stream()
+          .map(permittedParentClass -> permittedParentClass.getSimpleName().toLowerCase())
+          .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
+          .orElse("");
+      throw new InvalidInputException(String.format("Element \"%s\" can only be a inner child of the following elements: [%s]",
+          this.getMessageMLTag(), permittedParentsClassAsString));
+    }
+  }
+
+  /**
    * This is to enforce that at least one child of the element has one of the types informed.
    *
    * @param elementTypes list of element types to check

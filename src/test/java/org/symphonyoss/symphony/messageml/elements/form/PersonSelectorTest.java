@@ -15,64 +15,84 @@ public class PersonSelectorTest extends ElementTest {
   
   @Test
   public void sendValidPersonSelectorOnPresentationML() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag();
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\" data-name=\"one-name\" data-placeholder=\"some-placeholder\" data-required=\"true\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag("one-name", "some-placeholder", true);
   }
 
   @Test
   public void sendInvalidAttrPersonSelectorOnPresentationML() throws Exception {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"id\" is not allowed in \"person-selector\"");
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div id=\"idOne\" class=\"person-selector\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div id=\"idOne\" class=\"person-selector\" data-name=\"any-name\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
   public void sendInvalidContentPersonSelectorOnPresentationML() throws Exception {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"person-selector\" may not have child elements or text content");
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\"><div>hey</div></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\" data-name=\"any-name\"><div>hey</div></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
   public void sendValidPersonSelector() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag();
+    String name = "some-name";
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\"" + name + "\" placeholder=\"Add some user here...\" required=\"false\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag(name, "Add some user here...", false);
   }
 
   @Test
   public void sendValidPersonSelectorWithClosingTag() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector></person-selector></form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag();
+    String name = "other-name";
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\"" + name +"\" placeholder=\"Add some user here...\"></person-selector></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    assertDataFromValidParsedTag(name, "Add some user here...", null);
   }
 
   @Test
   public void sendPersonSelectorWithChildElement() throws Exception {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"person-selector\" may not have child elements or text content");
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector>a</person-selector></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\"name\">a</person-selector></form></messageML>", null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
-  public void sendPersonSelectorWithAttribute() throws Exception {
+  public void sendPersonSelectorWithInvalidRequiredAttribute() throws Exception {
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"person-selector\" may not have attributes");
+    expectedException.expectMessage("Attribute \"required\" of element \"person-selector\" can only be one of the following values: [true, false]");
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\"some-name\" placeholder=\"Person placeholder\" required=\"invalid\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void sendPersonSelectorWithInvalidAttribute() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"class\" is not allowed in \"person-selector\"");
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector class=\"some-class\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
   public void sendPersonSelectorOutsideForm() throws Exception {
-    expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Element \"person-selector\" can only be a child of the following elements: [form]");
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div><person-selector/></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div><person-selector name=\"some-name\"/></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element personSelector = form.getChildren().get(0).getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(personSelector.getClass(), PersonSelector.class);
+    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
+        "\"><div><div class=\"person-selector\" data-name=\"some-name\"></div></div></form></div>", context.getPresentationML());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:some-name)\n\n\n---\n", context.getMarkdown());
   }
 
-  private void assertDataFromValidParsedTag() {
+  private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {
     MessageML messageML = context.getMessageML();
     Element form = messageML.getChildren().get(0);
     Element personSelector = form.getChildren().get(0);
     assertEquals(form.getClass(), Form.class);
     assertEquals(personSelector.getClass(), PersonSelector.class);
-    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\"/></form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector)\n\n---\n", context.getMarkdown());
+    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR + 
+        "\"><div class=\"person-selector\" data-name=\"" + dataName + "\"" + 
+        (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
+        (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
+        "></div></form></div>", context.getPresentationML());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:" + dataName + ")\n---\n", context.getMarkdown());
   }
 }

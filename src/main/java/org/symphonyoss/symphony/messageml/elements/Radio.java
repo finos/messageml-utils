@@ -19,7 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.RadioNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -38,7 +38,7 @@ public class Radio extends FormElement {
 
   public static final String MESSAGEML_TAG = "radio";
 
-  private static final String PRESENTATIONML_INPUT_TYPE = "radio";
+  public static final String PRESENTATIONML_INPUT_TYPE = "radio";
   public static final String PRESENTATIONML_DIV_CLASS = "radio-group";
   public static final String PRESENTATIONML_LABEL_TAG = "label";
   private static final int PRESENTATIONML_DIV_NUMBER_OF_CHILDREN = 2;
@@ -49,6 +49,8 @@ public class Radio extends FormElement {
   private static final String NAME_ATTR = "name";
   private static final String VALUE_ATTR = "value";
   private static final String CHECKED_ATTR = "checked";
+
+  private static final String MARKDOWN = "Radio Button:";
 
   public Radio(Element parent, FormatEnum messageFormat) {
     super(parent, MESSAGEML_TAG, messageFormat);
@@ -62,7 +64,11 @@ public class Radio extends FormElement {
         super.buildAll(context, element);
         break;
       case PRESENTATIONML:
-        buildElementFromGroupDiv(context, element);
+        if(INPUT_TAG.equals(element.getNodeName())) {
+          buildAttrFromInputTag(element);
+        } else {
+          buildElementFromGroupDiv(context, element);
+        }
         this.validate();
         break;
       default:
@@ -72,23 +78,32 @@ public class Radio extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new RadioNode();
+    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
   }
 
   @Override
   public void asPresentationML(XmlPrintStream out) {
-    out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, PRESENTATIONML_DIV_CLASS);
-
     Map<String, String> presentationAttrs = buildRadioInputAttributes();
-    out.printElement(INPUT_TAG, presentationAttrs);
 
-    out.openElement(PRESENTATIONML_LABEL_TAG);
-    for (Element child : getChildren()) {
-      child.asPresentationML(out);
+    if (getChildren().isEmpty()) {
+      out.printElement(INPUT_TAG, presentationAttrs);
     }
-    out.closeElement(); // Closing label
+    
+    else {
+      out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, PRESENTATIONML_DIV_CLASS);
 
-    out.closeElement(); // Closing div
+      out.printElement(INPUT_TAG, presentationAttrs);
+
+      out.openElement(PRESENTATIONML_LABEL_TAG);
+      for (Element child : getChildren()) {
+        child.asPresentationML(out);
+      }
+      out.closeElement(); // Closing label
+
+      out.closeElement(); // Closing div
+    }
+    
+    
   }
 
   @Override
@@ -99,9 +114,10 @@ public class Radio extends FormElement {
     if(getAttribute(CHECKED_ATTR) != null) {
       assertAttributeValue(CHECKED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
-
-    assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
-    assertContainsChildOfType(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+    
+    if (!getChildren().isEmpty()) {
+      assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
+    }
   }
 
   @Override
