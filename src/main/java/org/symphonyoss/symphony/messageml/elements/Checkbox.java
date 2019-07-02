@@ -45,7 +45,12 @@ public class Checkbox extends FormElement {
         super.buildAll(context, element);
         break;
       case PRESENTATIONML:
-        buildElementFromGroupDiv(context, element);
+        if(INPUT_TAG.equals(element.getNodeName())) {
+          buildCheckboxAttrFromInputTag(element);
+        }
+        else {
+          buildElementFromGroupDiv(context, element);
+        }
         this.validate();
         break;
       default:

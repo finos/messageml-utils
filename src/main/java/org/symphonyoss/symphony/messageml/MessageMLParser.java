@@ -448,14 +448,10 @@ public class MessageMLParser {
         removeAttribute(element, FormElement.TYPE_ATTR, Password.PRESENTATIONML_INPUT_TYPE);
         return new Password(parent);
     } else if (containsAttribute(elementType, Checkbox.PRESENTATIONML_INPUT_TYPE)) {
-      removeAttribute(element, FormElement.TYPE_ATTR, Checkbox.PRESENTATIONML_INPUT_TYPE);
-      return new Checkbox(parent, FormatEnum.MESSAGEML);
-    }
-    else if (containsAttribute(elementType, Radio.PRESENTATIONML_INPUT_TYPE)) {
-      removeAttribute(element, FormElement.TYPE_ATTR, Radio.PRESENTATIONML_INPUT_TYPE);
-      return new Radio(parent, FormatEnum.MESSAGEML);
-    }    
-    else {
+      return new Checkbox(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementType, Radio.PRESENTATIONML_INPUT_TYPE)) { 
+      return new Radio(parent, FormatEnum.PRESENTATIONML);
+    } else {
       throw new InvalidInputException(String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
     }
   }

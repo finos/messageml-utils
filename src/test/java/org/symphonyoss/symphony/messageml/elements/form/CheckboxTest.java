@@ -44,6 +44,23 @@ public class CheckboxTest extends ElementTest {
   }
 
   @Test
+  public void testPresentationMLCheckboxWithOnlyNameAttribute() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"checkbox-form\">" +
+        "<input type=\"checkbox\" name=\"checkbox-name\"/>" +
+        "</form></div>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    verifyMessageMLObjectsForCheckbox(context);
+    String presentationML = context.getPresentationML();
+    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" value=\"on\"/></form></div>";
+    assertEquals(expectedPresentationML, presentationML);
+
+    verifyCheckboxMarkdown(context, name);
+  }
+
+  @Test
   public void testInvalidPresentationMLCheckbox() throws Exception {
     String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
