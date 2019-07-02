@@ -38,7 +38,7 @@ public class Radio extends FormElement {
 
   public static final String MESSAGEML_TAG = "radio";
 
-  private static final String PRESENTATIONML_INPUT_TYPE = "radio";
+  public static final String PRESENTATIONML_INPUT_TYPE = "radio";
   public static final String PRESENTATIONML_DIV_CLASS = "radio-group";
   public static final String PRESENTATIONML_LABEL_TAG = "label";
   private static final int PRESENTATIONML_DIV_NUMBER_OF_CHILDREN = 2;
