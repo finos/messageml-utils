@@ -66,8 +66,7 @@ public class Radio extends FormElement {
       case PRESENTATIONML:
         if(INPUT_TAG.equals(element.getNodeName())) {
           buildAttrFromInputTag(element);
-        }
-        else {
+        } else {
           buildElementFromGroupDiv(context, element);
         }
         this.validate();
