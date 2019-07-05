@@ -107,6 +107,17 @@
                 <role>Software Developer</role>
             </roles>
         </developer>
+        <developer>
+            <id>miltongq</id>
+            <name>Milton Gonçalves Quilzini</name>
+            <email>mquilzini@symphony.com</email>
+            <url>http://github.com/miltongq</url>
+            <organization>Symphony Communication Services LLC</organization>
+            <organizationUrl>http://symphony.com</organizationUrl>
+            <roles>
+                <role>Software Developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <contributors>
