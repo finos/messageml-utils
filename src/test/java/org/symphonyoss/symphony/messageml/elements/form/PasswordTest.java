@@ -45,11 +45,21 @@ public class PasswordTest extends ElementTest {
 
   @Test
   public void testPasswordFieldWithAllAttributes() throws Exception {
-    String input = String.format("<messageML><form id=\"form-id\"><password name=\"%s\" placeholder=\"%s\" required=\"%s\" "
-            + "minlength=\"%s\" maxlength=\"%s\"/></form></messageML>", NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH,
-        MAX_ALLOWED_LENGTH);
-    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
-            + "<input type=\"password\" name=\"%s\" placeholder=\"%s\" required=\"%s\" minlength=\"%s\" maxlength=\"%s\"/></form></div>",
+    String input = String.format(
+        "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<password name=\"%s\" placeholder=\"%s\" required=\"%s\" minlength=\"%s\" "
+            + "maxlength=\"%s\">password_pw</password>"
+            + "</form>"
+            + "</messageML>",
+        NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
+    String expectedPresentationML = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<form id=\"form-id\">"
+            + "<input type=\"password\" name=\"%s\" placeholder=\"%s\" required=\"%s\" "
+            + "minlength=\"%s\" maxlength=\"%s\" value=\"password_pw\"/>"
+            + "</form>"
+            + "</div>",
         NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
     String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n---\n",
         PLACEHOLDER_VALUE);
@@ -149,11 +159,20 @@ public class PasswordTest extends ElementTest {
 
   @Test
   public void testPasswordFieldUsingInputTag() throws Exception {
-    String input = String.format("<messageML><form id=\"form-id\"><input type=\"password\" name=\"%s\" placeholder=\"%s\" "
-            + "required=\"%s\" minlength=\"%s\" maxlength=\"%s\"/></form></messageML>",
+    String input = String.format(
+        "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<input type=\"password\" value=\"password_pw\" name=\"%s\" placeholder=\"%s\" required=\"%s\" minlength=\"%s\" maxlength=\"%s\"/>"
+            + "</form>"
+            + "</messageML>",
         NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
-    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
-            + "<input type=\"password\" name=\"%s\" placeholder=\"%s\" required=\"%s\" minlength=\"%s\" maxlength=\"%s\"/></form></div>",
+    String expectedPresentationML = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<form id=\"form-id\">"
+            + "<input type=\"password\" name=\"%s\" placeholder=\"%s\" required=\"%s\" "
+            + "minlength=\"%s\" maxlength=\"%s\" value=\"password_pw\"/>"
+            + "</form>"
+            + "</div>",
         NAME_VALUE, PLACEHOLDER_VALUE, REQUIRED_VALUE, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
     String expectedMarkdown = String.format("Form (log into desktop client to answer):\n---\n(Password Field:%s)\n---\n",
         PLACEHOLDER_VALUE);
@@ -181,13 +200,29 @@ public class PasswordTest extends ElementTest {
   }
 
   @Test
-  public void testPasswordFieldWithInvalidContent() throws Exception {
-    String input = String.format("<messageML><form id=\"form-id\"><password name=\"%s\">Text</password></form></messageML>", NAME_VALUE);
+  public void testPasswordFieldWithInvalidContentMessageML() throws Exception {
+    // inserting an attribute only valid for presentation ml in a message ml input
+    String messageMLInput = String.format("<messageML><form id=\"form-id\">"
+        + "<password name=\"%s\" value=\"value_for_invalid_attr\"/>"
+        + "</form></messageML>", NAME_VALUE);
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"value\" is not allowed in \"password\"");
+
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testPasswordFieldWithInvalidContentPresentationML() throws Exception {
+    // inserting a content only valid for the message ml tag in a presentation ml input
+    String presentationMLInput = String.format("<messageML><form id=\"form-id\">"
+        + "<input type=\"password\" name=\"%s\">Text</input>"
+        + "</form></messageML>", NAME_VALUE);
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"password\" may not have child elements or text content");
 
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML(presentationMLInput, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
