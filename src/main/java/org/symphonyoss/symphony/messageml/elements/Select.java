@@ -33,6 +33,7 @@ public class Select extends FormElement {
   public static final String MESSAGEML_TAG = "select";
   private static final String REQUIRED_ATTR = "required";
   private static final String OPTION_SELECTED_ATTR = "selected";
+  private static final String DATA_PLACEHOLDER_ATTR = "data-placeholder";
 
 
   public Select(Element parent) {
@@ -70,6 +71,9 @@ public class Select extends FormElement {
         break;
       case REQUIRED_ATTR:
         setAttribute(REQUIRED_ATTR, getStringAttribute(item));
+        break;
+      case DATA_PLACEHOLDER_ATTR:
+        setAttribute(DATA_PLACEHOLDER_ATTR, getStringAttribute(item));
         break;
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
