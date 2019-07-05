@@ -15,6 +15,7 @@ public class SelectOptionTest extends ElementTest {
 
   private static final String NAME_ATTR = "name";
   private static final String REQUIRED_ATTR = "required";
+  private static final String DATA_PLACEHOLDER_ATTR = "data-placeholder";
   private static final String VALUE_ATTR = "value";
   private static final String SELECTED_ATTR = "selected";
   private static final String FORM_ID_ATTR = "text-field-form";
@@ -23,7 +24,8 @@ public class SelectOptionTest extends ElementTest {
   public void testCompleteRequiredSelect() throws Exception {
     String name = "complete-required-id";
     boolean required = true;
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" + name + "\" required=\"" + required +
+    String placeholder = "placeholder-here";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select data-placeholder=\""+placeholder+"\" name=\"" + name + "\" required=\"" + required +
             "\"><option value=\"\">Option 1</option></select></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -32,7 +34,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, true, required);
+    verifySelectPresentation((Select) select, name, true, required, placeholder);
   }
 
   @Test
@@ -48,7 +50,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, true, required);
+    verifySelectPresentation((Select) select, name, true, required, null);
   }
 
   @Test
@@ -62,7 +64,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false,false);
+    verifySelectPresentation((Select) select, name, false,false, null);
   }
 
   @Test
@@ -77,7 +79,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false,false);
+    verifySelectPresentation((Select) select, name, false,false, null);
   }
 
   @Test
@@ -92,7 +94,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false,false);
+    verifySelectPresentation((Select) select, name, false,false, null);
   }
 
   @Test
@@ -262,8 +264,11 @@ public class SelectOptionTest extends ElementTest {
   }
 
   private String getExpectedSelectPresentation(Select select) {
-    String selectOpeningTag = "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" +
-            select.getAttribute(NAME_ATTR) + "\"" + getRequiredPresentationML(select.getAttribute(REQUIRED_ATTR)) + ">";
+    String selectOpeningTag =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
+            + "\"><select " + getPlaceholderAttribute(select.getAttribute(DATA_PLACEHOLDER_ATTR))
+            + "name=\"" + select.getAttribute(NAME_ATTR) + "\""
+            + getRequiredPresentationML(select.getAttribute(REQUIRED_ATTR)) + ">";
     String selectClosingTag = "</select></form></div>";
     String selectChildren = "";
 
@@ -276,17 +281,27 @@ public class SelectOptionTest extends ElementTest {
     return selectOpeningTag + selectChildren + selectClosingTag;
   }
 
+  private String getPlaceholderAttribute(String placeholder) {
+    return placeholder != null ? "data-placeholder=\"" + placeholder + "\" " : "";
+  }
+
   private String getOptionSelectedExpectedText(Element option) {
     return option.getAttribute(SELECTED_ATTR) != null ? " selected=\"" + option.getAttribute(SELECTED_ATTR) + "\"" : "";
   }
 
-  private void verifySelectPresentation(Select select, String name, boolean requiredAttrProvided, boolean requiredvalue) {
+  private void verifySelectPresentation(Select select, String name, boolean requiredAttrProvided, boolean requiredvalue, String placeholder) {
     assertEquals("Select name attribute", name, select.getAttribute(NAME_ATTR));
     if (requiredAttrProvided) {
       assertEquals("Select required attribute", String.valueOf(requiredvalue), select.getAttribute(REQUIRED_ATTR));
     } else {
       assertNull("Select required attribute", select.getAttribute(REQUIRED_ATTR));
     }
+
+    if(placeholder != null){
+      assertEquals("Select placeholder attribute", placeholder, select.getAttribute(DATA_PLACEHOLDER_ATTR));
+  } else {
+    assertNull("Select placeholder attribute", select.getAttribute(DATA_PLACEHOLDER_ATTR));
+  }
 
     assertEquals("Select presentationML", getExpectedSelectPresentation(select),
             context.getPresentationML());
