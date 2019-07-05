@@ -1,10 +1,15 @@
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,7 @@ public class Password extends FormElement {
   private static final String MAXLENGTH_ATTR = "maxlength";
   private static final String REQUIRED_ATTR = "required";
   private static final String PLACEHOLDER_ATTR = "placeholder";
+  private static final String VALUE_ATTR = "value";
 
   private static final List<String> VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
 
@@ -34,8 +40,8 @@ public class Password extends FormElement {
   private static final int MIN_ALLOWED_LENGTH = 1;
   private static final int MAX_ALLOWED_LENGTH = 128;
 
-  public Password(Element parent) {
-    super(parent, MESSAGEML_TAG);
+  public Password(Element parent, FormatEnum format) {
+    super(parent, MESSAGEML_TAG, format);
   }
 
   @Override
@@ -51,7 +57,61 @@ public class Password extends FormElement {
     }
 
     validateMinAndMaxLengths();
-    assertNoContent();
+    assertContentModel(Collections.singleton(TextNode.class));
+  }
+
+  @Override
+  public void buildAll(MessageMLParser context, org.w3c.dom.Element element)
+          throws InvalidInputException, ProcessingException {
+    switch (getFormat()) {
+      case MESSAGEML:
+        super.buildAll(context, element);
+        break;
+      case PRESENTATIONML:
+        this.buildAllForPresentationML(element);
+        break;
+    }
+  }
+
+  private void buildAllForPresentationML(org.w3c.dom.Element element)
+      throws InvalidInputException {
+    NamedNodeMap attr = element.getAttributes();
+    NodeList children = element.getChildNodes();
+
+    if (children != null && children.getLength() > 0) {
+      throw new InvalidInputException(
+          "Element \"" + this.getMessageMLTag() + "\" may not have child elements or text content");
+    }
+
+    for (int i = 0; i < attr.getLength(); i++) {
+      buildAttributeForPresentationML(attr.item(i));
+    }
+  }
+
+  private void buildAttributeForPresentationML(org.w3c.dom.Node item) throws InvalidInputException {
+    switch (item.getNodeName()) {
+      case NAME_ATTR:
+        setAttribute(NAME_ATTR, getStringAttribute(item));
+        break;
+      case REQUIRED_ATTR:
+        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
+        break;
+      case PLACEHOLDER_ATTR:
+        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
+        break;
+      case MINLENGTH_ATTR:
+        setAttribute(MINLENGTH_ATTR, getStringAttribute(item));
+        break;
+      case MAXLENGTH_ATTR:
+        setAttribute(MAXLENGTH_ATTR, getStringAttribute(item));
+        break;
+      case VALUE_ATTR:
+        addChild(new TextNode(this, getStringAttribute(item)));
+        break;
+      default:
+        throw new InvalidInputException("Attribute \"" + item.getNodeName()
+                + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+    }
   }
 
   @Override
@@ -113,6 +173,10 @@ public class Password extends FormElement {
 
     if (getAttribute(MAXLENGTH_ATTR) != null) {
       presentationAttrs.put(MAXLENGTH_ATTR, getAttribute(MAXLENGTH_ATTR));
+    }
+
+    if (getChildren() != null && getChildren().size() == 1) {
+      presentationAttrs.put(VALUE_ATTR, getChildren().get(0).asText());
     }
 
     return presentationAttrs;

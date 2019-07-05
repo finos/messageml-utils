@@ -431,7 +431,7 @@ public class MessageMLParser {
         return new TextArea(parent);
 
       case Password.MESSAGEML_TAG:
-        return new Password(parent);
+        return new Password(parent, FormatEnum.MESSAGEML);
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
@@ -443,10 +443,10 @@ public class MessageMLParser {
 
     if (containsAttribute(elementType, TextField.PRESENTATIONML_INPUT_TYPE)) {
       removeAttribute(element, FormElement.TYPE_ATTR, TextField.PRESENTATIONML_INPUT_TYPE);
-      return new TextField(parent);
+      return new TextField(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementType, Password.PRESENTATIONML_INPUT_TYPE)) {
         removeAttribute(element, FormElement.TYPE_ATTR, Password.PRESENTATIONML_INPUT_TYPE);
-        return new Password(parent);
+        return new Password(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementType, Checkbox.PRESENTATIONML_INPUT_TYPE)) {
       return new Checkbox(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementType, Radio.PRESENTATIONML_INPUT_TYPE)) { 

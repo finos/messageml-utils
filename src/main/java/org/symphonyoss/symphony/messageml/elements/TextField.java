@@ -28,10 +28,6 @@ public class TextField extends FormElement {
 
   private final static String MARKDOWN = "Text Field";
 
-  public TextField(Element parent) {
-    super(parent, MESSAGEML_TAG);
-  }
-
   public TextField(Element parent, FormatEnum messageFormat) {
     super(parent, MESSAGEML_TAG, messageFormat);
   }
@@ -59,12 +55,12 @@ public class TextField extends FormElement {
         super.buildAll(context, element);
         break;
       case PRESENTATIONML:
-        this.buildAllForPresentationML(context, element);
+        this.buildAllForPresentationML(element);
         break;
     }
   }
 
-  private void buildAllForPresentationML(MessageMLParser context, org.w3c.dom.Element element)
+  private void buildAllForPresentationML(org.w3c.dom.Element element)
       throws InvalidInputException {
     NamedNodeMap attr = element.getAttributes();
     NodeList children = element.getChildNodes();
@@ -75,11 +71,11 @@ public class TextField extends FormElement {
     }
 
     for (int i = 0; i < attr.getLength(); i++) {
-      buildAttributeWithPresentationML(attr.item(i));
+      buildAttributeForPresentationML(attr.item(i));
     }
   }
 
-  private void buildAttributeWithPresentationML(org.w3c.dom.Node item) throws InvalidInputException {
+  private void buildAttributeForPresentationML(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
         setAttribute(NAME_ATTR, getStringAttribute(item));
