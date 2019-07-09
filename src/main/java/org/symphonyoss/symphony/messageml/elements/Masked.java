@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class representing a Password Field inside a Form.
+ * Class representing a Masked Field inside a Form.
  * @author Sandro Ribeiro
  * @since 06/13/2019
  */
-public class Password extends FormElement {
+public class Masked extends FormElement {
 
-  public static final String MESSAGEML_TAG = "password";
+  public static final String MESSAGEML_TAG = "masked";
   public static final String PRESENTATIONML_INPUT_TYPE = "password";
 
   private static final String MINLENGTH_ATTR = "minlength";
@@ -32,7 +32,7 @@ public class Password extends FormElement {
 
   private static final List<String> VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
 
-  private final static String MARKDOWN = "Password Field";
+  private final static String MARKDOWN = "Masked Field";
 
   private static final String PRESENTATIONML_INPUT_TAG = "input";
   private static final String PRESENTATIONML_TYPE_ATTR = "type";
@@ -40,7 +40,7 @@ public class Password extends FormElement {
   private static final int MIN_ALLOWED_LENGTH = 1;
   private static final int MAX_ALLOWED_LENGTH = 128;
 
-  public Password(Element parent, FormatEnum format) {
+  public Masked(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
   }
 
@@ -140,7 +140,7 @@ public class Password extends FormElement {
 
   @Override
   public void asPresentationML(XmlPrintStream out) {
-    Map<String, String> presentationAttrs = buildTextFieldInputAttributes();
+    Map<String, String> presentationAttrs = buildMaskedInputAttributes();
     out.printElement(PRESENTATIONML_INPUT_TAG, presentationAttrs);
   }
 
@@ -153,7 +153,7 @@ public class Password extends FormElement {
     }
   }
 
-  private Map<String, String> buildTextFieldInputAttributes() {
+  private Map<String, String> buildMaskedInputAttributes() {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
 
     presentationAttrs.put(PRESENTATIONML_TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
