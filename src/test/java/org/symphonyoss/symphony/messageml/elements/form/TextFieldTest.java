@@ -36,13 +36,15 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testTextFieldWithAllAttributes() throws Exception {
-    String name = "text-field";
-    boolean required = true;
-    String placeholder = "Input some text here";
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" placeholder=\"" + placeholder + "\" required=\"" + required + "\"/></form></messageML>";
+    String messageMLInput = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
+        + "</form>"
+        + "</messageML>";
+
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<form id=\"text-field-form\">"
-        + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\"/>"
+        + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
         + "</form>"
         + "</div>";
     context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
@@ -56,18 +58,20 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(placeholder);
+    verifyTextFieldMarkdown("Input some text here");
   }
 
   @Test
   public void testTextFieldWithAllAttributesPresentationML() throws Exception {
-    boolean required = true;
-    String name = "text-field";
-    String placeholder = "Input some text here";
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><input type=\"text\" name=\"" + name + "\" placeholder=\"" + placeholder + "\" required=\"" + required + "\"/></form></messageML>";
+    String messageMLInput = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
+        + "</form>"
+        + "</messageML>";
+
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<form id=\"text-field-form\">"
-        + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\"/>"
+        + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
         + "</form>"
         + "</div>";
     context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
@@ -81,7 +85,95 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(placeholder);
+    verifyTextFieldMarkdown("Input some text here");
+  }
+
+  @Test
+  public void testMaskedTextField() throws Exception {
+    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"text-field\" masked=\"true\"/></form></messageML>";
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"text-field-form\">"
+        + "<input type=\"text\" name=\"text-field\" data-masked=\"true\"/>"
+        + "</form>"
+        + "</div>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textField = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, context.getPresentationML());
+    verifyTextFieldMarkdown(null);
+  }
+
+  @Test
+  public void testNonMaskedTextField() throws Exception {
+    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"text-field\" masked=\"false\"/></form></messageML>";
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"text-field-form\">"
+        + "<input type=\"text\" name=\"text-field\" data-masked=\"false\"/>"
+        + "</form>"
+        + "</div>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textField = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, context.getPresentationML());
+    verifyTextFieldMarkdown(null);
+  }
+
+  @Test
+  public void testMaskedTextFieldPresentationML() throws Exception {
+    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><input type=\"text\" name=\"text-field\" data-masked=\"true\"/></form></messageML>";
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"text-field-form\">"
+        + "<input type=\"text\" name=\"text-field\" data-masked=\"true\"/>"
+        + "</form>"
+        + "</div>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textField = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, context.getPresentationML());
+    verifyTextFieldMarkdown(null);
+  }
+
+  @Test
+  public void testNonMaskedTextFieldPresentationML() throws Exception {
+    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><input type=\"text\" name=\"text-field\" data-masked=\"false\"/></form></messageML>";
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"text-field-form\">"
+        + "<input type=\"text\" name=\"text-field\" data-masked=\"false\"/>"
+        + "</form>"
+        + "</div>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textField = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, context.getPresentationML());
+    verifyTextFieldMarkdown(null);
   }
 
   @Test
@@ -273,9 +365,7 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testRequiredTextFieldWithInvalidValue() throws Exception {
-    String name = "invalid-required";
-    String invalidRequired = "invalidRequired";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" required=\"" + invalidRequired + "\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"invalid-required\" required=\"invalidRequired\"/></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"required\" of element \"text-field\" can only be one of the following values: [true, false].");
@@ -283,16 +373,25 @@ public class TextFieldTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
-  private String getRequiredPresentationML(String required) {
-    if(required != null) {
-      if(required.equals("true") || required.equals("false")) {
-        return String.format(" required=\"%s\"", required);
-      }
-    }
+  @Test
+  public void testLengthAttributeNotNumber() throws Exception {
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"invalid-number\" maxlength=\"notNumber\"/></form></messageML>";
 
-    return "";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"maxlength\" must be a valid number.");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testLengthAttributeMinBiggerThanMaxNumber() throws Exception {
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"invalid-max-min\" minlength=\"30\" maxlength=\"2\"/></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
 
   private String getExpectedTextFieldMarkdown(String placeholder) {
     return String.format("Form (log into desktop client to answer):\n---\n(Text Field%s)\n---\n", (placeholder != null) ? ":" + placeholder : "");

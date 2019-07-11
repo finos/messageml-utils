@@ -117,7 +117,7 @@ public class PersonSelector extends FormElement {
     return presentationAttrs;
   }
 
-  void buildElementFromDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+  private void buildElementFromDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
     
     element.setAttribute(NAME_ATTR, element.getAttribute(PRESENTATIONML_NAME_ATTR));
     element.removeAttribute(PRESENTATIONML_NAME_ATTR);
