@@ -8,7 +8,12 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -21,10 +26,18 @@ public class TextField extends FormElement {
   public static final String MESSAGEML_TAG = "text-field";
   public static final String PRESENTATIONML_INPUT_TYPE = "text";
 
+  private static final String MINLENGTH_ATTR = "minlength";
+  private static final String MAXLENGTH_ATTR = "maxlength";
   private static final String REQUIRED_ATTR = "required";
+  private static final String MASKED_ATTR = "masked";
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String VALUE_ATTR = "value";
-  private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
+
+  private static final String PRESENTATIONML_MASKED_ATTR = "data-masked";
+
+  private static final Set<String> VALID_BOOLEAN_VALUES = new HashSet<>(Arrays.asList("true", "false"));
+  private static final Integer MIN_ALLOWED_LENGTH = 1;
+  private static final Integer MAX_ALLOWED_LENGTH = 128;
 
   private final static String MARKDOWN = "Text Field";
 
@@ -41,9 +54,14 @@ public class TextField extends FormElement {
     }
 
     if (getAttribute(REQUIRED_ATTR) != null) {
-      assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
+      assertAttributeValue(REQUIRED_ATTR, VALID_BOOLEAN_VALUES);
     }
 
+    if (getAttribute(MASKED_ATTR) != null) {
+      assertAttributeValue(MASKED_ATTR, VALID_BOOLEAN_VALUES);
+    }
+
+    validateMinAndMaxLengths();
     assertContentModel(Collections.singleton(TextNode.class));
   }
 
@@ -55,43 +73,22 @@ public class TextField extends FormElement {
         super.buildAll(context, element);
         break;
       case PRESENTATIONML:
-        this.buildAllForPresentationML(element);
+        this.buildAllFromPresentationML(element);
         break;
     }
   }
 
-  private void buildAllForPresentationML(org.w3c.dom.Element element)
-      throws InvalidInputException {
-    NamedNodeMap attr = element.getAttributes();
-    NodeList children = element.getChildNodes();
-
-    if (children != null && children.getLength() > 0) {
-      throw new InvalidInputException(
-          "Element \"" + this.getMessageMLTag() + "\" may not have child elements or text content");
-    }
-
-    for (int i = 0; i < attr.getLength(); i++) {
-      buildAttributeForPresentationML(attr.item(i));
-    }
+  @Override
+  public void asPresentationML(XmlPrintStream out) {
+    out.printElement(INPUT_TAG, buildTextFieldInputAttributes());
   }
 
-  private void buildAttributeForPresentationML(org.w3c.dom.Node item) throws InvalidInputException {
-    switch (item.getNodeName()) {
-      case NAME_ATTR:
-        setAttribute(NAME_ATTR, getStringAttribute(item));
-        break;
-      case VALUE_ATTR:
-        addChild(new TextNode(this, getStringAttribute(item)));
-        break;
-      case REQUIRED_ATTR:
-        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
-        break;
-      case PLACEHOLDER_ATTR:
-        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
-        break;
-      default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+  @Override
+  public org.commonmark.node.Node asMarkdown() {
+    if (getAttribute(PLACEHOLDER_ATTR) != null) {
+      return new FormElementNode(MARKDOWN, ":" + getAttribute(PLACEHOLDER_ATTR));
+    } else {
+      return new FormElementNode(MARKDOWN);
     }
   }
 
@@ -107,24 +104,62 @@ public class TextField extends FormElement {
       case PLACEHOLDER_ATTR:
         setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
         break;
+      case MINLENGTH_ATTR:
+        setAttribute(MINLENGTH_ATTR, getStringAttribute(item));
+        break;
+      case MAXLENGTH_ATTR:
+        setAttribute(MAXLENGTH_ATTR, getStringAttribute(item));
+        break;
+      case MASKED_ATTR:
+        setAttribute(MASKED_ATTR, getStringAttribute(item));
+        break;
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
             + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
   }
 
-  @Override
-  public void asPresentationML(XmlPrintStream out) {
-    Map<String, String> presentationAttrs = buildTextFieldInputAttributes();
-    out.printElement(INPUT_TAG, presentationAttrs);
+  private void buildAllFromPresentationML(org.w3c.dom.Element element)
+      throws InvalidInputException {
+    NamedNodeMap attr = element.getAttributes();
+    NodeList children = element.getChildNodes();
+
+    if (children != null && children.getLength() > 0) {
+      throw new InvalidInputException(
+          "Element \"" + this.getMessageMLTag() + "\" may not have child elements or text content");
+    }
+
+    for (int i = 0; i < attr.getLength(); i++) {
+      buildAttributeFromPresentationML(attr.item(i));
+    }
   }
 
-  @Override
-  public org.commonmark.node.Node asMarkdown() {
-    if (getAttribute(PLACEHOLDER_ATTR) != null) {
-      return new FormElementNode(MARKDOWN, ":" + getAttribute(PLACEHOLDER_ATTR));
-    } else {
-      return new FormElementNode(MARKDOWN);
+  private void buildAttributeFromPresentationML(org.w3c.dom.Node item) throws InvalidInputException {
+    switch (item.getNodeName()) {
+      case NAME_ATTR:
+        setAttribute(NAME_ATTR, getStringAttribute(item));
+        break;
+      case VALUE_ATTR:
+        addChild(new TextNode(this, getStringAttribute(item)));
+        break;
+      case REQUIRED_ATTR:
+        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
+        break;
+      case PLACEHOLDER_ATTR:
+        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
+        break;
+      case MINLENGTH_ATTR:
+        setAttribute(MINLENGTH_ATTR, getStringAttribute(item));
+        break;
+      case MAXLENGTH_ATTR:
+        setAttribute(MAXLENGTH_ATTR, getStringAttribute(item));
+        break;
+      case PRESENTATIONML_MASKED_ATTR:
+        setAttribute(MASKED_ATTR, getStringAttribute(item));
+        break;
+      default:
+        throw new InvalidInputException("Attribute \"" + item.getNodeName()
+            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
   }
 
@@ -142,6 +177,18 @@ public class TextField extends FormElement {
       presentationAttrs.put(REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
     }
 
+    if (getAttribute(MASKED_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_MASKED_ATTR, getAttribute(MASKED_ATTR));
+    }
+
+    if (getAttribute(MINLENGTH_ATTR) != null) {
+      presentationAttrs.put(MINLENGTH_ATTR, getAttribute(MINLENGTH_ATTR));
+    }
+
+    if (getAttribute(MAXLENGTH_ATTR) != null) {
+      presentationAttrs.put(MAXLENGTH_ATTR, getAttribute(MAXLENGTH_ATTR));
+    }
+
     if (getChildren() != null && getChildren().size() == 1) {
       presentationAttrs.put(VALUE_ATTR, getChildren().get(0).asText());
     }
@@ -149,5 +196,42 @@ public class TextField extends FormElement {
     return presentationAttrs;
   }
 
+  private void validateMinAndMaxLengths() throws InvalidInputException {
+    Integer maxLength = getAttributeAsInteger(MAXLENGTH_ATTR);
+    if (isLengthIsOutOfRange(maxLength)) {
+      throw new InvalidInputException(getLengthErrorMessage(MAXLENGTH_ATTR));
+    }
+
+    Integer minLength = getAttributeAsInteger(MINLENGTH_ATTR);
+    if (isLengthIsOutOfRange(minLength)) {
+      throw new InvalidInputException(getLengthErrorMessage(MINLENGTH_ATTR));
+    }
+
+    if (minLength != null && maxLength != null && minLength > maxLength) {
+      throw new InvalidInputException("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
+    }
+  }
+
+  private Integer getAttributeAsInteger(String attributeName) throws InvalidInputException {
+    Integer length = null;
+
+    if (getAttribute(attributeName) != null) {
+      try {
+        length = Integer.parseInt(getAttribute(attributeName));
+      } catch (NumberFormatException e) {
+        throw new InvalidInputException(String.format("The attribute \"%s\" must be a valid number.", attributeName));
+      }
+    }
+
+    return length;
+  }
+
+  private boolean isLengthIsOutOfRange(Integer length) {
+    return length != null && (length < MIN_ALLOWED_LENGTH || length > MAX_ALLOWED_LENGTH);
+  }
+
+  private String getLengthErrorMessage(String attributeName) {
+    return String.format("The attribute \"%s\" must be between %s and %s", attributeName, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
+  }
 
 }
