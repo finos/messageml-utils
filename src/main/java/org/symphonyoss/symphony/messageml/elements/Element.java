@@ -416,11 +416,21 @@ public abstract class Element {
    * @throws InvalidInputException
    */
   void assertContainsChildOfType(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
-    boolean hasPermittedElementAsChild = this.getChildren().stream()
-        .anyMatch(element -> elementTypes.contains(element.getClass()));
-
-    if (!hasPermittedElementAsChild) {
+    if (!hasElementAsChild(elementTypes)) {
       throw new InvalidInputException(String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
+          getMessageMLTag(), getElementsNameByClassName(elementTypes)));
+    }
+  }
+
+  /**
+   * This is to enforce that the element doesn't have any of the types informed as a child.
+   *
+   * @param elementTypes list of element types to check
+   * @throws InvalidInputException
+   */
+  void assertNotContainsChildOfType(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
+    if (hasElementAsChild(elementTypes)) {
+      throw new InvalidInputException(String.format("The \"%s\" element must not have a child that is any of the following elements: [%s].",
           getMessageMLTag(), getElementsNameByClassName(elementTypes)));
     }
   }
@@ -577,5 +587,9 @@ public abstract class Element {
 
   private String getElementNameByClass(Class<? extends Element> element) {
     return element.equals(TextNode.class) ? "text content" : element.getSimpleName().toLowerCase();
+  }
+
+  private boolean hasElementAsChild(Collection<Class<? extends Element>> elementTypes) {
+    return this.getChildren().stream().anyMatch(element -> elementTypes.contains(element.getClass()));
   }
 }

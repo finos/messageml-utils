@@ -54,7 +54,17 @@ public class FormTest extends ElementTest {
     expectedException.expectMessage("Invalid MessageML content at element \"invalid-child\"");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    
+  }
+
+  @Test
+  public void testNestedForms() throws Exception {
+    String id = "nested-form";
+    String input = "<messageML><form id=\"" + id + "\"><form id=\"" + id + "-inner\"></form></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The \"form\" element must not have a child that is any of the following elements: [form].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
   private String getExpectedFormPresentationML(Form form) {
