@@ -28,8 +28,12 @@ import org.commonmark.node.Document;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -151,20 +155,13 @@ public class MessageML extends Element {
   }
 
   private void assertNoFormsWithSameId() throws InvalidInputException {
-    Set<String> formIds = new HashSet<>();
+    List<String> collectedIds = getChildren().stream()
+        .filter(child -> child instanceof Form && child.getAttribute("id") != null)
+        .map(i -> i.getAttribute("id"))
+        .collect(Collectors.toList());
 
-    for (Element element : getChildren()) {
-      if (element instanceof Form) {
-        String formId = element.getAttribute("id");
-
-        if (formId == null) continue;
-
-        if (formIds.contains(formId)) {
-          throw new InvalidInputException("MessageML cannot contain multiple forms using the same id");
-        } else {
-          formIds.add(formId);
-        }
-      }
+    if (collectedIds.size() != new HashSet<>(collectedIds).size()) {
+      throw new InvalidInputException("MessageML cannot contain multiple forms using the same id");
     }
   }
 
