@@ -151,6 +151,11 @@ public class MessageML extends Element {
     this.chime = chime;
   }
 
+  /**
+   * Assert that the MessageML does not contain more than one form using the same id.
+   *
+   * @throws InvalidInputException
+   */
   private void assertNoFormsWithSameId() throws InvalidInputException {
     List<String> collectedIds = getChildren().stream()
         .filter(child -> child instanceof Form && child.getAttribute("id") != null)
