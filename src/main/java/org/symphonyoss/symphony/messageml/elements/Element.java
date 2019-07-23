@@ -589,6 +589,12 @@ public abstract class Element {
     return element.equals(TextNode.class) ? "text content" : element.getSimpleName().toLowerCase();
   }
 
+  /**
+   * Check if the element contains a child that is one of the informed types.
+   *
+   * @param elementTypes list of element types for verification
+   * @return true if contains; false otherwise.
+   */
   private boolean hasElementAsChild(Collection<Class<? extends Element>> elementTypes) {
     return this.getChildren().stream().anyMatch(element -> elementTypes.contains(element.getClass()));
   }
