@@ -37,6 +37,7 @@ import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.CashTag;
 import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.HashTag;
 import org.symphonyoss.symphony.messageml.elements.Link;
 import org.symphonyoss.symphony.messageml.elements.Mention;
@@ -751,6 +752,26 @@ public class MessageMLContextTest {
     assertEquals("Hashtag count", 2, hashtags.size());
     assertEquals("Label count", 3, labels.size());
 
+  }
+
+  @Test
+  public void testParseMessageMLWithMultipleFormsUsingSameId() throws Exception {
+    String message = "<messageML><form id=\"formId1\"></form><form id=\"formId1\"></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("MessageML cannot contain multiple forms using the same id");
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testParseMessageMLWithMultipleFormsUsingDifferentIds() throws Exception {
+    String message = "<messageML><form id=\"formId1\"></form><form id=\"formid1\"></form></messageML>";
+
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+    MessageML messageML = context.getMessageML();
+    List<Element> forms = messageML.findElements(Form.class);
+
+    assertEquals("Form count", 2, forms.size());
   }
 
   private String getPayload(String filename) throws IOException {

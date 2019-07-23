@@ -28,6 +28,9 @@ import org.commonmark.node.Document;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * Class representing a MessageML document (i.e. a message).
@@ -112,6 +115,7 @@ public class MessageML extends Element {
     if (format == FormatEnum.MESSAGEML) {
 
       assertNoAttributes();
+      assertNoFormsWithSameId();
 
     } else if (format == FormatEnum.PRESENTATIONML) {
 
@@ -146,5 +150,22 @@ public class MessageML extends Element {
     this.chime = chime;
   }
 
+  private void assertNoFormsWithSameId() throws InvalidInputException {
+    Set<String> formIds = new HashSet<>();
+
+    for (Element element : getChildren()) {
+      if (element instanceof Form) {
+        String formId = element.getAttribute("id");
+
+        if (formId == null) continue;
+
+        if (formIds.contains(formId)) {
+          throw new InvalidInputException("MessageML cannot contain multiple forms using the same id");
+        } else {
+          formIds.add(formId);
+        }
+      }
+    }
+  }
 
 }
