@@ -387,17 +387,7 @@ public abstract class Element {
    * Check in above levels if an element has a permitted parent.
    */
   void assertParentAtAnyLevel(Collection<Class<? extends Element>> permittedParents) throws InvalidInputException {
-    Element element = this;
-    Boolean permittedParentFound=false;
-    
-    while(!permittedParentFound && element.getParent() != null) {
-      if (permittedParents.contains(element.getParent().getClass())) {
-        permittedParentFound = true;
-      }
-      else {
-        element = element.getParent();
-      }
-    }
+    Boolean permittedParentFound = hasParentAtAnyLevel(permittedParents);
 
     if (!permittedParentFound) {
       String permittedParentsClassAsString = permittedParents.stream()
@@ -406,6 +396,22 @@ public abstract class Element {
           .orElse("");
       throw new InvalidInputException(String.format("Element \"%s\" can only be a inner child of the following elements: [%s]",
           this.getMessageMLTag(), permittedParentsClassAsString));
+    }
+  }
+
+  /**
+   * Check in above levels if an element has a forbidden parent.
+   */
+  void assertNotParentAtAnyLevel(Collection<Class<? extends Element>> forbiddenParents) throws InvalidInputException {
+    Boolean forbiddenParentFound = hasParentAtAnyLevel(forbiddenParents);
+
+    if (forbiddenParentFound) {
+      String forbiddenParentsClassAsString = forbiddenParents.stream()
+          .map(forbiddenParentClass -> forbiddenParentClass.getSimpleName().toLowerCase())
+          .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
+          .orElse("");
+      throw new InvalidInputException(String.format("Element \"%s\" cannot be an inner child of the following elements: [%s]",
+          this.getMessageMLTag(), forbiddenParentsClassAsString));
     }
   }
 
@@ -577,5 +583,25 @@ public abstract class Element {
 
   private String getElementNameByClass(Class<? extends Element> element) {
     return element.equals(TextNode.class) ? "text content" : element.getSimpleName().toLowerCase();
+  }
+
+  /**
+   * Check if the element has one of informed element types as a parent at any level.
+   *
+   * @param possibleParents
+   * @return true if contains; false otherwise.
+   */
+  private Boolean hasParentAtAnyLevel(Collection<Class<? extends Element>> possibleParents) {
+    Element element = this;
+    Boolean parentFound = false;
+
+    while (!parentFound && element.getParent() != null) {
+      if (possibleParents.contains(element.getParent().getClass())) {
+        parentFound = true;
+      } else {
+        element = element.getParent();
+      }
+    }
+    return parentFound;
   }
 }
