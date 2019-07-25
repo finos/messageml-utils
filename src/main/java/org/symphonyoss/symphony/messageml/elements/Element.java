@@ -402,16 +402,16 @@ public abstract class Element {
   /**
    * Check in above levels if an element has a forbidden parent.
    */
-  void assertNotParentAtAnyLevel(Collection<Class<? extends Element>> notPermittedParents) throws InvalidInputException {
-    Boolean notPermittedParentFound = hasParentAtAnyLevel(notPermittedParents);
+  void assertNotParentAtAnyLevel(Collection<Class<? extends Element>> forbiddenParents) throws InvalidInputException {
+    Boolean forbiddenParentFound = hasParentAtAnyLevel(forbiddenParents);
 
-    if (notPermittedParentFound) {
-      String permittedParentsClassAsString = notPermittedParents.stream()
-          .map(permittedParentClass -> permittedParentClass.getSimpleName().toLowerCase())
+    if (forbiddenParentFound) {
+      String forbiddenParentsClassAsString = forbiddenParents.stream()
+          .map(forbiddenParentClass -> forbiddenParentClass.getSimpleName().toLowerCase())
           .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
           .orElse("");
       throw new InvalidInputException(String.format("Element \"%s\" cannot be an inner child of the following elements: [%s]",
-          this.getMessageMLTag(), permittedParentsClassAsString));
+          this.getMessageMLTag(), forbiddenParentsClassAsString));
     }
   }
 
