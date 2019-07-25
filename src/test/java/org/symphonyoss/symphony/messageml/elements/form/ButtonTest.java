@@ -139,6 +139,18 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
+  public void testActionButtonWithoutTextNode() throws Exception {
+    String type = "action";
+    String name = "btn-name";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\"></button></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The \"button\" element must have at least one child that is any of the following elements: [text content].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testMisplacedButton() throws Exception {
     String innerText = "Misplaced Button";
     String type = "reset";
