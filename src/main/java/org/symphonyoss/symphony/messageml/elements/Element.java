@@ -400,7 +400,7 @@ public abstract class Element {
   }
 
   /**
-   * Check in above levels if an element has a permitted parent.
+   * Check in above levels if an element has a forbidden parent.
    */
   void assertNotParentAtAnyLevel(Collection<Class<? extends Element>> notPermittedParents) throws InvalidInputException {
     Boolean notPermittedParentFound = hasParentAtAnyLevel(notPermittedParents);
