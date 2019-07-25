@@ -22,7 +22,7 @@ public class Form extends Element {
   @Override
   public void validate() throws InvalidInputException {
     super.validate();
-    assertNotContainsChildOfType(Collections.singletonList(this.getClass()));
+    assertNotParentAtAnyLevel(Collections.singletonList(this.getClass()));
 
     if (getAttribute(ID_ATTR) == null) {
       throw new InvalidInputException("The attribute \"id\" is required");

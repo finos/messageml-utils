@@ -387,17 +387,7 @@ public abstract class Element {
    * Check in above levels if an element has a permitted parent.
    */
   void assertParentAtAnyLevel(Collection<Class<? extends Element>> permittedParents) throws InvalidInputException {
-    Element element = this;
-    Boolean permittedParentFound=false;
-    
-    while(!permittedParentFound && element.getParent() != null) {
-      if (permittedParents.contains(element.getParent().getClass())) {
-        permittedParentFound = true;
-      }
-      else {
-        element = element.getParent();
-      }
-    }
+    Boolean permittedParentFound = hasParentAtAnyLevel(permittedParents);
 
     if (!permittedParentFound) {
       String permittedParentsClassAsString = permittedParents.stream()
@@ -410,27 +400,33 @@ public abstract class Element {
   }
 
   /**
+   * Check in above levels if an element has a permitted parent.
+   */
+  void assertNotParentAtAnyLevel(Collection<Class<? extends Element>> notPermittedParents) throws InvalidInputException {
+    Boolean notPermittedParentFound = hasParentAtAnyLevel(notPermittedParents);
+
+    if (notPermittedParentFound) {
+      String permittedParentsClassAsString = notPermittedParents.stream()
+          .map(permittedParentClass -> permittedParentClass.getSimpleName().toLowerCase())
+          .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
+          .orElse("");
+      throw new InvalidInputException(String.format("Element \"%s\" cannot be an inner child of the following elements: [%s]",
+          this.getMessageMLTag(), permittedParentsClassAsString));
+    }
+  }
+
+  /**
    * This is to enforce that at least one child of the element has one of the types informed.
    *
    * @param elementTypes list of element types to check
    * @throws InvalidInputException
    */
   void assertContainsChildOfType(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
-    if (!hasElementAsChild(elementTypes)) {
-      throw new InvalidInputException(String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
-          getMessageMLTag(), getElementsNameByClassName(elementTypes)));
-    }
-  }
+    boolean hasPermittedElementAsChild = this.getChildren().stream()
+        .anyMatch(element -> elementTypes.contains(element.getClass()));
 
-  /**
-   * This is to enforce that the element doesn't have any of the types informed as a child.
-   *
-   * @param elementTypes list of element types to check
-   * @throws InvalidInputException
-   */
-  void assertNotContainsChildOfType(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
-    if (hasElementAsChild(elementTypes)) {
-      throw new InvalidInputException(String.format("The \"%s\" element must not have a child that is any of the following elements: [%s].",
+    if (!hasPermittedElementAsChild) {
+      throw new InvalidInputException(String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
           getMessageMLTag(), getElementsNameByClassName(elementTypes)));
     }
   }
@@ -590,12 +586,22 @@ public abstract class Element {
   }
 
   /**
-   * Check if the element contains a child that is one of the informed types.
+   * Check if the element has one of informed element types as a parent at any level.
    *
-   * @param elementTypes list of element types for verification
+   * @param possibleParents
    * @return true if contains; false otherwise.
    */
-  private boolean hasElementAsChild(Collection<Class<? extends Element>> elementTypes) {
-    return this.getChildren().stream().anyMatch(element -> elementTypes.contains(element.getClass()));
+  private Boolean hasParentAtAnyLevel(Collection<Class<? extends Element>> possibleParents) {
+    Element element = this;
+    Boolean parentFound = false;
+
+    while (!parentFound && element.getParent() != null) {
+      if (possibleParents.contains(element.getParent().getClass())) {
+        parentFound = true;
+      } else {
+        element = element.getParent();
+      }
+    }
+    return parentFound;
   }
 }

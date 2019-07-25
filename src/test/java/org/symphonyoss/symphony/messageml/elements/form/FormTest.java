@@ -58,11 +58,10 @@ public class FormTest extends ElementTest {
 
   @Test
   public void testNestedForms() throws Exception {
-    String id = "nested-form";
-    String input = "<messageML><form id=\"" + id + "\"><form id=\"" + id + "-inner\"></form></form></messageML>";
+    String input = "<messageML><form id=\"form1\"><div><form id=\"form2\"></form></div></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"form\" element must not have a child that is any of the following elements: [form].");
+    expectedException.expectMessage("Element \"form\" cannot be an inner child of the following elements: [form]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
