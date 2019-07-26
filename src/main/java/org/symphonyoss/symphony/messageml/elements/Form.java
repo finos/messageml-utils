@@ -3,6 +3,8 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 
+import java.util.Collections;
+
 /**
  * Class representing a Symphony Elements form
  *
@@ -20,6 +22,7 @@ public class Form extends Element {
   @Override
   public void validate() throws InvalidInputException {
     super.validate();
+    assertNotParentAtAnyLevel(Collections.singletonList(this.getClass()));
 
     if (getAttribute(ID_ATTR) == null) {
       throw new InvalidInputException("The attribute \"id\" is required");

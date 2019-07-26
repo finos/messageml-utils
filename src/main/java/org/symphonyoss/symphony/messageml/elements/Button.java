@@ -73,5 +73,6 @@ public class Button extends FormElement {
       throw new InvalidInputException("Attribute \"name\" is required for generic action buttons");
     }
     assertContentModel(Collections.singleton(TextNode.class));
+    assertContainsChildOfType(Collections.singleton(TextNode.class));
   }
 }
