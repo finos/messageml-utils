@@ -66,6 +66,15 @@ public class FormTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testParseMessageMLWithMultipleFormsUsingSameId() throws Exception {
+    String message = "<messageML><form id=\"formId1\"></form><form id=\"formId1\"></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("MessageML cannot contain multiple forms using the same id");
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+  }
+
   private String getExpectedFormPresentationML(Form form) {
     return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + 
         form.getAttribute(ID_ATTR) + "\"></form></div>";
