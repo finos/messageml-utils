@@ -1,22 +1,26 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.elements.*;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class TextFieldTest extends ElementTest {
 
-  private static final String FORM_ID_ATTR = "text-field-form";
+  private String formId;
 
+  @Before
+  public void beforeEach() {
+    this.formId = randomizeId("text-field-form");
+  }
 
   @Test
   public void testTextField() throws Exception {
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"text-field\"/></form></messageML>";
+    String messageMLInput = "<messageML><form id=\"" + formId + "\"><text-field name=\"text-field\"/></form></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"text-field\"/>"
         + "</form>"
         + "</div>";
@@ -37,13 +41,13 @@ public class TextFieldTest extends ElementTest {
   @Test
   public void testTextFieldWithAllAttributes() throws Exception {
     String messageMLInput = "<messageML>"
-        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<form id=\"" + formId + "\">"
         + "<text-field name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
         + "</form>"
         + "</messageML>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
         + "</form>"
         + "</div>";
@@ -64,13 +68,13 @@ public class TextFieldTest extends ElementTest {
   @Test
   public void testTextFieldWithAllAttributesPresentationML() throws Exception {
     String messageMLInput = "<messageML>"
-        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
         + "</form>"
         + "</messageML>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
         + "</form>"
         + "</div>";
@@ -90,9 +94,9 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testMaskedTextField() throws Exception {
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"text-field\" masked=\"true\"/></form></messageML>";
+    String messageMLInput = "<messageML><form id=\"" + formId + "\"><text-field name=\"text-field\" masked=\"true\"/></form></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"text-field\" data-masked=\"true\"/>"
         + "</form>"
         + "</div>";
@@ -112,9 +116,9 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testNonMaskedTextField() throws Exception {
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"text-field\" masked=\"false\"/></form></messageML>";
+    String messageMLInput = "<messageML><form id=\"" + formId + "\"><text-field name=\"text-field\" masked=\"false\"/></form></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"text-field\" data-masked=\"false\"/>"
         + "</form>"
         + "</div>";
@@ -134,9 +138,9 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testMaskedTextFieldPresentationML() throws Exception {
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><input type=\"text\" name=\"text-field\" data-masked=\"true\"/></form></messageML>";
+    String messageMLInput = "<messageML><form id=\"" + formId + "\"><input type=\"text\" name=\"text-field\" data-masked=\"true\"/></form></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"text-field\" data-masked=\"true\"/>"
         + "</form>"
         + "</div>";
@@ -156,9 +160,9 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testNonMaskedTextFieldPresentationML() throws Exception {
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><input type=\"text\" name=\"text-field\" data-masked=\"false\"/></form></messageML>";
+    String messageMLInput = "<messageML><form id=\"" + formId + "\"><input type=\"text\" name=\"text-field\" data-masked=\"false\"/></form></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"text-field\" data-masked=\"false\"/>"
         + "</form>"
         + "</div>";
@@ -198,7 +202,7 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testTextFieldInvalidAttributeFromPresentationMLElement() throws Exception {
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\">"
+    String input = "<messageML><form id=\"" + formId + "\">"
         + "<text-field name=\"name1\" value=\"value1\" placeholder=\"placeholder1\" required=\"true\"></text-field>"
         + "</form></messageML>";
 
@@ -211,7 +215,7 @@ public class TextFieldTest extends ElementTest {
   @Test
   public void testTextFieldInvalidContent() throws Exception {
     // test if it breaks when we put a text field inside a text field, should only accept simple text content within
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\">"
+    String input = "<messageML><form id=\"" + formId + "\">"
         + "<text-field name=\"first_attribute\" placeholder=\"placeholder1\">"
         + "<text-field name=\"INVALID_NESTED_ATTRIBUTE\" placeholder=\"placeholder1\"/>"
         + "</text-field></form></messageML>";
@@ -225,7 +229,7 @@ public class TextFieldTest extends ElementTest {
   @Test
   public void testTextFieldInvalidContentPresentationML() throws Exception {
     // test if it breaks when we put an input type text inside an input type text, it should not accept anything inside.
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\">"
+    String input = "<messageML><form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"first_attribute\" placeholder=\"placeholder1\" required=\"true\">"
         + "<input type=\"text\" name=\"INVALID_NESTED_ATTRIBUTE\"/></input>"
         + "</form></messageML>";
@@ -239,7 +243,7 @@ public class TextFieldTest extends ElementTest {
   @Test
   public void testTextFieldInvalidContentPresentationMLTextNode() throws Exception {
     // test if it breaks when we put an input type text inside an input type text, it should not accept anything inside.
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\">"
+    String input = "<messageML><form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"first_attribute\" placeholder=\"placeholder1\" required=\"true\">some value</input>"
         + "</form></messageML>";
 
@@ -252,7 +256,7 @@ public class TextFieldTest extends ElementTest {
   @Test
   public void testTextFieldMessageMLWithDefaultValue() throws Exception {
     String input = "<messageML>"
-        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<form id=\"" + formId + "\">"
         + "<text-field name=\"sample name\">Value here</text-field>"
         + "</form>"
         + "</messageML>";
@@ -268,7 +272,7 @@ public class TextFieldTest extends ElementTest {
 
     String expectedPresentationML = ""
         + "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"sample name\" value=\"Value here\"/>"
         + "</form>"
         + "</div>";
@@ -281,12 +285,12 @@ public class TextFieldTest extends ElementTest {
   public void testTextFieldPresentationMLWithDefaultValue() throws Exception {
     String txtFieldName = "sample name";
     String input = "<messageML>"
-        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"" + txtFieldName + "\" value=\"value\"/>"
         + "</form>"
         + "</messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"sample name\" value=\"value\"/>"
         + "</form>"
         + "</div>";
@@ -309,9 +313,9 @@ public class TextFieldTest extends ElementTest {
   public void testRequiredTextField() throws Exception {
     String name = "required-text-field";
     boolean required = true;
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" required=\"" + required + "\"/></form></messageML>";
+    String messageMLInput = "<messageML><form id=\"" + formId + "\"><text-field name=\"" + name + "\" required=\"" + required + "\"/></form></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"required-text-field\" required=\"true\"/>"
         + "</form>"
         + "</div>";
@@ -333,9 +337,9 @@ public class TextFieldTest extends ElementTest {
   public void testPlaceholderTextField() throws Exception {
     String name = "placeholder-text-field";
     String placeholder = "Input some text here";
-    String messageMLInput = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"" + name + "\" placeholder=\"" + placeholder + "\"/></form></messageML>";
+    String messageMLInput = "<messageML><form id=\"" + formId + "\"><text-field name=\"" + name + "\" placeholder=\"" + placeholder + "\"/></form></messageML>";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<form id=\"text-field-form\">"
+        + "<form id=\"" + formId + "\">"
         + "<input type=\"text\" name=\"placeholder-text-field\" placeholder=\"Input some text here\"/>"
         + "</form>"
         + "</div>";
@@ -355,7 +359,7 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testTextFieldWithoutName() throws Exception {
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field/></form></messageML>";
+    String input = "<messageML><form id=\"" + formId + "\"><text-field/></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"name\" is required");
@@ -365,7 +369,7 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testRequiredTextFieldWithInvalidValue() throws Exception {
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"invalid-required\" required=\"invalidRequired\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + formId + "\"><text-field name=\"invalid-required\" required=\"invalidRequired\"/></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"required\" of element \"text-field\" can only be one of the following values: [true, false].");
@@ -375,7 +379,7 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testLengthAttributeNotNumber() throws Exception {
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"invalid-number\" maxlength=\"notNumber\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + formId + "\"><text-field name=\"invalid-number\" maxlength=\"notNumber\"/></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"maxlength\" must be a valid number.");
@@ -385,7 +389,7 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testLengthAttributeMinBiggerThanMaxNumber() throws Exception {
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"invalid-max-min\" minlength=\"30\" maxlength=\"2\"/></form></messageML>";
+    String input = "<messageML><form id=\"" + formId + "\"><text-field name=\"invalid-max-min\" minlength=\"30\" maxlength=\"2\"/></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");

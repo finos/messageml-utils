@@ -16,7 +16,7 @@ public class RadioTest extends ElementTest {
 
   @Before
   public void beforeEach() {
-    this.formId = "radio-form";
+    this.formId = randomizeId("radio-form");
   }
 
   @Test

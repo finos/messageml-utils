@@ -21,7 +21,7 @@ public class CheckboxTest extends ElementTest {
 
   @Before
   public void beforeEach() {
-    this.formId = "checkbox-form";
+    this.formId = randomizeId("checkbox-form");
     this.name = "checkbox-name";
     this.value = "checkbox-value";
     this.text = "Checkbox Text";
@@ -204,7 +204,7 @@ public class CheckboxTest extends ElementTest {
 
     verifyMessageMLObjectsForCheckbox(context);
     String presentationML = context.getPresentationML();
-    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" checked=\"false\" value=\"checkbox-value\"/></form></div>";
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + formId + "\"><input type=\"checkbox\" name=\"checkbox-name\" checked=\"false\" value=\"checkbox-value\"/></form></div>";
     assertEquals(expectedPresentationML, presentationML);
 
     verifyCheckboxMarkdown(context, name);

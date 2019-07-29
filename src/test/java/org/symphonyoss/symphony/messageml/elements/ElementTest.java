@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -288,6 +289,16 @@ public class ElementTest {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message", "Element \"body\" can only be a child of the following elements: [card]", e.getMessage());
     }
+  }
+
+  /**
+   * Helper to generate random alphanumeric ids for any element, based on a prefix.
+   *
+   * @param prefix
+   * @return
+   */
+  protected String randomizeId(String prefix) {
+    return String.join(prefix, "-", RandomStringUtils.random(10, true, true));
   }
 
 }
