@@ -37,7 +37,7 @@ public class ListItem extends Element {
   @Override
   void validate() throws InvalidInputException {
     super.validate();
-    assertParentAtAnyLevel(Arrays.asList(OrderedList.class, BulletList.class));
+    assertParent(Arrays.asList(OrderedList.class, BulletList.class));
   }
 
   @Override
