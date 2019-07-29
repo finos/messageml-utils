@@ -1,6 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
