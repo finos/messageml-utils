@@ -17,6 +17,9 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+
+import java.util.Arrays;
 
 /**
  * Class representing a list item.
@@ -29,6 +32,12 @@ public class ListItem extends Element {
 
   public ListItem(Element parent) {
     super(parent, MESSAGEML_TAG);
+  }
+
+  @Override
+  void validate() throws InvalidInputException {
+    super.validate();
+    assertParent(Arrays.asList(OrderedList.class, BulletList.class));
   }
 
   @Override
