@@ -292,13 +292,13 @@ public class ElementTest {
   }
 
   /**
-   * Helper to generate random alphanumeric ids for any element, based on a prefix.
+   * Generate a random alphanumeric id for any element, based on a prefix.
    *
    * @param prefix
    * @return
    */
   protected String randomizeId(String prefix) {
-    return String.join(prefix, "-", RandomStringUtils.random(10, true, true));
+    return String.join(prefix, RandomStringUtils.random(10, true, true));
   }
 
 }
