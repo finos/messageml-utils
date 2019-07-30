@@ -240,6 +240,27 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testMoreThanTwentyCheckboxesWithinForm() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\"><div><checkbox name=\"grp1\" value=\"chk01\">Item 01</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk02\">Item 02</checkbox><checkbox name=\"grp1\" value=\"chk03\">Item 03</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk04\">Item 04</checkbox><checkbox name=\"grp1\" value=\"chk05\">Item 05</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk06\">Item 06</checkbox><checkbox name=\"grp1\" value=\"chk07\">Item 07</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk08\">Item 08</checkbox><checkbox name=\"grp1\" value=\"chk09\">Item 09</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk10\">Item 10</checkbox><checkbox name=\"grp2\" value=\"chk11\">Item 11</checkbox>\n"
+        + "<checkbox name=\"grp2\" value=\"chk12\">Item 12</checkbox><checkbox name=\"grp2\" value=\"chk13\">Item 13</checkbox>\n"
+        + "<checkbox name=\"grp2\" value=\"chk14\">Item 14</checkbox><checkbox name=\"grp2\" value=\"chk15\">Item 15</checkbox>\n"
+        + "<checkbox name=\"grp3\" value=\"chk16\">Item 16</checkbox><checkbox name=\"grp3\" value=\"chk17\">Item 17</checkbox>\n"
+        + "<checkbox name=\"grp3\" value=\"chk18\">Item 18</checkbox><checkbox name=\"grp3\" value=\"chk19\">Item 19</checkbox>\n"
+        + "<checkbox name=\"grp3\" value=\"chk20\">Item 20</checkbox><checkbox name=\"grp3\" value=\"chk21\">Item 21</checkbox>"
+        + "</div></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"form\" cannot have more than 20 children of the following elements: [checkbox, radio].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
   private String buildMessageMLFromParameters(String name, String value, String text, String checked, boolean shouldSendCheckedAttribute) {
     return "<messageML><form id=\"" + formId + "\"><checkbox" +
         (name != null ? String.format(" name=\"%s\"", name) : "") +

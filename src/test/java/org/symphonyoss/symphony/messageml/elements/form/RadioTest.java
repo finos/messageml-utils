@@ -419,4 +419,25 @@ public class RadioTest extends ElementTest {
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testMoreThanTwentyRadioButtonsWithinForm() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\"><div><radio name=\"grp1\" value=\"rad01\">Item 01</radio>\n"
+        + "<radio name=\"grp1\" value=\"rad02\">Item 02</radio><radio name=\"grp1\" value=\"rad03\">Item 03</radio>\n"
+        + "<radio name=\"grp1\" value=\"rad04\">Item 04</radio><radio name=\"grp1\" value=\"rad05\">Item 05</radio>\n"
+        + "<radio name=\"grp1\" value=\"rad06\">Item 06</radio><radio name=\"grp1\" value=\"rad07\">Item 07</radio>\n"
+        + "<radio name=\"grp1\" value=\"rad08\">Item 08</radio><radio name=\"grp1\" value=\"rad09\">Item 09</radio>\n"
+        + "<radio name=\"grp2\" value=\"rad10\">Item 10</radio><radio name=\"grp2\" value=\"rad11\">Item 11</radio>\n"
+        + "<radio name=\"grp2\" value=\"rad12\">Item 12</radio><radio name=\"grp2\" value=\"rad13\">Item 13</radio>\n"
+        + "<radio name=\"grp2\" value=\"rad14\">Item 14</radio><radio name=\"grp2\" value=\"rad15\">Item 15</radio>\n"
+        + "<radio name=\"grp3\" value=\"rad16\">Item 16</radio><radio name=\"grp3\" value=\"rad17\">Item 17</radio>\n"
+        + "<radio name=\"grp3\" value=\"rad18\">Item 18</radio><radio name=\"grp3\" value=\"rad19\">Item 19</radio>\n"
+        + "<radio name=\"grp3\" value=\"rad20\">Item 20</radio><radio name=\"grp3\" value=\"rad21\">Item 21</radio>"
+        + "</div></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"form\" cannot have more than 20 children of the following elements: [checkbox, radio].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
 }
