@@ -154,6 +154,16 @@ public class SelectOptionTest extends ElementTest {
   }
 
   @Test
+  public void testSelectWithBlankName() throws Exception {
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\" \"><option value=\"\">Option 1</option></select></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testOptionWithoutValue() throws Exception {
     String name = "nameless-option";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" + name +"\"><option>Option 1</option></select></form></messageML>";

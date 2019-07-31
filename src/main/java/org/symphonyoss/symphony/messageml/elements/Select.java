@@ -61,6 +61,7 @@ public class Select extends FormElement {
     }
 
     assertOnlyOneOptionSelected();
+    assertAttributeNotBlank(NAME_ATTR);
   }
 
   @Override

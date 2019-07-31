@@ -329,6 +329,18 @@ public class RadioTest extends ElementTest {
   }
 
   @Test
+  public void testRadioWithBlankName() throws Exception {
+    StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
+    input.append("<radio value=\"value01\" name=\" \">First</radio>");
+    input.append("</form></messageML>");
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testRadioWithoutAny() throws Exception {
     StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
     input.append("<radio></radio>");

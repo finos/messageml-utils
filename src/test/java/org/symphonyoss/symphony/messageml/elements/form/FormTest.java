@@ -35,6 +35,16 @@ public class FormTest extends ElementTest {
   }
 
   @Test
+  public void testFormWithBlankId() throws Exception {
+    String input = "<messageML><form id=\" \"></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"id\" is required");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testFormWithInvalidAttribute() throws Exception {
     String id = "invalid-attribute-form";
     String input = "<messageML><form id=\"" + id + "\" invalid=\"true\"></form></messageML>";

@@ -72,6 +72,9 @@ public class Button extends FormElement {
     if (type.equals("action") && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for generic action buttons");
     }
+    if (type.equals("reset") && getAttributes().containsKey(NAME_ATTR)) {
+      throw new InvalidInputException("Attribute \"name\" is allowed for generic action buttons only");
+    }
     assertContentModel(Collections.singleton(TextNode.class));
     assertContainsChildOfType(Collections.singleton(TextNode.class));
   }

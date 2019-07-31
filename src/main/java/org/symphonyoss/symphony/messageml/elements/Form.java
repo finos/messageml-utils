@@ -27,6 +27,8 @@ public class Form extends Element {
     if (getAttribute(ID_ATTR) == null) {
       throw new InvalidInputException("The attribute \"id\" is required");
     }
+
+    assertAttributeNotBlank(ID_ATTR);
   }
 
   @Override
