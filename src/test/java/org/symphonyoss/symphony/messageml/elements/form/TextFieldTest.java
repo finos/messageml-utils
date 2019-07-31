@@ -306,6 +306,90 @@ public class TextFieldTest extends ElementTest {
   }
 
   @Test
+  public void testTextFieldMessageMLWithDefaultValueBiggerThanMaxLength() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"sample name\" maxlength=\"5\">Value here</text-field>"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The initial value of a text field must respect the minlength and maxlength set on its element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldMessageMLWithDefaultValueBiggerThanMinLength() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"sample name\" minlength=\"20\">Value here</text-field>"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The initial value of a text field must respect the minlength and maxlength set on its element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldMessageMLWithMinAndMaxLengthWithTheSameValue() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"sample name\" maxlength=\"5\" minlength=\"5\">Value here</text-field>"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The initial value of a text field must respect the minlength and maxlength set on its element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldPresentationMLWithDefaultValueBiggerThanMaxLength() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<input type=\"text\" name=\"sample name\" maxlength=\"5\" value=\"Value here\" />"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The initial value of a text field must respect the minlength and maxlength set on its element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldPresentationMLWithDefaultValueBiggerThanMinLength() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<input type=\"text\" name=\"sample name\" minlength=\"20\" value=\"Value here\" />"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The initial value of a text field must respect the minlength and maxlength set on its element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldPresentationMLWithMinAndMaxLengthWithTheSameValue() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<input type=\"text\" name=\"sample name\" maxlength=\"5\" minlength=\"5\" value=\"Value here\"/>"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The initial value of a text field must respect the minlength and maxlength set on its element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testRequiredTextField() throws Exception {
     String name = "required-text-field";
     boolean required = true;

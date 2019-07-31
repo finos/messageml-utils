@@ -61,8 +61,9 @@ public class TextField extends FormElement {
       assertAttributeValue(MASKED_ATTR, VALID_BOOLEAN_VALUES);
     }
 
-    validateMinAndMaxLengths();
+    // guarantees that we will only have one children and its the expected type: TextNode
     assertContentModel(Collections.singleton(TextNode.class));
+    validateMinAndMaxLengths();
   }
 
   @Override
@@ -189,7 +190,7 @@ public class TextField extends FormElement {
       presentationAttrs.put(MAXLENGTH_ATTR, getAttribute(MAXLENGTH_ATTR));
     }
 
-    if (getChildren() != null && getChildren().size() == 1) {
+    if (hasInitialValue()) {
       presentationAttrs.put(VALUE_ATTR, getChildren().get(0).asText());
     }
 
@@ -210,6 +211,28 @@ public class TextField extends FormElement {
     if (minLength != null && maxLength != null && minLength > maxLength) {
       throw new InvalidInputException("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
     }
+    if (hasInitialValue()) {
+      TextNode initialValueElement = (TextNode) getChild(0);
+      String initialValue = initialValueElement.getText();
+      if (initialValue != null) {
+        if (isTextSmallerThanMinLength(minLength, initialValue) || isTextBiggerThanMaxLength(maxLength, initialValue)) {
+          throw new InvalidInputException(
+              "The initial value of a text field must respect the minlength and maxlength set on its element");
+        }
+      }
+    }
+  }
+
+  private boolean isTextBiggerThanMaxLength(Integer maxLength, String text) {
+    return maxLength != null && text.length() > maxLength;
+  }
+
+  private boolean isTextSmallerThanMinLength(Integer minLength, String text) {
+    return minLength != null && text.length() < minLength;
+  }
+
+  private boolean hasInitialValue() {
+    return getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode;
   }
 
   private Integer getAttributeAsInteger(String attributeName) throws InvalidInputException {
