@@ -61,6 +61,7 @@ public class TextField extends FormElement {
       assertAttributeValue(MASKED_ATTR, VALID_BOOLEAN_VALUES);
     }
 
+    assertAttributeNotBlank(NAME_ATTR);
     // guarantees that we will only have one children and its the expected type: TextNode
     assertContentModel(Collections.singleton(TextNode.class));
     validateMinAndMaxLengths();
@@ -190,7 +191,7 @@ public class TextField extends FormElement {
       presentationAttrs.put(MAXLENGTH_ATTR, getAttribute(MAXLENGTH_ATTR));
     }
 
-    if (hasInitialValue()) {
+    if (getChildren() != null && getChildren().size() == 1) {
       presentationAttrs.put(VALUE_ATTR, getChildren().get(0).asText());
     }
 

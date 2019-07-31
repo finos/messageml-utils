@@ -177,6 +177,16 @@ public class CheckboxTest extends ElementTest {
   }
 
   @Test
+  public void testCheckboxWithBlankName() throws Exception {
+    String input = buildMessageMLFromParameters(" ", value, text, checked, true);
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testCheckboxWithoutAny() throws Exception {
     String input = buildMessageMLFromParameters(null, null, null, "false", false);
 

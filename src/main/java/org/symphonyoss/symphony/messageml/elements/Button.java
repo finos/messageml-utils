@@ -70,8 +70,12 @@ public class Button extends FormElement {
               "\"primary-destructive\" or \"secondary-destructive\"");
     }
     if (type.equals("action") && StringUtils.isBlank(name)) {
-      throw new InvalidInputException("Attribute \"name\" is required for generic action buttons");
+      throw new InvalidInputException("Attribute \"name\" is required for action buttons");
     }
+    if (type.equals("reset") && getAttributes().containsKey(NAME_ATTR)) {
+      throw new InvalidInputException("Attribute \"name\" is allowed for action buttons only");
+    }
+
     assertContentModel(Collections.singleton(TextNode.class));
     assertContainsChildOfType(Collections.singleton(TextNode.class));
   }

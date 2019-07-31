@@ -119,7 +119,7 @@ public class ButtonTest extends ElementTest {
       fail("Should have thrown an exception on typeless button without name");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"name\" is required for generic action buttons", e.getMessage());
+      assertEquals("Exception message", "Attribute \"name\" is required for action buttons", e.getMessage());
     }
   }
 
@@ -134,7 +134,37 @@ public class ButtonTest extends ElementTest {
       fail("Should have thrown an exception on action button without name");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"name\" is required for generic action buttons", e.getMessage());
+      assertEquals("Exception message", "Attribute \"name\" is required for action buttons", e.getMessage());
+    }
+  }
+
+  @Test
+  public void testActionButtonWithBlankName() throws Exception {
+    String type = "action";
+    String innerText = "Typeless Button Without Name";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\" \">" + innerText + "</button></form></messageML>";
+
+    try {
+      context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+      fail("Should have thrown an exception on action button without name");
+    } catch (Exception e) {
+      assertEquals("Exception class", InvalidInputException.class, e.getClass());
+      assertEquals("Exception message", "Attribute \"name\" is required for action buttons", e.getMessage());
+    }
+  }
+
+  @Test
+  public void testResetButtonWithName() throws Exception {
+    String type = "reset";
+    String innerText = "Reset";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\" \">" + innerText + "</button></form></messageML>";
+
+    try {
+      context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+      fail("Should have thrown an exception on action button without name");
+    } catch (Exception e) {
+      assertEquals("Exception class", InvalidInputException.class, e.getClass());
+      assertEquals("Exception message", "Attribute \"name\" is allowed for action buttons only", e.getMessage());
     }
   }
 
