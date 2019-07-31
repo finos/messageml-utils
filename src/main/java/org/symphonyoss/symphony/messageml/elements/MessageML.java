@@ -28,6 +28,11 @@ import org.commonmark.node.Document;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 
 /**
  * Class representing a MessageML document (i.e. a message).
@@ -112,6 +117,7 @@ public class MessageML extends Element {
     if (format == FormatEnum.MESSAGEML) {
 
       assertNoAttributes();
+      assertChildrenHaveUniqueIds();
 
     } else if (format == FormatEnum.PRESENTATIONML) {
 
@@ -146,5 +152,36 @@ public class MessageML extends Element {
     this.chime = chime;
   }
 
+  /**
+   * Assert that all children are using unique values for the "id" attribute.
+   *
+   * @throws InvalidInputException
+   */
+  private void assertChildrenHaveUniqueIds() throws InvalidInputException {
+    Set<String> uniqueIds = new HashSet<>();
+    validateChildrenIdUniqueness(getChildren(), uniqueIds);
+  }
+
+  /**
+   * Recursive method to validate the uniqueness of the "id" attribute in a collection of elements.
+   *
+   * @param children
+   * @param uniqueIds
+   * @throws InvalidInputException
+   */
+  private void validateChildrenIdUniqueness(Collection<Element> children, Set<String> uniqueIds) throws InvalidInputException {
+    if (children == null) {
+      return;
+    }
+
+    boolean hasUniqueIds = children.stream().map(child -> child.getAttribute("id")).filter(Objects::nonNull).allMatch(uniqueIds::add);
+    if (!hasUniqueIds) {
+      throw new InvalidInputException("Child elements must have unique ids.");
+    }
+
+    for (Element child : children) {
+      validateChildrenIdUniqueness(child.getChildren(), uniqueIds);
+    }
+  }
 
 }

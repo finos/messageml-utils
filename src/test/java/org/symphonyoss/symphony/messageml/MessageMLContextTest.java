@@ -753,6 +753,16 @@ public class MessageMLContextTest {
 
   }
 
+  @Test
+  public void testChildrenShouldUseUniqueIds() throws Exception {
+    String message = "<messageML><form id=\"id-1\"></form><div><div><form id=\"id-1\"></form></div></div></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Child elements must have unique ids.");
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+  }
+
+
   private String getPayload(String filename) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
     try(Scanner scanner = new Scanner(classLoader.getResourceAsStream(filename)))
