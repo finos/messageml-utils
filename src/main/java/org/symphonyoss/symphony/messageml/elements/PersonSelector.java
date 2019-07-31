@@ -68,6 +68,7 @@ public class PersonSelector extends FormElement {
     }
     
     assertNoContent();
+    assertAttributeNotBlank(NAME_ATTR);
   }
 
   @Override

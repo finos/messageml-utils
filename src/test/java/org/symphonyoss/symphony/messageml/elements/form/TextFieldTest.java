@@ -364,6 +364,16 @@ public class TextFieldTest extends ElementTest {
   }
 
   @Test
+  public void testTextFieldWithBlankName() throws Exception {
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\" \"/></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testRequiredTextFieldWithInvalidValue() throws Exception {
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\"invalid-required\" required=\"invalidRequired\"/></form></messageML>";
 

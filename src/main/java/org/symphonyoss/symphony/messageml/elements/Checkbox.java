@@ -71,7 +71,9 @@ public class Checkbox extends FormElement {
 
     if (!getChildren().isEmpty()) {
       assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
-    }    
+    }
+
+    assertAttributeNotBlank(NAME_ATTR);
   }
 
   @Override

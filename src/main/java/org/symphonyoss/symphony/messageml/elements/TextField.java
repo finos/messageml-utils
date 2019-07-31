@@ -62,6 +62,7 @@ public class TextField extends FormElement {
     }
 
     validateMinAndMaxLengths();
+    assertAttributeNotBlank(NAME_ATTR);
     assertContentModel(Collections.singleton(TextNode.class));
   }
 

@@ -132,6 +132,16 @@ public class TextAreaTest extends ElementTest {
   }
 
   @Test
+  public void testTextAreaWithBlankName() throws Exception {
+    String input = "<messageML><form id=\"form-id\"><textarea name=\" \"></textarea></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testTextAreaWithInvalidRequiredAttributeValue() throws Exception {
     String input = String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" required=\"value\"></textarea></form></messageML>", NAME_VALUE);
 
