@@ -459,8 +459,8 @@ public abstract class Element {
   void assertChildrenNotExceedingMaxCount(Collection<Class<? extends Element>> elementTypes, int maxCountPerElementType) throws InvalidInputException {
     boolean hasExceeded = elementTypes.stream().anyMatch(type -> findElements(type).size() > maxCountPerElementType);
     if (hasExceeded) {
-      throw new InvalidInputException(String.format("Element \"form\" cannot have more than %s children of the following elements: [%s].",
-          maxCountPerElementType, getElementsNameByClassName(elementTypes)));
+      throw new InvalidInputException(String.format("Element \"%s\" cannot have more than %s children of the following elements: [%s].",
+          this.getClass().getSimpleName().toLowerCase(), maxCountPerElementType, getElementsNameByClassName(elementTypes)));
     }
   }
 
