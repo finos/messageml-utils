@@ -56,6 +56,7 @@ public abstract class Element {
   public static final String CLASS_ATTR = "class";
   public static final String STYLE_ATTR = "style";
   private static final String ID_ATTR = "id";
+  private static final int MAX_COUNT_PER_CHILD_TYPE = 20;
 
   protected FormatEnum format;
   private final Map<String, String> attributes = new LinkedHashMap<>();
@@ -446,6 +447,20 @@ public abstract class Element {
     if (!hasPermittedElementAsChild) {
       throw new InvalidInputException(String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
           getMessageMLTag(), getElementsNameByClassName(elementTypes)));
+    }
+  }
+
+  /**
+   * Assert that children with any of the informed types do not exceed the maximum count allowed.
+   *
+   * @param elementTypes The element types that will be verified in order to ensure that the maximum count was not exceed.
+   * @throws InvalidInputException
+   */
+  void assertChildrenNotExceedingMaxCount(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
+    boolean hasExceeded = elementTypes.stream().anyMatch(type -> findElements(type).size() > MAX_COUNT_PER_CHILD_TYPE);
+    if (hasExceeded) {
+      throw new InvalidInputException(String.format("Element \"form\" cannot have more than %s children of the following elements: [%s].",
+          MAX_COUNT_PER_CHILD_TYPE, getElementsNameByClassName(elementTypes)));
     }
   }
 

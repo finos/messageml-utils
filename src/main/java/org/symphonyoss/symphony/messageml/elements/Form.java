@@ -17,8 +17,6 @@ public class Form extends Element {
   public static final String MESSAGEML_TAG = "form";
   private static final String ID_ATTR = "id";
 
-  private static final int MAX_COUNT_PER_CHILD_TYPE = 20;
-
   public Form(Element parent) {
     super(parent, MESSAGEML_TAG);
   }
@@ -58,17 +56,4 @@ public class Form extends Element {
     return new FormNode();
   }
 
-  /**
-   * Assert that children with any of the informed types do not exceed the maximum count allowed.
-   *
-   * @param elementTypes
-   * @throws InvalidInputException
-   */
-  private void assertChildrenNotExceedingMaxCount(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
-    boolean hasExceeded = elementTypes.stream().anyMatch(type -> findElements(type).size() > MAX_COUNT_PER_CHILD_TYPE);
-    if (hasExceeded) {
-      throw new InvalidInputException(String.format("Element \"form\" cannot have more than %s children of the following elements: [%s].",
-          MAX_COUNT_PER_CHILD_TYPE, getElementsNameByClassName(elementTypes)));
-    }
-  }
 }
