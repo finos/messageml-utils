@@ -20,6 +20,11 @@ public class Form extends Element {
   }
 
   @Override
+  protected Boolean hasIdAttribute() {
+    return true;
+  }
+
+  @Override
   public void validate() throws InvalidInputException {
     super.validate();
     assertNotParentAtAnyLevel(Collections.singletonList(this.getClass()));

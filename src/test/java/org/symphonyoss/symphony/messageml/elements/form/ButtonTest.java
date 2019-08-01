@@ -1,5 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.elements.Button;
 import org.symphonyoss.symphony.messageml.elements.Element;
@@ -96,7 +97,8 @@ public class ButtonTest extends ElementTest {
     String innerText = "Class Test";
 
     for (String clazz : VALID_CLASSES) {
-      String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
+      String formId = FORM_ID_ATTR + RandomStringUtils.random(10, true, true);
+      String input = "<messageML><form id=\"" + formId + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
               + "</button></form></messageML>";
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -105,7 +107,7 @@ public class ButtonTest extends ElementTest {
       Element button = form.getChildren().get(0);
 
       assertEquals("Button class", Button.class, button.getClass());
-      verifyButtonPresentation((Button) button, null, type, clazz, innerText);
+      verifyButtonPresentation((Button) button, null, type, clazz, innerText, formId);
     }
   }
 
@@ -283,8 +285,8 @@ public class ButtonTest extends ElementTest {
     }
   }
 
-  private String getExpectedButtonPresentation(String name, String type, String clazz, String innerText) {
-    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\""
+  private String getExpectedButtonPresentation(String name, String type, String clazz, String innerText, String formId) {
+    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + formId + "\"><button type=\"" + type + "\""
             + getClassPresentationML(clazz) + getNamePresentationML(name) + ">" + innerText + "</button></form></div>";
   }
 
@@ -292,14 +294,18 @@ public class ButtonTest extends ElementTest {
     return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")\n---\n";
   }
 
-  private void verifyButtonPresentation(Button button, String name, String type, String clazz, String innerText) {
+  private void verifyButtonPresentation(Button button, String name, String type, String clazz, String innerText, String formId) {
     assertEquals("Button name attribute", name, button.getAttribute(NAME_ATTR));
     assertEquals("Button type attribute", type, button.getAttribute(TYPE_ATTR));
     assertEquals("Button clazz attribute", clazz, button.getAttribute(CLASS_ATTR));
     assertEquals("Button inner text", innerText, button.getChild(0).asText());
 
     assertEquals("Button markdown", getExpectedButtonMarkdown(innerText), context.getMarkdown());
-    assertEquals("Button presentationML", getExpectedButtonPresentation(name, type, clazz, innerText),
+    assertEquals("Button presentationML", getExpectedButtonPresentation(name, type, clazz, innerText, formId),
             context.getPresentationML());
+  }
+
+  private void verifyButtonPresentation(Button button, String name, String type, String clazz, String innerText) {
+    verifyButtonPresentation(button, name, type, clazz, innerText, FORM_ID_ATTR);
   }
 }

@@ -76,6 +76,15 @@ public class FormTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testMultipleFormsUsingSameId() throws Exception {
+    String message = "<messageML><form id=\"id-1\"></form><div><form id=\"id-2\"></form><form id=\"id-1\"></form></div></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Elements must have unique ids.");
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+  }
+
   private String getExpectedFormPresentationML(Form form) {
     return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + 
         form.getAttribute(ID_ATTR) + "\"></form></div>";

@@ -36,8 +36,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.symphonyoss.symphony.messageml.elements.Element.CLASS_ATTR;
@@ -57,6 +59,8 @@ public class MessageMLParser {
   private ObjectNode entityJson;
 
   private int index;
+
+  private Set<String> elementIds = new HashSet<>();
 
   static {
     FREEMARKER.setDefaultEncoding("UTF-8");
@@ -432,6 +436,18 @@ public class MessageMLParser {
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
+    }
+  }
+
+  /**
+   * Loads the values of the "id" attribute of elements being parsed and verifies if these values are unique.
+   *
+   * @param id
+   * @throws InvalidInputException
+   */
+  public void loadElementId(String id) throws InvalidInputException {
+    if (!elementIds.add(id)) {
+      throw new InvalidInputException("Elements must have unique ids.");
     }
   }
 
