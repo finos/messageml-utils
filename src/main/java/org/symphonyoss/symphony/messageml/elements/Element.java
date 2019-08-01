@@ -608,7 +608,7 @@ public abstract class Element {
     return result;
   }
 
-  protected String getElementsNameByClassName(Collection<Class<? extends Element>> elementsClasses) {
+  private String getElementsNameByClassName(Collection<Class<? extends Element>> elementsClasses) {
     return elementsClasses.stream()
         .map(this::getElementNameByClass)
         .collect(Collectors.joining(", "));
