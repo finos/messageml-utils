@@ -3,6 +3,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -14,7 +15,8 @@ import java.util.Collections;
 public class Form extends Element {
   public static final String MESSAGEML_TAG = "form";
   private static final String ID_ATTR = "id";
-  
+  private static final int MAX_COUNT_PER_CHILD_TYPE = 20;
+
   public Form(Element parent) {
     super(parent, MESSAGEML_TAG);
   }
@@ -28,6 +30,7 @@ public class Form extends Element {
   public void validate() throws InvalidInputException {
     super.validate();
     assertNotParentAtAnyLevel(Collections.singletonList(this.getClass()));
+    assertChildrenNotExceedingMaxCount(Arrays.asList(Checkbox.class, Radio.class), MAX_COUNT_PER_CHILD_TYPE);
 
     if (getAttribute(ID_ATTR) == null) {
       throw new InvalidInputException("The attribute \"id\" is required");
@@ -52,4 +55,5 @@ public class Form extends Element {
   public org.commonmark.node.Node asMarkdown() {
     return new FormNode();
   }
+
 }

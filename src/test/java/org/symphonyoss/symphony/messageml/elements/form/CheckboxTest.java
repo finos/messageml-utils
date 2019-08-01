@@ -250,6 +250,60 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testMoreThanTwentyCheckboxesWithinForm() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\"><div><checkbox name=\"grp1\" value=\"chk01\">Item 01</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk02\">Item 02</checkbox><checkbox name=\"grp1\" value=\"chk03\">Item 03</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk04\">Item 04</checkbox><checkbox name=\"grp1\" value=\"chk05\">Item 05</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk06\">Item 06</checkbox><checkbox name=\"grp1\" value=\"chk07\">Item 07</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk08\">Item 08</checkbox><checkbox name=\"grp1\" value=\"chk09\">Item 09</checkbox>\n"
+        + "<checkbox name=\"grp1\" value=\"chk10\">Item 10</checkbox><checkbox name=\"grp2\" value=\"chk11\">Item 11</checkbox>\n"
+        + "<checkbox name=\"grp2\" value=\"chk12\">Item 12</checkbox><checkbox name=\"grp2\" value=\"chk13\">Item 13</checkbox>\n"
+        + "<checkbox name=\"grp2\" value=\"chk14\">Item 14</checkbox><checkbox name=\"grp2\" value=\"chk15\">Item 15</checkbox>\n"
+        + "<checkbox name=\"grp3\" value=\"chk16\">Item 16</checkbox><checkbox name=\"grp3\" value=\"chk17\">Item 17</checkbox>\n"
+        + "<checkbox name=\"grp3\" value=\"chk18\">Item 18</checkbox><checkbox name=\"grp3\" value=\"chk19\">Item 19</checkbox>\n"
+        + "<checkbox name=\"grp3\" value=\"chk20\">Item 20</checkbox><checkbox name=\"grp3\" value=\"chk21\">Item 21</checkbox>"
+        + "</div></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"form\" cannot have more than 20 children of the following elements: [checkbox, radio].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMoreThanTwentyCheckboxesAsTableSelectWithinForm() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\"><table><thead><tr><td>H1</td><td>H2</td><td>H3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-header\" value=\"on\"/></td></tr></thead><tbody><tr><td>A1</td><td>B1</td><td>C1</td><td"
+        + "><input type=\"checkbox\" name=\"tablesel-row-1\" value=\"on\"/></td></tr><tr><td>A2</td><td>B2</td><td>C2</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-2\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-3\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-4\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-5\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-6\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-7\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-8\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-9\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-10\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-11\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-12\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-13\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-14\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-15\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-16\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-17\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-18\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-19\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-20\" value=\"on\"/></td></tr><tr><td>A3</td><td>B3</td><td>C3</td><td><input "
+        + "type=\"checkbox\" name=\"tablesel-row-21\" value=\"on\"/></td></tr></tbody><tfoot><tr><td>F1</td><td>F2</td><td>F3</td><td"
+        + "><input type=\"checkbox\" name=\"tablesel-footer\" value=\"on\"/></td></tr></tfoot></table></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Element \"form\" cannot have more than 20 children of the following elements: [checkbox, radio].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
   private String buildMessageMLFromParameters(String name, String value, String text, String checked, boolean shouldSendCheckedAttribute) {
     return "<messageML><form id=\"" + formId + "\"><checkbox" +
         (name != null ? String.format(" name=\"%s\"", name) : "") +
