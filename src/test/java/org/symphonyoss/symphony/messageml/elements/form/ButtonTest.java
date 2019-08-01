@@ -216,7 +216,7 @@ public class ButtonTest extends ElementTest {
     String type = "reset";
     String clazz = "outclassed";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
-           + "</button></form></messageML>";
+            + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -245,7 +245,7 @@ public class ButtonTest extends ElementTest {
               + Button.MESSAGEML_TAG + "\"", e.getMessage());
     }
   }
-
+  
   @Test
   public void testNotDirectParent() throws Exception {
     String input = "<messageML><form id=\"example\"><div><button name=\"div-button\">SELECT</button></div></form></messageML>";
@@ -256,7 +256,7 @@ public class ButtonTest extends ElementTest {
     Element button = form.getChildren().get(0).getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-
+    
     assertEquals("Button name attribute", "div-button", button.getAttribute(NAME_ATTR));
     assertEquals("Button type attribute", "action", button.getAttribute(TYPE_ATTR));
     assertEquals("Button clazz attribute", null, button.getAttribute(CLASS_ATTR));
