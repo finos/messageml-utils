@@ -460,7 +460,7 @@ public abstract class Element {
     boolean hasExceeded = elementTypes.stream().anyMatch(type -> findElements(type).size() > maxCountPerElementType);
     if (hasExceeded) {
       throw new InvalidInputException(String.format("Element \"%s\" cannot have more than %s children of the following elements: [%s].",
-          this.getClass().getSimpleName().toLowerCase(), maxCountPerElementType, getElementsNameByClassName(elementTypes)));
+          getElementNameByClass(this.getClass()), maxCountPerElementType, getElementsNameByClassName(elementTypes)));
     }
   }
 
