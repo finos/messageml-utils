@@ -55,6 +55,8 @@ import java.util.stream.Collectors;
 public abstract class Element {
   public static final String CLASS_ATTR = "class";
   public static final String STYLE_ATTR = "style";
+  private static final String ID_ATTR = "id";
+
   protected FormatEnum format;
   private final Map<String, String> attributes = new LinkedHashMap<>();
   private final List<Element> children = new ArrayList<>();
@@ -73,6 +75,17 @@ public abstract class Element {
     this.messageMLTag = messageMLTag;
     this.parent = parent;
     this.format = format;
+  }
+
+  /**
+   * Informs if the element has an "id" attribute.
+   * The parser that builds all elements keeps track of all ids from the elements that have it, in order to ensure unique values.
+   *
+   * @return
+   */
+  public Boolean hasIdAttribute() {
+    // An element, by default, should not have it.
+    return false;
   }
 
   /**
@@ -139,6 +152,11 @@ public abstract class Element {
     Element child = context.createElement(element, this);
     child.buildAll(context, element);
     child.validate();
+
+    if (child.hasIdAttribute()) {
+      context.loadElementId(child.getAttribute(ID_ATTR));
+    }
+
     addChild(child);
   }
 
