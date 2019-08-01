@@ -1,11 +1,14 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
-import org.junit.Test;
-import org.symphonyoss.symphony.messageml.elements.*;
-import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.ElementTest;
+import org.symphonyoss.symphony.messageml.elements.Form;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.TextField;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class TextFieldTest extends ElementTest {
 
@@ -314,7 +317,7 @@ public class TextFieldTest extends ElementTest {
         + "</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The length of a text-field's initial value must be between 1 and 5");
+    expectedException.expectMessage("The length of this text-field's initial value must be between 1 and 5");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -328,7 +331,7 @@ public class TextFieldTest extends ElementTest {
         + "</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The length of a text-field's initial value must be between 20 and 128");
+    expectedException.expectMessage("The length of this text-field's initial value must be between 20 and 128");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -342,7 +345,7 @@ public class TextFieldTest extends ElementTest {
         + "</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The length of a text-field's initial value must be between 5 and 5");
+    expectedException.expectMessage("The length of this text-field's initial value must be between 5 and 5");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -356,7 +359,7 @@ public class TextFieldTest extends ElementTest {
         + "</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The length of a text-field's initial value must be between 1 and 5");
+    expectedException.expectMessage("The length of this text-field's initial value must be between 1 and 5");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -370,7 +373,7 @@ public class TextFieldTest extends ElementTest {
         + "</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The length of a text-field's initial value must be between 20 and 128");
+    expectedException.expectMessage("The length of this text-field's initial value must be between 20 and 128");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -384,7 +387,7 @@ public class TextFieldTest extends ElementTest {
         + "</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The length of a text-field's initial value must be between 5 and 5");
+    expectedException.expectMessage("The length of this text-field's initial value must be between 5 and 5");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
