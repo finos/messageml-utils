@@ -78,10 +78,11 @@ public class FormTest extends ElementTest {
 
   @Test
   public void testMultipleFormsUsingSameId() throws Exception {
-    String message = "<messageML><form id=\"id-1\"></form><div><form id=\"id-2\"></form><form id=\"id-1\"></form></div></messageML>";
+    String notUniqueId = "id-1";
+    String message = "<messageML><form id=\"" + notUniqueId + "\"></form><div><form id=\"id-2\"></form><form id=\"" + notUniqueId + "\"></form></div></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Elements must have unique ids.");
+    expectedException.expectMessage("Elements must have unique ids. The following value is not unique: [" + notUniqueId + "].");
     context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
   }
 

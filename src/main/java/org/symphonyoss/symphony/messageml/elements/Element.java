@@ -79,10 +79,11 @@ public abstract class Element {
 
   /**
    * Informs if the element has an "id" attribute.
+   * The parser that builds all elements keeps track of all ids from the elements that have it, in order to ensure unique values.
    *
    * @return
    */
-  protected Boolean hasIdAttribute() {
+  public Boolean hasIdAttribute() {
     // An element, by default, should not have it.
     return false;
   }

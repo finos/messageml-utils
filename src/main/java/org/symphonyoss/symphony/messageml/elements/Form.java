@@ -20,7 +20,7 @@ public class Form extends Element {
   }
 
   @Override
-  protected Boolean hasIdAttribute() {
+  public Boolean hasIdAttribute() {
     return true;
   }
 

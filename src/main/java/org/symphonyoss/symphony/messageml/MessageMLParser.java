@@ -60,7 +60,7 @@ public class MessageMLParser {
 
   private int index;
 
-  private Set<String> elementIds = new HashSet<>();
+  private Set<String> elementIds;
 
   static {
     FREEMARKER.setDefaultEncoding("UTF-8");
@@ -86,6 +86,7 @@ public class MessageMLParser {
   MessageML parse(String message, String entityJson, String version) throws InvalidInputException, ProcessingException,
       IOException {
     this.index = 0;
+    this.elementIds = new HashSet<>();
     String expandedMessage;
 
     if (StringUtils.isBlank(message)) {
@@ -447,7 +448,7 @@ public class MessageMLParser {
    */
   public void loadElementId(String id) throws InvalidInputException {
     if (!elementIds.add(id)) {
-      throw new InvalidInputException("Elements must have unique ids.");
+      throw new InvalidInputException(String.format("Elements must have unique ids. The following value is not unique: [%s].", id));
     }
   }
 
