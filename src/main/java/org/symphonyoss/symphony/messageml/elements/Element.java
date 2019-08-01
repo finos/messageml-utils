@@ -453,6 +453,7 @@ public abstract class Element {
    * Assert that children with any of the informed types do not exceed the maximum count allowed.
    *
    * @param elementTypes The element types that will be verified in order to ensure that the maximum count was not exceed.
+   * @param maxCountPerElementType the maximum quantity, per element type, that is allowed.
    * @throws InvalidInputException
    */
   void assertChildrenNotExceedingMaxCount(Collection<Class<? extends Element>> elementTypes, int maxCountPerElementType) throws InvalidInputException {
