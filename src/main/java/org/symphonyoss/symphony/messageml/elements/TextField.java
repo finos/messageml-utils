@@ -220,8 +220,8 @@ public class TextField extends FormElement {
     if (textFieldHasInitialValue()) {
       String initialValue = getTextFieldInitialValue();
       if (isTextSmallerThanMinLength(minLength, initialValue) || isTextBiggerThanMaxLength(maxLength, initialValue)) {
-        throw new InvalidInputException(
-            format("The length of a text-field's initial value must be between %s and %s", minLength, maxLength));
+        throw new InvalidInputException(String.format(
+            "The length of this text-field's initial value must be between %s and %s", minLength, maxLength));
       }
     }
   }
