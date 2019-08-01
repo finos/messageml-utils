@@ -30,7 +30,7 @@ public class ButtonTest extends ElementTest {
     String clazz = "primary";
     String innerText = "Complete";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\" name=\"" + name + "\">"
-        + innerText + "</button></form></messageML>";
+            + innerText + "</button></form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -78,7 +78,7 @@ public class ButtonTest extends ElementTest {
     String name = "btn-name";
     String innerText = "Action Button With Name";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\">" + innerText
-        + "</button></form></messageML>";
+            + "</button></form></messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -97,7 +97,7 @@ public class ButtonTest extends ElementTest {
 
     for (String clazz : VALID_CLASSES) {
       String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
-          + "</button></form></messageML>";
+              + "</button></form></messageML>";
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
       Element messageML = context.getMessageML();
@@ -216,7 +216,7 @@ public class ButtonTest extends ElementTest {
     String type = "reset";
     String clazz = "outclassed";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
-        + "</button></form></messageML>";
+           + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -224,7 +224,7 @@ public class ButtonTest extends ElementTest {
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message", "Attribute \"class\" must be \"primary\", \"secondary\", " +
-          "\"primary-destructive\" or \"secondary-destructive\"", e.getMessage());
+              "\"primary-destructive\" or \"secondary-destructive\"", e.getMessage());
     }
   }
 
@@ -234,7 +234,7 @@ public class ButtonTest extends ElementTest {
     String type = "reset";
     String invalidAttribute = "invalid-attribute";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" " + invalidAttribute + "=\"invalid\">" + innerText
-        + "</button></form></messageML>";
+            + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -242,7 +242,7 @@ public class ButtonTest extends ElementTest {
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message", "Attribute \"" + invalidAttribute + "\" is not allowed in \""
-          + Button.MESSAGEML_TAG + "\"", e.getMessage());
+              + Button.MESSAGEML_TAG + "\"", e.getMessage());
     }
   }
 
@@ -285,7 +285,7 @@ public class ButtonTest extends ElementTest {
 
   private String getExpectedButtonPresentation(String name, String type, String clazz, String innerText) {
     return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\""
-        + getClassPresentationML(clazz) + getNamePresentationML(name) + ">" + innerText + "</button></form></div>";
+            + getClassPresentationML(clazz) + getNamePresentationML(name) + ">" + innerText + "</button></form></div>";
   }
 
   private String getExpectedButtonMarkdown(String innerText) {
@@ -300,6 +300,6 @@ public class ButtonTest extends ElementTest {
 
     assertEquals("Button markdown", getExpectedButtonMarkdown(innerText), context.getMarkdown());
     assertEquals("Button presentationML", getExpectedButtonPresentation(name, type, clazz, innerText),
-        context.getPresentationML());
+            context.getPresentationML());
   }
 }
