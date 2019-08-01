@@ -1,11 +1,14 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
-import org.junit.Test;
-import org.symphonyoss.symphony.messageml.elements.*;
-import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.ElementTest;
+import org.symphonyoss.symphony.messageml.elements.Form;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.TextField;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class TextFieldTest extends ElementTest {
 
@@ -306,6 +309,90 @@ public class TextFieldTest extends ElementTest {
   }
 
   @Test
+  public void testTextFieldMessageMLWithDefaultValueBiggerThanMaxLength() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"sample name\" maxlength=\"5\">Value here</text-field>"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this text-field's initial value must be between 1 and 5");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldMessageMLWithDefaultValueBiggerThanMinLength() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"sample name\" minlength=\"20\">Value here</text-field>"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this text-field's initial value must be between 20 and 128");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldMessageMLWithMinAndMaxLengthWithTheSameValue() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"sample name\" maxlength=\"5\" minlength=\"5\">Value here</text-field>"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this text-field's initial value must be between 5 and 5");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldPresentationMLWithDefaultValueBiggerThanMaxLength() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<input type=\"text\" name=\"sample name\" maxlength=\"5\" value=\"Value here\" />"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this text-field's initial value must be between 1 and 5");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldPresentationMLWithDefaultValueBiggerThanMinLength() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<input type=\"text\" name=\"sample name\" minlength=\"20\" value=\"Value here\" />"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this text-field's initial value must be between 20 and 128");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldPresentationMLWithMinAndMaxLengthWithTheSameValue() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<input type=\"text\" name=\"sample name\" maxlength=\"5\" minlength=\"5\" value=\"Value here\"/>"
+        + "</form>"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this text-field's initial value must be between 5 and 5");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testRequiredTextField() throws Exception {
     String name = "required-text-field";
     boolean required = true;
@@ -356,6 +443,16 @@ public class TextFieldTest extends ElementTest {
   @Test
   public void testTextFieldWithoutName() throws Exception {
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field/></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldWithBlankName() throws Exception {
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><text-field name=\" \"/></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"name\" is required");

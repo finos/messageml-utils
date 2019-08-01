@@ -24,6 +24,11 @@ public class Form extends Element {
   }
 
   @Override
+  public Boolean hasIdAttribute() {
+    return true;
+  }
+
+  @Override
   public void validate() throws InvalidInputException {
     super.validate();
     assertNotParentAtAnyLevel(Collections.singletonList(this.getClass()));
@@ -32,6 +37,8 @@ public class Form extends Element {
     if (getAttribute(ID_ATTR) == null) {
       throw new InvalidInputException("The attribute \"id\" is required");
     }
+
+    assertAttributeNotBlank(ID_ATTR);
   }
 
   @Override

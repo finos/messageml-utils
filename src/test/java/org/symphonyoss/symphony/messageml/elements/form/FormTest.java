@@ -35,6 +35,16 @@ public class FormTest extends ElementTest {
   }
 
   @Test
+  public void testFormWithBlankId() throws Exception {
+    String input = "<messageML><form id=\" \"></form></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"id\" is required");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testFormWithInvalidAttribute() throws Exception {
     String id = "invalid-attribute-form";
     String input = "<messageML><form id=\"" + id + "\" invalid=\"true\"></form></messageML>";
@@ -64,6 +74,16 @@ public class FormTest extends ElementTest {
     expectedException.expectMessage("Element \"form\" cannot be an inner child of the following elements: [form]");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultipleFormsUsingSameId() throws Exception {
+    String notUniqueId = "id-1";
+    String message = "<messageML><form id=\"" + notUniqueId + "\"></form><div><form id=\"id-2\"></form><form id=\"" + notUniqueId + "\"></form></div></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Elements must have unique ids. The following value is not unique: [" + notUniqueId + "].");
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
   }
 
   private String getExpectedFormPresentationML(Form form) {

@@ -69,6 +69,14 @@ public class PersonSelectorTest extends ElementTest {
   }
 
   @Test
+  public void sendPersonSelectorWithBlankName() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"name\" is required");
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\" \"></person-selector></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+
+  @Test
   public void sendPersonSelectorOutsideForm() throws Exception {
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div><person-selector name=\"some-name\"/></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
 

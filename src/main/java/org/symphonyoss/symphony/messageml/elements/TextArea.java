@@ -39,6 +39,7 @@ public class TextArea extends FormElement {
       assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
     }
 
+    assertAttributeNotBlank(NAME_ATTR);
     assertContentModel(Collections.singleton(TextNode.class));
   }
 
