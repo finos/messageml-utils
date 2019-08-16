@@ -75,7 +75,7 @@ public class ButtonTest extends ElementTest {
   @Test
   public void testActionButtonWithName() throws Exception {
     String type = "action";
-    String name = "btn-name";
+    String name = "btnName";
     String innerText = "Action Button With Name";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\">" + innerText
             + "</button></form></messageML>";

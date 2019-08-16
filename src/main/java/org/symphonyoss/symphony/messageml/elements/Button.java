@@ -32,15 +32,15 @@ public class Button extends FormElement {
   public void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
-        setAttribute(NAME_ATTR, getStringAttribute(item).toLowerCase());
+        setAttribute(NAME_ATTR, getStringAttribute(item));
         break;
 
       case TYPE_ATTR:
-        setAttribute(TYPE_ATTR, getStringAttribute(item).toLowerCase());
+        setAttribute(TYPE_ATTR, getStringAttribute(item));
         break;
 
       case CLASS_ATTR:
-        setAttribute(CLASS_ATTR, getStringAttribute(item).toLowerCase());
+        setAttribute(CLASS_ATTR, getStringAttribute(item));
         break;
 
       default:
