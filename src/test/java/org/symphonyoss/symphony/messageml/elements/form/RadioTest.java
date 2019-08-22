@@ -25,6 +25,7 @@ public class RadioTest extends ElementTest {
     input.append("<radio name=\"groupId\" value=\"value01\">First</radio>");
     input.append("<radio name=\"groupId\" value=\"value02\">Second</radio>");
     input.append("<radio name=\"groupId\" value=\"value03\">Third</radio>");
+    input.append(ACTION_BTN_ELE);
     input.append("</form></messageML>");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
@@ -39,6 +40,7 @@ public class RadioTest extends ElementTest {
     expectedMarkdown.append("\n(Radio Button:groupId)");
     expectedMarkdown.append("(Radio Button:groupId)");
     expectedMarkdown.append("(Radio Button:groupId)");
+    expectedMarkdown.append(ACTION_BTN_MD);
     expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
@@ -55,7 +57,7 @@ public class RadioTest extends ElementTest {
         "<label>Second</label></div>" +
         "<div class=\"radio-group\">" +
         "<input type=\"radio\" name=\"groupId\" value=\"value03\"/>" +
-        "<label>Third</label></div>" +
+        "<label>Third</label></div>" + ACTION_BTN_ELE +
         "</form></div>");
 
     String presentationML = context.getPresentationML();
@@ -66,7 +68,7 @@ public class RadioTest extends ElementTest {
   public void testPresentationMLCheckboxWithOnlyNameAttribute() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"radio-form\">" +
-        "<input type=\"radio\" name=\"radio-name\"/>" +
+        "<input type=\"radio\" name=\"radio-name\"/>" + ACTION_BTN_ELE +
         "</form></div>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -78,11 +80,12 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
     
     String presentationML = context.getPresentationML();
-    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"radio-form\"><input type=\"radio\" name=\"radio-name\" value=\"on\"/></form></div>";
+    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"radio-form\"><input type=\"radio\" name=\"radio-name\" value=\"on\"/>" + ACTION_BTN_ELE + "</form></div>";
     assertEquals(expectedPresentationML, presentationML);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:radio-name)");
+    expectedMarkdown.append(ACTION_BTN_MD);
     expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
@@ -155,6 +158,7 @@ public class RadioTest extends ElementTest {
   public void testCompleteFilledRadio() throws Exception {
     StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
     input.append("<radio name=\"groupId\" value=\"value01\" checked=\"true\">First</radio>");
+    input.append(ACTION_BTN_ELE);
     input.append("</form></messageML>");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
@@ -167,6 +171,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append(ACTION_BTN_MD);
     expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
@@ -177,7 +182,7 @@ public class RadioTest extends ElementTest {
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
         "<input type=\"radio\" name=\"groupId\" value=\"value01\" checked=\"true\"/>" +
-        "<label>First</label></div>" +
+        "<label>First</label></div>"  + ACTION_BTN_ELE +
         "</form></div>");
 
     String presentationML = context.getPresentationML();
@@ -188,6 +193,7 @@ public class RadioTest extends ElementTest {
   public void testNonCheckedCompleteRadio() throws Exception {
     StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
     input.append("<radio name=\"groupId\" value=\"value01\" checked=\"false\">First</radio>");
+    input.append(ACTION_BTN_ELE);
     input.append("</form></messageML>");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
@@ -200,6 +206,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append(ACTION_BTN_MD);
     expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
@@ -210,7 +217,7 @@ public class RadioTest extends ElementTest {
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
         "<input type=\"radio\" name=\"groupId\" value=\"value01\" checked=\"false\"/>" +
-        "<label>First</label></div>" +
+        "<label>First</label></div>" + ACTION_BTN_ELE +
         "</form></div>");
 
     String presentationML = context.getPresentationML();
@@ -221,6 +228,7 @@ public class RadioTest extends ElementTest {
   public void testNoCheckedParameterRadio() throws Exception {
     StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
     input.append("<radio name=\"groupId\" value=\"value01\">First</radio>");
+    input.append(ACTION_BTN_ELE);
     input.append("</form></messageML>");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
@@ -233,6 +241,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append(ACTION_BTN_MD);
     expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
@@ -243,7 +252,7 @@ public class RadioTest extends ElementTest {
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
         "<input type=\"radio\" name=\"groupId\" value=\"value01\"/>" +
-        "<label>First</label></div>" +
+        "<label>First</label></div>" + ACTION_BTN_ELE +
         "</form></div>");
 
     String presentationML = context.getPresentationML();
@@ -254,6 +263,7 @@ public class RadioTest extends ElementTest {
   public void testNoValueParameterRadio() throws Exception {
     StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
     input.append("<radio name=\"groupId\" checked=\"true\">First</radio>");
+    input.append(ACTION_BTN_ELE);
     input.append("</form></messageML>");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
@@ -266,6 +276,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append(ACTION_BTN_MD);
     expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
@@ -276,7 +287,7 @@ public class RadioTest extends ElementTest {
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
         "<input type=\"radio\" name=\"groupId\" value=\"on\" checked=\"true\"/>" +
-        "<label>First</label></div>" +
+        "<label>First</label></div>" + ACTION_BTN_ELE +
         "</form></div>");
 
     String presentationML = context.getPresentationML();
@@ -287,6 +298,7 @@ public class RadioTest extends ElementTest {
   public void testSimplerRadio() throws Exception {
     StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
     input.append("<radio name=\"groupId\">First</radio>");
+    input.append(ACTION_BTN_ELE);
     input.append("</form></messageML>");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
@@ -299,6 +311,7 @@ public class RadioTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append(ACTION_BTN_MD);
     expectedMarkdown.append("\n---\n");
 
     String markdown = context.getMarkdown();
@@ -309,7 +322,7 @@ public class RadioTest extends ElementTest {
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
         "<input type=\"radio\" name=\"groupId\" value=\"on\"/>" +
-        "<label>First</label></div>" +
+        "<label>First</label></div>" + ACTION_BTN_ELE +
         "</form></div>");
 
     String presentationML = context.getPresentationML();
@@ -369,6 +382,7 @@ public class RadioTest extends ElementTest {
   public void testNoTextParameterRadio() throws Exception {
     StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
     input.append("<radio name=\"groupId\"></radio>");
+    input.append(ACTION_BTN_ELE);
     input.append("</form></messageML>");
 
     context.parseMessageML(input.toString(), null, MessageML.MESSAGEML_VERSION);
@@ -381,15 +395,16 @@ public class RadioTest extends ElementTest {
     String presentationML = context.getPresentationML();
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
-        "<input type=\"radio\" name=\"groupId\" value=\"on\"/>" +
+        "<input type=\"radio\" name=\"groupId\" value=\"on\"/>" + ACTION_BTN_ELE +
         "</form></div>");    
     
     assertEquals(expectedPresentationML, presentationML);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
     expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append(ACTION_BTN_MD);
     expectedMarkdown.append("\n---\n");
-    
+
     String markdown = context.getMarkdown();
     assertEquals(expectedMarkdown.toString(), markdown);
   }

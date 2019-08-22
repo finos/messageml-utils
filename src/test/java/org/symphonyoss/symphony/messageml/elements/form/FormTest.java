@@ -10,18 +10,16 @@ public class FormTest extends ElementTest {
   private static final String ID_ATTR = "id";
   
   @Test
-  public void testEmptyForm() throws Exception {
+  public void testEmptyForm() {
     String id = "empty-form";
     String input = "<messageML><form id=\"" + id + "\"></form></messageML>";
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-
-    Element messageML = context.getMessageML();
-    Element form = messageML.getChildren().get(0);
-
-    assertEquals(Form.class, form.getClass());
-    
-    verifyFormPresentation((Form) form, id);
-    verifyFormMarkdown();
+    try {
+      context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    } catch (Exception e) {
+      assertEquals("Exception class", InvalidInputException.class, e.getClass());
+      assertEquals("Exception message",
+          "The form with id 'empty-form' should have at least one action button", e.getMessage());
+    }
   }
   
   @Test
@@ -79,7 +77,12 @@ public class FormTest extends ElementTest {
   @Test
   public void testMultipleFormsUsingSameId() throws Exception {
     String notUniqueId = "id-1";
-    String message = "<messageML><form id=\"" + notUniqueId + "\"></form><div><form id=\"id-2\"></form><form id=\"" + notUniqueId + "\"></form></div></messageML>";
+    String message = "<messageML>"
+        + "<form id=\"" + notUniqueId + "\">" + ACTION_BTN_ELE + "</form>"
+        + "<div>"
+        + "<form id=\"id-2\">" + ACTION_BTN_ELE + "</form>"
+        + "<form id=\"" + notUniqueId + "\">" + ACTION_BTN_ELE + "</form>"
+        + "</div></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Elements must have unique ids. The following value is not unique: [" + notUniqueId + "].");

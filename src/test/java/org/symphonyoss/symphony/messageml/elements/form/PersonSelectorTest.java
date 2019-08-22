@@ -15,7 +15,7 @@ public class PersonSelectorTest extends ElementTest {
   
   @Test
   public void sendValidPersonSelectorOnPresentationML() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\" data-name=\"one-name\" data-placeholder=\"some-placeholder\" data-required=\"true\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\" data-name=\"one-name\" data-placeholder=\"some-placeholder\" data-required=\"true\"/>" + ACTION_BTN_ELE + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
     assertDataFromValidParsedTag("one-name", "some-placeholder", true);
   }
 
@@ -36,14 +36,14 @@ public class PersonSelectorTest extends ElementTest {
   @Test
   public void sendValidPersonSelector() throws Exception {
     String name = "some-name";
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\"" + name + "\" placeholder=\"Add some user here...\" required=\"false\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\"" + name + "\" placeholder=\"Add some user here...\" required=\"false\"/>" + ACTION_BTN_ELE + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
     assertDataFromValidParsedTag(name, "Add some user here...", false);
   }
 
   @Test
   public void sendValidPersonSelectorWithClosingTag() throws Exception {
     String name = "other-name";
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\"" + name +"\" placeholder=\"Add some user here...\"></person-selector></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><person-selector name=\"" + name +"\" placeholder=\"Add some user here...\"></person-selector>" + ACTION_BTN_ELE + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
     assertDataFromValidParsedTag(name, "Add some user here...", null);
   }
 
@@ -78,7 +78,7 @@ public class PersonSelectorTest extends ElementTest {
 
   @Test
   public void sendPersonSelectorOutsideForm() throws Exception {
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div><person-selector name=\"some-name\"/></div></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div><person-selector name=\"some-name\"/></div>" + ACTION_BTN_ELE + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
 
     MessageML messageML = context.getMessageML();
     Element form = messageML.getChildren().get(0);
@@ -86,8 +86,8 @@ public class PersonSelectorTest extends ElementTest {
     assertEquals(form.getClass(), Form.class);
     assertEquals(personSelector.getClass(), PersonSelector.class);
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
-        "\"><div><div class=\"person-selector\" data-name=\"some-name\"></div></div></form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:some-name)\n\n\n---\n", context.getMarkdown());
+        "\"><div><div class=\"person-selector\" data-name=\"some-name\"></div></div>" + ACTION_BTN_ELE + "</form></div>", context.getPresentationML());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:some-name)\n\n" + ACTION_BTN_MD + "\n---\n", context.getMarkdown());
   }
 
   private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {
@@ -100,7 +100,7 @@ public class PersonSelectorTest extends ElementTest {
         "\"><div class=\"person-selector\" data-name=\"" + dataName + "\"" + 
         (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
-        "></div></form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:" + dataName + ")\n---\n", context.getMarkdown());
+        "></div>" + ACTION_BTN_ELE + "</form></div>", context.getPresentationML());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:" + dataName + ")" + ACTION_BTN_MD + "\n---\n", context.getMarkdown());
   }
 }

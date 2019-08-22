@@ -17,15 +17,22 @@ import java.util.Set;
  * @since 03/21/19
  */
 public class Button extends FormElement {
-  public static final String MESSAGEML_TAG = "button";
 
-  private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
-          "primary-destructive", "secondary-destructive"));
-  private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList("action", "reset"));
+  public static final String MESSAGEML_TAG = "button";
+  public static final String ACTION_TYPE = "action";
+  public static final String RESET_TYPE = "reset";
+  public static final String PRIMARY_CLASS = "primary";
+  public static final String SECONDARY_CLASS = "secondary";
+  public static final String PRIMARY_DESTR_CLASS = "primary-destructive";
+  public static final String SECONDARY_DESTR_CLASS = "secondary-destructive";
+
+  private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList(PRIMARY_CLASS, SECONDARY_CLASS,
+      PRIMARY_DESTR_CLASS, SECONDARY_DESTR_CLASS));
+  private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList(ACTION_TYPE, RESET_TYPE));
 
   public Button(Element parent) {
     super(parent, MESSAGEML_TAG);
-    setAttribute(TYPE_ATTR, "action");
+    setAttribute(TYPE_ATTR, ACTION_TYPE);
   }
 
   @Override
@@ -69,10 +76,10 @@ public class Button extends FormElement {
       throw new InvalidInputException("Attribute \"class\" must be \"primary\", \"secondary\", " +
               "\"primary-destructive\" or \"secondary-destructive\"");
     }
-    if (type.equals("action") && StringUtils.isBlank(name)) {
+    if (type.equals(ACTION_TYPE) && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for action buttons");
     }
-    if (type.equals("reset") && getAttributes().containsKey(NAME_ATTR)) {
+    if (type.equals(RESET_TYPE) && getAttributes().containsKey(NAME_ATTR)) {
       throw new InvalidInputException("Attribute \"name\" is allowed for action buttons only");
     }
 
