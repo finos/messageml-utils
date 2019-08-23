@@ -35,7 +35,7 @@ public class CheckboxTest extends ElementTest {
         "<div class=\"checkbox-group\">" +
         "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
         "<label>%s</label>" +
-        "</div>" + ACTION_BTN_ELE + "</form></div>", this.name, this.value, this.text);
+        "</div>" + ACTION_BTN_ELEMENT + "</form></div>", this.name, this.value, this.text);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
@@ -47,7 +47,7 @@ public class CheckboxTest extends ElementTest {
   public void testPresentationMLCheckboxWithOnlyNameAttribute() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"checkbox-form\">" +
-        "<input type=\"checkbox\" name=\"checkbox-name\"/>" + ACTION_BTN_ELE +
+        "<input type=\"checkbox\" name=\"checkbox-name\"/>" + ACTION_BTN_ELEMENT +
         "</form></div>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -313,7 +313,7 @@ public class CheckboxTest extends ElementTest {
         (shouldSendCheckedAttribute ? String.format(" checked=\"%s\"", checked) : "") +
         ">" +
         (text != null ? text : "") +
-        "</checkbox>" + ACTION_BTN_ELE + "</form></messageML>";
+        "</checkbox>" + ACTION_BTN_ELEMENT + "</form></messageML>";
   }
 
   private void verifyMessageMLObjectsForCheckbox(MessageMLContext context) {
@@ -337,7 +337,7 @@ public class CheckboxTest extends ElementTest {
         (value != null ? String.format(" value=\"%s\"", value) : " value=\"on\"") +
         "/><label>" +
         (text != null ? text : "") +
-        "</label></div>" + ACTION_BTN_ELE + "</form></div>";
+        "</label></div>" + ACTION_BTN_ELEMENT + "</form></div>";
   }
 
   private void verifyCheckboxMarkdown(MessageMLContext context, String name) {
@@ -347,6 +347,7 @@ public class CheckboxTest extends ElementTest {
   }
 
   private String buildExpectedMarkdownForCheckbox(String name) {
-    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)%s\n---\n", name, ACTION_BTN_MD);
+    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)%s\n---\n", name,
+        ACTION_BTN_MARKDOWN);
   }
 }

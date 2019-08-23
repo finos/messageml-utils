@@ -78,10 +78,10 @@ public class FormTest extends ElementTest {
   public void testMultipleFormsUsingSameId() throws Exception {
     String notUniqueId = "id-1";
     String message = "<messageML>"
-        + "<form id=\"" + notUniqueId + "\">" + ACTION_BTN_ELE + "</form>"
+        + "<form id=\"" + notUniqueId + "\">" + ACTION_BTN_ELEMENT + "</form>"
         + "<div>"
-        + "<form id=\"id-2\">" + ACTION_BTN_ELE + "</form>"
-        + "<form id=\"" + notUniqueId + "\">" + ACTION_BTN_ELE + "</form>"
+        + "<form id=\"id-2\">" + ACTION_BTN_ELEMENT + "</form>"
+        + "<form id=\"" + notUniqueId + "\">" + ACTION_BTN_ELEMENT + "</form>"
         + "</div></messageML>";
 
     expectedException.expect(InvalidInputException.class);

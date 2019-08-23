@@ -48,7 +48,7 @@ public class ButtonTest extends ElementTest {
     String type = RESET_TYPE;
     String innerText = "Reset";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\">" + innerText +
-        "</button>" + ACTION_BTN_ELE + "</form></messageML>";
+        "</button>" + ACTION_BTN_ELEMENT + "</form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -117,7 +117,7 @@ public class ButtonTest extends ElementTest {
       String input =
           "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">"
               + innerText
-              + "</button>" + ACTION_BTN_ELE + "</form></messageML>";
+              + "</button>" + ACTION_BTN_ELEMENT + "</form></messageML>";
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
       Element messageML = context.getMessageML();
@@ -307,7 +307,7 @@ public class ButtonTest extends ElementTest {
     if (shouldHaveAdditionalStandardActionBtn) {
       return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
           + "\"><button type=\"" + type + "\"" + getClassPresentationML(clazz) + getNamePresentationML(name) + ">"
-          + innerText + "</button>" + ACTION_BTN_ELE + "</form></div>";
+          + innerText + "</button>" + ACTION_BTN_ELEMENT + "</form></div>";
     } else {
       return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
           + "\"><button type=\"" + type + "\"" + getClassPresentationML(clazz) + getNamePresentationML(name) + ">"
@@ -317,7 +317,7 @@ public class ButtonTest extends ElementTest {
 
   private String getExpectedButtonMarkdown(String innerText, Boolean shouldHaveAdditionalStandardActionBtn) {
     if (shouldHaveAdditionalStandardActionBtn) {
-      return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")" + ACTION_BTN_MD + "\n---\n";
+      return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")" + ACTION_BTN_MARKDOWN + "\n---\n";
     } else {
       return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")\n---\n";
     }

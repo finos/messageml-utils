@@ -26,7 +26,7 @@ public class SelectOptionTest extends ElementTest {
     boolean required = true;
     String placeholder = "placeholder-here";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select data-placeholder=\""+placeholder+"\" name=\"" + name + "\" required=\"" + required +
-            "\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELE + "</form></messageML>";
+            "\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELEMENT + "</form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -42,7 +42,7 @@ public class SelectOptionTest extends ElementTest {
     String name = "complete-id";
     boolean required = false;
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" + name + "\" required=\"" + required +
-            "\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELE + "</form></messageML>";
+            "\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELEMENT + "</form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -56,7 +56,8 @@ public class SelectOptionTest extends ElementTest {
   @Test
   public void testSimpleSelect() throws Exception {
     String name = "simple-id";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" + name + "\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELE + "</form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" + name + "\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELEMENT
+        + "</form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -71,7 +72,7 @@ public class SelectOptionTest extends ElementTest {
   public void testDoubleOptionSelect() throws Exception {
     String name = "simple-id";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" + name + "\"><option value=\"1\">Option 1</option><option value=\"2\">" +
-            "Option 2</option></select>" + ACTION_BTN_ELE + "</form></messageML>";
+            "Option 2</option></select>" + ACTION_BTN_ELEMENT + "</form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -86,7 +87,7 @@ public class SelectOptionTest extends ElementTest {
   public void testOptionWithSelectedAttr() throws Exception {
     String name = "simple-id";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" + name + "\"><option selected=\"true\" value=\"1\">Option 1</option><option value=\"2\">" +
-        "Option 2</option></select>" + ACTION_BTN_ELE + "</form></messageML>";
+        "Option 2</option></select>" + ACTION_BTN_ELEMENT + "</form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     Element messageML = context.getMessageML();
@@ -270,7 +271,7 @@ public class SelectOptionTest extends ElementTest {
         selectMarkdown = selectMarkdown + "-" + option.getChild(0).asText() + "\n";
       }
     }
-    return FORM_MARKDOWN_HEADER + selectMarkdown + ACTION_BTN_MD + "\n" + FORM_MARKDOWN_FOOTER;
+    return FORM_MARKDOWN_HEADER + selectMarkdown + ACTION_BTN_MARKDOWN + "\n" + FORM_MARKDOWN_FOOTER;
   }
 
   private String getExpectedSelectPresentation(Select select) {
@@ -289,7 +290,7 @@ public class SelectOptionTest extends ElementTest {
             option.getAttribute(VALUE_ATTR) + "\">" + option.getChild(0).asText() + "</option>";
       }
     }
-    return selectOpeningTag + selectChildren + selectClosingTag + ACTION_BTN_ELE + formDivClosingTag;
+    return selectOpeningTag + selectChildren + selectClosingTag + ACTION_BTN_ELEMENT + formDivClosingTag;
   }
 
   private String getPlaceholderAttribute(String placeholder) {
