@@ -51,6 +51,9 @@ public class ElementTest {
   static final ObjectMapper MAPPER = new ObjectMapper();
   final IDataProvider dataProvider = new TestDataProvider();
 
+  protected static final String ACTION_BTN_ELEMENT = "<button type=\"action\" name=\"actionName\">Send</button>";
+  protected static final String ACTION_BTN_MARKDOWN = "(Button:Send)";
+
   @Rule
   public final ExpectedException expectedException = ExpectedException.none();
 
