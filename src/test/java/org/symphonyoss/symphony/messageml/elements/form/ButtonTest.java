@@ -1,5 +1,10 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.symphonyoss.symphony.messageml.elements.Button.ACTION_TYPE;
+import static org.symphonyoss.symphony.messageml.elements.Button.RESET_TYPE;
+
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.elements.Button;
 import org.symphonyoss.symphony.messageml.elements.Element;
@@ -10,12 +15,6 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.symphonyoss.symphony.messageml.elements.Button.ACTION_TYPE;
-import static org.symphonyoss.symphony.messageml.elements.Button.PRIMARY_CLASS;
-import static org.symphonyoss.symphony.messageml.elements.Button.RESET_TYPE;
 
 public class ButtonTest extends ElementTest {
 
@@ -30,7 +29,7 @@ public class ButtonTest extends ElementTest {
   public void testCompleteButton() throws Exception {
     String type = ACTION_TYPE;
     String name = "action-btn-name";
-    String clazz = PRIMARY_CLASS;
+    String clazz = "primary";
     String innerText = "Complete";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\" name=\"" + name + "\">"
             + innerText + "</button></form></messageML>";
