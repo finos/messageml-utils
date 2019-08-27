@@ -57,15 +57,54 @@ public class RadioTest extends ElementTest {
         "<label>Second</label></div>" +
         "<div class=\"radio-group\">" +
         "<input type=\"radio\" name=\"groupId\" value=\"value03\"/>" +
-        "<label>Third</label></div>" + ACTION_BTN_ELEMENT +
+        "<label>Third</label></div>" + 
+        ACTION_BTN_ELEMENT +
         "</form></div>");
 
     String presentationML = context.getPresentationML();
     assertEquals(expectedPresentationML, presentationML);
   }
-
+  
   @Test
-  public void testPresentationMLCheckboxWithOnlyNameAttribute() throws Exception {
+  public void testPresentationMLRadioWithLinebreaksAndWhitespacesBetweenTags() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"radio-group\">\n" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value02\"/>\n" +
+        " <label>Second</label>\n" +
+        "</div>" + ACTION_BTN_ELEMENT + 
+        "</form></div>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+
+    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
+    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append(ACTION_BTN_MARKDOWN);
+    expectedMarkdown.append("\n---\n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
+
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"radio-group\">" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value02\"/>" +
+        "<label>Second</label></div>" +
+        ACTION_BTN_ELEMENT +
+        "</form></div>");
+
+    String presentationML = context.getPresentationML();
+    assertEquals(expectedPresentationML, presentationML);
+  }
+  @Test
+  public void testPresentationMLRadioWithOnlyNameAttribute() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"radio-form\">" +
         "<input type=\"radio\" name=\"radio-name\"/>" + ACTION_BTN_ELEMENT +
@@ -390,9 +429,9 @@ public class RadioTest extends ElementTest {
     
     MessageML messageML = context.getMessageML();
     Element form = messageML.getChildren().get(0);
-    Element checkbox = form.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
     assertEquals(form.getClass(), Form.class);
-    assertEquals(checkbox.getClass(), Radio.class);
+    assertEquals(radio.getClass(), Radio.class);
     String presentationML = context.getPresentationML();
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +

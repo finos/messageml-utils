@@ -140,13 +140,14 @@ public class Radio extends FormElement {
 
   private void buildElementFromGroupDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
     NodeList children = element.getChildNodes();
-
-    if (children.getLength() != PRESENTATIONML_DIV_NUMBER_OF_CHILDREN) {
+    Integer numberOfNonTextChildrenNodes = countNonTextNodesInNodeList(children);
+    
+    if (numberOfNonTextChildrenNodes != PRESENTATIONML_DIV_NUMBER_OF_CHILDREN) {
       throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
     }
 
     String firstNodeName = "";
-    for (int i = 0; i < PRESENTATIONML_DIV_NUMBER_OF_CHILDREN; i++) {
+    for (int i = 0; i < children.getLength(); i++) {
       if(firstNodeName.equals(children.item(i).getNodeName())) {
         throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));
       }
@@ -159,6 +160,8 @@ public class Radio extends FormElement {
         case PRESENTATIONML_LABEL_TAG:
           buildTextFromLabelTag(context, children.item(i));
           firstNodeName = PRESENTATIONML_LABEL_TAG;
+          break;
+        case "#text":
           break;
         default:
           throw new InvalidInputException(String.format("Invalid PresentationML for the \"%s\" element", MESSAGEML_TAG));

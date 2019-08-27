@@ -27,6 +27,22 @@ public class CheckboxTest extends ElementTest {
     this.text = "Checkbox Text";
     this.checked = "false";
   }
+  
+  @Test
+  public void testPresentationMLCheckBoxWithLinebreaksAndWhitespacesBetweenTags() throws Exception {
+    String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"" + formId + "\">" +
+        "<div class=\"checkbox-group\">\n" +
+        "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>\n" +
+        " <label>%s</label>\n" +
+        "</div>" + ACTION_BTN_ELEMENT +
+        "</form></div>", this.name, this.value, this.text);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    verifyMessageMLObjectsForCheckbox(context);
+    verifyCheckboxPresentationML(context, name, value, text, null, false);
+    verifyCheckboxMarkdown(context, name);
+  }
 
   @Test
   public void testPresentationMLCheckbox() throws Exception {
