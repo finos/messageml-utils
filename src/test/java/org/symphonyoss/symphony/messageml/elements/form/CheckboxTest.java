@@ -35,7 +35,8 @@ public class CheckboxTest extends ElementTest {
         "<div class=\"checkbox-group\">\n" +
         "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>\n" +
         " <label>%s</label>\n" +
-        "</div></form></div>", this.name, this.value, this.text);
+        "</div>" + ACTION_BTN_ELEMENT +
+        "</form></div>", this.name, this.value, this.text);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
