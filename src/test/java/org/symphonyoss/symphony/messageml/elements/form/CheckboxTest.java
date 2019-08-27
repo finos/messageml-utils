@@ -50,7 +50,7 @@ public class CheckboxTest extends ElementTest {
         "<div class=\"checkbox-group\">" +
         "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
         "<label>%s</label>" +
-        "</div></form></div>", this.name, this.value, this.text);
+        "</div>" + ACTION_BTN_ELEMENT + "</form></div>", this.name, this.value, this.text);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
@@ -62,14 +62,15 @@ public class CheckboxTest extends ElementTest {
   public void testPresentationMLCheckboxWithOnlyNameAttribute() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"checkbox-form\">" +
-        "<input type=\"checkbox\" name=\"checkbox-name\"/>" +
+        "<input type=\"checkbox\" name=\"checkbox-name\"/>" + ACTION_BTN_ELEMENT +
         "</form></div>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     verifyMessageMLObjectsForCheckbox(context);
     String presentationML = context.getPresentationML();
-    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" value=\"on\"/></form></div>";
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" value=\"on\"/><button type=\"action\" name=\"actionName\">Send</button></form></div>";
     assertEquals(expectedPresentationML, presentationML);
 
     verifyCheckboxMarkdown(context, name);
@@ -229,7 +230,8 @@ public class CheckboxTest extends ElementTest {
 
     verifyMessageMLObjectsForCheckbox(context);
     String presentationML = context.getPresentationML();
-    String expectedPresentationML ="<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" checked=\"false\" value=\"checkbox-value\"/></form></div>";
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" checked=\"false\" value=\"checkbox-value\"/><button type=\"action\" name=\"actionName\">Send</button></form></div>";
     assertEquals(expectedPresentationML, presentationML);
 
     verifyCheckboxMarkdown(context, name);
@@ -326,7 +328,7 @@ public class CheckboxTest extends ElementTest {
         (shouldSendCheckedAttribute ? String.format(" checked=\"%s\"", checked) : "") +
         ">" +
         (text != null ? text : "") +
-        "</checkbox></form></messageML>";
+        "</checkbox>" + ACTION_BTN_ELEMENT + "</form></messageML>";
   }
 
   private void verifyMessageMLObjectsForCheckbox(MessageMLContext context) {
@@ -350,7 +352,7 @@ public class CheckboxTest extends ElementTest {
         (value != null ? String.format(" value=\"%s\"", value) : " value=\"on\"") +
         "/><label>" +
         (text != null ? text : "") +
-        "</label></div></form></div>";
+        "</label></div>" + ACTION_BTN_ELEMENT + "</form></div>";
   }
 
   private void verifyCheckboxMarkdown(MessageMLContext context, String name) {
@@ -360,6 +362,7 @@ public class CheckboxTest extends ElementTest {
   }
 
   private String buildExpectedMarkdownForCheckbox(String name) {
-    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)\n---\n", name);
+    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)%s\n---\n", name,
+        ACTION_BTN_MARKDOWN);
   }
 }
