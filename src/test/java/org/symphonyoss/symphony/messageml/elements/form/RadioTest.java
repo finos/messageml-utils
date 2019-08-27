@@ -10,9 +10,6 @@ import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.Radio;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-
-import java.io.IOException;
 
 public class RadioTest extends ElementTest {
   private String formId;
@@ -66,11 +63,11 @@ public class RadioTest extends ElementTest {
   }
   
   @Test
-  public void testPresentationMLRadioWithLinebreaksAndWhitespacesBetweenTags() throws InvalidInputException, IOException, ProcessingException {
+  public void testPresentationMLRadioWithLinebreaksAndWhitespacesBetweenTags() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">\n" +
-        " <input type=\"radio\" name=\"groupId\" value=\"value02\"/>\n" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value02\"/>\n" +
         " <label>Second</label>\n" +
         "</div></form></div>";
 

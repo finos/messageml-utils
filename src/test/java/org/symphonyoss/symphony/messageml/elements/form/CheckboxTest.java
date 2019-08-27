@@ -9,9 +9,6 @@ import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,11 +29,11 @@ public class CheckboxTest extends ElementTest {
   }
   
   @Test
-  public void testPresentationMLCheckBoxWithLinebreaksAndWhitespacesBetweenTags() throws InvalidInputException, IOException, ProcessingException {
+  public void testPresentationMLCheckBoxWithLinebreaksAndWhitespacesBetweenTags() throws Exception {
     String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"checkbox-group\">\n" +
-        " <input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
+        "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>\n" +
         " <label>%s</label>\n" +
         "</div></form></div>", this.name, this.value, this.text);
 

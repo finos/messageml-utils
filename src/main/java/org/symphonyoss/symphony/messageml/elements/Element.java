@@ -607,6 +607,18 @@ public abstract class Element {
 
     return result;
   }
+  
+  public Integer countNonTextNodesInNodeList(NodeList nodeList) {
+    Integer numberOfNonTextNodes = 0;
+
+    for(int i = 0; i < nodeList.getLength(); i ++) {
+      if(!"#text".equals(nodeList.item(i).getNodeName())) {
+        numberOfNonTextNodes++;
+      }
+    }
+    
+    return numberOfNonTextNodes;
+  }
 
   private String getElementsNameByClassName(Collection<Class<? extends Element>> elementsClasses) {
     return elementsClasses.stream()
