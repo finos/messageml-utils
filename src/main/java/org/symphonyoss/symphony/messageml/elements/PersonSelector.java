@@ -32,7 +32,7 @@ public class PersonSelector extends FormElement {
   private static final String PRESENTATIONML_PLACEHOLDER_ATTR = "data-placeholder";
   private static final String PRESENTATIONML_REQUIRED_ATTR = "data-required";
 
-  private final static String MARKDOWN = "Person Selector:";
+  private final static String MARKDOWN = "Person Selector";
   private static final String CLASS_ATTR = "class";
   private static final String PRESENTATIONML_NAME_ATTR = "data-name";
 
@@ -80,7 +80,10 @@ public class PersonSelector extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
+    String markdownText = (getAttribute(PLACEHOLDER_ATTR) != null) ? ":[" + getAttribute(PLACEHOLDER_ATTR) + "]" : "";
+
+    return new FormElementNode(MARKDOWN, markdownText);
+
   }
 
   @Override

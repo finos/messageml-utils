@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
 
 import java.util.Arrays;
@@ -42,7 +43,9 @@ public class Select extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new SelectNode(getAttribute(NAME_ATTR));
+    String markdownText = (getAttribute(DATA_PLACEHOLDER_ATTR) != null) ? ":[" + getAttribute(DATA_PLACEHOLDER_ATTR) + "]" : "";
+    
+    return new SelectNode(markdownText);
   }
 
   @Override

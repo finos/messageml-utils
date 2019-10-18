@@ -20,8 +20,12 @@ public class TextAreaTest extends ElementTest {
   private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)" + ACTION_BTN_MARKDOWN
       + "\n---\n";
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE);
-
+      String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s])" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE);
+  private static final String EXPECTED_MARKDOWN_WITH_INITIAL_VALUE =
+      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE);
+  private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER_AND_INITIAL_VALUE =
+      String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s]%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE, INITIAL_VALUE);
+  
   @Test
   public void testTextAreaWithRequiredAttributesOnly() throws Exception {
     String input = String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\"></textarea>%s</form></messageML>", NAME_VALUE,
@@ -59,7 +63,7 @@ public class TextAreaTest extends ElementTest {
 
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
-    assertEquals("Markdown", EXPECTED_MARKDOWN_WITH_PLACEHOLDER, context.getMarkdown());
+    assertEquals("Markdown", EXPECTED_MARKDOWN_WITH_PLACEHOLDER_AND_INITIAL_VALUE, context.getMarkdown());
     assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
     assertEquals("Text should be the initial value", INITIAL_VALUE, textArea.getChild(0).asText());
   }
@@ -79,7 +83,7 @@ public class TextAreaTest extends ElementTest {
 
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
-    assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
+    assertEquals("Markdown", EXPECTED_MARKDOWN_WITH_INITIAL_VALUE, context.getMarkdown());
     assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
     assertEquals("Text should be the initial value", INITIAL_VALUE, textArea.getChild(0).asText());
   }

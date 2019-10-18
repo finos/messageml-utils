@@ -50,7 +50,7 @@ public class Radio extends FormElement {
   private static final String VALUE_ATTR = "value";
   private static final String CHECKED_ATTR = "checked";
 
-  private static final String MARKDOWN = "Radio Button:";
+  private static final String MARKDOWN = "Radio Button";
 
   public Radio(Element parent, FormatEnum messageFormat) {
     super(parent, MESSAGEML_TAG, messageFormat);
@@ -78,7 +78,9 @@ public class Radio extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
+    String markdownText = (getChildren() != null && getChildren().size() == 1) ? ":" + getChildren().get(0).asText() : "" ;
+
+    return new FormElementNode(MARKDOWN, markdownText);    
   }
 
   @Override

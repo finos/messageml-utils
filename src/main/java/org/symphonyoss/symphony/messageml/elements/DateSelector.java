@@ -33,7 +33,7 @@ public class DateSelector extends FormElement {
   private static final String PRESENTATIONML_REQUIRED_ATTR = "data-required";
   
   private static final String PRESENTATIONML_TAG = "div";
-  private static final String MARKDOWN = "Date Selector:";
+  private static final String MARKDOWN = "Date Selector";
   private static final String CLASS_ATTR = "class";
 
   public DateSelector(Element parent, FormatEnum messageFormat) {
@@ -79,7 +79,9 @@ public class DateSelector extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
+    String markdownText = (getAttribute(PLACEHOLDER_ATTR) != null) ? ":[" + getAttribute(PLACEHOLDER_ATTR) + "]" : "";
+
+    return new FormElementNode(MARKDOWN, markdownText);
   }
 
   @Override

@@ -88,8 +88,11 @@ public class TextField extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    if (getAttribute(PLACEHOLDER_ATTR) != null) {
-      return new FormElementNode(MARKDOWN, ":" + getAttribute(PLACEHOLDER_ATTR));
+    String markdownText = ((getAttribute(PLACEHOLDER_ATTR) != null) ? "[" + getAttribute(PLACEHOLDER_ATTR) + "]" : "") +
+        ((getChildren() != null && getChildren().size() == 1) ? getChildren().get(0).asText() : "") ;
+        
+    if (!markdownText.isEmpty()) {
+      return new FormElementNode(MARKDOWN, ":" + markdownText);
     } else {
       return new FormElementNode(MARKDOWN);
     }
