@@ -3,6 +3,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextAreaNode;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,13 +63,6 @@ public class TextArea extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    String markdownText = ((getAttribute(PLACEHOLDER_ATTR) != null) ? "[" + getAttribute(PLACEHOLDER_ATTR) + "]" : "") +
-        ((getChildren() != null && getChildren().size() == 1) ? getChildren().get(0).asText() : "") ;
-
-    if (!markdownText.isEmpty()) {
-      return new FormElementNode(MARKDOWN, ":" + markdownText);
-    } else {
-      return new FormElementNode(MARKDOWN);
-    }
+    return new TextAreaNode(getAttribute(PLACEHOLDER_ATTR), (getChildren() != null && getChildren().size() == 1) ? getChildren().get(0).asText() : null);
   }
 }

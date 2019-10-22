@@ -5,6 +5,7 @@ import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.PersonSelectorNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -80,10 +81,7 @@ public class PersonSelector extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    String markdownText = (getAttribute(PLACEHOLDER_ATTR) != null) ? ":[" + getAttribute(PLACEHOLDER_ATTR) + "]" : "";
-
-    return new FormElementNode(MARKDOWN, markdownText);
-
+    return new PersonSelectorNode(getAttribute(PLACEHOLDER_ATTR));
   }
 
   @Override

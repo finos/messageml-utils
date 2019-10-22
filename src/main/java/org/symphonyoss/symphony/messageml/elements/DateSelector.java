@@ -4,6 +4,7 @@ import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.DateSelectorNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
@@ -79,9 +80,7 @@ public class DateSelector extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    String markdownText = (getAttribute(PLACEHOLDER_ATTR) != null) ? ":[" + getAttribute(PLACEHOLDER_ATTR) + "]" : "";
-
-    return new FormElementNode(MARKDOWN, markdownText);
+    return new DateSelectorNode(getAttribute(PLACEHOLDER_ATTR));
   }
 
   @Override

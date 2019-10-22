@@ -2,7 +2,6 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 
 /**
  * Class that Represents a Markdown Node for the "Select" form element.
- * - The "LEFT_DELIMITER" for this one is the default one from the {@link FormElementNode} class.
  *
  * @author Cristiano Faustino
  * @since 06/05/2019
@@ -10,13 +9,27 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 public class SelectNode extends FormElementNode {
   private final static String MARKDOWN = "Dropdown";
   private final static String RIGHT_DELIMITER = "):";
+  
+  private String placeholder;
 
-  public SelectNode(String text) {
-    super(MARKDOWN, text);
+  public SelectNode(String placeholder) {
+    this.placeholder = placeholder;
   }
 
   @Override
+  public String getOpeningDelimiter() {
+    return LEFT_DELIMITER + MARKDOWN;
+  }
+  
+  @Override
   public String getClosingDelimiter() {
     return RIGHT_DELIMITER + "\n";
+  }
+
+  @Override
+  public String getText() {
+    String text = ((placeholder != null) ? "[" + placeholder + "]" : "");
+
+    return (!text.isEmpty()) ? ":" + text : "";
   }
 }

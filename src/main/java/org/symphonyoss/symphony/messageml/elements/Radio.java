@@ -20,6 +20,7 @@ import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.RadioNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -78,9 +79,7 @@ public class Radio extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    String markdownText = (getChildren() != null && getChildren().size() == 1) ? ":" + getChildren().get(0).asText() : "" ;
-
-    return new FormElementNode(MARKDOWN, markdownText);    
+    return new RadioNode((getChildren() != null && getChildren().size() == 1) ? getChildren().get(0).asText() : null);    
   }
 
   @Override

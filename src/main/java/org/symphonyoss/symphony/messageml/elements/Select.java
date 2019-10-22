@@ -43,9 +43,7 @@ public class Select extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    String markdownText = (getAttribute(DATA_PLACEHOLDER_ATTR) != null) ? ":[" + getAttribute(DATA_PLACEHOLDER_ATTR) + "]" : "";
-    
-    return new SelectNode(markdownText);
+    return new SelectNode(getAttribute(DATA_PLACEHOLDER_ATTR));
   }
 
   @Override
