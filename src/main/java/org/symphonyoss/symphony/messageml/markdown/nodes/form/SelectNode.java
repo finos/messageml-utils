@@ -28,8 +28,6 @@ public class SelectNode extends FormElementNode {
 
   @Override
   public String getText() {
-    String text = ((placeholder != null) ? "[" + placeholder + "]" : "");
-
-    return (!text.isEmpty()) ? ":" + text : "";
+    return (placeholder != null) ? String.format(":[%s]", placeholder) : "";
   }
 }

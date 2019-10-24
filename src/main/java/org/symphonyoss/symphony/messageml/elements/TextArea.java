@@ -63,6 +63,6 @@ public class TextArea extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    return new TextAreaNode(getAttribute(PLACEHOLDER_ATTR), (getChildren() != null && getChildren().size() == 1) ? getChildren().get(0).asText() : null);
+      return new TextAreaNode(getAttribute(PLACEHOLDER_ATTR), hasExactNumberOfChildren(1) ? getChild(0).asText() : null);
   }
 }

@@ -79,7 +79,12 @@ public class Radio extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new RadioNode((getChildren() != null && getChildren().size() == 1) ? getChildren().get(0).asText() : null);    
+    if (hasExactNumberOfChildren(1)) {
+      return new RadioNode(getChildren().get(0).asText());
+    }
+    else {
+      return new RadioNode();
+    }
   }
 
   @Override

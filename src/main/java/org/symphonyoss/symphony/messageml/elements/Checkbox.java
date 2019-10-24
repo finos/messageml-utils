@@ -119,7 +119,12 @@ public class Checkbox extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    return new CheckboxNode((getChildren() != null && getChildren().size() == 1) ? getChildren().get(0).asText() : null);
+    if (hasExactNumberOfChildren(1)) {
+      return new CheckboxNode(getChildren().get(0).asText());
+    }
+    else {
+      return new CheckboxNode();
+    }
   }
 
   private void buildElementFromGroupDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {

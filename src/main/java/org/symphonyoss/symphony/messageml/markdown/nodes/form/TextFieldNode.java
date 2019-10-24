@@ -24,9 +24,22 @@ public class TextFieldNode extends FormElementNode {
 
   @Override
   public String getText() {
-    String text = ((placeholder != null) ? "[" + placeholder + "]" : "") +
-        ((initialValue != null) ? initialValue : "") ;
+    StringBuilder markdownRepresentation = new StringBuilder();
+
+    if(placeholder != null || initialValue != null) {
+      markdownRepresentation.append(":");
+    }
+
+    if(placeholder != null) {
+      markdownRepresentation.append("[")
+          .append(placeholder)
+          .append("]");
+    }
     
-    return (!text.isEmpty()) ? ":" + text : "";
+    if(initialValue != null) {
+      markdownRepresentation.append(initialValue);
+    }
+
+    return markdownRepresentation.toString();
   }
 }

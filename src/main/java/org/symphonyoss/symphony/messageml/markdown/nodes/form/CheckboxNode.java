@@ -10,6 +10,9 @@ public class CheckboxNode extends FormElementNode {
   private final static String MARKDOWN = "Checkbox";
 
   private String label;
+  
+  public CheckboxNode() {
+  }
 
   public CheckboxNode(String label) {
     this.label = label;
@@ -22,8 +25,6 @@ public class CheckboxNode extends FormElementNode {
 
   @Override
   public String getText() {
-    String text = ((label != null) ? label : "");
-
-    return (!text.isEmpty()) ? ":" + text : "";
+    return (label != null) ? ":" + label : "";
   }
 }

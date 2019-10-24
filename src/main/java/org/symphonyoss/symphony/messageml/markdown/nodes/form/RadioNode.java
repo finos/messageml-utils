@@ -10,6 +10,10 @@ public class RadioNode extends FormElementNode {
   private final static String MARKDOWN = "Radio Button";
 
   private String label;
+  
+  public RadioNode() {
+    
+  }
 
   public RadioNode(String label) {
     this.label = label;
@@ -22,8 +26,6 @@ public class RadioNode extends FormElementNode {
 
   @Override
   public String getText() {
-    String text = ((label != null) ? label : "");
-
-    return (!text.isEmpty()) ? ":" + text : "";
+    return (label != null) ? ":" + label : "";
   }
 }
