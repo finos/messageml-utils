@@ -12,18 +12,14 @@ public class RadioNode extends FormElementNode {
   private String label;
   
   public RadioNode() {
-    
+    super(MARKDOWN);
   }
 
   public RadioNode(String label) {
+    super(MARKDOWN, label);
     this.label = label;
   }
-
-  @Override
-  public String getOpeningDelimiter() {
-    return LEFT_DELIMITER + MARKDOWN;
-  }
-
+  
   @Override
   public String getText() {
     return (label != null) ? ":" + label : "";

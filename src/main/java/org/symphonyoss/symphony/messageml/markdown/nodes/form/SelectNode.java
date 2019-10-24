@@ -13,12 +13,8 @@ public class SelectNode extends FormElementNode {
   private String placeholder;
 
   public SelectNode(String placeholder) {
+    super(MARKDOWN, placeholder);
     this.placeholder = placeholder;
-  }
-
-  @Override
-  public String getOpeningDelimiter() {
-    return LEFT_DELIMITER + MARKDOWN;
   }
   
   @Override

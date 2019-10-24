@@ -12,14 +12,10 @@ public class DateSelectorNode extends FormElementNode {
   private String placeholder;
 
   public DateSelectorNode(String placeholder) {
+    super(MARKDOWN, placeholder);
     this.placeholder = placeholder;
   }
-
-  @Override
-  public String getOpeningDelimiter() {
-    return LEFT_DELIMITER + MARKDOWN;
-  }
-
+  
   @Override
   public String getText() {
     return (placeholder != null) ? String.format(":[%s]", placeholder) : "";

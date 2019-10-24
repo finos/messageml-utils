@@ -12,17 +12,14 @@ public class CheckboxNode extends FormElementNode {
   private String label;
   
   public CheckboxNode() {
+    super(MARKDOWN);
   }
 
   public CheckboxNode(String label) {
+    super(MARKDOWN);
     this.label = label;
   }
-
-  @Override
-  public String getOpeningDelimiter() {
-    return LEFT_DELIMITER + MARKDOWN;
-  }
-
+  
   @Override
   public String getText() {
     return (label != null) ? ":" + label : "";

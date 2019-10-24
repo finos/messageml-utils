@@ -13,15 +13,11 @@ public class TextAreaNode extends FormElementNode {
   private String initialValue;
 
   public TextAreaNode(String placeholder, String initialValue) {
+    super(MARKDOWN);
     this.placeholder = placeholder;
     this.initialValue = initialValue;
   }
-
-  @Override
-  public String getOpeningDelimiter() {
-    return LEFT_DELIMITER + MARKDOWN;
-  }
-
+  
   @Override
   public String getText() {
     StringBuilder markdownRepresentation = new StringBuilder();
