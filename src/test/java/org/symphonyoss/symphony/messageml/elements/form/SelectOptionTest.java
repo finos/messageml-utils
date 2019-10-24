@@ -264,7 +264,8 @@ public class SelectOptionTest extends ElementTest {
   private String getExpectedSelectMarkdown(Select select) {
     String FORM_MARKDOWN_HEADER = "Form (log into desktop client to answer):\n---\n";
     String FORM_MARKDOWN_FOOTER = "---\n";
-    String selectMarkdown = "(Dropdown:" + select.getAttribute(NAME_ATTR) + "):\n";
+    String expectedSelectMarkdownText = (select.getAttribute(DATA_PLACEHOLDER_ATTR) != null) ? ":[" + select.getAttribute(DATA_PLACEHOLDER_ATTR) + "]" : "";
+    String selectMarkdown = "(Dropdown" + expectedSelectMarkdownText + "):\n";
 
     for (Element option : select.getChildren()) {
       if (option instanceof Option) {

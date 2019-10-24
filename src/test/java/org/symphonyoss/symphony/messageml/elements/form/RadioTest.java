@@ -37,9 +37,9 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
-    expectedMarkdown.append("(Radio Button:groupId)");
-    expectedMarkdown.append("(Radio Button:groupId)");
+    expectedMarkdown.append("\n(Radio Button:First)");
+    expectedMarkdown.append("(Radio Button:Second)");
+    expectedMarkdown.append("(Radio Button:Third)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 
@@ -84,7 +84,7 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n(Radio Button:Second)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 
@@ -124,7 +124,7 @@ public class RadioTest extends ElementTest {
     assertEquals(expectedPresentationML, presentationML);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:radio-name)");
+    expectedMarkdown.append("\n(Radio Button)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 
@@ -210,7 +210,7 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n(Radio Button:First)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 
@@ -245,7 +245,7 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n(Radio Button:First)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 
@@ -280,7 +280,7 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n(Radio Button:First)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 
@@ -315,7 +315,7 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n(Radio Button:First)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 
@@ -350,7 +350,7 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n(Radio Button:First)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 
@@ -441,7 +441,7 @@ public class RadioTest extends ElementTest {
     assertEquals(expectedPresentationML, presentationML);
 
     StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:groupId)");
+    expectedMarkdown.append("\n(Radio Button)");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
     expectedMarkdown.append("\n---\n");
 

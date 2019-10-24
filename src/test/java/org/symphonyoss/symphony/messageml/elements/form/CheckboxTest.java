@@ -41,7 +41,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, null, false);
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, text);
   }
 
   @Test
@@ -56,7 +56,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, null, false);
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, text);
   }
 
   @Test
@@ -74,7 +74,7 @@ public class CheckboxTest extends ElementTest {
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" value=\"on\"/><button type=\"action\" name=\"actionName\">Send</button></form></div>";
     assertEquals(expectedPresentationML, presentationML);
 
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, null);
   }
 
   @Test
@@ -144,7 +144,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, checked, true);
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, text);
   }
 
   @Test
@@ -153,7 +153,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, checked, true);
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, text);
   }
 
   @Test
@@ -162,7 +162,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, value, text, checked, false);
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, text);
   }
 
   @Test
@@ -171,7 +171,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, null, text, checked, true);
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, text);
   }
 
   @Test
@@ -180,7 +180,7 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
     verifyCheckboxPresentationML(context, name, null, text, checked, false);
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, text);
   }
 
   @Test
@@ -235,7 +235,7 @@ public class CheckboxTest extends ElementTest {
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" checked=\"false\" value=\"checkbox-value\"/><button type=\"action\" name=\"actionName\">Send</button></form></div>";
     assertEquals(expectedPresentationML, presentationML);
 
-    verifyCheckboxMarkdown(context, name);
+    verifyCheckboxMarkdown(context, null);
   }
 
   @Test
@@ -356,14 +356,15 @@ public class CheckboxTest extends ElementTest {
         "</label></div>" + ACTION_BTN_ELEMENT + "</form></div>";
   }
 
-  private void verifyCheckboxMarkdown(MessageMLContext context, String name) {
+  private void verifyCheckboxMarkdown(MessageMLContext context, String label) {
     String markdown = context.getMarkdown();
-    String expectedMarkdown  = buildExpectedMarkdownForCheckbox(name);
+    String expectedMarkdown  = buildExpectedMarkdownForCheckbox(label);
     assertEquals(expectedMarkdown, markdown);
   }
 
-  private String buildExpectedMarkdownForCheckbox(String name) {
-    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox:%s)%s\n---\n", name,
+  private String buildExpectedMarkdownForCheckbox(String label) {
+    String expectedMarkdownText = ((label != null) ? ":" + label : "") ;
+    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox%s)%s\n---\n", expectedMarkdownText,
         ACTION_BTN_MARKDOWN);
   }
 }

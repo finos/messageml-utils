@@ -6,6 +6,7 @@ import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -88,11 +89,7 @@ public class TextField extends FormElement {
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    if (getAttribute(PLACEHOLDER_ATTR) != null) {
-      return new FormElementNode(MARKDOWN, ":" + getAttribute(PLACEHOLDER_ATTR));
-    } else {
-      return new FormElementNode(MARKDOWN);
-    }
+    return new TextFieldNode(getAttribute(PLACEHOLDER_ATTR), hasExactNumberOfChildren(1) ? getChild(0).asText() : null);
   }
 
   @Override

@@ -32,10 +32,16 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.DateSelectorNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.PersonSelectorNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.RadioNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextAreaNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Collection;
@@ -248,6 +254,18 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((OptionNode) node);
     } else if (node instanceof ButtonNode) {
       visit((ButtonNode) node);
+    } else if (node instanceof TextFieldNode) {
+      visit((TextFieldNode) node);
+    } else if (node instanceof TextAreaNode) {
+      visit((TextAreaNode) node);
+    } else if (node instanceof DateSelectorNode) {
+      visit((DateSelectorNode) node);
+    } else if (node instanceof PersonSelectorNode) {
+      visit((PersonSelectorNode) node);
+    } else if (node instanceof CheckboxNode) {
+      visit((CheckboxNode) node);
+    } else if (node instanceof RadioNode) {
+      visit((RadioNode) node);
     } else if (node instanceof FormElementNode) {
       visit((FormElementNode) node);
     }
@@ -289,7 +307,43 @@ public class MarkdownRenderer extends AbstractVisitor {
     visitChildren(option);
     writer.write(option.getClosingDelimiter());
   }
+  
+  private void visit(TextFieldNode textField) {
+    writer.write(textField.getOpeningDelimiter());
+    writer.write(textField.getText());
+    writer.write(textField.getClosingDelimiter());
+  }
 
+  private void visit(TextAreaNode textArea) {
+    writer.write(textArea.getOpeningDelimiter());
+    writer.write(textArea.getText());
+    writer.write(textArea.getClosingDelimiter());
+  }
+
+  private void visit(DateSelectorNode dateSelector) {
+    writer.write(dateSelector.getOpeningDelimiter());
+    writer.write(dateSelector.getText());
+    writer.write(dateSelector.getClosingDelimiter());
+  }
+
+  private void visit(PersonSelectorNode personSelector) {
+    writer.write(personSelector.getOpeningDelimiter());
+    writer.write(personSelector.getText());
+    writer.write(personSelector.getClosingDelimiter());
+  }
+
+  private void visit(CheckboxNode checkbox) {
+    writer.write(checkbox.getOpeningDelimiter());
+    writer.write(checkbox.getText());
+    writer.write(checkbox.getClosingDelimiter());
+  }
+
+  private void visit(RadioNode radio) {
+    writer.write(radio.getOpeningDelimiter());
+    writer.write(radio.getText());
+    writer.write(radio.getClosingDelimiter());
+  }
+  
   private void visit(KeywordNode keyword) {
     String text = keyword.getPrefix() + keyword.getText();
 

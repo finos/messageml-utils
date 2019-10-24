@@ -4,6 +4,7 @@ import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
@@ -32,7 +33,7 @@ public class Checkbox extends FormElement {
   private static final String PRESENTATIONML_LABEL_TAG = "label";
   private static final int PRESENTATIONML_DIV_NUMBER_OF_CHILDREN = 2;
 
-  private static final String MARKDOWN = "Checkbox:";
+  private static final String MARKDOWN = "Checkbox";
 
   public Checkbox(Element parent, FormatEnum messageFormat) {
     super(parent, MESSAGEML_TAG, messageFormat);
@@ -118,7 +119,12 @@ public class Checkbox extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
+    if (hasExactNumberOfChildren(1)) {
+      return new CheckboxNode(getChildren().get(0).asText());
+    }
+    else {
+      return new CheckboxNode();
+    }
   }
 
   private void buildElementFromGroupDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {

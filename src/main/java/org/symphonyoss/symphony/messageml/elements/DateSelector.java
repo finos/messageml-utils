@@ -4,6 +4,7 @@ import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.DateSelectorNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
@@ -33,7 +34,7 @@ public class DateSelector extends FormElement {
   private static final String PRESENTATIONML_REQUIRED_ATTR = "data-required";
   
   private static final String PRESENTATIONML_TAG = "div";
-  private static final String MARKDOWN = "Date Selector:";
+  private static final String MARKDOWN = "Date Selector";
   private static final String CLASS_ATTR = "class";
 
   public DateSelector(Element parent, FormatEnum messageFormat) {
@@ -79,7 +80,7 @@ public class DateSelector extends FormElement {
 
   @Override
   public Node asMarkdown() {
-    return new FormElementNode(MARKDOWN, getAttribute(NAME_ATTR));
+    return new DateSelectorNode(getAttribute(PLACEHOLDER_ATTR));
   }
 
   @Override

@@ -39,7 +39,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(null);
+    verifyTextFieldMarkdown(null, null);
   }
 
   @Test
@@ -68,7 +68,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown("Input some text here");
+    verifyTextFieldMarkdown("Input some text here", null);
   }
 
   @Test
@@ -97,7 +97,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown("Input some text here");
+    verifyTextFieldMarkdown("Input some text here", null);
   }
 
   @Test
@@ -124,7 +124,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(null);
+    verifyTextFieldMarkdown(null, null);
   }
 
   @Test
@@ -151,7 +151,34 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(null);
+    verifyTextFieldMarkdown(null, null);
+  }
+
+  @Test
+  public void testNonMaskedTextFieldWithPlaceholderAndInitialValue() throws Exception {
+    String messageMLInput = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"text-field\" masked=\"false\" placeholder=\"Input some text...\">Initial value</text-field>"
+        + ACTION_BTN_ELEMENT
+        + "</form></messageML>";
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"text-field-form\">"
+        + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text...\" data-masked=\"false\" value=\"Initial value\"/>"
+        + ACTION_BTN_ELEMENT
+        + "</form>"
+        + "</div>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textField = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, context.getPresentationML());
+    verifyTextFieldMarkdown("Input some text...", "Initial value");
   }
 
   @Test
@@ -178,7 +205,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(null);
+    verifyTextFieldMarkdown(null, null);
   }
 
   @Test
@@ -205,7 +232,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(null);
+    verifyTextFieldMarkdown(null, null);
   }
 
   @Test
@@ -308,7 +335,7 @@ public class TextFieldTest extends ElementTest {
         + "</div>";
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(null);
+    verifyTextFieldMarkdown(null, "Value here");
   }
 
   @Test
@@ -338,7 +365,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(null);
+    verifyTextFieldMarkdown(null, "value");
   }
 
   @Test
@@ -451,7 +478,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(null);
+    verifyTextFieldMarkdown(null, null);
   }
 
   @Test
@@ -480,7 +507,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
         expectedPresentationML, context.getPresentationML());
-    verifyTextFieldMarkdown(placeholder);
+    verifyTextFieldMarkdown(placeholder, null);
   }
 
   @Test
@@ -533,13 +560,16 @@ public class TextFieldTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
-  private String getExpectedTextFieldMarkdown(String placeholder) {
-    return String.format("Form (log into desktop client to answer):\n---\n(Text Field%s)"+ ACTION_BTN_MARKDOWN + "\n---\n", (placeholder != null) ? ":" + placeholder : "");
+  private String getExpectedTextFieldMarkdown(String placeholder, String initialValue) {
+    String expectedMarkdownText = ((placeholder != null) ? "[" + placeholder + "]" : "") +
+        ((initialValue != null) ? initialValue : "") ;
+    
+    return String.format("Form (log into desktop client to answer):\n---\n(Text Field%s)"+ ACTION_BTN_MARKDOWN + "\n---\n", (!expectedMarkdownText.isEmpty()) ? ":" + expectedMarkdownText : "");
   }
 
-  private void verifyTextFieldMarkdown(String placeholder) {
+  private void verifyTextFieldMarkdown(String placeholder, String initialValue) {
     String markdown = context.getMarkdown();
-    String expectedMarkdown  = getExpectedTextFieldMarkdown(placeholder);
+    String expectedMarkdown  = getExpectedTextFieldMarkdown(placeholder, initialValue);
     assertEquals(expectedMarkdown, markdown);
   }
 }

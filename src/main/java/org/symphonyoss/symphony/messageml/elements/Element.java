@@ -299,6 +299,10 @@ public abstract class Element {
           + " must be a URI value not \"" + s + "\"");
     }
   }
+  
+  public boolean hasExactNumberOfChildren(int childrenNumber) {
+    return (getChildren() != null && getChildren().size() == childrenNumber);
+  }
 
   /**
    * Checks if attribute has one of the allowed values

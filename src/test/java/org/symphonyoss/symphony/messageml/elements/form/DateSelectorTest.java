@@ -83,7 +83,7 @@ public class DateSelectorTest extends ElementTest {
     assertEquals(dateSelector.getClass(), DateSelector.class);
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
         "\"><div><div class=\"date-selector\" data-name=\"some-name\"></div></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector:some-name)\n\n" + ACTION_BTN_MARKDOWN + "\n---\n", context.getMarkdown());
+    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector)\n\n" + ACTION_BTN_MARKDOWN + "\n---\n", context.getMarkdown());
   }
 
   private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {
@@ -97,7 +97,8 @@ public class DateSelectorTest extends ElementTest {
         (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
         "></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector:" + dataName + ")" + ACTION_BTN_MARKDOWN
+    String expectedMarkdownText = (dataPlaceholder != null) ? ":[" + dataPlaceholder + "]" : "";
+    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
         + "\n---\n", context.getMarkdown());
   }
 }

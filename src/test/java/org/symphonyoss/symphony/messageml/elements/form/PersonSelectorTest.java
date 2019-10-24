@@ -93,7 +93,7 @@ public class PersonSelectorTest extends ElementTest {
     assertEquals(personSelector.getClass(), PersonSelector.class);
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
         "\"><div><div class=\"person-selector\" data-name=\"some-name\"></div></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:some-name)\n\n" + ACTION_BTN_MARKDOWN
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector)\n\n" + ACTION_BTN_MARKDOWN
         + "\n---\n", context.getMarkdown());
   }
 
@@ -108,7 +108,8 @@ public class PersonSelectorTest extends ElementTest {
         (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
         "></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:" + dataName + ")" + ACTION_BTN_MARKDOWN
+    String expectedMarkdownText = (dataPlaceholder != null) ? ":[" + dataPlaceholder + "]" : "";
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
         + "\n---\n", context.getMarkdown());
   }
 }
