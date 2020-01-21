@@ -1,14 +1,4 @@
 {
-  "urls": [
-    {
-      "text": "https://whiteam1.atlassian.net/browse/SAM-24",
-      "id": "https://whiteam1.atlassian.net/browse/SAM-24",
-      "expandedUrl": "https://whiteam1.atlassian.net/browse/SAM-24",
-      "indexStart": 54,
-      "indexEnd": 98,
-      "type": "URL"
-    }
-  ],
   "userMentions": [
     {
       "id": 123456789,

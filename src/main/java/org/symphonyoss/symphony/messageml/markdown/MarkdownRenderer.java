@@ -60,11 +60,9 @@ public class MarkdownRenderer extends AbstractVisitor {
 
   private static final String TEXT = "text";
   private static final String ID = "id";
-  private static final String EXPANDED_URL = "expandedUrl";
   private static final String INDEX_START = "indexStart";
   private static final String INDEX_END = "indexEnd";
   private static final String TYPE = "type";
-  private static final String URLS = "urls";
   private static final String SCREEN_NAME = "screenName";
   private static final String PRETTY_NAME = "prettyName";
   private static final String USER_TYPE = "userType";
@@ -145,15 +143,6 @@ public class MarkdownRenderer extends AbstractVisitor {
 
     // Note: this is the correct Markdown representation of links with text. We can't do this as we'd break legacy clients.
 //    String markdown = (StringUtils.isNotBlank(a.getTitle())) ? String.format("[%s](%s)", a.getTitle().trim(), href) : href;
-
-    ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
-    node.put(TEXT, href);
-    node.put(ID, href);
-    node.put(EXPANDED_URL, href);
-    node.put(INDEX_START, writer.length());
-    node.put(INDEX_END, writer.length() + href.length());
-    node.put(TYPE, "URL");
-    putJsonObject(URLS, node);
 
     writer.write(href);
   }
