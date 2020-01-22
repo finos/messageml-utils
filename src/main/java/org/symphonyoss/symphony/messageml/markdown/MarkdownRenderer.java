@@ -141,9 +141,6 @@ public class MarkdownRenderer extends AbstractVisitor {
   public void visit(Link a) {
     String href = a.getDestination();
 
-    // Note: this is the correct Markdown representation of links with text. We can't do this as we'd break legacy clients.
-//    String markdown = (StringUtils.isNotBlank(a.getTitle())) ? String.format("[%s](%s)", a.getTitle().trim(), href) : href;
-
     writer.write(href);
   }
 
