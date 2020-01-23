@@ -38,7 +38,6 @@ import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.CashTag;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.HashTag;
-import org.symphonyoss.symphony.messageml.elements.Link;
 import org.symphonyoss.symphony.messageml.elements.Mention;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.TextNode;
@@ -53,7 +52,6 @@ import org.xml.sax.InputSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.List;
 import java.util.Scanner;
 
@@ -295,14 +293,6 @@ public class MessageMLContextTest {
         + "        \"indexEnd\": 84,\n"
         + "        \"userType\": \"lc\",\n"
         + "        \"type\": \"USER_FOLLOW\"\n"
-        + "    }],\n"
-        + "    \"urls\": [{\n"
-        + "        \"text\": \"http://example.com\",\n"
-        + "        \"id\": \"http://example.com\",\n"
-        + "        \"expandedUrl\": \"http://example.com\",\n"
-        + "        \"indexStart\": 85,\n"
-        + "        \"indexEnd\": 103,\n"
-        + "        \"type\": \"URL\"\n"
         + "    }]\n"
         + "}");
 
@@ -338,7 +328,7 @@ public class MessageMLContextTest {
     assertEquals("Chime", false, messageML.isChime());
 
     List<Element> children = messageML.getChildren();
-    assertEquals("MessageML children", 16, children.size());
+    assertEquals("MessageML children", 15, children.size());
 
     assertEquals("Child #1 class", TextNode.class, children.get(0).getClass());
     assertEquals("Child #1 text", "Hello!", ((TextNode) children.get(0)).getText());
@@ -364,15 +354,9 @@ public class MessageMLContextTest {
     assertTrue("Child #11 attributes", children.get(10).getAttributes().isEmpty());
     assertTrue("Child #11 children", children.get(10).getChildren().isEmpty());
 
-    assertEquals("Child #13 class", Link.class, children.get(12).getClass());
-    assertEquals("Child #13 text", new URI("http://example.com"), ((Link) children.get(12)).getUri());
-    assertEquals("Child #13 attributes", 1, children.get(12).getAttributes().size());
-    assertEquals("Child #13 attribute", "http://example.com", children.get(12).getAttribute("href"));
-    assertEquals("Child #13 children", 0, children.get(12).getChildren().size());
-
-    assertEquals("Child #14 class", BulletList.class, children.get(13).getClass());
-    assertEquals("Child #14 attributes", 0, children.get(13).getAttributes().size());
-    assertEquals("Child #14 children", 2, children.get(13).getChildren().size());
+    assertEquals("Child #13 class", BulletList.class, children.get(12).getClass());
+    assertEquals("Child #13 attributes", 0, children.get(12).getAttributes().size());
+    assertEquals("Child #13 children", 2, children.get(12).getChildren().size());
 
     //TODO: fix that check
     // validateMessageML(expectedPresentationML, expectedEntityJson, expectedMarkdown, expectedEntities);

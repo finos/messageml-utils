@@ -1,9 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
@@ -33,18 +31,6 @@ public class LinkTest extends ElementTest {
         context.getPresentationML());
     assertEquals("Markdown", "https://hello.org", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
-    assertEquals("Legacy entities", 1, context.getEntities().size());
-
-    JsonNode entity = context.getEntities().get("urls");
-    assertNotNull("Entity node", entity);
-    assertEquals("Entity count", 1, entity.size());
-
-    assertEquals("Entity text", "https://hello.org", entity.get(0).get("text").textValue());
-    assertEquals("Entity id", "https://hello.org", entity.get(0).get("id").textValue());
-    assertEquals("Entity expanded URL", "https://hello.org", entity.get(0).get("expandedUrl").textValue());
-    assertEquals("Entity start index", 0, entity.get(0).get("indexStart").intValue());
-    assertEquals("Entity end index", 17, entity.get(0).get("indexEnd").intValue());
-    assertEquals("Entity type", "URL", entity.get(0).get("type").textValue());
 
     String noText = "<messageML><a href=\"https://hello.org\"/></messageML>";
     context.parseMessageML(noText, null, MessageML.MESSAGEML_VERSION);
