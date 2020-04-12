@@ -61,6 +61,7 @@ public class EntityJsonURIDownloader implements URIDownloader
   {
     switch(source.getHost())
     {
+      case "schemas.oss.symphony.com":
       case "symphonyosf.github.io":
       case "object.symphonyoss.org":
       case "object.symphony.com":
