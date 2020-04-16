@@ -142,7 +142,7 @@ public class StructuredObject
    */
   public IEntityJsonSchemaContext validate(EntityJsonParser parser) throws SchemaValidationException, NoSchemaException, InvalidSchemaException
   {
-    StringBuffer ubuf = new StringBuffer("https://symphonyosf.github.io/symphony-object/proposed");
+    StringBuffer ubuf = new StringBuffer("https://schemas.oss.symphony.com/proposed");
     
     for(String part : type_.split("\\."))
     {
