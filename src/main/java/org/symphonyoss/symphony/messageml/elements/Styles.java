@@ -1,12 +1,13 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
+import org.apache.commons.lang3.StringUtils;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Static set of styles for the style Global Attribute
@@ -134,8 +135,17 @@ public class Styles {
    */
   public static void validate(String styleAttribute) throws InvalidInputException {
     try {
-      final Map<String, String> styleMap = Splitter.on(";").omitEmptyStrings().withKeyValueSeparator(":").split(styleAttribute);
-      final HashSet<String> inputStyleProperties = new HashSet<>(styleMap.keySet());
+      final Set<String> inputStyleProperties = Arrays.asList(styleAttribute.split(";")).stream()
+          .filter(input -> !StringUtils.isBlank(input))
+          .map(input -> {
+              int separator = input.indexOf(":");
+              if(separator == -1){
+                throw new IllegalArgumentException(String.format("Chunk [%s] is not a valid entry", input));
+              }
+              return input.substring(0, separator).trim();
+            }
+          )
+          .collect(Collectors.toSet());
       inputStyleProperties.removeAll(ALLOWED_PROPERTIES);
       if (!inputStyleProperties.isEmpty()) {
         throw new InvalidInputException("Invalid property(s): [" + Joiner.on(",").join(inputStyleProperties) + "] in the \"style\" attribute");
