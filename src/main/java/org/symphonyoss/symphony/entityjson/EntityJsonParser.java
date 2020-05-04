@@ -61,7 +61,7 @@ public class EntityJsonParser
   {
     try
     {
-      return new URL("https://symphonyosf.github.io/symphony-object" + url);
+      return new URL("https://schemas.oss.symphony.com" + url);
     }
     catch (MalformedURLException e)
     {

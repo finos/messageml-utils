@@ -35,16 +35,6 @@
         "indexStart": 46,
         "indexEnd": 58
       }
-    ],
-    "urls": [
-      {
-        "text": "http://example.com",
-        "id": "http://example.com",
-        "expandedUrl": "http://example.com",
-        "indexStart": 59,
-        "indexEnd": 77,
-        "type": "URL"
-      }
     ]
   },
   "media": {
