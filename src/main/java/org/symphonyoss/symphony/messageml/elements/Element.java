@@ -120,8 +120,12 @@ public abstract class Element {
         attributes.put(STYLE_ATTR, styleAttribute);
         break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        if(this instanceof RegexElement && RegexElement.PATTERN_ATTRS.contains(item.getNodeName())){
+          attributes.put(item.getNodeName(), getStringAttribute(item));
+        } else {
+          throw new InvalidInputException("Attribute \"" + item.getNodeName()
+              + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        }
     }
   }
 
@@ -242,6 +246,9 @@ public abstract class Element {
    * Check the syntax and contents of the element.
    */
   void validate() throws InvalidInputException {
+    if(this instanceof RegexElement){
+      ((RegexElement)this).validateRegex();
+    }
   }
 
   /**

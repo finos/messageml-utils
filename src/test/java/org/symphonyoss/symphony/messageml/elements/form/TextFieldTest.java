@@ -1,12 +1,18 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.RegexElement;
+import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.elements.TextField;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -14,6 +20,8 @@ public class TextFieldTest extends ElementTest {
 
   private static final String FORM_ID_ATTR = "text-field-form";
 
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
 
   @Test
   public void testTextField() throws Exception {
@@ -558,6 +566,90 @@ public class TextFieldTest extends ElementTest {
     expectedException.expectMessage("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldWithRegex() throws Exception {
+    String messageMLInput = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"text-field\" pattern=\"regex\" pattern-error-message=\"Regex Error\"/>"
+        + ACTION_BTN_ELEMENT
+        + "</form></messageML>";
+
+    /*
+    String expectedPresentationML =
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\"></textarea>%s</form></div>",
+            NAME_VALUE, ACTION_BTN_ELEMENT);*/
+
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textArea = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textArea.getClass());
+    //assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
+    //assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
+    assertTrue("Text should be empty", textArea.getChildren().isEmpty());
+  }
+
+  @Test
+  public void testTextFieldWithInvalidRegex() throws Exception {
+    String invalidRegex = "[abc+";
+
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(String.format(RegexElement.REGEX_NOT_VALID_ERR, invalidRegex));
+
+    String messageMLInput = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"text-field\" pattern=\"" + invalidRegex + "\" pattern-error-message=\"Regex Error\"/>"
+        + ACTION_BTN_ELEMENT
+        + "</form></messageML>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldWithMissingPatternError() throws Exception {
+
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_MANDATORY_WHEN_ATTRIBUTE_DEFINED_ERR, RegexElement.PATTERN_ERROR_MESSAGE_ATTR, RegexElement.PATTERN_ATTR));
+
+    String messageMLInput = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"text-field\" pattern=\"\"/>"
+        + ACTION_BTN_ELEMENT
+        + "</form></messageML>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldPatternTooLong() throws Exception {
+    String regexTooLong = StringUtils.leftPad("", RegexElement.PATTERN_MAX_LENGTH + 1);
+
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_TOO_LONG_ERR, RegexElement.PATTERN_ATTR, RegexElement.PATTERN_MAX_LENGTH));
+
+    String messageMLInput = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"text-field\" pattern=\"" + regexTooLong + "\" pattern-error-message=\"Regex Error\"/>"
+        + ACTION_BTN_ELEMENT
+        + "</form></messageML>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldPatternErrorTooLong() throws Exception {
+    String errTooLong = StringUtils.leftPad("", RegexElement.PATTERN_ERROR_MESSAGE_MAX_LENGTH + 1);
+
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_TOO_LONG_ERR, RegexElement.PATTERN_ERROR_MESSAGE_ATTR, RegexElement.PATTERN_ERROR_MESSAGE_MAX_LENGTH));
+
+    String messageMLInput = "<messageML>"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<text-field name=\"text-field\" pattern=\"\" pattern-error-message=\"" + errTooLong + "\"/>"
+        + ACTION_BTN_ELEMENT
+        + "</form></messageML>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
   }
 
   private String getExpectedTextFieldMarkdown(String placeholder, String initialValue) {

@@ -3,11 +3,15 @@ package org.symphonyoss.symphony.messageml.elements.form;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.RegexElement;
 import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -28,6 +32,9 @@ public class TextAreaTest extends ElementTest {
           String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE_WITH_LINE_BREAK);
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER_AND_INITIAL_VALUE =
       String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s]%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE, INITIAL_VALUE);
+
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
   
   @Test
   public void testTextAreaWithRequiredAttributesOnly() throws Exception {
@@ -206,6 +213,85 @@ public class TextAreaTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"" + childElement + "\" is not allowed in \"textarea\"");
 
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaWithRegex() throws Exception {
+    String input = String.format(
+        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" pattern-error-message=\"Regex Error\"></textarea>%s</form></messageML>", NAME_VALUE,
+        ACTION_BTN_ELEMENT);
+
+    /*
+    String expectedPresentationML =
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\"></textarea>%s</form></div>",
+            NAME_VALUE, ACTION_BTN_ELEMENT);*/
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textArea = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextArea.class, textArea.getClass());
+    assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
+    //assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
+    assertTrue("Text should be empty", textArea.getChildren().isEmpty());
+  }
+
+  @Test
+  public void testTextAreaWithInvalidRegex() throws Exception {
+    String invalidRegex = "[abc+";
+
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(String.format(RegexElement.REGEX_NOT_VALID_ERR, invalidRegex));
+
+    String input = String.format(
+        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\" pattern-error-message=\"Regex Error\"></textarea></form></messageML>",
+        NAME_VALUE,
+        invalidRegex);
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaWithMissingPatternError() throws Exception {
+
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_MANDATORY_WHEN_ATTRIBUTE_DEFINED_ERR, RegexElement.PATTERN_ERROR_MESSAGE_ATTR, RegexElement.PATTERN_ATTR));
+
+    String input = String.format(
+        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\"></textarea></form></messageML>",
+        NAME_VALUE, "");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaPatternTooLong() throws Exception {
+    String regexTooLong = StringUtils.leftPad("", RegexElement.PATTERN_MAX_LENGTH + 1);
+
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_TOO_LONG_ERR, RegexElement.PATTERN_ATTR, RegexElement.PATTERN_MAX_LENGTH));
+
+    String input = String.format(
+        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\" pattern-error"
+            + "-message=\"Regex Error\"></textarea></form></messageML>",
+        NAME_VALUE,
+        regexTooLong);
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaPatternErrorTooLong() throws Exception {
+    String errTooLong = StringUtils.leftPad("", RegexElement.PATTERN_ERROR_MESSAGE_MAX_LENGTH + 1);
+
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_TOO_LONG_ERR, RegexElement.PATTERN_ERROR_MESSAGE_ATTR, RegexElement.PATTERN_ERROR_MESSAGE_MAX_LENGTH));
+
+    String input = String.format(
+        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" pattern-error"
+            + "-message=\"%s\"></textarea></form></messageML>",
+        NAME_VALUE,
+        errTooLong);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 

@@ -24,7 +24,7 @@ import java.util.Set;
  * @author Lucas Macedo
  * @since 06/07/2019
  */
-public class TextField extends FormElement {
+public class TextField extends FormElement implements RegexElement {
 
   public static final String MESSAGEML_TAG = "text-field";
   public static final String PRESENTATIONML_INPUT_TYPE = "text";
@@ -35,6 +35,8 @@ public class TextField extends FormElement {
   private static final String MASKED_ATTR = "masked";
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String VALUE_ATTR = "value";
+  private static final String PATTERN = "pattern";
+  private static final String PATTERN_ERROR_MESSAGE = "pattern-error-message";
 
   private static final String PRESENTATIONML_MASKED_ATTR = "data-masked";
 
@@ -96,22 +98,14 @@ public class TextField extends FormElement {
   protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
-        setAttribute(NAME_ATTR, getStringAttribute(item));
-        break;
       case REQUIRED_ATTR:
-        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
-        break;
       case PLACEHOLDER_ATTR:
-        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
-        break;
       case MINLENGTH_ATTR:
-        setAttribute(MINLENGTH_ATTR, getStringAttribute(item));
-        break;
       case MAXLENGTH_ATTR:
-        setAttribute(MAXLENGTH_ATTR, getStringAttribute(item));
-        break;
       case MASKED_ATTR:
-        setAttribute(MASKED_ATTR, getStringAttribute(item));
+      case PATTERN_ATTR:
+      case PATTERN_ERROR_MESSAGE_ATTR:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
