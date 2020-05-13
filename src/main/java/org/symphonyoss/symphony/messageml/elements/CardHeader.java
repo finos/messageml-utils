@@ -65,4 +65,9 @@ public class CardHeader extends Element {
   void validate() throws InvalidInputException {
     assertNoAttributes();
   }
+
+  @Override
+  public String getPresentationMLTag() {
+    return PRESENTATIONML_TAG;
+  }
 }

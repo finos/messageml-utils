@@ -221,11 +221,10 @@ public class TextAreaTest extends ElementTest {
     String input = String.format(
         "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" pattern-error-message=\"Regex Error\"></textarea>%s</form></messageML>", NAME_VALUE,
         ACTION_BTN_ELEMENT);
-
-    /*
     String expectedPresentationML =
-        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\"></textarea>%s</form></div>",
-            NAME_VALUE, ACTION_BTN_ELEMENT);*/
+        String.format(
+            "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" data-pattern-error-message=\"Regex Error\"></textarea>%s</form></div>",
+            NAME_VALUE, ACTION_BTN_ELEMENT);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -235,7 +234,7 @@ public class TextAreaTest extends ElementTest {
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
-    //assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
+    assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
     assertTrue("Text should be empty", textArea.getChildren().isEmpty());
   }
 

@@ -5,7 +5,6 @@ import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.DateSelectorNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -99,6 +98,11 @@ public class DateSelector extends FormElement {
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
             + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
+  }
+
+  @Override
+  public String getPresentationMLTag() {
+    return PRESENTATIONML_TAG;
   }
 
   private Map<String, String> buildDateSelectorInputAttributes() {

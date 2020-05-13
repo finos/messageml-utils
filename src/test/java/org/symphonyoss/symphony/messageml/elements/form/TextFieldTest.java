@@ -12,7 +12,6 @@ import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.RegexElement;
-import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.elements.TextField;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -575,11 +574,13 @@ public class TextFieldTest extends ElementTest {
         + "<text-field name=\"text-field\" pattern=\"regex\" pattern-error-message=\"Regex Error\"/>"
         + ACTION_BTN_ELEMENT
         + "</form></messageML>";
-
-    /*
-    String expectedPresentationML =
-        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\"></textarea>%s</form></div>",
-            NAME_VALUE, ACTION_BTN_ELEMENT);*/
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"" + FORM_ID_ATTR + "\">"
+        + "<input type=\"text\" name=\"text-field\" pattern=\"regex\" "
+        + "data-pattern-error-message=\"Regex Error\"/>"
+        + ACTION_BTN_ELEMENT
+        + "</form>"
+        + "</div>";
 
     context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -588,8 +589,7 @@ public class TextFieldTest extends ElementTest {
 
     assertEquals(Form.class, form.getClass());
     assertEquals(TextField.class, textArea.getClass());
-    //assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
-    //assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
+    assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
     assertTrue("Text should be empty", textArea.getChildren().isEmpty());
   }
 
