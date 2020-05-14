@@ -66,4 +66,8 @@ public class CardBody extends Element {
     assertParent(Collections.singleton(Card.class));
   }
 
+  @Override
+  public String getPresentationMLTag() {
+    return PRESENTATIONML_TAG;
+  }
 }

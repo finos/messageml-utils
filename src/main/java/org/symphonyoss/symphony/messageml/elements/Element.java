@@ -120,8 +120,12 @@ public abstract class Element {
         attributes.put(STYLE_ATTR, styleAttribute);
         break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        if(this instanceof RegexElement && RegexElement.ALL_REGEX_ATTRS.contains(item.getNodeName())){
+          attributes.put(item.getNodeName(), getStringAttribute(item));
+        } else {
+          throw new InvalidInputException("Attribute \"" + item.getNodeName()
+              + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        }
     }
   }
 
@@ -209,13 +213,24 @@ public abstract class Element {
    * Print a PresentationML representation of the element and its children to the provided PrintStream.
    */
   void asPresentationML(XmlPrintStream out) {
-    out.openElement(getMessageMLTag(), getAttributes());
+    Map<String, String> attributes;
 
-    for (Element child : getChildren()) {
-      child.asPresentationML(out);
+    if(this instanceof RegexElement){
+      attributes = ((RegexElement)this).getOtherAttributes();
+      attributes.putAll(((RegexElement)this).getRegexAttrForPresentationML());
+    } else {
+      attributes = getAttributes();
     }
 
-    out.closeElement();
+    if(areNestedElementsAllowed()){
+      out.openElement(getPresentationMLTag(), attributes);
+      for (Element child : getChildren()) {
+        child.asPresentationML(out);
+      }
+      out.closeElement();
+    } else {
+      out.printElement(getPresentationMLTag(), attributes);
+    }
   }
 
   /**
@@ -242,6 +257,9 @@ public abstract class Element {
    * Check the syntax and contents of the element.
    */
   void validate() throws InvalidInputException {
+    if(this instanceof RegexElement){
+      ((RegexElement)this).validateRegex();
+    }
   }
 
   /**
@@ -471,8 +489,24 @@ public abstract class Element {
   /**
    * Return the element's MessageML tag.
    */
-  public String getMessageMLTag() {
+  public final String getMessageMLTag() {
     return messageMLTag;
+  }
+
+  /**
+   * Return the element's PresentationML tag.
+   * By default is equals to MessageML tag, override when needed
+   */
+  public String getPresentationMLTag() {
+    return messageMLTag;
+  }
+
+  /**
+   * Return true if nested elements are allowed
+   * By default true, override to false for elements that dont support nested elements
+   */
+  public boolean areNestedElementsAllowed(){
+    return true;
   }
 
   /**

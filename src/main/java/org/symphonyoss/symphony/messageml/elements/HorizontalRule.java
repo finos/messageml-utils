@@ -18,7 +18,6 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 /**
  * Class representing a horizontal rule.
@@ -33,11 +32,6 @@ public class HorizontalRule extends Element {
 
   public HorizontalRule(Element parent) {
     super(parent, MESSAGEML_TAG);
-  }
-
-  @Override
-  public void asPresentationML(XmlPrintStream out) {
-    out.printElement(MESSAGEML_TAG);
   }
 
   @Override
@@ -65,7 +59,13 @@ public class HorizontalRule extends Element {
   }
 
   @Override
+  public boolean areNestedElementsAllowed(){
+    return false;
+  }
+
+  @Override
   public String toString() {
     return "\n";
   }
+
 }

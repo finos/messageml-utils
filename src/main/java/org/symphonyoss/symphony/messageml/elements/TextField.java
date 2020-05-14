@@ -5,9 +5,7 @@ import static java.lang.String.format;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
-import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
@@ -24,7 +22,7 @@ import java.util.Set;
  * @author Lucas Macedo
  * @since 06/07/2019
  */
-public class TextField extends FormElement {
+public class TextField extends FormElement implements RegexElement {
 
   public static final String MESSAGEML_TAG = "text-field";
   public static final String PRESENTATIONML_INPUT_TYPE = "text";
@@ -83,11 +81,6 @@ public class TextField extends FormElement {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
-    out.printElement(INPUT_TAG, buildTextFieldInputAttributes());
-  }
-
-  @Override
   public org.commonmark.node.Node asMarkdown() {
     return new TextFieldNode(getAttribute(PLACEHOLDER_ATTR), hasExactNumberOfChildren(1) ? getChild(0).asText() : null);
   }
@@ -96,22 +89,14 @@ public class TextField extends FormElement {
   protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
-        setAttribute(NAME_ATTR, getStringAttribute(item));
-        break;
       case REQUIRED_ATTR:
-        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
-        break;
       case PLACEHOLDER_ATTR:
-        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
-        break;
       case MINLENGTH_ATTR:
-        setAttribute(MINLENGTH_ATTR, getStringAttribute(item));
-        break;
       case MAXLENGTH_ATTR:
-        setAttribute(MAXLENGTH_ATTR, getStringAttribute(item));
-        break;
       case MASKED_ATTR:
-        setAttribute(MASKED_ATTR, getStringAttribute(item));
+      case PATTERN_ATTR:
+      case PATTERN_ERROR_MESSAGE_ATTR:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
@@ -130,6 +115,7 @@ public class TextField extends FormElement {
     }
 
     for (int i = 0; i < attr.getLength(); i++) {
+
       buildAttributeFromPresentationML(attr.item(i));
     }
   }
@@ -137,33 +123,28 @@ public class TextField extends FormElement {
   private void buildAttributeFromPresentationML(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
-        setAttribute(NAME_ATTR, getStringAttribute(item));
+      case REQUIRED_ATTR:
+      case PLACEHOLDER_ATTR:
+      case MINLENGTH_ATTR:
+      case MAXLENGTH_ATTR:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case VALUE_ATTR:
         addChild(new TextNode(this, getStringAttribute(item)));
         break;
-      case REQUIRED_ATTR:
-        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
-        break;
-      case PLACEHOLDER_ATTR:
-        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
-        break;
-      case MINLENGTH_ATTR:
-        setAttribute(MINLENGTH_ATTR, getStringAttribute(item));
-        break;
-      case MAXLENGTH_ATTR:
-        setAttribute(MAXLENGTH_ATTR, getStringAttribute(item));
-        break;
       case PRESENTATIONML_MASKED_ATTR:
         setAttribute(MASKED_ATTR, getStringAttribute(item));
         break;
+      case PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR:
+        setAttribute(PATTERN_ERROR_MESSAGE_ATTR, getStringAttribute(item));
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName()
             + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
   }
 
-  private Map<String, String> buildTextFieldInputAttributes() {
+  @Override
+  public Map<String, String> getOtherAttributes() {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
 
     presentationAttrs.put(TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
@@ -194,6 +175,16 @@ public class TextField extends FormElement {
     }
 
     return presentationAttrs;
+  }
+
+  @Override
+  public String getPresentationMLTag() {
+    return INPUT_TAG;
+  }
+
+  @Override
+  public boolean areNestedElementsAllowed(){
+    return false;
   }
 
   private void validateMinAndMaxLengths() throws InvalidInputException {

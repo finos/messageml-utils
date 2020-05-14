@@ -2,7 +2,6 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextAreaNode;
 
 import java.util.Arrays;
@@ -14,7 +13,7 @@ import java.util.List;
  * @author Sandro Ribeiro
  * @since 06/12/2019
  */
-public class TextArea extends FormElement {
+public class TextArea extends FormElement implements RegexElement {
 
   public static final String MESSAGEML_TAG = "textarea";
 
@@ -48,13 +47,11 @@ public class TextArea extends FormElement {
   protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
-        setAttribute(NAME_ATTR, getStringAttribute(item));
-        break;
       case REQUIRED_ATTR:
-        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
-        break;
       case PLACEHOLDER_ATTR:
-        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
+      case PATTERN_ATTR:
+      case PATTERN_ERROR_MESSAGE_ATTR:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       default:
         throw new InvalidInputException("Attribute \"" + item.getNodeName() + "\" is not allowed in \"" + getMessageMLTag() + "\"");
