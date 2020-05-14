@@ -146,5 +146,8 @@ public class MessageML extends Element {
     this.chime = chime;
   }
 
-
+  @Override
+  public String getPresentationMLTag() {
+    return PRESENTATIONML_TAG;
+  }
 }

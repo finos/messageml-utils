@@ -4,7 +4,6 @@ import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.PersonSelectorNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
@@ -146,5 +145,10 @@ public class PersonSelector extends FormElement {
       buildNode(context, children.item(i));
     }
     
+  }
+
+  @Override
+  public String getPresentationMLTag() {
+    return PRESENTATIONML_TAG;
   }
 }

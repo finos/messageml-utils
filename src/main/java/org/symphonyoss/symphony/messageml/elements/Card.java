@@ -83,4 +83,8 @@ public class Card extends Element {
     out.closeElement();
   }
 
+  @Override
+  public String getPresentationMLTag() {
+    return PRESENTATIONML_TAG;
+  }
 }

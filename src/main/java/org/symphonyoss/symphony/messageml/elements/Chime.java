@@ -74,4 +74,9 @@ public class Chime extends Element {
   public void validate() throws InvalidInputException {
     assertNoContent();
   }
+
+  @Override
+  public String getPresentationMLTag() {
+    return PRESENTATIONML_TAG;
+  }
 }
