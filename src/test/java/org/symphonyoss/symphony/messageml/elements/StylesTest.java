@@ -30,7 +30,7 @@ public class StylesTest extends ElementTest {
   @Test
   public void validateAll() throws Exception {
     String validString =
-        "background:values values values;background-attachment:values;background-blend-mode:values;background-clip:values;background-color:values;background-image:values;background-position:values;background-repeat:values;background-size:values;border:values with spaces;border-bottom:101010;"
+        "background:values values values;background-attachment:values;background-blend-mode:values;background-clip:values;background-color:values;background-image: url('http://myimage.jpg');background-position:values;background-repeat:values;background-size:values;border:values with spaces;border-bottom:101010;"
             + "border-bottom-color:10 px;border-bottom-left-radius:values;border-bottom-right-radius:10 px values;border-bottom-style:100;border-bottom-width:values values;border-collapse:values;border-color:values;border-image:values;border-image-outset:values;border-image-repeat:values;"
             + "border-image-slice:values;border-image-source:values;border-image-width:values;border-left:values;border-left-color:values;border-left-style:values;border-left-width:values;border-radius:values;border-right:values;border-right-color:values;border-right-style:values;"
             + "border-right-width:values;border-spacing:values;border-style:values;border-top:values;border-top-color:values;border-top-left-radius:values;border-top-right-radius:values;border-top-style:values;border-top-width:values;border-width:values;box-shadow:values;box-sizing:values;"

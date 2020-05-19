@@ -19,7 +19,6 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.HardLineBreak;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 /**
  * Class representing a line break.
@@ -32,11 +31,6 @@ public class LineBreak extends Element {
 
   public LineBreak(Element parent) {
     super(parent, MESSAGEML_TAG);
-  }
-
-  @Override
-  public void asPresentationML(XmlPrintStream out) {
-    out.printElement(MESSAGEML_TAG);
   }
 
   @Override
@@ -59,6 +53,11 @@ public class LineBreak extends Element {
   public void validate() throws InvalidInputException {
     assertNoContent();
     assertNoAttributes();
+  }
+
+  @Override
+  public boolean areNestedElementsAllowed() {
+    return false;
   }
 
   @Override

@@ -97,6 +97,11 @@ public abstract class Entity extends Element {
     return String.format("%s%s", getEntityIdPrefix(), index);
   }
 
+  @Override
+  public String getPresentationMLTag() {
+    return presentationMLTag;
+  }
+
   protected abstract String getEntityValue();
 
   protected abstract String getEntitySubType();
