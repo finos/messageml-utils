@@ -70,7 +70,7 @@ public class Button extends FormElement {
     }
     if (clazz != null && !VALID_CLASSES.contains(clazz)) {
       throw new InvalidInputException("Attribute \"class\" must be \"primary\", \"secondary\", " +
-              "\"primary-destructive\" or \"secondary-destructive\"");
+              "\"tertiary\" or \"destructive\" (\"primary-destructive\" and \"secondary-destructive\" are deprecated)");
     }
     if (type.equals(ACTION_TYPE) && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for action buttons");
