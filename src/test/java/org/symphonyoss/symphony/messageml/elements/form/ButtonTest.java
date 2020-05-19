@@ -254,8 +254,9 @@ public class ButtonTest extends ElementTest {
       fail("Should have thrown an exception on invalid class button");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"class\" must be \"primary\", \"secondary\", " +
-              "\"primary-destructive\" or \"secondary-destructive\"", e.getMessage());
+      assertEquals("Exception message", "Attribute \"class\" must be \"primary\", \"secondary\", "
+          + "\"tertiary\" or \"destructive\" (\"primary-destructive\" and "
+          + "\"secondary-destructive\" are deprecated)", e.getMessage());
     }
   }
 
