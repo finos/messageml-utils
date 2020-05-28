@@ -10,7 +10,7 @@
 
     <groupId>org.symphonyoss.symphony</groupId>
     <artifactId>messageml</artifactId>
-    <version>0.9.51</version>
+    <version>0.9.52-SNAPSHOT</version>
     <name>MessageML Utils</name>
     <url>https://github.com/symphonyoss/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages</description>
