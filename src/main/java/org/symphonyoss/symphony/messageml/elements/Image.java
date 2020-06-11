@@ -16,7 +16,9 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.w3c.dom.Node;
 
 /**
  * Class representing an image.
@@ -34,13 +36,14 @@ public class Image extends Element {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_SRC:
         setAttribute(ATTR_SRC, getStringAttribute(item));
         break;
       default:
-        super.buildAttribute(item);
+        super.buildAttribute(parser, item);
     }
   }
 

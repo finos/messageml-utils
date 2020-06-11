@@ -1,8 +1,10 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.apache.commons.lang3.StringUtils;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
+import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +34,8 @@ public class Button extends FormElement {
   }
 
   @Override
-  public void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  public void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
         setAttribute(NAME_ATTR, getStringAttribute(item));
@@ -47,8 +50,7 @@ public class Button extends FormElement {
         break;
 
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-                + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throwInvalidInputException(item);
     }
   }
 

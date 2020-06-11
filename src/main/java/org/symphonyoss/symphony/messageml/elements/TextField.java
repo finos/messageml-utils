@@ -7,6 +7,7 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -22,9 +24,10 @@ import java.util.Set;
  * @author Lucas Macedo
  * @since 06/07/2019
  */
-public class TextField extends FormElement implements RegexElement {
+public class TextField extends FormElement implements RegexElement, LabelableElement {
 
   public static final String MESSAGEML_TAG = "text-field";
+  public static final String ELEMENT_ID = "textfield";
   public static final String PRESENTATIONML_INPUT_TYPE = "text";
 
   private static final String MINLENGTH_ATTR = "minlength";
@@ -68,11 +71,11 @@ public class TextField extends FormElement implements RegexElement {
   }
 
   @Override
-  public void buildAll(MessageMLParser context, org.w3c.dom.Element element)
+  public void buildAll(MessageMLParser parser, org.w3c.dom.Element element)
       throws InvalidInputException, ProcessingException {
     switch (getFormat()) {
       case MESSAGEML:
-        super.buildAll(context, element);
+        super.buildAll(parser, element);
         break;
       case PRESENTATIONML:
         this.buildAllFromPresentationML(element);
@@ -86,7 +89,8 @@ public class TextField extends FormElement implements RegexElement {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case REQUIRED_ATTR:
@@ -96,11 +100,20 @@ public class TextField extends FormElement implements RegexElement {
       case MASKED_ATTR:
       case PATTERN_ATTR:
       case PATTERN_ERROR_MESSAGE_ATTR:
+      case LABEL:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
+      case ID_ATTR:
+        if(format != FormatEnum.PRESENTATIONML){
+          throwInvalidInputException(item);
+        }
+        Optional<String> labelValue = parser.getLabel(getStringAttribute(item));
+        if(labelValue.isPresent()){
+          setAttribute(LabelableElement.LABEL, labelValue.get());
+        }
+        break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throwInvalidInputException(item);
     }
   }
 
@@ -127,6 +140,7 @@ public class TextField extends FormElement implements RegexElement {
       case PLACEHOLDER_ATTR:
       case MINLENGTH_ATTR:
       case MAXLENGTH_ATTR:
+      case LABEL:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case VALUE_ATTR:
@@ -137,9 +151,9 @@ public class TextField extends FormElement implements RegexElement {
         break;
       case PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR:
         setAttribute(PATTERN_ERROR_MESSAGE_ATTR, getStringAttribute(item));
+        break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throwInvalidInputException(item);
     }
   }
 
@@ -185,6 +199,11 @@ public class TextField extends FormElement implements RegexElement {
   @Override
   public boolean areNestedElementsAllowed(){
     return false;
+  }
+
+  @Override
+  public String getElementId(){
+    return ELEMENT_ID;
   }
 
   private void validateMinAndMaxLengths() throws InvalidInputException {
@@ -259,5 +278,4 @@ public class TextField extends FormElement implements RegexElement {
   private String getLengthErrorMessage(String attributeName) {
     return format("The attribute \"%s\" must be between %s and %s", attributeName, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
   }
-
 }

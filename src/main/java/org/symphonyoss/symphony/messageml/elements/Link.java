@@ -18,6 +18,8 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -57,7 +59,8 @@ public class Link extends Element {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_HREF:
         uri = getUrlAttribute(item);
@@ -65,19 +68,20 @@ public class Link extends Element {
         break;
 
       default:
-        super.buildAttribute(item);
+        super.buildAttribute(parser, item);
     }
   }
 
   @Override
-  void asPresentationML(XmlPrintStream out) {
+  void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     out.openElement(getMessageMLTag(), getAttributes());
 
     if (getChildren().isEmpty()) {
       out.print(out.escape(getUri().toString()));
     } else {
       for (Element child : getChildren()) {
-        child.asPresentationML(out);
+        child.asPresentationML(out, context);
       }
     }
 

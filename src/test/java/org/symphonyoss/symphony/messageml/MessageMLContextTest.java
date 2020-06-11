@@ -42,6 +42,7 @@ import org.symphonyoss.symphony.messageml.elements.Mention;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.TextNode;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
 import org.w3c.dom.Document;
@@ -111,6 +112,126 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseMessageMLTextFieldWithLabels()
+      throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>\n"
+        + "  <form id=\"example\">\n"
+        + "    <text-field label=\"Username\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" pattern-error-message=\"\"/>"
+        + "    <button type=\"action\" name=\"send-answers\">Submit</button>\n"
+        + "  </form>\n"
+        + "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    MessageML messageML = context.getMessageML();
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    String id = presentationML.substring(startId + "label for=\"".length(), endId);
+
+    String expectedResult = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "   <form id=\"example\">"
+        + "     <div class=\"textfield-group\"><label for=\"%s\">Username</label><input type=\"text\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" data-pattern-error-message=\"\" id=\"%s\"/></div>"
+        + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
+        + "   </form>"
+        + " </div>", id, id);
+
+    assertEquals(expectedResult, presentationML);
+  }
+
+  @Test
+  public void testParseMessageMLTextAreaWithLabels()
+      throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>\n"
+        + "  <form id=\"example\">\n"
+        + "    <textarea name=\"justification\" pattern=\"^((?!badword).)*$\" pattern-error-message=\"\" label=\"Justification\"/>"
+        + "    <button type=\"action\" name=\"send-answers\">Submit</button>\n"
+        + "  </form>\n"
+        + "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    MessageML messageML = context.getMessageML();
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    String id = presentationML.substring(startId + "label for=\"".length(), endId);
+
+    String expectedResult = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "   <form id=\"example\">"
+            + "     <div class=\"textarea-group\"><label for=\"%s\">Justification</label><textarea name=\"justification\" pattern=\"^((?!badword).)*$\" data-pattern-error-message=\"\" id=\"%s\"></textarea></div>"
+            + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
+            + "   </form>"
+            + " </div>", id, id);
+
+    assertEquals(expectedResult, presentationML);
+  }
+
+  @Test
+  public void testParseMessageMLPersonSelectorWithLabels()
+      throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>\n"
+        + "  <form id=\"example\">\n"
+        + "    <person-selector label=\"Awesome users\" name=\"awesome-users\"/>"
+        + "    <button type=\"action\" name=\"send-answers\">Submit</button>\n"
+        + "  </form>\n"
+        + "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    MessageML messageML = context.getMessageML();
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    String id = presentationML.substring(startId + "label for=\"".length(), endId);
+
+    String expectedResult = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "   <form id=\"example\">"
+            + "     <div class=\"person-selector-group\"><label for=\"%s\">Awesome users</label><div class=\"person-selector\" data-name=\"awesome-users\" id=\"%s\"></div></div>"
+            + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
+            + "   </form>"
+            + " </div>", id, id, id);
+
+    assertEquals(expectedResult, presentationML);
+  }
+
+  @Test
+  public void testParseMessageMLDropdownWithLabels()
+      throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>\n"
+        + "  <form id=\"example\">\n"
+        + "    <select name=\"cities\" label=\"Cities\">\n"
+        + "      <option selected=\"true\" value=\"ny\">New York</option>\n"
+        + "      <option value=\"van\">Vancouver</option>\n"
+        + "      <option value=\"par\">Paris</option>\n"
+        + "    </select>\n"
+        + "    <button type=\"action\" name=\"send-answers\">Submit</button>\n"
+        + "  </form>\n"
+        + "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    MessageML messageML = context.getMessageML();
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    String id = presentationML.substring(startId + "label for=\"".length(), endId);
+
+    String expectedResult = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "   <form id=\"example\">"
+            + "     <div class=\"dropdown-group\"><label for=\"%s\">Cities</label><select name=\"cities\" id=\"%s\">"
+            + "       <option selected=\"true\" value=\"ny\">New York</option>"
+            + "       <option value=\"van\">Vancouver</option>"
+            + "       <option value=\"par\">Paris</option>"
+            + "     </select></div>"
+            + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
+            + "   </form>"
+            + " </div>", id, id);
+
+    assertEquals(expectedResult, presentationML);
+  }
+
+  @Test
   public void testParsePresentationML() throws Exception {
     final String message = getPayload("payloads/expanded_single_jira_ticket.presentationml");
     final String data = getPayload("payloads/expanded_single_jira_ticket.entityjson");
@@ -134,6 +255,25 @@ public class MessageMLContextTest {
     assertEquals("EntityJSON", MAPPER.writeValueAsString(expectedEntityJson), MAPPER.writeValueAsString(entityJson));
     assertEquals("Markdown", expectedMarkdown, markdown);
     assertEquals("Legacy entities", MAPPER.writeValueAsString(expectedEntities), MAPPER.writeValueAsString(entities));
+  }
+
+  @Test
+  public void testParsePresentationMLWithLabels()
+      throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "   <form id=\"example\">"
+        + "     <label for=\"dropdown-mlePOgOrF\">Cities</label><select name=\"cities\" id=\"dropdown-mlePOgOrF\">"
+        + "       <option value=\"ny\" selected=\"true\">New York</option>"
+        + "       <option value=\"van\">Vancouver</option>"
+        + "       <option value=\"par\">Paris</option>"
+        + "     </select>"
+        + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
+        + "   </form>"
+        + " </div>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    MessageML messageML = context.getMessageML();
   }
 
   @Test

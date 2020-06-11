@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.commonmark.node.Node;
 import org.commonmark.node.Paragraph;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -38,7 +39,8 @@ public class Div extends Element {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_ENTITY_ID:
         setAttribute(ATTR_ENTITY_ID, getStringAttribute(item));
@@ -53,7 +55,7 @@ public class Div extends Element {
         break;
 
       default:
-        super.buildAttribute(item);
+        super.buildAttribute(parser, item);
     }
   }
 

@@ -19,6 +19,8 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.commonmark.node.Node;
 import org.commonmark.node.Text;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -74,7 +76,8 @@ public class Mention extends Entity {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_EMAIL:
         email = getStringAttribute(item);
@@ -89,12 +92,13 @@ public class Mention extends Entity {
         break;
 
       default:
-        super.buildAttribute(item);
+        super.buildAttribute(parser, item);
     }
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     if (userPresentation != null) {
       out.printElement(presentationMLTag, asText(), CLASS_ATTR, PRESENTATIONML_CLASS,
           ENTITY_ID_ATTR, entityId);
@@ -118,7 +122,7 @@ public class Mention extends Entity {
             link.addChild(child);
           }
 
-          link.asPresentationML(out);
+          link.asPresentationML(out, context);
         } catch (InvalidInputException e) { // Thrown on unsupported protocol
           out.print(email);
         }
