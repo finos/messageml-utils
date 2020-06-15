@@ -25,8 +25,11 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.commonmark.node.Document;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.Node;
 
 
 /**
@@ -55,7 +58,8 @@ public class MessageML extends Element {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     if (getFormat() == FormatEnum.PRESENTATIONML) {
       switch (item.getNodeName()) {
         case ATTR_FORMAT:
@@ -67,10 +71,10 @@ public class MessageML extends Element {
           break;
 
         default:
-          super.buildAttribute(item);
+          super.buildAttribute(parser, item);
       }
     } else {
-      super.buildAttribute(item);
+      super.buildAttribute(parser, item);
     }
   }
 
@@ -86,12 +90,13 @@ public class MessageML extends Element {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
 
     out.openElement(PRESENTATIONML_TAG, ATTR_FORMAT, PRESENTATIONML_FORMAT, ATTR_VERSION, version);
 
     for (Element child : getChildren()) {
-      child.asPresentationML(out);
+      child.asPresentationML(out, context);
     }
 
     out.closeElement();

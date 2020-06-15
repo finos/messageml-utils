@@ -25,6 +25,7 @@ import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.MarkdownParser;
 import org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
+import org.symphonyoss.symphony.messageml.util.ShortID;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,6 +47,7 @@ public class MessageMLContext {
 
   private final MessageMLParser messageMLParser;
   private final MarkdownParser markdownParser;
+  private final ShortID shortID;
   private MarkdownRenderer markdownRenderer;
   private MessageML messageML;
   private ObjectNode entityJson;
@@ -53,6 +55,7 @@ public class MessageMLContext {
   public MessageMLContext(IDataProvider dataProvider) {
     this.markdownParser = new MarkdownParser(dataProvider);
     this.messageMLParser = new MessageMLParser(dataProvider);
+    this.shortID = new ShortID();
   }
 
   /**
@@ -115,7 +118,7 @@ public class MessageMLContext {
     out.setNoIndent(true);
     out.setNoNl(true);
 
-    messageML.asPresentationML(out);
+    messageML.asPresentationML(out, this);
 
     out.close();
 
@@ -211,6 +214,10 @@ public class MessageMLContext {
     }
 
     return sb.toString();
+  }
+
+  public String generateShortId(){
+    return shortID.generate();
   }
 
 }

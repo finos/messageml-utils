@@ -18,6 +18,8 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
 import org.commonmark.node.Paragraph;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
@@ -40,17 +42,18 @@ public class CardHeader extends Element {
   }
 
   @Override
-  void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
-    throw new InvalidInputException("Attribute \"" + item.getNodeName()
-        + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+  void buildAttribute(MessageMLParser parser,
+      org.w3c.dom.Node item) throws InvalidInputException {
+    throwInvalidInputException(item);
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     out.openElement(PRESENTATIONML_TAG, Collections.singletonMap(CLASS_ATTR, PRESENTATIONML_CLASS));
 
     for (Element child : getChildren()) {
-      child.asPresentationML(out);
+      child.asPresentationML(out, context);
     }
 
     out.closeElement();

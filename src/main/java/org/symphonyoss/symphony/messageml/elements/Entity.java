@@ -20,7 +20,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.w3c.dom.Node;
 
 /**
  * @author lukasz
@@ -44,17 +46,17 @@ public abstract class Entity extends Element {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ENTITY_ID_ATTR:
         this.entityId = item.getTextContent();
         break;
       default:
         if (format == FormatEnum.PRESENTATIONML) {
-          super.buildAttribute(item);
+          super.buildAttribute(parser, item);
         } else {
-          throw new InvalidInputException("Attribute \"" + item.getNodeName()
-              + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+          throwInvalidInputException(item);
         }
     }
   }

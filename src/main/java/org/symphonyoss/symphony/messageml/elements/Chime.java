@@ -16,8 +16,11 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.Node;
 
 /**
  * Class representing a convenience element for a chime. Translated to an audio element.
@@ -43,7 +46,8 @@ public class Chime extends Element {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_SRC:
         if (!getStringAttribute(item).equalsIgnoreCase(SRC)) {
@@ -54,13 +58,13 @@ public class Chime extends Element {
       case ATTR_AUTOPLAY:
         break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throwInvalidInputException(item);
     }
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     out.printElement(PRESENTATIONML_TAG, null, ATTR_SRC, SRC,
         ATTR_AUTOPLAY, "true");
   }

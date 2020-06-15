@@ -16,8 +16,11 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.Node;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -44,7 +47,8 @@ public class Card extends Element {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case PRESENTATIONML_ICON:
       case ATTR_ICON:
@@ -55,12 +59,13 @@ public class Card extends Element {
         setAttribute(ATTR_ACCENT, getStringAttribute(item));
         break;
       default:
-        super.buildAttribute(item);
+        super.buildAttribute(parser, item);
     }
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
     if (getAttribute(CLASS_ATTR) != null) {
       presentationAttrs.put(CLASS_ATTR, String.format("%s %s", PRESENTATIONML_CLASS, getAttribute(CLASS_ATTR)));
@@ -77,7 +82,7 @@ public class Card extends Element {
     out.openElement(PRESENTATIONML_TAG, presentationAttrs);
 
     for (Element child : getChildren()) {
-      child.asPresentationML(out);
+      child.asPresentationML(out, context);
     }
 
     out.closeElement();

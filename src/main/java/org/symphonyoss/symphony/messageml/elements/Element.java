@@ -37,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -55,13 +56,13 @@ import java.util.stream.Collectors;
 public abstract class Element {
   public static final String CLASS_ATTR = "class";
   public static final String STYLE_ATTR = "style";
-  private static final String ID_ATTR = "id";
+  protected static final String ID_ATTR = "id";
 
   protected FormatEnum format;
   private final Map<String, String> attributes = new LinkedHashMap<>();
   private final List<Element> children = new ArrayList<>();
   private final Element parent;
-  private String messageMLTag;
+  private final String messageMLTag;
 
   Element(Element parent) {
     this(parent, null);
@@ -91,25 +92,25 @@ public abstract class Element {
   /**
    * Process a DOM element, descending into its children, and construct the output MessageML tree.
    */
-  public void buildAll(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException,
+  public void buildAll(MessageMLParser parser, org.w3c.dom.Element element) throws InvalidInputException,
       ProcessingException {
     NamedNodeMap attr = element.getAttributes();
 
     for (int i = 0; i < attr.getLength(); i++) {
-      buildAttribute(attr.item(i));
+      buildAttribute(parser, attr.item(i));
     }
 
     NodeList children = element.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
-      buildNode(context, children.item(i));
+      buildNode(parser, children.item(i));
     }
   }
 
   /**
    * Parse a DOM attribute into MessageML element properties.
    */
-  void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  void buildAttribute(MessageMLParser parser, org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case CLASS_ATTR:
         attributes.put(CLASS_ATTR, getStringAttribute(item));
@@ -120,11 +121,16 @@ public abstract class Element {
         attributes.put(STYLE_ATTR, styleAttribute);
         break;
       default:
-        if(this instanceof RegexElement && RegexElement.ALL_REGEX_ATTRS.contains(item.getNodeName())){
+        if((this instanceof RegexElement && RegexElement.ALL_REGEX_ATTRS.contains(item.getNodeName()))
+        || (format == FormatEnum.MESSAGEML && this instanceof LabelableElement && LabelableElement.LABEL.equals(item.getNodeName()))){
           attributes.put(item.getNodeName(), getStringAttribute(item));
+        } else if(format == FormatEnum.PRESENTATIONML && this instanceof LabelableElement && ID_ATTR.equals(item.getNodeName())) {
+          Optional<String> labelValue = parser.getLabel(getStringAttribute(item));
+          if(labelValue.isPresent()){
+            attributes.put(LabelableElement.LABEL, labelValue.get());
+          }
         } else {
-          throw new InvalidInputException("Attribute \"" + item.getNodeName()
-              + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+          throwInvalidInputException(item);
         }
     }
   }
@@ -154,14 +160,16 @@ public abstract class Element {
   private void buildElement(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException,
       ProcessingException {
     Element child = context.createElement(element, this);
-    child.buildAll(context, element);
-    child.validate();
+    if(child != null){
+      child.buildAll(context, element);
+      child.validate();
 
-    if (child.hasIdAttribute()) {
-      context.loadElementId(child.getAttribute(ID_ATTR));
+      if (child.hasIdAttribute()) {
+        context.loadElementId(child.getAttribute(ID_ATTR));
+      }
+
+      addChild(child);
     }
-
-    addChild(child);
   }
 
   /**
@@ -212,20 +220,38 @@ public abstract class Element {
   /**
    * Print a PresentationML representation of the element and its children to the provided PrintStream.
    */
-  void asPresentationML(XmlPrintStream out) {
-    Map<String, String> attributes;
+  void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
+    Map<String, String> attributes = new LinkedHashMap<>();
 
     if(this instanceof RegexElement){
-      attributes = ((RegexElement)this).getOtherAttributes();
-      attributes.putAll(((RegexElement)this).getRegexAttrForPresentationML());
+      RegexElement regexElement = (RegexElement)this;
+      attributes.putAll(regexElement.getOtherAttributes());
+      attributes.putAll(regexElement.getRegexAttrForPresentationML());
     } else {
-      attributes = getAttributes();
+      attributes.putAll(getAttributes());
     }
 
+    if(this instanceof LabelableElement && ((LabelableElement) this).isLabel()){
+      attributes.remove(LabelableElement.LABEL);
+      // open div + adding label element
+      String uid = ((LabelableElement)this).labelAsPresentationML(out, context);
+      attributes.put("id", uid);
+      // render element
+      innerAsPresentationML(out, context, attributes);
+      // close div
+      out.closeElement();
+    } else {
+      innerAsPresentationML(out, context, attributes);
+    }
+  }
+
+  private void innerAsPresentationML(XmlPrintStream out,
+      MessageMLContext context, Map<String, String> attributes){
     if(areNestedElementsAllowed()){
       out.openElement(getPresentationMLTag(), attributes);
       for (Element child : getChildren()) {
-        child.asPresentationML(out);
+        child.asPresentationML(out, context);
       }
       out.closeElement();
     } else {
@@ -259,6 +285,9 @@ public abstract class Element {
   void validate() throws InvalidInputException {
     if(this instanceof RegexElement){
       ((RegexElement)this).validateRegex();
+    }
+    if(this instanceof LabelableElement){
+      ((LabelableElement)this).validateLabel();
     }
   }
 
@@ -317,7 +346,7 @@ public abstract class Element {
           + " must be a URI value not \"" + s + "\"");
     }
   }
-  
+
   public boolean hasExactNumberOfChildren(int childrenNumber) {
     return (getChildren() != null && getChildren().size() == childrenNumber);
   }
@@ -645,7 +674,7 @@ public abstract class Element {
 
     return result;
   }
-  
+
   public Integer countNonTextNodesInNodeList(NodeList nodeList) {
     Integer numberOfNonTextNodes = 0;
 
@@ -654,7 +683,7 @@ public abstract class Element {
         numberOfNonTextNodes++;
       }
     }
-    
+
     return numberOfNonTextNodes;
   }
 
@@ -686,5 +715,10 @@ public abstract class Element {
       }
     }
     return parentFound;
+  }
+
+  protected void throwInvalidInputException(org.w3c.dom.Node item) throws InvalidInputException {
+    throw new InvalidInputException("Attribute \"" + item.getNodeName()
+        + "\" is not allowed in \"" + getMessageMLTag() + "\"");
   }
 }
