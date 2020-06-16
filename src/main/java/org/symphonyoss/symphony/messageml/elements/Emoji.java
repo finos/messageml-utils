@@ -19,6 +19,8 @@ import org.w3c.dom.Node;
 public class Emoji extends Entity {
 
   public static final String MESSAGEML_TAG = "emoji";
+  @Deprecated
+  private static final String ATTR_ANNOTATION = "annotation";
   private static final String ATTR_SHORTCODE = "shortcode";
   private static final String SHORTCODE_PATTERN = "[\\p{Alnum}_+-]*";
   private static final String ATTR_FAMILY = "family";
@@ -32,12 +34,15 @@ public class Emoji extends Entity {
   private static final String UNICODE_FIELD = "unicode";
   private static final String DEFAULT_EMOJI_SIZE = "normal";
 
+  @Deprecated
+  private String annotation;
   private String shortcode;
   private String family;
   private String size;
 
   public Emoji(Element parent, String shortcode, int entityIndex) {
     this(parent, entityIndex);
+    this.annotation = shortcode;
     this.shortcode = shortcode;
   }
 
@@ -45,6 +50,14 @@ public class Emoji extends Entity {
     super(parent, MESSAGEML_TAG, DEFAULT_PRESENTATIONML_TAG, FormatEnum.MESSAGEML);
     this.entityId = getEntityId(entityIndex);
     this.size = DEFAULT_EMOJI_SIZE;
+  }
+
+  /**
+   * It is deprecated, use getShortcode() instead
+   * @return annotation
+   */
+  public String getAnnotation() {
+    return this.annotation;
   }
 
   public String getShortCode() {
@@ -105,6 +118,7 @@ public class Emoji extends Entity {
 
       ObjectNode idNode = new ObjectNode(JsonNodeFactory.instance);
       idNode.put(ATTR_SHORTCODE, getShortCode());
+      idNode.put(ATTR_ANNOTATION, getAnnotation());
       idNode.put(ATTR_SIZE, getSize());
 
       if (EmojiShortcodeToUnicode.hasUnicodeRepresentation(shortcode)) {
@@ -131,9 +145,9 @@ public class Emoji extends Entity {
   @Override
   public void validate() throws InvalidInputException {
     if (this.shortcode == null) {
-      throw new InvalidInputException("The attribute \"shortcode\" is required");
+      throw new InvalidInputException("Either the attribute \"shortcode\" or \"annotation\" are required");
     } else if (!this.shortcode.matches(SHORTCODE_PATTERN)) {
-      throw new InvalidInputException("Shortcode parameter may only contain alphanumeric characters, underscore, plus sign and dash");
+      throw new InvalidInputException("Shortcode or Annotation parameter may only contain alphanumeric characters, underscore, plus sign and dash");
     }
 
     assertPhrasingContent();
@@ -148,7 +162,9 @@ public class Emoji extends Entity {
   protected void buildAttribute(Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_SHORTCODE:
+      case ATTR_ANNOTATION:
         this.shortcode = getStringAttribute(item);
+        this.annotation = this.shortcode;
         break;
       case ATTR_FAMILY:
         this.family = getStringAttribute(item);
