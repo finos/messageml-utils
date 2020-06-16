@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Text;
 
@@ -39,7 +40,8 @@ public class TextNode extends Element {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     String content = this.text;
     if (out.isRemoveNl() && !(getParent() instanceof Code) && !(getParent() instanceof TextArea)) { // Do not remove newlines if the parent node is a code node or a text area node
       content = XmlPrintStream.removeNewLines(content);

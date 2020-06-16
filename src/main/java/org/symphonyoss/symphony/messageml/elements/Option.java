@@ -1,7 +1,9 @@
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
+import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +44,8 @@ public class Option extends FormElement {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case VALUE_ATTR:
         setAttribute(VALUE_ATTR, getStringAttribute(item));
@@ -51,8 +54,7 @@ public class Option extends FormElement {
         setAttribute(SELECTED_ATTR, getStringAttribute(item));
         break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throwInvalidInputException(item);
     }
   }
 }

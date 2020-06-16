@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 
@@ -36,7 +37,8 @@ public class TableCell extends Element {
   }
 
   @Override
-  void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  void buildAttribute(MessageMLParser parser,
+      org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_ROWSPAN:
         setAttribute(ATTR_ROWSPAN, getLongAttribute(item).toString());
@@ -45,7 +47,7 @@ public class TableCell extends Element {
         setAttribute(ATTR_COLSPAN, getLongAttribute(item).toString());
         break;
       default:
-        super.buildAttribute(item);
+        super.buildAttribute(parser, item);
     }
   }
 

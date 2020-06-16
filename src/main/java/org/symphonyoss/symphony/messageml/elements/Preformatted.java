@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
@@ -34,12 +35,13 @@ public class Preformatted extends Element {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     boolean removeNl = out.isRemoveNl();
 
     out.setRemoveNl(false);
 
-    super.asPresentationML(out);
+    super.asPresentationML(out, context);
 
     out.setRemoveNl(removeNl);
   }

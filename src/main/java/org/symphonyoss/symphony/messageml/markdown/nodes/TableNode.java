@@ -16,7 +16,10 @@
 
 package org.symphonyoss.symphony.messageml.markdown.nodes;
 
+import org.commonmark.node.Block;
 import org.commonmark.node.CustomBlock;
+import org.commonmark.node.Emphasis;
+import org.commonmark.node.Node;
 
 /**
  * Class representing a Markdown node for tables.
@@ -35,4 +38,5 @@ public class TableNode extends CustomBlock {
   public String getClosingDelimiter() {
     return "\n" + DELIMITER + "\n";
   }
+
 }

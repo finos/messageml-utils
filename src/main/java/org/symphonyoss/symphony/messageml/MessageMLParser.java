@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,7 @@ public class MessageMLParser {
   private int index;
 
   private Set<String> elementIds;
+  private Map<String, Optional<String>> labels;
 
   static {
     FREEMARKER.setDefaultEncoding("UTF-8");
@@ -87,6 +89,7 @@ public class MessageMLParser {
       IOException {
     this.index = 0;
     this.elementIds = new HashSet<>();
+    this.labels = new HashMap<>();
     String expandedMessage;
 
     if (StringUtils.isBlank(message)) {
@@ -290,6 +293,9 @@ public class MessageMLParser {
 
   /**
    * Create a MessageML element based on the DOM element's name and attributes.
+   * It can return null when the element must be not created (e.g. see label element {@link LabelableElement}
+   * that is PresentationML specific, but in MessageML is not an element, instead it is an attribute of another element)
+   * and it should be not considered an error; in case of a real error, an exception is thrown
    */
   public Element createElement(org.w3c.dom.Element element, Element parent) throws
       InvalidInputException {
@@ -416,7 +422,7 @@ public class MessageMLParser {
 
       case Button.MESSAGEML_TAG:
         return new Button(parent);
-        
+
       case TextField.MESSAGEML_TAG:
         return new TextField(parent, FormatEnum.MESSAGEML);
 
@@ -435,6 +441,17 @@ public class MessageMLParser {
       case TextArea.MESSAGEML_TAG:
         return new TextArea(parent);
 
+      case LabelableElement.LABEL:
+        String id = element.getAttribute(LabelableElement.LABEL_FOR);
+        if(id == null || id.isEmpty()){
+          throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\": 'for' attribute missing or empty");
+        }
+        if(labels.containsKey(id)){
+          throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\": 'for' value already existing");
+        }
+        labels.put(id, Optional.ofNullable(element.getTextContent()));
+        return null;
+
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
     }
@@ -452,6 +469,18 @@ public class MessageMLParser {
     }
   }
 
+  /**
+   * Returns the label value corresponding to the id
+   * (used internally during parsing)
+   */
+  public Optional<String> getLabel(String id) throws InvalidInputException {
+    Optional<String> value = labels.get(id);
+    if(value == null){
+      throw new InvalidInputException(String.format("Label not found for the id: %s. The must be present before the corresponding element.", id));
+    }
+    return value;
+  }
+
   private Element createElementFromInput(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
     String elementType = element.getAttribute(FormElement.TYPE_ATTR);
 
@@ -460,7 +489,7 @@ public class MessageMLParser {
       return new TextField(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementType, Checkbox.PRESENTATIONML_INPUT_TYPE)) {
       return new Checkbox(parent, FormatEnum.PRESENTATIONML);
-    } else if (containsAttribute(elementType, Radio.PRESENTATIONML_INPUT_TYPE)) { 
+    } else if (containsAttribute(elementType, Radio.PRESENTATIONML_INPUT_TYPE)) {
       return new Radio(parent, FormatEnum.PRESENTATIONML);
     } else {
       throw new InvalidInputException(String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
@@ -530,8 +559,7 @@ public class MessageMLParser {
     } else if (Span.MESSAGEML_TAG.equals(tag)) {
       return new Span(parent);
     } else {
-      throw new InvalidInputException("The element \'" + tag + "\" cannot be an entity");
+      throw new InvalidInputException("The element \"" + tag + "\" cannot be an entity");
     }
   }
-
 }
