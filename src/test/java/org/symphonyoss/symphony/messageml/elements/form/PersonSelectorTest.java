@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class PersonSelectorTest extends ElementTest {
   private static final String FORM_ID_ATTR = "id";
-  
+
   @Test
   public void sendValidPersonSelectorOnPresentationML() throws Exception {
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\" data-name=\"one-name\" data-placeholder=\"some-placeholder\" data-required=\"true\"/>" + ACTION_BTN_ELEMENT
@@ -23,8 +23,8 @@ public class PersonSelectorTest extends ElementTest {
   @Test
   public void sendInvalidAttrPersonSelectorOnPresentationML() throws Exception {
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"id\" is not allowed in \"person-selector\"");
-    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div id=\"idOne\" class=\"person-selector\" data-name=\"any-name\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
+    expectedException.expectMessage("Attribute \"dummy\" is not allowed in \"person-selector\"");
+    context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div dummy=\"idOne\" class=\"person-selector\" data-name=\"any-name\"/></form></messageML>", null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
@@ -103,8 +103,8 @@ public class PersonSelectorTest extends ElementTest {
     Element personSelector = form.getChildren().get(0);
     assertEquals(form.getClass(), Form.class);
     assertEquals(personSelector.getClass(), PersonSelector.class);
-    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR + 
-        "\"><div class=\"person-selector\" data-name=\"" + dataName + "\"" + 
+    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
+        "\"><div class=\"person-selector\" data-name=\"" + dataName + "\"" +
         (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
         "></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());

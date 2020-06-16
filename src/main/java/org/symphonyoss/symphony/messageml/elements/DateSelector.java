@@ -1,6 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -23,15 +24,15 @@ import java.util.Set;
  */
 public class DateSelector extends FormElement {
   public static final String MESSAGEML_TAG = "date-selector";
-  
+
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
   private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
-  
+
   private static final String PRESENTATIONML_NAME_ATTR = "data-name";
   private static final String PRESENTATIONML_PLACEHOLDER_ATTR = "data-placeholder";
   private static final String PRESENTATIONML_REQUIRED_ATTR = "data-required";
-  
+
   private static final String PRESENTATIONML_TAG = "div";
   private static final String MARKDOWN = "Date Selector";
   private static final String CLASS_ATTR = "class";
@@ -41,13 +42,13 @@ public class DateSelector extends FormElement {
   }
 
   @Override
-  public void buildAll(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+  public void buildAll(MessageMLParser parser, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
     switch (getFormat()) {
       case MESSAGEML:
-        super.buildAll(context, element);
+        super.buildAll(parser, element);
         break;
       case PRESENTATIONML:
-        buildElementFromDiv(context, element);
+        buildElementFromDiv(parser, element);
         this.validate();
         break;
       default:
@@ -58,7 +59,7 @@ public class DateSelector extends FormElement {
   @Override
   public void validate() throws InvalidInputException {
     super.validate();
-    
+
     if (getAttribute(NAME_ATTR) == null) {
       throw new InvalidInputException("The attribute \"name\" is required");
     }
@@ -71,7 +72,8 @@ public class DateSelector extends FormElement {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     Map<String, String> presentationAttrs = buildDateSelectorInputAttributes();
     out.openElement(PRESENTATIONML_TAG, presentationAttrs);
     out.closeElement();
@@ -83,7 +85,8 @@ public class DateSelector extends FormElement {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
         setAttribute(NAME_ATTR, getStringAttribute(item));
@@ -95,8 +98,7 @@ public class DateSelector extends FormElement {
         setAttribute(REQUIRED_ATTR, getStringAttribute(item));
         break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName()
-            + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throwInvalidInputException(item);
     }
   }
 
@@ -122,8 +124,8 @@ public class DateSelector extends FormElement {
     return presentationAttrs;
   }
 
-  void buildElementFromDiv(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
-    
+  void buildElementFromDiv(MessageMLParser parser, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {
+
     element.setAttribute(NAME_ATTR, element.getAttribute(PRESENTATIONML_NAME_ATTR));
     element.removeAttribute(PRESENTATIONML_NAME_ATTR);
 
@@ -131,7 +133,7 @@ public class DateSelector extends FormElement {
       element.setAttribute(PLACEHOLDER_ATTR, element.getAttribute(PRESENTATIONML_PLACEHOLDER_ATTR));
       element.removeAttribute(PRESENTATIONML_PLACEHOLDER_ATTR);
     }
-    
+
     if (element.hasAttribute(PRESENTATIONML_REQUIRED_ATTR)) {
       element.setAttribute(REQUIRED_ATTR, element.getAttribute(PRESENTATIONML_REQUIRED_ATTR));
       element.removeAttribute(PRESENTATIONML_REQUIRED_ATTR);
@@ -140,13 +142,13 @@ public class DateSelector extends FormElement {
     NamedNodeMap attributes = element.getAttributes();
 
     for (int i = 0; i < attributes.getLength(); i++) {
-      buildAttribute(attributes.item(i));
+      buildAttribute(parser, attributes.item(i));
     }
 
     NodeList children = element.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
-      buildNode(context, children.item(i));
+      buildNode(parser, children.item(i));
     }
 
   }

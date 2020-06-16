@@ -3,6 +3,8 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.util.EmojiShortcodeToUnicode;
@@ -73,14 +75,15 @@ public class Emoji extends Entity {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     out.openElement(presentationMLTag, CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
 
     if (this.getChildren().isEmpty()) {
       out.append(asDefaultRepresentation());
     } else {
       for (Element child : getChildren()) {
-        child.asPresentationML(out);
+        child.asPresentationML(out, context);
       }
     }
 
@@ -159,7 +162,8 @@ public class Emoji extends Entity {
   }
 
   @Override
-  protected void buildAttribute(Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_SHORTCODE:
       case ATTR_ANNOTATION:

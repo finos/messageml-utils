@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -35,9 +36,9 @@ public class HorizontalRule extends Element {
   }
 
   @Override
-  void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
-    throw new InvalidInputException("Attribute \"" + item.getNodeName()
-        + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+  void buildAttribute(MessageMLParser parser,
+      org.w3c.dom.Node item) throws InvalidInputException {
+    throwInvalidInputException(item);
   }
 
   @Override

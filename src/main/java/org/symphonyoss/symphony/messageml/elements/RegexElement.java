@@ -21,7 +21,7 @@ import java.util.regex.PatternSyntaxException;
  * Simply implement it into the element when you want to add regex support
  *
  * Beware:
- *  If the element implementing this interface overrides {@link Element#validate()} and/or {@link Element#buildAttribute(Node)} and/or {@link Element#asPresentationML(XmlPrintStream)}
+ *  If the element implementing this interface overrides {@link Element#validate()} and/or {@link Element#buildAttribute(org.symphonyoss.symphony.messageml.MessageMLParser, Node)} and/or {@link Element#asPresentationML(XmlPrintStream, org.symphonyoss.symphony.messageml.MessageMLContext)}
  *  without calling super, it is needed to manage manually PATTERN_ATTR and PATTERN_ERROR_MESSAGE_ATTR in these methods
  *
  * @author enrico.molino (12/05/2020)

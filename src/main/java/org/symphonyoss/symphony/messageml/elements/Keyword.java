@@ -16,8 +16,11 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+import org.w3c.dom.Node;
 
 /**
  * Base class of convenience elements for hash and cash tags.
@@ -38,13 +41,14 @@ abstract class Keyword extends Entity {
   }
 
   @Override
-  protected void buildAttribute(org.w3c.dom.Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser,
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_TAG:
         this.tag = item.getTextContent();
         break;
       default:
-          super.buildAttribute(item);
+          super.buildAttribute(parser, item);
     }
   }
 
@@ -71,7 +75,8 @@ abstract class Keyword extends Entity {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out) {
+  public void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
     out.printElement(presentationMLTag, asText(), CLASS_ATTR, Entity.PRESENTATIONML_CLASS, ENTITY_ID_ATTR, entityId);
   }
 
