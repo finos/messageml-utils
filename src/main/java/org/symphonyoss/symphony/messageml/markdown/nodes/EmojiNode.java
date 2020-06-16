@@ -66,6 +66,7 @@ public class EmojiNode extends CustomNode implements Delimited {
    * It is deprecated, use setShortcode() instead
    * @param name
    */
+  @Deprecated
   public void setAnnotation(String name) {
     this.annotation = annotation;
   }
