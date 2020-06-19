@@ -17,10 +17,13 @@ public class EmojiNode extends CustomNode implements Delimited {
 
   private String delimiter;
   private String shortcode;
+  @Deprecated
+  private String annotation;
 
   public EmojiNode(String shortcode) {
     this();
     this.shortcode = shortcode;
+    this.annotation = shortcode;
   }
 
   public EmojiNode() {
@@ -48,6 +51,24 @@ public class EmojiNode extends CustomNode implements Delimited {
 
   public void setShortcode(String shortcode) {
     this.shortcode = shortcode;
+  }
+
+  /**
+   * It is deprecated, use getShortcode() instead
+   * @return annotation
+   */
+  @Deprecated
+  public String getAnnotation() {
+    return this.annotation;
+  }
+
+  /**
+   * It is deprecated, use setShortcode() instead
+   * @param name
+   */
+  @Deprecated
+  public void setAnnotation(String name) {
+    this.annotation = annotation;
   }
 
 }

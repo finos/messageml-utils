@@ -48,7 +48,7 @@ public class EmojiTest extends ElementTest{
   public void testEmojiNonValidShortcode() throws Exception {
     String input = "<messageML><emoji family=\"Rick and Morty\" size=\"big\" shortcode=\"smiley.something invalid\"><b>Test of content</b></emoji></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Shortcode parameter may only contain alphanumeric characters, underscore, plus sign and dash");
+    expectedException.expectMessage("Shortcode or Annotation parameter may only contain alphanumeric characters, underscore, plus sign and dash");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
   }
@@ -108,6 +108,7 @@ public class EmojiTest extends ElementTest{
             "\"version\":\"1.0\","+
             "\"data\":{"+
             "\"shortcode\":\""+shortcode+"\","+
+            "\"annotation\":\""+shortcode+"\","+
             "\"size\":\""+size+"\""+
             unicodeAttr+
             familyAttr+
