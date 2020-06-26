@@ -5,6 +5,7 @@ import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextAreaNode;
 
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Optional;
  * @author Sandro Ribeiro
  * @since 06/12/2019
  */
-public class TextArea extends FormElement implements RegexElement, LabelableElement {
+public class TextArea extends FormElement implements RegexElement, LabelableElement, TooltipableElement {
 
   public static final String MESSAGEML_TAG = "textarea";
 
@@ -25,8 +26,8 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
 
   private static final String MARKDOWN = "Text Area";
 
-  public TextArea(Element parent) {
-    super(parent, MESSAGEML_TAG);
+  public TextArea(Element parent, FormatEnum format) {
+    super(parent, MESSAGEML_TAG, format);
   }
 
   @Override
@@ -53,18 +54,27 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
       case REQUIRED_ATTR:
       case PLACEHOLDER_ATTR:
       case PATTERN_ATTR:
-      case PATTERN_ERROR_MESSAGE_ATTR:
       case LABEL:
+      case TITLE:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
-      case ID_ATTR:
-        if(format != FormatEnum.PRESENTATIONML){
+      case PATTERN_ERROR_MESSAGE_ATTR:
+        if(this.format != FormatEnum.MESSAGEML){
           throwInvalidInputException(item);
         }
-        Optional<String> labelValue = parser.getLabel(getStringAttribute(item));
-        if(labelValue.isPresent()){
-          setAttribute(LabelableElement.LABEL, labelValue.get());
+        setAttribute(PATTERN_ERROR_MESSAGE_ATTR, getStringAttribute(item));
+        break;
+      case PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR:
+        if(this.format != FormatEnum.PRESENTATIONML){
+          throwInvalidInputException(item);
         }
+        setAttribute(PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR, getStringAttribute(item));
+        break;
+      case ID_ATTR:
+        if(this.format != FormatEnum.PRESENTATIONML){
+          throwInvalidInputException(item);
+        }
+        fillAttributes(parser, item);
         break;
       default:
         throwInvalidInputException(item);

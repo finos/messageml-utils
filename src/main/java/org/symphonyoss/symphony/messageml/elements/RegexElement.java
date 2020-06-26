@@ -51,10 +51,11 @@ public interface RegexElement {
     String regexPattern = getAttribute(PATTERN_ATTR);
 
     if (regexPattern != null) {
-      String regexPatterErrorMessage = getAttribute(PATTERN_ERROR_MESSAGE_ATTR);
+      String regexPatterErrorMessageAtt = getFormat() == FormatEnum.MESSAGEML ? PATTERN_ERROR_MESSAGE_ATTR : PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR;
+      String regexPatterErrorMessage = getAttribute(regexPatterErrorMessageAtt);
       if(regexPatterErrorMessage == null) {
         throw new InvalidInputException(String.format(ATTRIBUTE_MANDATORY_WHEN_ATTRIBUTE_DEFINED_ERR,
-            PATTERN_ERROR_MESSAGE_ATTR,
+            regexPatterErrorMessageAtt,
             PATTERN_ATTR));
       }
 
@@ -64,7 +65,7 @@ public interface RegexElement {
 
       if(regexPatterErrorMessage.length() > PATTERN_ERROR_MESSAGE_MAX_LENGTH){
         throw new InvalidInputException(String.format(ATTRIBUTE_TOO_LONG_ERR,
-            PATTERN_ERROR_MESSAGE_ATTR, PATTERN_ERROR_MESSAGE_MAX_LENGTH));
+            regexPatterErrorMessageAtt, PATTERN_ERROR_MESSAGE_MAX_LENGTH));
       }
 
       try {
@@ -107,4 +108,6 @@ public interface RegexElement {
   String getAttribute(String attr);
 
   Map<String, String> getAttributes();
+
+  FormatEnum getFormat();
 }

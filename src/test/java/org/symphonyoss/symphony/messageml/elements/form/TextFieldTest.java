@@ -244,10 +244,11 @@ public class TextFieldTest extends ElementTest {
 
   @Test
   public void testTextFieldInvalidAttrPresentationML() throws Exception {
-    String input = "<messageML><form><input type=\"text\" name=\"name1\" id=\"id1\" placeholder=\"placeholder1\" required=\"true\"/></form></messageML>";
+    String input =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form\"><input type=\"text\" name=\"name1\" invalid=\"invalid\" placeholder=\"placeholder1\" required=\"true\"/><button type=\"action\" name=\"send-answers\">Submit</button></form></div>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"id\" is not allowed in \"text-field\"");
+    expectedException.expectMessage("Attribute \"invalid\" is not allowed in \"text-field\"");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -655,7 +656,7 @@ public class TextFieldTest extends ElementTest {
   private String getExpectedTextFieldMarkdown(String placeholder, String initialValue) {
     String expectedMarkdownText = ((placeholder != null) ? "[" + placeholder + "]" : "") +
         ((initialValue != null) ? initialValue : "") ;
-    
+
     return String.format("Form (log into desktop client to answer):\n---\n(Text Field%s)"+ ACTION_BTN_MARKDOWN + "\n---\n", (!expectedMarkdownText.isEmpty()) ? ":" + expectedMarkdownText : "");
   }
 
