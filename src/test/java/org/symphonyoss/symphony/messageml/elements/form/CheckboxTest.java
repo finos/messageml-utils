@@ -71,7 +71,8 @@ public class CheckboxTest extends ElementTest {
     verifyMessageMLObjectsForCheckbox(context);
     String presentationML = context.getPresentationML();
     String expectedPresentationML =
-        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" value=\"on\"/><button type=\"action\" name=\"actionName\">Send</button></form></div>";
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input id=\"%s\" type=\"checkbox\" name=\"checkbox-name\" value=\"on\"/>" +
+                "<button type=\"action\" name=\"actionName\">Send</button></form></div>", RadioTest.getInputId(presentationML));
     assertEquals(expectedPresentationML, presentationML);
 
     verifyCheckboxMarkdown(context, null);
@@ -93,17 +94,16 @@ public class CheckboxTest extends ElementTest {
   }
 
   @Test
-  public void testInvalidAttrPresentationMLCheckbox() throws Exception {
+  public void testLabelAttrPresentationMLCheckbox() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"checkbox-group\">" +
-        "<input id=\"id1\" type=\"checkbox\" name=\"name2\" value=\"value1\"/>" +
+        "<input dummy=\"test\" id=\"id1\" type=\"checkbox\" name=\"name2\" value=\"value1\"/>" +
         "<label>Text 1</label>" +
         "</div></form></div>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"id\" is not allowed in \"checkbox\"");
-
+    expectedException.expectMessage("Attribute \"dummy\" is not allowed in \"checkbox\"");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -232,9 +232,9 @@ public class CheckboxTest extends ElementTest {
     verifyMessageMLObjectsForCheckbox(context);
     String presentationML = context.getPresentationML();
     String expectedPresentationML =
-        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input type=\"checkbox\" name=\"checkbox-name\" checked=\"false\" value=\"checkbox-value\"/><button type=\"action\" name=\"actionName\">Send</button></form></div>";
+        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"checkbox-form\"><input id=\"%s\" type=\"checkbox\" name=\"checkbox-name\" checked=\"false\" value=\"checkbox-value\"/>" +
+                "<button type=\"action\" name=\"actionName\">Send</button></form></div>", RadioTest.getInputId(presentationML));
     assertEquals(expectedPresentationML, presentationML);
-
     verifyCheckboxMarkdown(context, null);
   }
 
@@ -342,16 +342,17 @@ public class CheckboxTest extends ElementTest {
 
   private void verifyCheckboxPresentationML(MessageMLContext context, String name, String value, String text, String checked, boolean shouldShowChecked) {
     String presentationML = context.getPresentationML();
-    String expectedPresentationML = buildExpectedPresentationMLForCheckbox(name, value, text, checked, shouldShowChecked);
+    String id = RadioTest.getInputId(presentationML);
+    String expectedPresentationML = buildExpectedPresentationMLForCheckbox(id, name, value, text, checked, shouldShowChecked);
     assertEquals(expectedPresentationML, presentationML);
   }
 
-  private String buildExpectedPresentationMLForCheckbox(String name, String value, String text, String checked, boolean shouldShowChecked) {
-    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + formId + "\"><div class=\"checkbox-group\"><input type=\"checkbox\"" +
+  private String buildExpectedPresentationMLForCheckbox(String id, String name, String value, String text, String checked, boolean shouldShowChecked) {
+    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + formId + "\"><div class=\"checkbox-group\"><input id=\"" + id + "\"" + " type=\"checkbox\"" +
         String.format(" name=\"%s\"", name) +
         (shouldShowChecked ? String.format(" checked=\"%s\"", checked) : "") +
         (value != null ? String.format(" value=\"%s\"", value) : " value=\"on\"") +
-        "/><label>" +
+        "/><label for=\""+ id + "\">" +
         (text != null ? text : "") +
         "</label></div>" + ACTION_BTN_ELEMENT + "</form></div>";
   }
