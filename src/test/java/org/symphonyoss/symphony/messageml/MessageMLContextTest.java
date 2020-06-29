@@ -250,7 +250,7 @@ public class MessageMLContextTest {
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "    <form id=\"example\">"
-        + "       <div class=\"checkbox-group\"><input id=\"%s\" type=\"checkbox\" name=\"fruits\" value=\"orange\"/><label for=\"%s\">Orange</label></div>"
+        + "       <div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"orange\" id=\"%s\"/><label for=\"%s\">Orange</label></div>"
         + "         <button type=\"action\" name=\"actionName\">Send</button>"
         + "    </form> </div>", id, id);
 
@@ -280,9 +280,9 @@ public class MessageMLContextTest {
     String expectedResult = String.format(
             "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
                     "<form id=\"radio-form\">" +
-                    "       <div class=\"radio-group\"><input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"value01\"/>" +
+                    "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
                     "<label for=\"%s\">First</label></div>" +
-                    "       <div class=\"radio-group\"><input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"value02\"/>" +
+                    "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
                     "<label for=\"%s\">Second</label></div>" +
                     "       <button type=\"action\" name=\"actionName\">Send</button>" +
                     "   </form>" +

@@ -47,29 +47,29 @@ public class RadioTest extends ElementTest {
 
     assertEquals(expectedMarkdown.toString(), markdown);
     String presentationML = context.getPresentationML();
-    int startId1 = presentationML.indexOf("input id=\"");
-    int endId1 = presentationML.indexOf('"', startId1 + "input id=\"".length());
-    String id1 = presentationML.substring(startId1 + "input id=\"".length(), endId1);
+    int startId1 = presentationML.indexOf("label for=\"");
+    int endId1 = presentationML.indexOf('"', startId1 + "label for=\"".length());
+    String id1 = presentationML.substring(startId1 + "label for=\"".length(), endId1);
 
-    int startId2 = presentationML.indexOf("input id=\"", endId1);
-    int endId2 = presentationML.indexOf('"', startId2 + "input id=\"".length());
-    String id2 = presentationML.substring(startId2 + "input id=\"".length(), endId2);
+    int startId2 = presentationML.indexOf("label for=\"", endId1);
+    int endId2 = presentationML.indexOf('"', startId2 + "label for=\"".length());
+    String id2 = presentationML.substring(startId2 + "label for=\"".length(), endId2);
 
-    int startId3 = presentationML.indexOf("input id=\"", endId2);
-    int endId3 = presentationML.indexOf('"', startId3 + "input id=\"".length());
-    String id3 = presentationML.substring(startId3 + "input id=\"".length(), endId3);
+    int startId3 = presentationML.indexOf("label for=\"", endId2);
+    int endId3 = presentationML.indexOf('"', startId3 + "label for=\"".length());
+    String id3 = presentationML.substring(startId3 + "label for=\"".length(), endId3);
 
 
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"value01\"/>" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
         "<label for=\"%s\">First</label></div>" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"value02\"/>" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
         "<label for=\"%s\">Second</label></div>" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"value03\"/>" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value03\" id=\"%s\"/>" +
         "<label for=\"%s\">Third</label></div>" +
         ACTION_BTN_ELEMENT +
         "</form></div>", id1, id1, id2, id2, id3, id3);
@@ -108,7 +108,7 @@ public class RadioTest extends ElementTest {
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"value02\"/>" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
         "<label for=\"%s\">Second</label></div>" +
         ACTION_BTN_ELEMENT +
         "</form></div>", id, id);
@@ -130,7 +130,7 @@ public class RadioTest extends ElementTest {
     assertEquals(radio.getClass(), Radio.class);
 
     String presentationML = context.getPresentationML();
-    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"radio-form\"><input id=\"%s\" type=\"radio\" name=\"radio-name\" value=\"on\"/>" + ACTION_BTN_ELEMENT
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"radio-form\"><input type=\"radio\" name=\"radio-name\" value=\"on\"/>" + ACTION_BTN_ELEMENT
         + "</form></div>", getInputId(presentationML));
     assertEquals(expectedPresentationML, presentationML);
 
@@ -233,7 +233,7 @@ public class RadioTest extends ElementTest {
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" checked=\"true\" value=\"value01\"/>" +
+        "<input type=\"radio\" name=\"groupId\" checked=\"true\" value=\"value01\" id=\"%s\"/>" +
         "<label for=\"%s\">First</label></div>"  + ACTION_BTN_ELEMENT +
         "</form></div>", id, id);
 
@@ -268,7 +268,7 @@ public class RadioTest extends ElementTest {
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" checked=\"false\" value=\"value01\"/>" +
+        "<input type=\"radio\" name=\"groupId\" checked=\"false\" value=\"value01\" id=\"%s\"/>" +
         "<label for=\"%s\">First</label></div>" + ACTION_BTN_ELEMENT +
         "</form></div>", id, id);
 
@@ -303,7 +303,7 @@ public class RadioTest extends ElementTest {
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"value01\"/>" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
         "<label for=\"%s\">First</label></div>" + ACTION_BTN_ELEMENT +
         "</form></div>", id, id);
 
@@ -338,7 +338,7 @@ public class RadioTest extends ElementTest {
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" checked=\"true\" value=\"on\"/>" +
+        "<input type=\"radio\" name=\"groupId\" checked=\"true\" value=\"on\" id=\"%s\"/>" +
         "<label for=\"%s\">First</label></div>" + ACTION_BTN_ELEMENT +
         "</form></div>", id, id);
 
@@ -373,7 +373,7 @@ public class RadioTest extends ElementTest {
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"on\"/>" +
+        "<input type=\"radio\" name=\"groupId\" value=\"on\" id=\"%s\"/>" +
         "<label for=\"%s\">First</label></div>" + ACTION_BTN_ELEMENT +
         "</form></div>", id, id);
 
@@ -446,7 +446,7 @@ public class RadioTest extends ElementTest {
     String presentationML = context.getPresentationML();
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
-        "<input id=\"%s\" type=\"radio\" name=\"groupId\" value=\"on\"/>" + ACTION_BTN_ELEMENT +
+        "<input type=\"radio\" name=\"groupId\" value=\"on\"/>" + ACTION_BTN_ELEMENT +
         "</form></div>", getInputId(presentationML));
 
     assertEquals(expectedPresentationML, presentationML);
@@ -519,9 +519,9 @@ public class RadioTest extends ElementTest {
   }
 
   static String getInputId(String presentationML) {
-    int startId = presentationML.indexOf("input id=\"");
-    int endId = presentationML.indexOf('"', startId + "input id=\"".length());
-    return presentationML.substring(startId + "input id=\"".length(), endId);
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    return presentationML.substring(startId + "label for=\"".length(), endId);
   }
 
 }

@@ -53,7 +53,7 @@ public abstract class GroupedElement extends FormElement {
   @Override
   public void asPresentationML(XmlPrintStream out,
       MessageMLContext context) {
-    String id = String.format("%s-%s", getPresentationMLDivClass(), context.generateShortId());
+    String id = String.format("%s-%s", getPresentationMLInputType(), context.generateShortId());
     Map<String, String> presentationInputAttrs = buildGroupedElementInputAttributes(id);
     Map<String, String> presentationLabelForAttr = new LinkedHashMap<>();
     if (getChildren().isEmpty()) {
@@ -61,6 +61,7 @@ public abstract class GroupedElement extends FormElement {
     }
     else {
       out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, getPresentationMLDivClass());
+      presentationInputAttrs.put(ID_ATTR, id);
       out.printElement(INPUT_TAG, presentationInputAttrs);
       presentationLabelForAttr.put(FOR_ATTR, id);
       out.openElement(PRESENTATIONML_LABEL_TAG, presentationLabelForAttr);
@@ -129,7 +130,6 @@ public abstract class GroupedElement extends FormElement {
 
   protected Map<String, String> buildGroupedElementInputAttributes(String id) {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
-    presentationAttrs.put(ID_ATTR, id);
     presentationAttrs.put(TYPE_ATTR, getPresentationMLInputType());
     presentationAttrs.put(NAME_ATTR, getAttribute(NAME_ATTR));
 
