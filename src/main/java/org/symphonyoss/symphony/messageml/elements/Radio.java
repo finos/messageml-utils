@@ -83,10 +83,7 @@ public class Radio extends GroupedElement implements LabelableElement{
         if(format != FormatEnum.PRESENTATIONML){
           throwInvalidInputException(item);
         }
-        Optional<String> labelValue = parser.getLabel(getStringAttribute(item));
-        if(labelValue.isPresent()){
-          setAttribute(LabelableElement.LABEL, labelValue.get());
-        }
+        fillAttributes(parser, item);
         break;
       default:
         throwInvalidInputException(item);
