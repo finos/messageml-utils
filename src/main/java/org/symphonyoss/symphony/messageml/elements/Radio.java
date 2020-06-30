@@ -22,6 +22,7 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.form.RadioNode;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Class representing Radio Buttons - Symphony Elements.
@@ -29,7 +30,7 @@ import java.util.Arrays;
  * @author Pedro Sanchez
  * @since 06/13/19
  */
-public class Radio extends GroupedElement {
+public class Radio extends GroupedElement implements LabelableElement{
 
   public static final String MESSAGEML_TAG = "radio";
 
@@ -75,7 +76,17 @@ public class Radio extends GroupedElement {
       case CHECKED_ATTR:
       case NAME_ATTR:
       case VALUE_ATTR:
+      case LABEL:
         setAttribute(item.getNodeName(), getStringAttribute(item));
+        break;
+      case ID_ATTR:
+        if(format != FormatEnum.PRESENTATIONML){
+          throwInvalidInputException(item);
+        }
+        Optional<String> labelValue = parser.getLabel(getStringAttribute(item));
+        if(labelValue.isPresent()){
+          setAttribute(LabelableElement.LABEL, labelValue.get());
+        }
         break;
       default:
         throwInvalidInputException(item);
@@ -90,5 +101,10 @@ public class Radio extends GroupedElement {
   @Override
   protected String getPresentationMLDivClass() {
     return PRESENTATIONML_DIV_CLASS;
+  }
+
+  @Override
+  public String getElementId() {
+    return MESSAGEML_TAG;
   }
 }
