@@ -1,5 +1,7 @@
 package org.symphonyoss.symphony.messageml;
 
+import static org.symphonyoss.symphony.messageml.elements.Element.CLASS_ATTR;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +14,55 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.symphonyoss.symphony.messageml.elements.*;
+import org.apache.commons.lang3.tuple.Pair;
+import org.symphonyoss.symphony.messageml.elements.Bold;
+import org.symphonyoss.symphony.messageml.elements.BulletList;
+import org.symphonyoss.symphony.messageml.elements.Button;
+import org.symphonyoss.symphony.messageml.elements.Card;
+import org.symphonyoss.symphony.messageml.elements.CardBody;
+import org.symphonyoss.symphony.messageml.elements.CardHeader;
+import org.symphonyoss.symphony.messageml.elements.CashTag;
+import org.symphonyoss.symphony.messageml.elements.Checkbox;
+import org.symphonyoss.symphony.messageml.elements.Chime;
+import org.symphonyoss.symphony.messageml.elements.Code;
+import org.symphonyoss.symphony.messageml.elements.DateSelector;
+import org.symphonyoss.symphony.messageml.elements.Div;
+import org.symphonyoss.symphony.messageml.elements.Element;
+import org.symphonyoss.symphony.messageml.elements.Emoji;
+import org.symphonyoss.symphony.messageml.elements.Entity;
+import org.symphonyoss.symphony.messageml.elements.Form;
+import org.symphonyoss.symphony.messageml.elements.FormElement;
+import org.symphonyoss.symphony.messageml.elements.FormatEnum;
+import org.symphonyoss.symphony.messageml.elements.HashTag;
+import org.symphonyoss.symphony.messageml.elements.Header;
+import org.symphonyoss.symphony.messageml.elements.HorizontalRule;
+import org.symphonyoss.symphony.messageml.elements.Image;
+import org.symphonyoss.symphony.messageml.elements.Italic;
+import org.symphonyoss.symphony.messageml.elements.LabelableElement;
+import org.symphonyoss.symphony.messageml.elements.LineBreak;
+import org.symphonyoss.symphony.messageml.elements.Link;
+import org.symphonyoss.symphony.messageml.elements.ListItem;
+import org.symphonyoss.symphony.messageml.elements.Mention;
+import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.elements.Option;
+import org.symphonyoss.symphony.messageml.elements.OrderedList;
+import org.symphonyoss.symphony.messageml.elements.Paragraph;
+import org.symphonyoss.symphony.messageml.elements.PersonSelector;
+import org.symphonyoss.symphony.messageml.elements.Preformatted;
+import org.symphonyoss.symphony.messageml.elements.Radio;
+import org.symphonyoss.symphony.messageml.elements.Select;
+import org.symphonyoss.symphony.messageml.elements.Span;
+import org.symphonyoss.symphony.messageml.elements.SplittableElement;
+import org.symphonyoss.symphony.messageml.elements.Table;
+import org.symphonyoss.symphony.messageml.elements.TableBody;
+import org.symphonyoss.symphony.messageml.elements.TableCell;
+import org.symphonyoss.symphony.messageml.elements.TableFooter;
+import org.symphonyoss.symphony.messageml.elements.TableHeader;
+import org.symphonyoss.symphony.messageml.elements.TableHeaderCell;
+import org.symphonyoss.symphony.messageml.elements.TableRow;
+import org.symphonyoss.symphony.messageml.elements.TextArea;
+import org.symphonyoss.symphony.messageml.elements.TextField;
+import org.symphonyoss.symphony.messageml.elements.TooltipableElement;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -23,6 +73,19 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,19 +94,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.symphonyoss.symphony.messageml.elements.Element.CLASS_ATTR;
 
 /**
  * Converts a string representation of the message and optional entity data into a MessageMLV2 document tree.
@@ -62,7 +112,8 @@ public class MessageMLParser {
   private int index;
 
   private Set<String> elementIds;
-  private Map<String, Optional<String>> labels;
+  // Map for storing SplittableElements components. The key is the id, the value the data holder of attributes
+  private Map<String, SplittableData> splittableComponents;
 
   static {
     FREEMARKER.setDefaultEncoding("UTF-8");
@@ -89,7 +140,7 @@ public class MessageMLParser {
       IOException {
     this.index = 0;
     this.elementIds = new HashSet<>();
-    this.labels = new HashMap<>();
+    this.splittableComponents = new HashMap<>();
     String expandedMessage;
 
     if (StringUtils.isBlank(message)) {
@@ -258,6 +309,7 @@ public class MessageMLParser {
 
       StringReader sr = new StringReader(messageML);
       ReaderInputStream ris = new ReaderInputStream(sr);
+
       Document doc = dBuilder.parse(ris);
 
       doc.getDocumentElement().normalize();
@@ -293,9 +345,10 @@ public class MessageMLParser {
 
   /**
    * Create a MessageML element based on the DOM element's name and attributes.
-   * It can return null when the element must be not created (e.g. see label element {@link LabelableElement}
-   * that is PresentationML specific, but in MessageML is not an element, instead it is an attribute of another element)
-   * and it should be not considered an error; in case of a real error, an exception is thrown
+   * It can return null when the element must be not created (e.g. see label element {@link LabelableElement} or tooltip
+   * element {@link TooltipableElement}) that is PresentationML specific, but in MessageML is not an element,
+   * instead it is an attribute of another element) and it should be not considered an error; in case of a real error,
+   * an exception is thrown
    */
   public Element createElement(org.w3c.dom.Element element, Element parent) throws
       InvalidInputException {
@@ -324,7 +377,13 @@ public class MessageMLParser {
         return new HorizontalRule(parent);
 
       case Span.MESSAGEML_TAG:
-        if (containsAttribute(elementClass, Entity.PRESENTATIONML_CLASS)) {
+        if(TooltipableElement.isTooltipNode(element)){
+          String id = getAttribute(element, TooltipableElement.DATA_TARGET_ID);
+          createSplittable(id, TooltipableElement.class, null);
+          String title = getAttribute(element, TooltipableElement.DATA_TITLE);
+          addSplittableData(id, TooltipableElement.class, TooltipableElement.TITLE, title);
+          return null;
+        } else if (containsAttribute(elementClass, Entity.PRESENTATIONML_CLASS)) {
             return createEntity(element, parent);
         } else {
             return new Span(parent);
@@ -395,24 +454,24 @@ public class MessageMLParser {
 
       case Card.MESSAGEML_TAG:
         validateFormat(tag);
-        return new Card(parent, FormatEnum.MESSAGEML);
+        return new Card(parent, messageFormat);
 
       case Code.MESSAGEML_TAG:
         return new Code(parent);
 
       case CardHeader.MESSAGEML_TAG:
         validateFormat(tag);
-        return new CardHeader(parent, FormatEnum.MESSAGEML);
+        return new CardHeader(parent, messageFormat);
 
       case CardBody.MESSAGEML_TAG:
         validateFormat(tag);
-        return new CardBody(parent, FormatEnum.MESSAGEML);
+        return new CardBody(parent, messageFormat);
 
       case Emoji.MESSAGEML_TAG:
         return new Emoji(parent, ++index);
 
       case Form.MESSAGEML_TAG:
-        return new Form(parent);
+        return new Form(parent, messageFormat);
 
       case Select.MESSAGEML_TAG:
         return new Select(parent);
@@ -421,40 +480,46 @@ public class MessageMLParser {
         return new Option(parent);
 
       case Button.MESSAGEML_TAG:
-        return new Button(parent);
+        return new Button(parent, messageFormat);
 
       case TextField.MESSAGEML_TAG:
-        return new TextField(parent, FormatEnum.MESSAGEML);
+        return new TextField(parent, messageFormat);
 
       case Checkbox.MESSAGEML_TAG:
-        return new Checkbox(parent, FormatEnum.MESSAGEML);
+        return new Checkbox(parent, messageFormat);
 
       case Radio.MESSAGEML_TAG:
-        return new Radio(parent, FormatEnum.MESSAGEML);
+        return new Radio(parent, messageFormat);
 
       case PersonSelector.MESSAGEML_TAG:
-        return new PersonSelector(parent, FormatEnum.MESSAGEML);
+        return new PersonSelector(parent, messageFormat);
 
       case DateSelector.MESSAGEML_TAG:
-        return new DateSelector(parent, FormatEnum.MESSAGEML);
+        return new DateSelector(parent, messageFormat);
 
       case TextArea.MESSAGEML_TAG:
-        return new TextArea(parent);
+        return new TextArea(parent, messageFormat);
 
       case LabelableElement.LABEL:
-        String id = element.getAttribute(LabelableElement.LABEL_FOR);
-        if(id == null || id.isEmpty()){
-          throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\": 'for' attribute missing or empty");
-        }
-        if(labels.containsKey(id)){
-          throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\": 'for' value already existing");
-        }
-        labels.put(id, Optional.ofNullable(element.getTextContent()));
+        String id = getAttribute(element, LabelableElement.LABEL_FOR);
+        createSplittable(id, LabelableElement.class, Pair.of(LabelableElement.LABEL, element.getTextContent()));
         return null;
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
     }
+  }
+
+  private String getAttribute(org.w3c.dom.Element element, String key)
+      throws InvalidInputException {
+    String value = element.getAttribute(key);
+    if(value == null || value.isEmpty()){
+      throw new InvalidInputException(String.format("Invalid MessageML content at element \"%s\": 'data-target-id' attribute missing or empty"));
+    }
+    if(splittableContains(value, TooltipableElement.class)){
+      throw new InvalidInputException(String.format("Invalid MessageML content at element \"%s\": 'data-target-id' value already existing", key));
+    }
+    return value;
   }
 
   /**
@@ -470,15 +535,72 @@ public class MessageMLParser {
   }
 
   /**
-   * Returns the label value corresponding to the id
+   * Returns the attributes corresponding to the id for a splittable element
    * (used internally during parsing)
    */
-  public Optional<String> getLabel(String id) throws InvalidInputException {
-    Optional<String> value = labels.get(id);
-    if(value == null){
-      throw new InvalidInputException(String.format("Label not found for the id: %s. The must be present before the corresponding element.", id));
+  public Optional<Map<String, String>> getSplittableAttributes(String id, Class<? extends SplittableElement> clazz) throws InvalidInputException {
+    SplittableData data = splittableComponents.get(id);
+    if(data == null){
+      return Optional.empty();
     }
-    return value;
+    return data.getAttributes(clazz);
+  }
+
+  /**
+   * Returns all attributes corresponding to the id
+   * (used internally during parsing)
+   */
+  public Optional<Map<Class<? extends SplittableElement>, Map<String, String>>> getAllSplittableAttributes(String id) throws InvalidInputException {
+    SplittableData data = splittableComponents.get(id);
+    if(data == null){
+      return Optional.empty();
+    }
+    return Optional.of(data.getAllAttributes());
+  }
+
+  /**
+   * Returns all values corresponding to the id
+   * (used internally during parsing)
+   */
+  public Optional<Map<Class<? extends SplittableElement>, Pair<String, String>>> getAllSplittableValues(String id) throws InvalidInputException {
+    SplittableData data = splittableComponents.get(id);
+    if(data == null){
+      return Optional.empty();
+    }
+    return Optional.of(data.getAllValues());
+  }
+
+  private void createSplittable(String id, Class<? extends SplittableElement> clazz, Pair<String,String> value)
+      throws InvalidInputException {
+    SplittableData data = splittableComponents.get(id);
+    if (data == null) {
+      data = new SplittableData();
+      splittableComponents.put(id, data);
+    }
+    data.create(clazz, value);
+  }
+
+  /**
+   * Add a splittable element value in the map
+   */
+  private void addSplittableData(String id, Class<? extends SplittableElement> clazz, String attributeName, String attributeValue) {
+    SplittableData data = splittableComponents.get(id);
+    if (data == null) {
+      data = new SplittableData();
+      splittableComponents.put(id, data);
+    }
+    data.addAttribute(clazz, attributeName, attributeValue);
+  }
+
+  /**
+   * Checks if the splittable map contains the element
+   */
+  private boolean splittableContains(String id, Class<? extends SplittableElement> clazz){
+    SplittableData data = splittableComponents.get(id);
+    if(data != null) {
+      return data.exists(clazz);
+    }
+    return false;
   }
 
   private Element createElementFromInput(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
@@ -497,6 +619,11 @@ public class MessageMLParser {
   }
 
   private Element createElementFromDiv(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
+    if(element.hasAttribute(SplittableElement.PRESENTATIONML_DIV_FLAG)){
+      // Special div created by a splittable element, it is not converted in MessageML or in PresentationML tree object
+      return null;
+    }
+
     String elementClass = element.getAttribute(CLASS_ATTR);
     if (containsAttribute(elementClass, Entity.PRESENTATIONML_CLASS)) {
       return createEntity(element, parent);
@@ -560,6 +687,57 @@ public class MessageMLParser {
       return new Span(parent);
     } else {
       throw new InvalidInputException("The element \"" + tag + "\" cannot be an entity");
+    }
+  }
+
+  public FormatEnum getMessageFormat() {
+    return messageFormat;
+  }
+
+  /**
+   * Internal class for storing data about splittable elements during parse
+   */
+  static final class SplittableData {
+
+    private final Map<Class<? extends SplittableElement>, Pair<String, String>> valuesBySplittable = new LinkedHashMap<>();
+    private final Map<Class<? extends SplittableElement>, Map<String, String>> attributesBySplittable = new LinkedHashMap<>();
+
+    public void create(Class<? extends SplittableElement> splittable, Pair<String, String> value) throws InvalidInputException {
+      if(valuesBySplittable.containsKey(splittable)){
+        throw new InvalidInputException("Invalid MessageML content, multiple splittable elements with the same id created");
+      }
+      if(value != null) {
+        valuesBySplittable.put(splittable, value);
+      }
+      attributesBySplittable.put(splittable, new LinkedHashMap<>());
+    }
+
+    public boolean exists(Class<? extends SplittableElement> splittable){
+      return valuesBySplittable.containsKey(splittable);
+    }
+
+    public Map<Class<? extends SplittableElement>, Pair<String, String>> getAllValues(){
+      return new LinkedHashMap<>(valuesBySplittable);
+    }
+
+    public void addAttribute(Class<? extends SplittableElement> splittable, String attributeName, String attributeValue){
+      Map<String, String> attributes = attributesBySplittable.get(splittable);
+      if(attributes == null){
+        throw new UnsupportedOperationException("Create new SplittableData before adding attributes");
+      }
+      attributes.put(attributeName, attributeValue);
+    }
+
+    public Optional<Map<String, String>> getAttributes(Class<? extends SplittableElement> splittable){
+      Map<String, String> attributes = attributesBySplittable.get(splittable);
+      if(attributes == null){
+        return Optional.empty();
+      }
+      return Optional.of(new LinkedHashMap<>(attributes));
+    }
+
+    public Map<Class<? extends SplittableElement>, Map<String, String>> getAllAttributes(){
+      return new LinkedHashMap<>(attributesBySplittable);
     }
   }
 }

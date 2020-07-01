@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -24,7 +23,7 @@ import java.util.Set;
  * @author Lucas Macedo
  * @since 06/07/2019
  */
-public class TextField extends FormElement implements RegexElement, LabelableElement {
+public class TextField extends FormElement implements RegexElement, LabelableElement, TooltipableElement {
 
   public static final String MESSAGEML_TAG = "text-field";
   public static final String ELEMENT_ID = "textfield";
@@ -78,7 +77,7 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
         super.buildAll(parser, element);
         break;
       case PRESENTATIONML:
-        this.buildAllFromPresentationML(element);
+        this.buildAllFromPresentationML(parser, element);
         break;
     }
   }
@@ -101,23 +100,21 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
       case PATTERN_ATTR:
       case PATTERN_ERROR_MESSAGE_ATTR:
       case LABEL:
+      case TITLE:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
         if(format != FormatEnum.PRESENTATIONML){
           throwInvalidInputException(item);
         }
-        Optional<String> labelValue = parser.getLabel(getStringAttribute(item));
-        if(labelValue.isPresent()){
-          setAttribute(LabelableElement.LABEL, labelValue.get());
-        }
+        fillAttributes(parser, item);
         break;
       default:
         throwInvalidInputException(item);
     }
   }
 
-  private void buildAllFromPresentationML(org.w3c.dom.Element element)
+  private void buildAllFromPresentationML(MessageMLParser parser, org.w3c.dom.Element element)
       throws InvalidInputException {
     NamedNodeMap attr = element.getAttributes();
     NodeList children = element.getChildNodes();
@@ -129,11 +126,11 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
     for (int i = 0; i < attr.getLength(); i++) {
 
-      buildAttributeFromPresentationML(attr.item(i));
+      buildAttributeFromPresentationML(parser, attr.item(i));
     }
   }
 
-  private void buildAttributeFromPresentationML(org.w3c.dom.Node item) throws InvalidInputException {
+  private void buildAttributeFromPresentationML(MessageMLParser parser, org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case REQUIRED_ATTR:
@@ -141,6 +138,8 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
       case MINLENGTH_ATTR:
       case MAXLENGTH_ATTR:
       case LABEL:
+      case PATTERN_ATTR:
+      case PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case VALUE_ATTR:
@@ -149,8 +148,8 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
       case PRESENTATIONML_MASKED_ATTR:
         setAttribute(MASKED_ATTR, getStringAttribute(item));
         break;
-      case PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR:
-        setAttribute(PATTERN_ERROR_MESSAGE_ATTR, getStringAttribute(item));
+      case ID_ATTR:
+        fillAttributes(parser, item);
         break;
       default:
         throwInvalidInputException(item);

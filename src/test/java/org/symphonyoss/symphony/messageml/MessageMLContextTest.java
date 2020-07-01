@@ -30,7 +30,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -53,7 +56,9 @@ import org.xml.sax.InputSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -112,18 +117,18 @@ public class MessageMLContextTest {
   }
 
   @Test
-  public void testParseMessageMLTextFieldWithLabels()
+  public void testParseMessageMLTextFieldWithSplittables()
       throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>\n"
         + "  <form id=\"example\">\n"
-        + "    <text-field label=\"Username\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" pattern-error-message=\"\"/>"
+        + "    <text-field title=\"This only \\n accept regex characters\" label=\"Username\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" pattern-error-message=\"\"/>"
         + "    <button type=\"action\" name=\"send-answers\">Submit</button>\n"
         + "  </form>\n"
         + "</messageML>";
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
-    MessageML messageML = context.getMessageML();
+    assertNotNull(context.getMessageML());
     int startId = presentationML.indexOf("label for=\"");
     int endId = presentationML.indexOf('"', startId + "label for=\"".length());
     String id = presentationML.substring(startId + "label for=\"".length(), endId);
@@ -131,27 +136,30 @@ public class MessageMLContextTest {
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "   <form id=\"example\">"
-        + "     <div class=\"textfield-group\"><label for=\"%s\">Username</label><input type=\"text\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" data-pattern-error-message=\"\" id=\"%s\"/></div>"
+        + "     <div class=\"textfield-group\" data-generated=\"true\"><label for=\"%s\">Username</label>"
+            + "<span class=\"info-hint\" data-target-id=\"%s\" data-title=\"This only \\n accept regex characters\"></span>"
+            + "<input type=\"text\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" data-pattern-error-message=\"\" id=\"%s\"/></div>"
         + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
         + "   </form>"
-        + " </div>", id, id);
+        + " </div>", id, id, id);
 
     assertEquals(expectedResult, presentationML);
   }
 
   @Test
-  public void testParseMessageMLTextAreaWithLabels()
+  public void testParseMessageMLTextAreaWithSplittables()
       throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>\n"
         + "  <form id=\"example\">\n"
-        + "    <textarea name=\"justification\" pattern=\"^((?!badword).)*$\" pattern-error-message=\"\" label=\"Justification\"/>"
+        +
+        "    <textarea name=\"justification\" pattern=\"^((?!badword).)*$\" pattern-error-message=\"\" title=\"This only \\n accept regex characters\" label=\"Justification\"/>"
         + "    <button type=\"action\" name=\"send-answers\">Submit</button>\n"
         + "  </form>\n"
         + "</messageML>";
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
-    MessageML messageML = context.getMessageML();
+    assertNotNull(context.getMessageML());
     int startId = presentationML.indexOf("label for=\"");
     int endId = presentationML.indexOf('"', startId + "label for=\"".length());
     String id = presentationML.substring(startId + "label for=\"".length(), endId);
@@ -159,35 +167,9 @@ public class MessageMLContextTest {
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
             + "   <form id=\"example\">"
-            + "     <div class=\"textarea-group\"><label for=\"%s\">Justification</label><textarea name=\"justification\" pattern=\"^((?!badword).)*$\" data-pattern-error-message=\"\" id=\"%s\"></textarea></div>"
-            + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
-            + "   </form>"
-            + " </div>", id, id);
-
-    assertEquals(expectedResult, presentationML);
-  }
-
-  @Test
-  public void testParseMessageMLPersonSelectorWithLabels()
-      throws InvalidInputException, IOException, ProcessingException {
-    final String message = "<messageML>\n"
-        + "  <form id=\"example\">\n"
-        + "    <person-selector label=\"Awesome users\" name=\"awesome-users\"/>"
-        + "    <button type=\"action\" name=\"send-answers\">Submit</button>\n"
-        + "  </form>\n"
-        + "</messageML>";
-
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    String presentationML = context.getPresentationML();
-    MessageML messageML = context.getMessageML();
-    int startId = presentationML.indexOf("label for=\"");
-    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
-    String id = presentationML.substring(startId + "label for=\"".length(), endId);
-
-    String expectedResult = String.format(
-        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "   <form id=\"example\">"
-            + "     <div class=\"person-selector-group\"><label for=\"%s\">Awesome users</label><div class=\"person-selector\" data-name=\"awesome-users\" id=\"%s\"></div></div>"
+            + "     <div class=\"textarea-group\" data-generated=\"true\"><label for=\"%s\">Justification</label>"
+            + "<span class=\"info-hint\" data-target-id=\"%s\" data-title=\"This only \\n accept regex characters\"></span>"
+            + "<textarea name=\"justification\" pattern=\"^((?!badword).)*$\" data-pattern-error-message=\"\" id=\"%s\"></textarea></div>"
             + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
             + "   </form>"
             + " </div>", id, id, id);
@@ -196,11 +178,41 @@ public class MessageMLContextTest {
   }
 
   @Test
-  public void testParseMessageMLDropdownWithLabels()
+  public void testParseMessageMLPersonSelectorWithSplittables()
       throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>\n"
         + "  <form id=\"example\">\n"
-        + "    <select name=\"cities\" label=\"Cities\">\n"
+        + "    <person-selector label=\"Awesome users\" name=\"awesome-users\" title=\"Indicate \\n awesome users\"/>"
+        + "    <button type=\"action\" name=\"send-answers\">Submit</button>\n"
+        + "  </form>\n"
+        + "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    assertNotNull(context.getMessageML());
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    String id = presentationML.substring(startId + "label for=\"".length(), endId);
+
+    String expectedResult = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "   <form id=\"example\">"
+            + "     <div class=\"person-selector-group\" data-generated=\"true\"><label for=\"%s\">Awesome users</label>"
+            + "<span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate \\n awesome users\"></span>"
+            + "<div class=\"person-selector\" data-name=\"awesome-users\" id=\"%s\"></div></div>"
+            + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
+            + "   </form>"
+            + " </div>", id, id, id, id);
+
+    assertEquals(expectedResult, presentationML);
+  }
+
+  @Test
+  public void testParseMessageMLDropdownWithSplittables()
+      throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>\n"
+        + "  <form id=\"example\">\n"
+        + "    <select name=\"cities\" label=\"Cities\" title=\"Indicate your \\n favorite city\">\n"
         + "      <option selected=\"true\" value=\"ny\">New York</option>\n"
         + "      <option value=\"van\">Vancouver</option>\n"
         + "      <option value=\"par\">Paris</option>\n"
@@ -211,23 +223,45 @@ public class MessageMLContextTest {
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
-    MessageML messageML = context.getMessageML();
+    assertNotNull(context.getMessageML());
     int startId = presentationML.indexOf("label for=\"");
     int endId = presentationML.indexOf('"', startId + "label for=\"".length());
     String id = presentationML.substring(startId + "label for=\"".length(), endId);
 
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "   <form id=\"example\">"
-            + "     <div class=\"dropdown-group\"><label for=\"%s\">Cities</label><select name=\"cities\" id=\"%s\">"
-            + "       <option selected=\"true\" value=\"ny\">New York</option>"
-            + "       <option value=\"van\">Vancouver</option>"
-            + "       <option value=\"par\">Paris</option>"
-            + "     </select></div>"
-            + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
-            + "   </form>"
-            + " </div>", id, id);
+        + "   <form id=\"example\">"
+        + "     <div class=\"dropdown-group\" data-generated=\"true\"><label for=\"%s\">Cities</label><span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate your \\n favorite city\"></span><select name=\"cities\" id=\"%s\">"
+        + "       <option selected=\"true\" value=\"ny\">New York</option>"
+        + "       <option value=\"van\">Vancouver</option>"
+        + "       <option value=\"par\">Paris</option>     "
+        + "</select></div>"
+        + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
+        + "   </form>"
+        + " </div>", id, id, id);
+    assertEquals(expectedResult, presentationML);
+  }
 
+  @Test
+  public void testParseMessageMLButtonWithSplittables()
+      throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>"
+        + "  <form id=\"example\">"
+        + "    <button title=\"Tooltip text \\n should appear on hover\" name=\"send-answers\" type=\"action\">Submit</button>"
+        + "  </form>"
+        + "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    assertNotNull(context.getMessageML());
+
+    String expectedResult =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "  <form id=\"example\">"
+            + "    <button type=\"action\" name=\"send-answers\" data-title=\"Tooltip text \\n should appear on hover\">Submit</button>"
+            + "  </form>"
+            + "</div>";
     assertEquals(expectedResult, presentationML);
   }
 
@@ -258,22 +292,84 @@ public class MessageMLContextTest {
   }
 
   @Test
-  public void testParsePresentationMLWithLabels()
+  public void testParsePresentationMLWithSplittables()
       throws InvalidInputException, IOException, ProcessingException {
     final String message = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "   <form id=\"example\">"
-        + "     <label for=\"dropdown-mlePOgOrF\">Cities</label><select name=\"cities\" id=\"dropdown-mlePOgOrF\">"
-        + "       <option value=\"ny\" selected=\"true\">New York</option>"
-        + "       <option value=\"van\">Vancouver</option>"
-        + "       <option value=\"par\">Paris</option>"
-        + "     </select>"
-        + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
+        + "     <div class=\"dropdown-group\" data-generated=\"true\">"
+        + "       <label for=\"dropdown-mlePOgOrF\">Cities</label>"
+        + "       <span class=\"info-hint\" data-target-id=\"dropdown-mlePOgOrF\" data-title=\"Indicate your \\n favorite city\"></span>"
+        + "       <select name=\"cities\" id=\"dropdown-mlePOgOrF\">"
+        + "         <option value=\"ny\" selected=\"true\">New York</option>"
+        + "         <option value=\"van\">Vancouver</option>"
+        + "         <option value=\"par\">Paris</option>"
+        + "       </select>"
+        + "     </div>"
+        + "     <button type=\"action\" name=\"send-answers\" data-title=\"Tooltip text\">Submit</button>"
+        + "     <div class=\"textfield-group\" data-generated=\"true\">"
+        + "       <label for=\"textfield-mlePOgOrG\">Username</label>"
+        + "       <span class=\"info-hint\" data-title=\"This only accept regex characters\" data-target-id=\"textfield-mlePOgOrG\"></span>"
+        + "       <input id=\"textfield-mlePOgOrG\" type=\"text\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" data-pattern-error-message=\"error message\"/>"
+        + "     </div>"
+        + "     <div class=\"textarea-group\" data-generated=\"true\">\n"
+        + "      <label for=\"textarea-mlePOgOrH\">Justification</label>\n"
+        + "      <span class=\"info-hint\" data-title=\"This only accept regex characters\" data-target-id=\"textarea-mlePOgOrH\"></span>\n"
+        + "      <textarea id=\"textarea-mlePOgOrH\" name=\"justification\" pattern=\"^((?!badword).)*$\" data-pattern-error-message=\"error message\"></textarea>"
+        + "    </div>"
+        + "    <div class=\"person-selector-group\" data-generated=\"true\">\n"
+        + "      <label for=\"person-selector-mlePOgOrI\">Awesome users</label>\n"
+        + "      <span class=\"info-hint\" data-title=\"Indicate \\n awesome users\" data-target-id=\"person-selector-mlePOgOrI\"></span>\n"
+        + "      <div class=\"person-selector\" id=\"person-selector-mlePOgOrI\" data-name=\"awesome-users\"></div>\n"
+        + "    </div>"
         + "   </form>"
         + " </div>";
-
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    String presentationML = context.getPresentationML();
+    assertNotNull(context.getMessageML());
     MessageML messageML = context.getMessageML();
+    checkNode(messageML, "messageML");
+    Element form = messageML.getChild(1);
+    checkNode(form, "form", Pair.of("id", "example"));
+    Element select = form.getChild(4);
+    checkNode(select, "select", Pair.of("title", "Indicate your \\n favorite city"), Pair.of("label", "Cities"), Pair.of("name", "cities"));
+    Element button = form.getChild(7);
+    checkNode(button, "button", Pair.of("type", "action"), Pair.of("name", "send-answers"), Pair.of("data-title", "Tooltip text"));
+    Element textField = form.getChild(12);
+    checkNode(textField, "text-field",
+        Pair.of("data-pattern-error-message", "error message"),
+        Pair.of("pattern", "^[a-zA-Z]{3,}$"),
+        Pair.of("title", "This only accept regex characters"),
+        Pair.of("name", "login"),
+        Pair.of("label", "Username"));
+    Element textArea = form.getChild(18);
+    checkNode(textArea, "textarea",
+        Pair.of("data-pattern-error-message", "error message"),
+        Pair.of("pattern", "^((?!badword).)*$"),
+        Pair.of("title", "This only accept regex characters"),
+        Pair.of("name", "justification"),
+        Pair.of("label", "Justification"));
+    Element personSelector = form.getChild(24);
+    checkNode(personSelector, "person-selector",
+        Pair.of("title", "Indicate \\n awesome users"),
+        Pair.of("name", "awesome-users"),
+        Pair.of("label", "Awesome users"));
+  }
+
+  private void checkNode(Element element, String elementName, Pair<String, String>... attributes){
+    assertEquals(elementName, element.getMessageMLTag());
+    Map<String,String> actualAttributes = new LinkedHashMap<>(element.getAttributes());
+    if(attributes != null){
+      for(Pair<String, String> attribute:attributes){
+        String key = attribute.getKey();
+        assertTrue(String.format("Attribute %s not found in tag %s", key, elementName), actualAttributes.containsKey(key));
+        assertEquals(String.format("Attribute %s in tag %s is expected to be %s but it is %s", key, elementName, attribute.getValue(), actualAttributes.get(key)),
+            attribute.getValue(), actualAttributes.get(key));
+        actualAttributes.remove(key);
+      }
+    }
+    if(!MessageML.MESSAGEML_TAG.equals(elementName)) {
+      assertTrue(String.format("Unexpected attributes found in tag %s: %s", elementName,
+          StringUtils.join(actualAttributes.keySet(), ',')), actualAttributes.isEmpty());
+    }
   }
 
   @Test
