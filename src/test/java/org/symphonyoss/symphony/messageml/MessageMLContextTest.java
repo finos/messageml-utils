@@ -241,65 +241,6 @@ public class MessageMLContextTest {
         + " </div>", id, id, id);
     assertEquals(expectedResult, presentationML);
   }
-  
-  @Test
-  public void testParseMessageMLCheckboxWithLabels()
-          throws InvalidInputException, IOException, ProcessingException {
-    final String message = "<messageML>\n"
-            + "   <form id=\"example\">\n"
-            + "      <checkbox name=\"fruits\" value=\"orange\">Orange</checkbox> \n"
-            + "       <button type=\"action\" name=\"actionName\">Send</button>\n"
-            + "   </form>\n"
-            + "</messageML>";
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    String presentationML = context.getPresentationML();
-    MessageML messageML = context.getMessageML();
-    int startId = presentationML.indexOf("label for=\"");
-    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
-    String id = presentationML.substring(startId + "label for=\"".length(), endId);
-
-    String expectedResult = String.format(
-        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "    <form id=\"example\">"
-        + "       <div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"orange\" id=\"%s\"/><label for=\"%s\">Orange</label></div>"
-        + "         <button type=\"action\" name=\"actionName\">Send</button>"
-        + "    </form> </div>", id, id);
-
-    assertEquals(expectedResult, presentationML);
-  }
-
-  @Test
-  public void testParseMessageMLRadioWithLabels()
-          throws InvalidInputException, IOException, ProcessingException {
-    final String message = "<messageML><form id=\"radio-form\">" +
-            "       <radio name=\"groupId\" value=\"value01\">First</radio>" +
-            "       <radio name=\"groupId\" value=\"value02\">Second</radio>" +
-            "       <button type=\"action\" name=\"actionName\">Send</button>" +
-            "   </form>" +
-            "</messageML>";
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    String presentationML = context.getPresentationML();
-    MessageML messageML = context.getMessageML();
-    int startId1 = presentationML.indexOf("label for=\"");
-    int endId1 = presentationML.indexOf('"', startId1 + "label for=\"".length());
-    String id1 = presentationML.substring(startId1 + "label for=\"".length(), endId1);
-
-    int startId2 = presentationML.indexOf("label for=\"", endId1);
-    int endId2 = presentationML.indexOf('"', startId2 + "label for=\"".length());
-    String id2 = presentationML.substring(startId2 + "label for=\"".length(), endId2);
-
-    String expectedResult = String.format(
-            "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
-                    "<form id=\"radio-form\">" +
-                    "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
-                    "<label for=\"%s\">First</label></div>" +
-                    "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
-                    "<label for=\"%s\">Second</label></div>" +
-                    "       <button type=\"action\" name=\"actionName\">Send</button>" +
-                    "   </form>" +
-                    "</div>", id1, id1, id2, id2);
-    assertEquals(expectedResult, presentationML);
-  }
 
   @Test
   public void testParseMessageMLButtonWithSplittables()
