@@ -6,13 +6,14 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Class representing a Checkbox inside a Form.
  * @author Cristiano Faustino
  * @since 05/29/2019
  */
-public class Checkbox extends GroupedElement {
+public class Checkbox extends GroupedElement implements LabelableElement{
   public static final String MESSAGEML_TAG = "checkbox";
   public static final String PRESENTATIONML_INPUT_TYPE = "checkbox";
   public static final String PRESENTATIONML_DIV_CLASS = "checkbox-group";
@@ -49,7 +50,14 @@ public class Checkbox extends GroupedElement {
       case NAME_ATTR:
       case VALUE_ATTR:
       case CHECKED_ATTR:
+      case LABEL:
         setAttribute(item.getNodeName(), getStringAttribute(item));
+        break;
+      case ID_ATTR:
+        if(this.format != FormatEnum.PRESENTATIONML){
+          throwInvalidInputException(item);
+        }
+        fillAttributes(parser, item);
         break;
       default:
         throwInvalidInputException(item);
@@ -74,5 +82,10 @@ public class Checkbox extends GroupedElement {
   @Override
   protected String getPresentationMLDivClass() {
     return PRESENTATIONML_DIV_CLASS;
+  }
+
+  @Override
+  public String getElementId() {
+    return MESSAGEML_TAG;
   }
 }

@@ -28,6 +28,7 @@ public abstract class GroupedElement extends FormElement {
   protected static final String PRESENTATIONML_LABEL_TAG = "label";
   protected static final String VALUE_ATTR = "value";
   protected static final String CHECKED_ATTR = "checked";
+  protected static final String FOR_ATTR = "for";
 
   public GroupedElement(Element parent, String messageMLTag,
       FormatEnum format) {
@@ -57,17 +58,18 @@ public abstract class GroupedElement extends FormElement {
   @Override
   public void asPresentationML(XmlPrintStream out,
       MessageMLContext context) {
-    Map<String, String> presentationAttrs = buildGroupedElementInputAttributes();
-
+    String id = String.format("%s-%s", getPresentationMLInputType(), context.generateShortId());
+    Map<String, String> presentationInputAttrs = buildGroupedElementInputAttributes(id);
+    Map<String, String> presentationLabelForAttr = new LinkedHashMap<>();
     if (getChildren().isEmpty()) {
-      out.printElement(INPUT_TAG, presentationAttrs);
+      out.printElement(INPUT_TAG, presentationInputAttrs);
     }
     else {
       out.openElement(PRESENTATIONML_DIV_TAG, PRESENTATIONML_CLASS_ATTR, getPresentationMLDivClass());
-
-      out.printElement(INPUT_TAG, presentationAttrs);
-
-      out.openElement(PRESENTATIONML_LABEL_TAG);
+      presentationInputAttrs.put(ID_ATTR, id);
+      out.printElement(INPUT_TAG, presentationInputAttrs);
+      presentationLabelForAttr.put(FOR_ATTR, id);
+      out.openElement(PRESENTATIONML_LABEL_TAG, presentationLabelForAttr);
       for (Element child : getChildren()) {
         child.asPresentationML(out, context);
       }
@@ -172,7 +174,7 @@ public abstract class GroupedElement extends FormElement {
     }
   }
 
-  protected Map<String, String> buildGroupedElementInputAttributes() {
+  protected Map<String, String> buildGroupedElementInputAttributes(String id) {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
     presentationAttrs.put(TYPE_ATTR, getPresentationMLInputType());
     presentationAttrs.put(NAME_ATTR, getAttribute(NAME_ATTR));
@@ -188,6 +190,7 @@ public abstract class GroupedElement extends FormElement {
     }
     return presentationAttrs;
   }
+
 
   protected abstract String getPresentationMLInputType();
 
