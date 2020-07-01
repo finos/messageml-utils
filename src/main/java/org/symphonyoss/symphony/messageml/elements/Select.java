@@ -31,7 +31,7 @@ import java.util.Optional;
  * @author lumoura
  * @since 3/22/18
  */
-public class Select extends FormElement implements LabelableElement {
+public class Select extends FormElement implements LabelableElement, TooltipableElement {
 
   public static final String MESSAGEML_TAG = "select";
   public static final String ELEMENT_ID = "dropdown";
@@ -75,16 +75,14 @@ public class Select extends FormElement implements LabelableElement {
       case REQUIRED_ATTR:
       case DATA_PLACEHOLDER_ATTR:
       case LABEL:
+      case TITLE:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
         if(format != FormatEnum.PRESENTATIONML){
           throwInvalidInputException(item);
         }
-        Optional<String> labelValue = parser.getLabel(getStringAttribute(item));
-        if(labelValue.isPresent()){
-          setAttribute(LabelableElement.LABEL, labelValue.get());
-        }
+        fillAttributes(parser, item);
         break;
       default:
         throwInvalidInputException(item);

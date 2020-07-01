@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -23,7 +22,7 @@ import java.util.Set;
  * @author Cristiano Faustino
  * @since 06/11/2019
  */
-public class PersonSelector extends FormElement implements LabelableElement {
+public class PersonSelector extends FormElement implements LabelableElement, TooltipableElement {
   public static final String MESSAGEML_TAG = "person-selector";
 
   private static final String PLACEHOLDER_ATTR = "placeholder";
@@ -77,10 +76,9 @@ public class PersonSelector extends FormElement implements LabelableElement {
   public void asPresentationML(XmlPrintStream out,
       MessageMLContext context) {
     Map<String, String> presentationAttrs = buildPersonSelectorInputAttributes();
-    if(isLabel()){
-      // open div + adding label element
-      String uid = labelAsPresentationML(out, context);
-      presentationAttrs.put("id", uid);
+    if(isSplittable()){
+      // open div + adding splittable elements
+      presentationAttrs.put("id", splittableAsPresentationML(out, context));
       // render element
       innerAsPresentationML(out, presentationAttrs);
       // close div
@@ -108,16 +106,14 @@ public class PersonSelector extends FormElement implements LabelableElement {
       case PLACEHOLDER_ATTR:
       case REQUIRED_ATTR:
       case LABEL:
+      case TITLE:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
         if(format != FormatEnum.PRESENTATIONML){
           throwInvalidInputException(item);
         }
-        Optional<String> labelValue = parser.getLabel(getStringAttribute(item));
-        if(labelValue.isPresent()){
-          setAttribute(LabelableElement.LABEL, labelValue.get());
-        }
+        fillAttributes(parser, item);
         break;
       default:
         throwInvalidInputException(item);

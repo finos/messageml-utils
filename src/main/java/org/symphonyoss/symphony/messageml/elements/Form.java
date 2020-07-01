@@ -26,8 +26,8 @@ public class Form extends Element {
 
   private static final String ERR_MSG_MISSING_ACTION_BTN = "The form with id '%s' should have at least one action button";
 
-  public Form(Element parent) {
-    super(parent, MESSAGEML_TAG);
+  public Form(Element parent, FormatEnum format) {
+    super(parent, MESSAGEML_TAG, format);
   }
 
   @Override

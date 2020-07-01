@@ -4,7 +4,6 @@ import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,13 +15,13 @@ import java.util.Map;
  *
  * Beware:
  *  If the element implementing this interface overrides {@link Element#buildAttribute(org.symphonyoss.symphony.messageml.MessageMLParser, org.w3c.dom.Node)} and/or {@link Element#asPresentationML(XmlPrintStream out,
- *       MessageMLContext context)} without calling super, it is needed to manage manually LABEL attribute and {@link #labelAsPresentationML(XmlPrintStream out,
+ *       MessageMLContext context)} without calling super, it is needed to manage manually LABEL attribute and {@link #splittableAsPresentationML(XmlPrintStream out,
  *       MessageMLContext context)} method
  *
  * @author enrico.molino (10/06/2020)
  *
  */
-public interface LabelableElement {
+public interface LabelableElement extends SplittableElement {
 
   String LABEL = "label";
   String LABEL_FOR = "for";
@@ -50,39 +49,19 @@ public interface LabelableElement {
   }
 
   /**
-   *
-   * @return the name used to build unique element id
-   */
-  default String getElementId(){
-   if(this instanceof Element){
-     return ((Element)this).getPresentationMLTag();
-   }
-   return "";
-  }
-
-  /**
-   * Convert the label attribute to a label element (MessageML -> PresentationML). It opens also a <div> block, don't forget to close it
-   * by calling {@link XmlPrintStream#closeElement()}
-   * Normally, you dont need to override the default method
-   *
-   * @param out
-   * @param context
-   * @return
-   */
-  default String labelAsPresentationML(XmlPrintStream out,
-      MessageMLContext context){
-    out.openElement(Div.MESSAGEML_TAG, Collections.singletonMap(Div.CLASS_ATTR, String.format("%s-group", getElementId())));
-    String id = String.format("%s-%s", getElementId(), context.generateShortId());
-    out.printElement(getPresentationMLLabelTag(), getAttribute(LABEL), getLabelAttribute(id));
-    return id;
-  }
-
-  /**
    * @return true if label exists
    * Normally, you dont need to override the default method
    */
   default boolean isLabel(){
     return getAttribute(LABEL) != null;
+  }
+
+  /**
+   *
+   * Check if the PresentationML node is a label
+   */
+  default boolean isLabelNode(org.w3c.dom.Node item){
+    return getPresentationMLLabelTag().equals(item.getNodeName());
   }
 
   /**
@@ -95,6 +74,4 @@ public interface LabelableElement {
       throw new InvalidInputException(String.format(LABEL_TOO_LONG_ERR, LABEL_MAX_LENGTH));
     }
   }
-
-  String getAttribute(String attr);
 }

@@ -1,14 +1,18 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.apache.commons.lang3.StringUtils;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
+import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -28,8 +32,8 @@ public class Button extends FormElement {
       "primary-destructive", "secondary-destructive")); // primary-destructive, secondary-destructive are deprecated
   private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList(ACTION_TYPE, RESET_TYPE));
 
-  public Button(Element parent) {
-    super(parent, MESSAGEML_TAG);
+  public Button(Element parent, FormatEnum format) {
+    super(parent, MESSAGEML_TAG, format);
     setAttribute(TYPE_ATTR, ACTION_TYPE);
   }
 
@@ -38,20 +42,47 @@ public class Button extends FormElement {
       Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
-        setAttribute(NAME_ATTR, getStringAttribute(item));
-        break;
-
       case TYPE_ATTR:
-        setAttribute(TYPE_ATTR, getStringAttribute(item));
-        break;
-
       case CLASS_ATTR:
-        setAttribute(CLASS_ATTR, getStringAttribute(item));
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
-
+        // The button can a have tooltips but is not a tooltipable element because it dont generate the span with tooltip
+      case TooltipableElement.TITLE:
+        if(format != FormatEnum.MESSAGEML){
+          throwInvalidInputException(item);
+        }
+        setAttribute(TooltipableElement.TITLE, getStringAttribute(item));
+        break;
+      case TooltipableElement.DATA_TITLE:
+        if(format != FormatEnum.PRESENTATIONML){
+          throwInvalidInputException(item);
+        }
+        setAttribute(TooltipableElement.DATA_TITLE, getStringAttribute(item));
+        break;
       default:
         throwInvalidInputException(item);
     }
+  }
+
+  @Override
+  void asPresentationML(XmlPrintStream out,
+      MessageMLContext context) {
+    out.openElement(getPresentationMLTag(), getPresentationMLAttributes());
+    for (Element child : getChildren()) {
+      child.asPresentationML(out, context);
+    }
+    out.closeElement();
+  }
+
+  private Map<String, String> getPresentationMLAttributes() {
+    Map<String, String> attributes = getAttributes();
+    if(format == FormatEnum.MESSAGEML && attributes.containsKey(TooltipableElement.TITLE)){
+      Map<String, String> presentationAttributes = new LinkedHashMap<>(attributes);
+      presentationAttributes.put(TooltipableElement.DATA_TITLE, attributes.get(TooltipableElement.TITLE));
+      presentationAttributes.remove(TooltipableElement.TITLE);
+      return presentationAttributes;
+    }
+    return attributes;
   }
 
   @Override

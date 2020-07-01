@@ -6,10 +6,15 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author enrico.molino (15/06/2020)
@@ -122,9 +127,50 @@ public abstract class GroupedElement extends FormElement {
       throws InvalidInputException {
     NamedNodeMap inputAttributes = inputElement.getAttributes();
     inputAttributes.removeNamedItem(TYPE_ATTR);
-
     for (int i = 0; i < inputAttributes.getLength(); i++) {
       buildAttribute(parser, inputAttributes.item(i));
+    }
+    /**
+     * When parsing PresentationML, find value of labels/tooltip if any.
+     * The grouped elements work in a different way than standard LabelableElement / TooltipableElement
+     * because the label/tooltip are after the element and not before, the code is written to manage both cases anyway
+     */
+    if(this instanceof LabelableElement){
+      org.w3c.dom.Element sibling = findSibling(inputElement, LabelableElement.LABEL, null);
+      if(sibling != null) {
+        getAttributes().put(LabelableElement.LABEL, sibling.getTextContent());
+      }
+    }
+    if(this instanceof TooltipableElement){
+      org.w3c.dom.Element sibling = findSibling(inputElement, TooltipableElement.TOOLTIPABLE_PRESENTATIONML, TooltipableElement.TOOLTIP_CLASS);
+      if(sibling != null) {
+        getAttributes().put(TooltipableElement.DATA_TITLE, sibling.getAttribute(TooltipableElement.DATA_TITLE));
+      }
+    }
+  }
+
+  private org.w3c.dom.Element findSibling(org.w3c.dom.Node inputElement, String tagName, String clazz)
+      throws InvalidInputException {
+    List<org.w3c.dom.Element> result = new ArrayList<>();
+    Arrays.asList(true, false).stream().forEach(ascending -> {
+      org.w3c.dom.Node sibling = ascending ? inputElement.getNextSibling() : inputElement.getPreviousSibling();
+      while(sibling != null) {
+        if(sibling instanceof org.w3c.dom.Element){
+          org.w3c.dom.Element element = (org.w3c.dom.Element)sibling;
+          if(tagName.equals(element.getTagName()) && (clazz == null || clazz.equals(element.getAttribute(CLASS_ATTR)))){
+            result.add(element);
+          }
+        }
+        sibling = ascending ? sibling.getNextSibling() : sibling.getPreviousSibling();
+      }
+    });
+    switch(result.size()){
+      case 0:
+        return null;
+      case 1:
+        return result.get(0);
+      default:
+        throw new InvalidInputException(String.format("Multiple tag %s found for element %s but only one is expected", tagName, inputElement.getNodeName()));
     }
   }
 
