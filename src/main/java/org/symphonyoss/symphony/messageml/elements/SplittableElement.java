@@ -6,10 +6,8 @@ import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -50,14 +48,22 @@ public interface SplittableElement {
       MessageMLContext context){
     out.openElement(Div.MESSAGEML_TAG, Collections.singletonMap(Div.CLASS_ATTR, String.format("%s-group", getElementId())));
     String id = String.format("%s-%s", getElementId(), context.generateShortId());
+
+    // it this method has been called, it is expected to have a label or a tooltip or both
     if(this instanceof LabelableElement){
       LabelableElement labelableElement = (LabelableElement)this;
-      out.printElement(labelableElement.getPresentationMLLabelTag(), getAttribute(LabelableElement.LABEL), labelableElement.getLabelAttribute(id));
+      if(labelableElement.isLabel()) {
+        out.printElement(labelableElement.getPresentationMLLabelTag(),
+            getAttribute(LabelableElement.LABEL), labelableElement.getLabelAttribute(id));
+      }
     }
     if(this instanceof TooltipableElement){
       TooltipableElement tooltipableElement = (TooltipableElement)this;
-      out.openElement(tooltipableElement.getPresentationMLTooltipTag(), tooltipableElement.getTooltipAttributes(id));
-      out.closeElement();
+      if(tooltipableElement.isTooltip()) {
+        out.openElement(tooltipableElement.getPresentationMLTooltipTag(),
+            tooltipableElement.getTooltipAttributes(id));
+        out.closeElement();
+      }
     }
     return id;
   }

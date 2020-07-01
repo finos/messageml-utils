@@ -240,30 +240,7 @@ public class MessageMLContextTest {
         + " </div>", id, id, id);
     assertEquals(expectedResult, presentationML);
   }
-
-  @Test
-  public void testParseMessageMLButtonWithSplittables()
-      throws InvalidInputException, IOException, ProcessingException {
-    final String message =
-        "<messageML>"
-        + "  <form id=\"example\">"
-        + "    <button title=\"Tooltip text \\n should appear on hover\" name=\"send-answers\" type=\"action\">Submit</button>"
-        + "  </form>"
-        + "</messageML>";
-
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    String presentationML = context.getPresentationML();
-    assertNotNull(context.getMessageML());
-
-    String expectedResult =
-        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "  <form id=\"example\">"
-            + "    <button type=\"action\" name=\"send-answers\" data-title=\"Tooltip text \\n should appear on hover\">Submit</button>"
-            + "  </form>"
-            + "</div>";
-    assertEquals(expectedResult, presentationML);
-  }
-
+  
   @Test
   public void testParseMessageMLCheckboxWithLabels()
           throws InvalidInputException, IOException, ProcessingException {
@@ -320,7 +297,29 @@ public class MessageMLContextTest {
                     "       <button type=\"action\" name=\"actionName\">Send</button>" +
                     "   </form>" +
                     "</div>", id1, id1, id2, id2);
+    assertEquals(expectedResult, presentationML);
+  }
 
+  @Test
+  public void testParseMessageMLButtonWithSplittables()
+      throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>"
+        + "  <form id=\"example\">"
+        + "    <button title=\"Tooltip text \\n should appear on hover\" name=\"send-answers\" type=\"action\">Submit</button>"
+        + "  </form>"
+        + "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    assertNotNull(context.getMessageML());
+
+    String expectedResult =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "  <form id=\"example\">"
+            + "    <button type=\"action\" name=\"send-answers\" data-title=\"Tooltip text \\n should appear on hover\">Submit</button>"
+            + "  </form>"
+            + "</div>";
     assertEquals(expectedResult, presentationML);
   }
 
