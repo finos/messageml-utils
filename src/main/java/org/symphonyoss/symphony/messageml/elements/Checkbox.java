@@ -58,6 +58,7 @@ public class Checkbox extends GroupedElement implements LabelableElement{
           throwInvalidInputException(item);
         }
         fillAttributes(parser, item);
+        break;
       default:
         throwInvalidInputException(item);
     }
