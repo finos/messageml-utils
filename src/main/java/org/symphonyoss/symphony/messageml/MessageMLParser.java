@@ -379,7 +379,7 @@ public class MessageMLParser {
       case Span.MESSAGEML_TAG:
         if(TooltipableElement.isTooltipNode(element)){
           String id = getAttribute(element, TooltipableElement.DATA_TARGET_ID);
-          createSpittable(id, TooltipableElement.class, null);
+          createSplittable(id, TooltipableElement.class, null);
           String title = getAttribute(element, TooltipableElement.DATA_TITLE);
           addSplittableData(id, TooltipableElement.class, TooltipableElement.TITLE, title);
           return null;
@@ -502,7 +502,7 @@ public class MessageMLParser {
 
       case LabelableElement.LABEL:
         String id = getAttribute(element, LabelableElement.LABEL_FOR);
-        createSpittable(id, LabelableElement.class, Pair.of(LabelableElement.LABEL, element.getTextContent()));
+        createSplittable(id, LabelableElement.class, Pair.of(LabelableElement.LABEL, element.getTextContent()));
         return null;
 
       default:
@@ -570,7 +570,7 @@ public class MessageMLParser {
     return Optional.of(data.getAllValues());
   }
 
-  private void createSpittable(String id, Class<? extends SplittableElement> clazz, Pair<String,String> value)
+  private void createSplittable(String id, Class<? extends SplittableElement> clazz, Pair<String,String> value)
       throws InvalidInputException {
     SplittableData data = splittableComponents.get(id);
     if (data == null) {

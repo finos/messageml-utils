@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -135,7 +136,7 @@ public class MessageMLContextTest {
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "   <form id=\"example\">"
-        + "     <div class=\"textfield-group\"><label for=\"%s\">Username</label>"
+        + "     <div class=\"textfield-group\" data-generated=\"true\"><label for=\"%s\">Username</label>"
             + "<span class=\"info-hint\" data-target-id=\"%s\" data-title=\"This only \\n accept regex characters\"></span>"
             + "<input type=\"text\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" data-pattern-error-message=\"\" id=\"%s\"/></div>"
         + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
@@ -166,7 +167,7 @@ public class MessageMLContextTest {
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
             + "   <form id=\"example\">"
-            + "     <div class=\"textarea-group\"><label for=\"%s\">Justification</label>"
+            + "     <div class=\"textarea-group\" data-generated=\"true\"><label for=\"%s\">Justification</label>"
             + "<span class=\"info-hint\" data-target-id=\"%s\" data-title=\"This only \\n accept regex characters\"></span>"
             + "<textarea name=\"justification\" pattern=\"^((?!badword).)*$\" data-pattern-error-message=\"\" id=\"%s\"></textarea></div>"
             + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
@@ -196,7 +197,7 @@ public class MessageMLContextTest {
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
             + "   <form id=\"example\">"
-            + "     <div class=\"person-selector-group\"><label for=\"%s\">Awesome users</label>"
+            + "     <div class=\"person-selector-group\" data-generated=\"true\"><label for=\"%s\">Awesome users</label>"
             + "<span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate \\n awesome users\"></span>"
             + "<div class=\"person-selector\" data-name=\"awesome-users\" id=\"%s\"></div></div>"
             + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
@@ -230,7 +231,7 @@ public class MessageMLContextTest {
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "   <form id=\"example\">"
-        + "     <div class=\"dropdown-group\"><label for=\"%s\">Cities</label><span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate your \\n favorite city\"></span><select name=\"cities\" id=\"%s\">"
+        + "     <div class=\"dropdown-group\" data-generated=\"true\"><label for=\"%s\">Cities</label><span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate your \\n favorite city\"></span><select name=\"cities\" id=\"%s\">"
         + "       <option selected=\"true\" value=\"ny\">New York</option>"
         + "       <option value=\"van\">Vancouver</option>"
         + "       <option value=\"par\">Paris</option>     "

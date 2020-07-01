@@ -8,6 +8,8 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +50,10 @@ public interface SplittableElement {
    */
   default String splittableAsPresentationML(XmlPrintStream out,
       MessageMLContext context){
-    out.openElement(Div.MESSAGEML_TAG, Collections.singletonMap(Div.CLASS_ATTR, String.format("%s-group", getElementId())));
+    Map<String, String> attributes = new LinkedHashMap<>();
+    attributes.put(Div.CLASS_ATTR, String.format("%s-group", getElementId()));
+    attributes.put(PRESENTATIONML_DIV_FLAG, Boolean.TRUE.toString());
+    out.openElement(Div.MESSAGEML_TAG, attributes);
     String id = String.format("%s-%s", getElementId(), context.generateShortId());
 
     // it this method has been called, it is expected to have a label or a tooltip or both
