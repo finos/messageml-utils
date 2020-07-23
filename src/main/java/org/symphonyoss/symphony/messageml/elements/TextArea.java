@@ -57,20 +57,6 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
   }
 
   @Override
-  public void buildAll(MessageMLParser parser, org.w3c.dom.Element element)
-          throws InvalidInputException, ProcessingException {
-    switch (getFormat()) {
-      case MESSAGEML:
-        super.buildAll(parser, element);
-        break;
-      case PRESENTATIONML:
-        this.buildAllFromPresentationML(parser, element);
-        break;
-    }
-  }
-
-
-  @Override
   protected void buildAttribute(MessageMLParser parser,
       org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
@@ -108,31 +94,6 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
   }
 
   @Override
-  public Map<String, String> getOtherAttributes() {
-    Map<String, String> presentationAttrs = new LinkedHashMap<>();
-
-    presentationAttrs.put(NAME_ATTR, getAttribute(NAME_ATTR));
-
-    if (getAttribute(PLACEHOLDER_ATTR) != null) {
-      presentationAttrs.put(PLACEHOLDER_ATTR, getAttribute(PLACEHOLDER_ATTR));
-    }
-
-    if (getAttribute(REQUIRED_ATTR) != null) {
-      presentationAttrs.put(REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
-    }
-
-    if (getAttribute(MINLENGTH_ATTR) != null) {
-      presentationAttrs.put(MINLENGTH_ATTR, getAttribute(MINLENGTH_ATTR));
-    }
-
-    if (getAttribute(MAXLENGTH_ATTR) != null) {
-      presentationAttrs.put(MAXLENGTH_ATTR, getAttribute(MAXLENGTH_ATTR));
-    }
-
-    return presentationAttrs;
-  }
-
-  @Override
   public Node asMarkdown() {
       return new TextAreaNode(getAttribute(PLACEHOLDER_ATTR), hasExactNumberOfChildren(1) ? getChild(0).asText() : null);
   }
@@ -140,43 +101,6 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
   @Override
   public String getElementId(){
     return MESSAGEML_TAG;
-  }
-
-
-  private void buildAllFromPresentationML(MessageMLParser parser, org.w3c.dom.Element element)
-          throws InvalidInputException {
-    NamedNodeMap attr = element.getAttributes();
-    NodeList children = element.getChildNodes();
-
-    if (children != null && children.getLength() > 0) {
-      throw new InvalidInputException(
-              "Element \"" + this.getMessageMLTag() + "\" may not have child elements or text content");
-    }
-
-    for (int i = 0; i < attr.getLength(); i++) {
-
-      buildAttributeFromPresentationML(parser, attr.item(i));
-    }
-  }
-
-  private void buildAttributeFromPresentationML(MessageMLParser parser, org.w3c.dom.Node item) throws InvalidInputException {
-    switch (item.getNodeName()) {
-      case NAME_ATTR:
-      case REQUIRED_ATTR:
-      case PLACEHOLDER_ATTR:
-      case MINLENGTH_ATTR:
-      case MAXLENGTH_ATTR:
-      case LABEL:
-      case PATTERN_ATTR:
-      case PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR:
-        setAttribute(item.getNodeName(), getStringAttribute(item));
-        break;
-      case ID_ATTR:
-        fillAttributes(parser, item);
-        break;
-      default:
-        throwInvalidInputException(item);
-    }
   }
 
   /**
