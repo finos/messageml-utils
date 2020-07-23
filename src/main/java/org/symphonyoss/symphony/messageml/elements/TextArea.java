@@ -202,8 +202,11 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
     if (minLength > maxLength) {
       throw new InvalidInputException("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
     }
+    validateInitialValueIfFound(maxLength, minLength);
+  }
 
-    if (hasElementInitialValue()) {
+  private void validateInitialValueIfFound(Integer maxLength, Integer minLength) throws InvalidInputException {
+    if (getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode) {
       String initialValue = ((TextNode) getChild(0)).getText();
       if (initialValue.length() < minLength || initialValue.length() > maxLength) {
         throw new InvalidInputException(String.format(
@@ -237,10 +240,6 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
 
   private String getLengthErrorMessage(String attributeName) {
     return format("The attribute \"%s\" must be between %s and %s", attributeName, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
-  }
-
-  private boolean hasElementInitialValue() {
-    return getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode;
   }
 
 }
