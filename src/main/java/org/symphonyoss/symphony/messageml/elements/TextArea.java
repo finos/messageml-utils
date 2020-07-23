@@ -1,5 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
+import static java.lang.String.format;
+
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -19,9 +21,14 @@ import java.util.Map;
  * @author Sandro Ribeiro
  * @since 06/12/2019
  */
-public class TextArea extends FormElement implements RegexElement, LabelableElement, TooltipableElement, LimitedInputLengthElement {
+public class TextArea extends FormElement implements RegexElement, LabelableElement, TooltipableElement {
 
   public static final String MESSAGEML_TAG = "textarea";
+
+  private static final String MINLENGTH_ATTR = "minlength";
+  private static final String MAXLENGTH_ATTR = "maxlength";
+  private Integer MIN_ALLOWED_LENGTH = 0;
+  private Integer MAX_ALLOWED_LENGTH = 10000;
 
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
@@ -135,23 +142,6 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
     return MESSAGEML_TAG;
   }
 
-  @Override
-  public String getElementInitialValue() {
-    return ((TextNode) getChild(0)).getText();
-  }
-
-  @Override
-  public boolean hasElementInitialValue() {
-    return getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode;
-  }
-
-  @Override
-  public String getAttributeValue(String attributeName){
-    return getAttribute(attributeName);
-  }
-
-  @Override
-  public String getElementType(){ return MESSAGEML_TAG; }
 
   private void buildAllFromPresentationML(MessageMLParser parser, org.w3c.dom.Element element)
           throws InvalidInputException {
@@ -187,6 +177,70 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
       default:
         throwInvalidInputException(item);
     }
+  }
+
+  /**
+   * This method checks if the input of the element respects the range given by the
+   * attributes maxlength and minlength
+   *
+   * @throws InvalidInputException when the input is not in range
+   */
+  private void validateMinAndMaxLengths() throws InvalidInputException {
+    Integer maxLength = getAttributeAsInteger(MAXLENGTH_ATTR);
+    if (isLengthOutOfPossibleRange(maxLength)) {
+      throw new InvalidInputException(getLengthErrorMessage(MAXLENGTH_ATTR));
+    }
+
+    Integer minLength = getAttributeAsInteger(MINLENGTH_ATTR);
+    if (isLengthOutOfPossibleRange(minLength)) {
+      throw new InvalidInputException(getLengthErrorMessage(MINLENGTH_ATTR));
+    }
+
+    minLength = getDefaultValueIfCurrentIsNull(minLength, MIN_ALLOWED_LENGTH);
+    maxLength = getDefaultValueIfCurrentIsNull(maxLength, MAX_ALLOWED_LENGTH);
+
+    if (minLength > maxLength) {
+      throw new InvalidInputException("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
+    }
+
+    if (hasElementInitialValue()) {
+      String initialValue = ((TextNode) getChild(0)).getText();
+      if (initialValue.length() < minLength || initialValue.length() > maxLength) {
+        throw new InvalidInputException(String.format(
+                "The length of this textarea's initial value must be between %s and %s", minLength, maxLength));
+      }
+    }
+  }
+
+  private boolean isLengthOutOfPossibleRange(Integer length) {
+    return length != null && (length < MIN_ALLOWED_LENGTH || length > MAX_ALLOWED_LENGTH);
+  }
+
+
+  private Integer getAttributeAsInteger(String attributeName) throws InvalidInputException{
+    Integer length = null;
+
+    if (getAttribute(attributeName) != null) {
+      try {
+        length = Integer.parseInt(getAttribute(attributeName));
+      } catch (NumberFormatException e) {
+        throw new InvalidInputException(format("The attribute \"%s\" must be a valid number.", attributeName));
+      }
+    }
+
+    return length;
+  }
+
+  private Integer getDefaultValueIfCurrentIsNull(Integer currentValue, Integer defaultValue) {
+    return currentValue == null ? defaultValue : currentValue;
+  }
+
+  private String getLengthErrorMessage(String attributeName) {
+    return format("The attribute \"%s\" must be between %s and %s", attributeName, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
+  }
+
+  private boolean hasElementInitialValue() {
+    return getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode;
   }
 
 }

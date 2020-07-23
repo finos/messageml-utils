@@ -23,26 +23,26 @@ public class TextAreaTest extends ElementTest {
   private static final String INITIAL_VALUE_WITH_LINE_BREAK = "An \n initial \n value";
 
   private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)" + ACTION_BTN_MARKDOWN
-      + "\n---\n";
+          + "\n---\n";
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s])" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE);
+          String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s])" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE);
   private static final String EXPECTED_MARKDOWN_WITH_INITIAL_VALUE =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE);
+          String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE);
   private static final String EXPECTED_MARKDOWN_WITH_LINE_BREAK =
           String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE_WITH_LINE_BREAK);
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER_AND_INITIAL_VALUE =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s]%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE, INITIAL_VALUE);
+          String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s]%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE, INITIAL_VALUE);
 
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();
-  
+
   @Test
   public void testTextAreaWithRequiredAttributesOnly() throws Exception {
     String input = String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\"></textarea>%s</form></messageML>", NAME_VALUE,
-        ACTION_BTN_ELEMENT);
+            ACTION_BTN_ELEMENT);
     String expectedPresentationML =
-        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\"></textarea>%s</form></div>",
-            NAME_VALUE, ACTION_BTN_ELEMENT);
+            String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\"></textarea>%s</form></div>",
+                    NAME_VALUE, ACTION_BTN_ELEMENT);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -59,12 +59,12 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaWithAllAttributes() throws Exception {
     String input =
-        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\" minlength=\"3\" maxlength=\"25\">%s</textarea>%s</form></messageML>",
-            NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
+            String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\" minlength=\"3\" maxlength=\"25\">%s</textarea>%s</form></messageML>",
+                    NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
     String expectedPresentationML = String.format(
-        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" "
-            + "required=\"true\" minlength=\"3\" maxlength=\"25\">%s</textarea>%s</form></div>",
-        NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
+            "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" "
+                    + "required=\"true\" minlength=\"3\" maxlength=\"25\">%s</textarea>%s</form></div>",
+            NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -81,10 +81,10 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaWithInitialValue() throws Exception {
     String input = String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\">%s</textarea>%s</form></messageML>", NAME_VALUE, INITIAL_VALUE,
-        ACTION_BTN_ELEMENT);
+            ACTION_BTN_ELEMENT);
     String expectedPresentationML =
-        String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\">%s</textarea>%s</form></div>",
-            NAME_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
+            String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\">%s</textarea>%s</form></div>",
+                    NAME_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -121,12 +121,12 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaRequiredAttribute() throws Exception {
     String input =
-        String.format(
-            "<messageML><form id=\"form-id\"><textarea name=\"%s\" required=\"true\"></textarea>%s</form></messageML>", NAME_VALUE,
-            ACTION_BTN_ELEMENT);
+            String.format(
+                    "<messageML><form id=\"form-id\"><textarea name=\"%s\" required=\"true\"></textarea>%s</form></messageML>", NAME_VALUE,
+                    ACTION_BTN_ELEMENT);
     String expectedPresentationML = String.format(
-        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" required=\"true\"></textarea>%s</form></div>",
-        NAME_VALUE, ACTION_BTN_ELEMENT);
+            "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" required=\"true\"></textarea>%s</form></div>",
+            NAME_VALUE, ACTION_BTN_ELEMENT);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -143,11 +143,11 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaPlaceholderAttribute() throws Exception {
     String input = String.format(
-        "<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\"></textarea>%s</form></messageML>", NAME_VALUE,
-        PLACEHOLDER_VALUE, ACTION_BTN_ELEMENT);
+            "<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\"></textarea>%s</form></messageML>", NAME_VALUE,
+            PLACEHOLDER_VALUE, ACTION_BTN_ELEMENT);
     String expectedPresentationML = String.format(
-        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\"></textarea>%s</form></div>",
-        NAME_VALUE, PLACEHOLDER_VALUE, ACTION_BTN_ELEMENT);
+            "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\"></textarea>%s</form></div>",
+            NAME_VALUE, PLACEHOLDER_VALUE, ACTION_BTN_ELEMENT);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -187,7 +187,7 @@ public class TextAreaTest extends ElementTest {
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage(
-        "Attribute \"required\" of element \"textarea\" can only be one of the following values: [true, false].");
+            "Attribute \"required\" of element \"textarea\" can only be one of the following values: [true, false].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
@@ -208,7 +208,7 @@ public class TextAreaTest extends ElementTest {
     String childElement = "div";
     String initialValueWithChildren = String.format("<%s>%s</%s>", childElement, INITIAL_VALUE, childElement);
     String input = String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\">%s</textarea></form></messageML>", NAME_VALUE,
-        initialValueWithChildren);
+            initialValueWithChildren);
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"" + childElement + "\" is not allowed in \"textarea\"");
@@ -219,12 +219,12 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaWithRegex() throws Exception {
     String input = String.format(
-        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" pattern-error-message=\"Regex Error\"></textarea>%s</form></messageML>", NAME_VALUE,
-        ACTION_BTN_ELEMENT);
+            "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" pattern-error-message=\"Regex Error\"></textarea>%s</form></messageML>", NAME_VALUE,
+            ACTION_BTN_ELEMENT);
     String expectedPresentationML =
-        String.format(
-            "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" data-pattern-error-message=\"Regex Error\"></textarea>%s</form></div>",
-            NAME_VALUE, ACTION_BTN_ELEMENT);
+            String.format(
+                    "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" data-pattern-error-message=\"Regex Error\"></textarea>%s</form></div>",
+                    NAME_VALUE, ACTION_BTN_ELEMENT);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -246,9 +246,9 @@ public class TextAreaTest extends ElementTest {
     exceptionRule.expectMessage(String.format(RegexElement.REGEX_NOT_VALID_ERR, invalidRegex));
 
     String input = String.format(
-        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\" pattern-error-message=\"Regex Error\"></textarea></form></messageML>",
-        NAME_VALUE,
-        invalidRegex);
+            "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\" pattern-error-message=\"Regex Error\"></textarea></form></messageML>",
+            NAME_VALUE,
+            invalidRegex);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -259,8 +259,8 @@ public class TextAreaTest extends ElementTest {
     exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_MANDATORY_WHEN_ATTRIBUTE_DEFINED_ERR, RegexElement.PATTERN_ERROR_MESSAGE_ATTR, RegexElement.PATTERN_ATTR));
 
     String input = String.format(
-        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\"></textarea></form></messageML>",
-        NAME_VALUE, "");
+            "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\"></textarea></form></messageML>",
+            NAME_VALUE, "");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -272,10 +272,10 @@ public class TextAreaTest extends ElementTest {
     exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_TOO_LONG_ERR, RegexElement.PATTERN_ATTR, RegexElement.PATTERN_MAX_LENGTH));
 
     String input = String.format(
-        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\" pattern-error"
-            + "-message=\"Regex Error\"></textarea></form></messageML>",
-        NAME_VALUE,
-        regexTooLong);
+            "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"%s\" pattern-error"
+                    + "-message=\"Regex Error\"></textarea></form></messageML>",
+            NAME_VALUE,
+            regexTooLong);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -287,15 +287,15 @@ public class TextAreaTest extends ElementTest {
     exceptionRule.expectMessage(String.format(RegexElement.ATTRIBUTE_TOO_LONG_ERR, RegexElement.PATTERN_ERROR_MESSAGE_ATTR, RegexElement.PATTERN_ERROR_MESSAGE_MAX_LENGTH));
 
     String input = String.format(
-        "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" pattern-error"
-            + "-message=\"%s\"></textarea></form></messageML>",
-        NAME_VALUE,
-        errTooLong);
+            "<messageML><form id=\"form-id\"><textarea name=\"%s\" pattern=\"regex\" pattern-error"
+                    + "-message=\"%s\"></textarea></form></messageML>",
+            NAME_VALUE,
+            errTooLong);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
-  public void testTextFieldMessageMLWithDefaultValueBiggerThanMaxLength() throws Exception {
+  public void testTextAreaMessageMLWithDefaultValueBiggerThanMaxLength() throws Exception {
     String input = "<messageML>"
             + "<form id=\"form-id\">"
             + "<textarea name=\"sample name\" maxlength=\"5\" minlength=\"1\">Value here</textarea>"
@@ -309,7 +309,7 @@ public class TextAreaTest extends ElementTest {
   }
 
   @Test
-  public void testTextFieldMessageMLWithDefaultValueSmallerThanMinLength() throws Exception {
+  public void testTextAreaMessageMLWithDefaultValueSmallerThanMinLength() throws Exception {
     String input = "<messageML>"
             + "<form id=\"form-id\">"
             + "<textarea name=\"sample name\" maxlength=\"20\" minlength=\"5\">Text</textarea>"
@@ -318,6 +318,34 @@ public class TextAreaTest extends ElementTest {
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The length of this textarea's initial value must be between 5 and 20");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaMessageMLWithValueSmallerThanMinLength() throws Exception {
+    String input = "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<textarea name=\"sample name\" maxlength=\"20\" minlength=\"-3\">Text</textarea>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"minlength\" must be between 0 and 10000");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaMessageMLWithValueSmallerThanMaxLength() throws Exception {
+    String input = "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<textarea name=\"sample name\" maxlength=\"20000\" minlength=\"3\">Text</textarea>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"maxlength\" must be between 0 and 10000");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
