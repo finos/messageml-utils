@@ -59,11 +59,11 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaWithAllAttributes() throws Exception {
     String input =
-        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\">%s</textarea>%s</form></messageML>",
+        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\" minlength=\"3\" maxlength=\"25\">%s</textarea>%s</form></messageML>",
             NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
     String expectedPresentationML = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" "
-            + "required=\"true\">%s</textarea>%s</form></div>",
+            + "required=\"true\" minlength=\"3\" maxlength=\"25\">%s</textarea>%s</form></div>",
         NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -294,4 +294,31 @@ public class TextAreaTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testTextFieldMessageMLWithDefaultValueBiggerThanMaxLength() throws Exception {
+    String input = "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<textarea name=\"sample name\" maxlength=\"5\" minlength=\"1\">Value here</textarea>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this textarea's initial value must be between 1 and 5");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldMessageMLWithDefaultValueSmallerThanMinLength() throws Exception {
+    String input = "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<textarea name=\"sample name\" maxlength=\"20\" minlength=\"5\">Text</textarea>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this textarea's initial value must be between 5 and 20");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
 }

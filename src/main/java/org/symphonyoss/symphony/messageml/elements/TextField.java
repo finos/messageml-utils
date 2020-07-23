@@ -1,7 +1,5 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import static java.lang.String.format;
-
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -23,14 +21,12 @@ import java.util.Set;
  * @author Lucas Macedo
  * @since 06/07/2019
  */
-public class TextField extends FormElement implements RegexElement, LabelableElement, TooltipableElement {
+public class TextField extends FormElement implements RegexElement, LabelableElement, TooltipableElement, LimitedInputLengthElement {
 
   public static final String MESSAGEML_TAG = "text-field";
   public static final String ELEMENT_ID = "textfield";
   public static final String PRESENTATIONML_INPUT_TYPE = "text";
 
-  private static final String MINLENGTH_ATTR = "minlength";
-  private static final String MAXLENGTH_ATTR = "maxlength";
   private static final String REQUIRED_ATTR = "required";
   private static final String MASKED_ATTR = "masked";
   private static final String PLACEHOLDER_ATTR = "placeholder";
@@ -39,10 +35,6 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
   private static final String PRESENTATIONML_MASKED_ATTR = "data-masked";
 
   private static final Set<String> VALID_BOOLEAN_VALUES = new HashSet<>(Arrays.asList("true", "false"));
-  private static final Integer MIN_ALLOWED_LENGTH = 1;
-  private static final Integer MAX_ALLOWED_LENGTH = 128;
-
-  private final static String MARKDOWN = "Text Field";
 
   public TextField(Element parent, FormatEnum messageFormat) {
     super(parent, MESSAGEML_TAG, messageFormat);
@@ -205,76 +197,23 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
     return ELEMENT_ID;
   }
 
-  private void validateMinAndMaxLengths() throws InvalidInputException {
-    Integer maxLength = getAttributeAsInteger(MAXLENGTH_ATTR);
-    if (isLengthOutOfRange(maxLength)) {
-      throw new InvalidInputException(getLengthErrorMessage(MAXLENGTH_ATTR));
-    }
-
-    Integer minLength = getAttributeAsInteger(MINLENGTH_ATTR);
-    if (isLengthOutOfRange(minLength)) {
-      throw new InvalidInputException(getLengthErrorMessage(MINLENGTH_ATTR));
-    }
-
-    minLength = getDefaultValueIfCurrentIsNull(minLength, MIN_ALLOWED_LENGTH);
-    maxLength = getDefaultValueIfCurrentIsNull(maxLength, MAX_ALLOWED_LENGTH);
-
-    if (isMinAndMaxLengthCombinationValid(maxLength, minLength)) {
-      throw new InvalidInputException("The attribute \"minlength\" must be lower than the \"maxlength\" attribute");
-    }
-
-    if (textFieldHasInitialValue()) {
-      String initialValue = getTextFieldInitialValue();
-      if (isTextSmallerThanMinLength(minLength, initialValue) || isTextBiggerThanMaxLength(maxLength, initialValue)) {
-        throw new InvalidInputException(String.format(
-            "The length of this text-field's initial value must be between %s and %s", minLength, maxLength));
-      }
-    }
-  }
-
-  private Integer getDefaultValueIfCurrentIsNull(Integer currentValue, Integer defaultValue) {
-    return currentValue == null ? defaultValue : currentValue;
-  }
-
-  private String getTextFieldInitialValue() {
+  @Override
+  public String getElementInitialValue() {
     return ((TextNode) getChild(0)).getText();
   }
 
-  private boolean isMinAndMaxLengthCombinationValid(Integer maxLength, Integer minLength) {
-    return minLength != null && maxLength != null && minLength > maxLength;
-  }
-
-  private boolean isTextBiggerThanMaxLength(Integer maxLength, String text) {
-    return text != null && maxLength != null && text.length() > maxLength;
-  }
-
-  private boolean isTextSmallerThanMinLength(Integer minLength, String text) {
-    return text != null && minLength != null && text.length() < minLength;
-  }
-
-  private boolean textFieldHasInitialValue() {
+  @Override
+  public boolean hasElementInitialValue() {
     return getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode;
   }
 
-  private Integer getAttributeAsInteger(String attributeName) throws InvalidInputException {
-    Integer length = null;
-
-    if (getAttribute(attributeName) != null) {
-      try {
-        length = Integer.parseInt(getAttribute(attributeName));
-      } catch (NumberFormatException e) {
-        throw new InvalidInputException(format("The attribute \"%s\" must be a valid number.", attributeName));
-      }
-    }
-
-    return length;
+  @Override
+  public String getAttributeValue(String attributeName){
+    return getAttribute(attributeName);
   }
 
-  private boolean isLengthOutOfRange(Integer length) {
-    return length != null && (length < MIN_ALLOWED_LENGTH || length > MAX_ALLOWED_LENGTH);
-  }
 
-  private String getLengthErrorMessage(String attributeName) {
-    return format("The attribute \"%s\" must be between %s and %s", attributeName, MIN_ALLOWED_LENGTH, MAX_ALLOWED_LENGTH);
-  }
+  @Override
+  public String getElementType(){ return MESSAGEML_TAG; }
+
 }
