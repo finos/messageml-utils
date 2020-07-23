@@ -71,7 +71,7 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
   @Override
   public void buildAll(MessageMLParser parser, org.w3c.dom.Element element)
-          throws InvalidInputException, ProcessingException {
+      throws InvalidInputException, ProcessingException {
     switch (getFormat()) {
       case MESSAGEML:
         super.buildAll(parser, element);
@@ -89,7 +89,7 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
   @Override
   protected void buildAttribute(MessageMLParser parser,
-                                Node item) throws InvalidInputException {
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case REQUIRED_ATTR:
@@ -115,13 +115,13 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
   }
 
   private void buildAllFromPresentationML(MessageMLParser parser, org.w3c.dom.Element element)
-          throws InvalidInputException {
+      throws InvalidInputException {
     NamedNodeMap attr = element.getAttributes();
     NodeList children = element.getChildNodes();
 
     if (children != null && children.getLength() > 0) {
       throw new InvalidInputException(
-              "Element \"" + this.getMessageMLTag() + "\" may not have child elements or text content");
+          "Element \"" + this.getMessageMLTag() + "\" may not have child elements or text content");
     }
 
     for (int i = 0; i < attr.getLength(); i++) {
@@ -227,7 +227,7 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
       String initialValue = getTextFieldInitialValue();
       if (isTextSmallerThanMinLength(minLength, initialValue) || isTextBiggerThanMaxLength(maxLength, initialValue)) {
         throw new InvalidInputException(String.format(
-                "The length of this text-field's initial value must be between %s and %s", minLength, maxLength));
+            "The length of this text-field's initial value must be between %s and %s", minLength, maxLength));
       }
     }
   }
