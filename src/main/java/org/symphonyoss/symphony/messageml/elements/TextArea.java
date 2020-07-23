@@ -180,10 +180,11 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
   }
 
   /**
-   * This method checks if the input of the element respects the range given by the
-   * attributes maxlength and minlength
+   * This method checks if the values assigned to minlength and maxlength attributes
+   * are valid. If there is an initial value in the textarea it also checks if the latter is
+   * between the range given
    *
-   * @throws InvalidInputException when the input is not in range
+   * @throws InvalidInputException when the attributes value are not valid or the input is not in range
    */
   private void validateMinAndMaxLengths() throws InvalidInputException {
     Integer maxLength = getAttributeAsInteger(MAXLENGTH_ATTR);
