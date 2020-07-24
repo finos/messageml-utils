@@ -121,6 +121,7 @@ public abstract class Element {
         break;
       default:
         if((this instanceof RegexElement && RegexElement.ALL_REGEX_ATTRS.contains(item.getNodeName()))
+        || (this instanceof MinMaxLengthElement && MinMaxLengthElement.ALL_MIN_MAX_ATTRS.contains(item.getNodeName()))
         || (format == FormatEnum.MESSAGEML && this instanceof SplittableElement && ((SplittableElement) this).isSplittableNodeComponent(item))){
           attributes.put(item.getNodeName(), getStringAttribute(item));
         } else if(format == FormatEnum.PRESENTATIONML

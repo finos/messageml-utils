@@ -2,7 +2,8 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static java.lang.String.format;
 
-import javax.xml.bind.Element;
+import java.util.Arrays;
+import java.util.List;
 
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -12,13 +13,19 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
  *
  * Simply implement this interface into the element to support the two attributes
  *
+ * Beware:
+ * If the element implementing this interface overrides {@link Element#buildAttribute(org.symphonyoss.symphony.messageml.MessageMLParser, org.w3c.dom.Node)}
+ * without calling super, it is needed to manage manually MINLENGTH_ATTR, MAXLENGTH_ATTR attributes
+ *
  * @author mariacristina.dedominicis (23/07/2020)
  */
 
-public interface MinMaxLengthElement extends Element {
+public interface MinMaxLengthElement{
 
     String MINLENGTH_ATTR = "minlength";
     String MAXLENGTH_ATTR = "maxlength";
+    List<String> ALL_MIN_MAX_ATTRS = Arrays.asList(MINLENGTH_ATTR, MAXLENGTH_ATTR);
+
 
     /**
      * This method checks if the values assigned to minlength and maxlength attributes
