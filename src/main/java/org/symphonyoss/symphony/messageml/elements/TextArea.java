@@ -5,26 +5,25 @@ import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextAreaNode;
 
-import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Class representing a Text Area inside a Form.
  * @author Sandro Ribeiro
  * @since 06/12/2019
  */
-public class TextArea extends FormElement implements RegexElement, LabelableElement, TooltipableElement {
+public class TextArea extends FormElement implements RegexElement, LabelableElement, TooltipableElement, MinMaxLengthElement{
 
   public static final String MESSAGEML_TAG = "textarea";
+
+  private Integer MIN_ALLOWED_LENGTH = 0;
+  private Integer MAX_ALLOWED_LENGTH = 10000;
 
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
   private static final List<String> VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
-
-  private static final String MARKDOWN = "Text Area";
 
   public TextArea(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -44,6 +43,8 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
 
     assertAttributeNotBlank(NAME_ATTR);
     assertContentModel(Collections.singleton(TextNode.class));
+    validateMinAndMaxLengths();
+
   }
 
   @Override
@@ -53,6 +54,8 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
       case NAME_ATTR:
       case REQUIRED_ATTR:
       case PLACEHOLDER_ATTR:
+      case MINLENGTH_ATTR:
+      case MAXLENGTH_ATTR:
       case PATTERN_ATTR:
       case LABEL:
       case TITLE:
@@ -91,4 +94,33 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
     return MESSAGEML_TAG;
   }
 
+  @Override
+  public String getElementType() {
+    return MESSAGEML_TAG;
+  }
+
+  @Override
+  public boolean hasElementInitialValue() {
+    return getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode;
+  }
+
+  @Override
+  public String getElementInitialValue() {
+    return ((TextNode) getChild(0)).getText();
+  }
+
+  @Override
+  public String getAttributeValue(String attributeName) {
+    return getAttribute(attributeName);
+  }
+
+  @Override
+  public Integer getMinValueAllowed() {
+    return MIN_ALLOWED_LENGTH;
+  }
+
+  @Override
+  public Integer getMaxValueAllowed() {
+    return MAX_ALLOWED_LENGTH;
+  }
 }

@@ -29,7 +29,7 @@ public class TextAreaTest extends ElementTest {
   private static final String EXPECTED_MARKDOWN_WITH_INITIAL_VALUE =
       String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE);
   private static final String EXPECTED_MARKDOWN_WITH_LINE_BREAK =
-          String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE_WITH_LINE_BREAK);
+      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE_WITH_LINE_BREAK);
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER_AND_INITIAL_VALUE =
       String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s]%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE, INITIAL_VALUE);
 
@@ -59,10 +59,10 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaWithAllAttributes() throws Exception {
     String input =
-        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\">%s</textarea>%s</form></messageML>",
+        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\" minlength=\"3\" maxlength=\"25\">%s</textarea>%s</form></messageML>",
             NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
     String expectedPresentationML = String.format(
-        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" "
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea maxlength=\"25\" minlength=\"3\" name=\"%s\" placeholder=\"%s\" "
             + "required=\"true\">%s</textarea>%s</form></div>",
         NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
 
@@ -294,4 +294,59 @@ public class TextAreaTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testTextAreaMessageMLWithDefaultValueBiggerThanMaxLength() throws Exception {
+    String input = "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<textarea name=\"sample name\" maxlength=\"5\" minlength=\"1\">Value here</textarea>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this textarea's initial value must be between 1 and 5");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaMessageMLWithDefaultValueSmallerThanMinLength() throws Exception {
+    String input = "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<textarea name=\"sample name\" maxlength=\"20\" minlength=\"5\">Text</textarea>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The length of this textarea's initial value must be between 5 and 20");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaMessageMLWithValueSmallerThanMinLength() throws Exception {
+    String input = "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<textarea name=\"sample name\" maxlength=\"20\" minlength=\"-3\">Text</textarea>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"minlength\" must be between 0 and 10000");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaMessageMLWithValueSmallerThanMaxLength() throws Exception {
+    String input = "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<textarea name=\"sample name\" maxlength=\"20000\" minlength=\"3\">Text</textarea>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("The attribute \"maxlength\" must be between 0 and 10000");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
 }
