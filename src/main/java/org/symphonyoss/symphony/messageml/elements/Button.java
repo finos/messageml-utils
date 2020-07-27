@@ -105,6 +105,12 @@ public class Button extends FormElement {
       throw new InvalidInputException("Attribute \"class\" must be \"primary\", \"secondary\", " +
               "\"tertiary\" or \"destructive\" (\"primary-destructive\" and \"secondary-destructive\" are deprecated)");
     }
+    if("primary-destructive".equals(clazz)) {
+      setAttribute(CLASS_ATTR, "primary");
+    }
+    if("secondary-destructive".equals(clazz)) {
+      setAttribute(CLASS_ATTR, "secondary");
+    }    
     if (type.equals(ACTION_TYPE) && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for action buttons");
     }
