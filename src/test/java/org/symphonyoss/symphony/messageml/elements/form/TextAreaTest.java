@@ -15,12 +15,17 @@ import org.symphonyoss.symphony.messageml.elements.RegexElement;
 import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class TextAreaTest extends ElementTest {
 
   private static final String NAME_VALUE = "A name";
   private static final String PLACEHOLDER_VALUE = "A placeholder";
   private static final String INITIAL_VALUE = "An initial value";
   private static final String INITIAL_VALUE_WITH_LINE_BREAK = "An \n initial \n value";
+  private static final String LABEL = "label here";
+  private static final String TITLE = "title here";
 
   private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)" + ACTION_BTN_MARKDOWN
       + "\n---\n";
@@ -30,8 +35,8 @@ public class TextAreaTest extends ElementTest {
       String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE);
   private static final String EXPECTED_MARKDOWN_WITH_LINE_BREAK =
           String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE_WITH_LINE_BREAK);
-  private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER_AND_INITIAL_VALUE =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s]%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE, INITIAL_VALUE);
+  private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER_INITIAL_VALUE_LABEL_TITLE =
+      String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s][%s][%s]%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE, LABEL, TITLE, INITIAL_VALUE);
 
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();
@@ -59,22 +64,34 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaWithAllAttributes() throws Exception {
     String input =
-        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\">%s</textarea>%s</form></messageML>",
-            NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
-    String expectedPresentationML = String.format(
-        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" "
-            + "required=\"true\">%s</textarea>%s</form></div>",
-        NAME_VALUE, PLACEHOLDER_VALUE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
-
+        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\" label=\"%s\" title=\"%s\">%s</textarea>%s</form></messageML>",
+            NAME_VALUE, PLACEHOLDER_VALUE, LABEL, TITLE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
+    
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
     Element form = messageML.getChildren().get(0);
     Element textArea = form.getChildren().get(0);
 
+    String presentationML = context.getPresentationML();
+    String textAreaRegex = ".*(\"textarea-(.*?)\").*";
+    Pattern pattern = Pattern.compile(textAreaRegex);
+    Matcher matcher = pattern.matcher(presentationML);
+    String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
+
+    String expectedPresentationML = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\">"
+            + "<div class=\"textarea-group\" data-generated=\"true\">"
+            + "<label for=\"textarea-%s\">label here</label>"
+            + "<span class=\"info-hint\" data-target-id=\"textarea-%s\" data-title=\"title here\"></span>"
+            + "<textarea name=\"%s\" placeholder=\"%s\" "
+            + "required=\"true\" id=\"textarea-%s\">%s</textarea></div>%s</form></div>",
+        uniqueLabelId, uniqueLabelId, NAME_VALUE, PLACEHOLDER_VALUE, uniqueLabelId, INITIAL_VALUE, ACTION_BTN_ELEMENT);
+
+
     assertEquals(Form.class, form.getClass());
     assertEquals(TextArea.class, textArea.getClass());
-    assertEquals("Markdown", EXPECTED_MARKDOWN_WITH_PLACEHOLDER_AND_INITIAL_VALUE, context.getMarkdown());
-    assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
+    assertEquals("Markdown", EXPECTED_MARKDOWN_WITH_PLACEHOLDER_INITIAL_VALUE_LABEL_TITLE, context.getMarkdown());
+    assertEquals("PresentationML", expectedPresentationML, presentationML);
     assertEquals("Text should be the initial value", INITIAL_VALUE, textArea.getChild(0).asText());
   }
 

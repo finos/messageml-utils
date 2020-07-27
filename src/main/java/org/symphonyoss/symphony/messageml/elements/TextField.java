@@ -84,7 +84,8 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new TextFieldNode(getAttribute(PLACEHOLDER_ATTR), hasExactNumberOfChildren(1) ? getChild(0).asText() : null);
+    return new TextFieldNode(getAttribute(PLACEHOLDER_ATTR), hasExactNumberOfChildren(1) ? getChild(0).asText() : null,
+        getAttribute(LABEL), getAttribute(TITLE));
   }
 
   @Override

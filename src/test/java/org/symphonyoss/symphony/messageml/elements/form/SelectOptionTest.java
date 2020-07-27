@@ -8,6 +8,9 @@ import org.symphonyoss.symphony.messageml.elements.Option;
 import org.symphonyoss.symphony.messageml.elements.Select;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -19,6 +22,8 @@ public class SelectOptionTest extends ElementTest {
   private static final String VALUE_ATTR = "value";
   private static final String SELECTED_ATTR = "selected";
   private static final String FORM_ID_ATTR = "text-field-form";
+  private static final String LABEL_ATTR = "label";
+  private static final String TITLE_ATTR = "title";
 
   @Test
   public void testCompleteRequiredSelect() throws Exception {
@@ -34,7 +39,27 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, true, required, placeholder);
+    verifySelectPresentation((Select) select, name, true, required, placeholder, false, false);
+  }
+
+  @Test
+  public void testCompleteRequiredSelectWithLabelAndTooltip() throws Exception {
+    String name = "complete-required-id";
+    String label = "label";
+    String title = "tooltip";
+    boolean required = true;
+    String placeholder = "placeholder-here";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select data-placeholder=\""+placeholder+"\" name=\"" + name + "\" required=\"" + required + "\"" +
+        " label=\"" + label + "\" title=\"" + title +
+        "\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELEMENT + "</form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element select = form.getChildren().get(0);
+
+    assertEquals("Select class", Select.class, select.getClass());
+    verifySelectPresentation((Select) select, name, true, required, placeholder, true, true);
   }
 
   @Test
@@ -50,7 +75,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, true, required, null);
+    verifySelectPresentation((Select) select, name, true, required, null, false, false);
   }
 
   @Test
@@ -65,7 +90,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false,false, null);
+    verifySelectPresentation((Select) select, name, false,false, null, false, false);
   }
 
   @Test
@@ -80,7 +105,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false,false, null);
+    verifySelectPresentation((Select) select, name, false,false, null, false, false);
   }
 
   @Test
@@ -95,7 +120,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false,false, null);
+    verifySelectPresentation((Select) select, name, false,false, null, false, false);
   }
 
   @Test
@@ -261,26 +286,40 @@ public class SelectOptionTest extends ElementTest {
     return "";
   }
 
-  private String getExpectedSelectMarkdown(Select select) {
+  private String getExpectedSelectMarkdown(Select select, boolean hasLabel, boolean hasTitle) {
     String FORM_MARKDOWN_HEADER = "Form (log into desktop client to answer):\n---\n";
     String FORM_MARKDOWN_FOOTER = "---\n";
-    String expectedSelectMarkdownText = (select.getAttribute(DATA_PLACEHOLDER_ATTR) != null) ? ":[" + select.getAttribute(DATA_PLACEHOLDER_ATTR) + "]" : "";
-    String selectMarkdown = "(Dropdown" + expectedSelectMarkdownText + "):\n";
+    
+    StringBuilder expectedMarkdown = new StringBuilder(FORM_MARKDOWN_HEADER);
+    expectedMarkdown.append("(Dropdown");
+    expectedMarkdown.append((select.getAttribute(DATA_PLACEHOLDER_ATTR) != null || hasLabel || hasTitle) ? ":" : "");
+    expectedMarkdown.append((select.getAttribute(DATA_PLACEHOLDER_ATTR) != null) ? "[" + select.getAttribute(DATA_PLACEHOLDER_ATTR) + "]" : "");
+    expectedMarkdown.append(hasLabel ? "[" + select.getAttribute(LABEL_ATTR) + "]" : "");
+    expectedMarkdown.append(hasTitle ? "[" + select.getAttribute(TITLE_ATTR) + "]" : "");
+    expectedMarkdown.append("):\n");
 
     for (Element option : select.getChildren()) {
       if (option instanceof Option) {
-        selectMarkdown = selectMarkdown + "-" + option.getChild(0).asText() + "\n";
+        expectedMarkdown.append("-" + option.getChild(0).asText() + "\n");
       }
     }
-    return FORM_MARKDOWN_HEADER + selectMarkdown + ACTION_BTN_MARKDOWN + "\n" + FORM_MARKDOWN_FOOTER;
+    
+    expectedMarkdown.append(ACTION_BTN_MARKDOWN + "\n" + FORM_MARKDOWN_FOOTER);
+    return expectedMarkdown.toString();
   }
 
-  private String getExpectedSelectPresentation(Select select) {
+  private String getExpectedSelectPresentation(Select select, boolean hasLabel, boolean hasTitle, String uniqueLabelId) {
     String selectOpeningTag =
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
-            + "\"><select " + getPlaceholderAttribute(select.getAttribute(DATA_PLACEHOLDER_ATTR))
+            + "\">"
+            + ((hasLabel || hasTitle) ? "<div class=\"dropdown-group\" data-generated=\"true\">" : "")
+            + (hasLabel ? "<label for=\"dropdown-" + uniqueLabelId + "\">"+ select.getAttribute(LABEL_ATTR) +"</label>" : "")
+            + (hasTitle ? "<span class=\"info-hint\" data-target-id=\"dropdown-" + uniqueLabelId + "\" data-title=\"" + select.getAttribute(TITLE_ATTR) + "\"></span>" : "")
+            + "<select " + getPlaceholderAttribute(select.getAttribute(DATA_PLACEHOLDER_ATTR))
             + "name=\"" + select.getAttribute(NAME_ATTR) + "\""
-            + getRequiredPresentationML(select.getAttribute(REQUIRED_ATTR)) + ">";
+            + getRequiredPresentationML(select.getAttribute(REQUIRED_ATTR)) 
+            + ((hasLabel || hasTitle) ? " id=\"dropdown-" + uniqueLabelId + "\"" : "")
+            + ">";
     String selectClosingTag = "</select>";
     String formDivClosingTag = "</form></div>";
     String selectChildren = "";
@@ -291,7 +330,7 @@ public class SelectOptionTest extends ElementTest {
             option.getAttribute(VALUE_ATTR) + "\">" + option.getChild(0).asText() + "</option>";
       }
     }
-    return selectOpeningTag + selectChildren + selectClosingTag + ACTION_BTN_ELEMENT + formDivClosingTag;
+    return selectOpeningTag + selectChildren + selectClosingTag + ((hasLabel || hasTitle) ? "</div>" : "") + ACTION_BTN_ELEMENT + formDivClosingTag;
   }
 
   private String getPlaceholderAttribute(String placeholder) {
@@ -302,7 +341,8 @@ public class SelectOptionTest extends ElementTest {
     return option.getAttribute(SELECTED_ATTR) != null ? " selected=\"" + option.getAttribute(SELECTED_ATTR) + "\"" : "";
   }
 
-  private void verifySelectPresentation(Select select, String name, boolean requiredAttrProvided, boolean requiredValue, String placeholder) {
+  private void verifySelectPresentation(Select select, String name, boolean requiredAttrProvided, boolean requiredValue, 
+                                        String placeholder, boolean hasLabel, boolean hasTitle) {
     assertEquals("Select name attribute", name, select.getAttribute(NAME_ATTR));
     if (requiredAttrProvided) {
       assertEquals("Select required attribute", String.valueOf(requiredValue), select.getAttribute(REQUIRED_ATTR));
@@ -316,7 +356,12 @@ public class SelectOptionTest extends ElementTest {
       assertNull("Select placeholder attribute", select.getAttribute(DATA_PLACEHOLDER_ATTR));
     }
 
-    assertEquals("Select presentationML", getExpectedSelectPresentation(select), context.getPresentationML());
-    assertEquals("Select markdown", getExpectedSelectMarkdown(select), context.getMarkdown());
+    String presentationML = context.getPresentationML();
+    String dropdownRegex = ".*(\"dropdown-(.*?)\").*";
+    Pattern pattern = Pattern.compile(dropdownRegex);
+    Matcher matcher = pattern.matcher(presentationML);
+    
+    assertEquals("Select presentationML", getExpectedSelectPresentation(select, hasLabel, hasTitle, matcher.matches() ? matcher.group(2) : null), presentationML);
+    assertEquals("Select markdown", getExpectedSelectMarkdown(select, hasLabel, hasTitle), context.getMarkdown());
   }
 }

@@ -11,10 +11,14 @@ public class SelectNode extends FormElementNode {
   private final static String RIGHT_DELIMITER = "):";
   
   private String placeholder;
+  private String label;
+  private String tooltip;
 
-  public SelectNode(String placeholder) {
+  public SelectNode(String placeholder, String label, String tooltip) {
     super(MARKDOWN, placeholder);
     this.placeholder = placeholder;
+    this.label = label;
+    this.tooltip = tooltip;
   }
   
   @Override
@@ -24,6 +28,30 @@ public class SelectNode extends FormElementNode {
 
   @Override
   public String getText() {
-    return (placeholder != null) ? String.format(":[%s]", placeholder) : "";
+    StringBuilder markdownRepresentation = new StringBuilder();
+
+    if(placeholder != null || label != null || tooltip != null) {
+      markdownRepresentation.append(":");
+    }
+
+    if(placeholder != null) {
+      markdownRepresentation.append("[")
+          .append(placeholder)
+          .append("]");
+    }
+
+    if(label != null) {
+      markdownRepresentation.append("[")
+          .append(label)
+          .append("]");
+    }
+
+    if(tooltip != null) {
+      markdownRepresentation.append("[")
+          .append(tooltip)
+          .append("]");
+    }
+
+    return markdownRepresentation.toString();
   }
 }

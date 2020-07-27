@@ -10,14 +10,42 @@ public class PersonSelectorNode extends FormElementNode {
   private final static String MARKDOWN = "Person Selector";
 
   private String placeholder;
+  private String label;
+  private String tooltip;
 
-  public PersonSelectorNode(String placeholder) {
+  public PersonSelectorNode(String placeholder, String label, String tooltip) {
     super(MARKDOWN, placeholder);
     this.placeholder = placeholder;
+    this.label = label;
+    this.tooltip = tooltip;
   }
   
   @Override
   public String getText() {
-    return (placeholder != null) ? String.format(":[%s]", placeholder) : "";
+    StringBuilder markdownRepresentation = new StringBuilder();
+
+    if(placeholder != null || label != null || tooltip != null) {
+      markdownRepresentation.append(":");
+    }
+
+    if(placeholder != null) {
+      markdownRepresentation.append("[")
+          .append(placeholder)
+          .append("]");
+    }
+
+    if(label != null) {
+      markdownRepresentation.append("[")
+          .append(label)
+          .append("]");
+    }
+
+    if(tooltip != null) {
+      markdownRepresentation.append("[")
+          .append(tooltip)
+          .append("]");
+    }
+
+    return markdownRepresentation.toString();
   }
 }

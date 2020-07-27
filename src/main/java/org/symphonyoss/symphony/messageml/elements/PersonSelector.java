@@ -95,7 +95,7 @@ public class PersonSelector extends FormElement implements LabelableElement, Too
 
   @Override
   public Node asMarkdown() {
-    return new PersonSelectorNode(getAttribute(PLACEHOLDER_ATTR));
+    return new PersonSelectorNode(getAttribute(PLACEHOLDER_ATTR), getAttribute(LABEL), getAttribute(TITLE));
   }
 
   @Override
