@@ -43,10 +43,19 @@ public class Button extends FormElement {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case TYPE_ATTR:
-      case CLASS_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
         // The button can a have tooltips but is not a tooltipable element because it dont generate the span with tooltip
+      case CLASS_ATTR:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
+        String clazz = getAttribute(CLASS_ATTR);
+        if("primary-destructive".equals(clazz)) {
+          setAttribute(item.getNodeName(), "primary");
+        }
+        if("secondary-destructive".equals(clazz)) {
+          setAttribute(item.getNodeName(), "secondary");
+        }
+        break;
       case TooltipableElement.TITLE:
         if(format != FormatEnum.MESSAGEML){
           throwInvalidInputException(item);
@@ -105,12 +114,6 @@ public class Button extends FormElement {
       throw new InvalidInputException("Attribute \"class\" must be \"primary\", \"secondary\", " +
               "\"tertiary\" or \"destructive\" (\"primary-destructive\" and \"secondary-destructive\" are deprecated)");
     }
-    if("primary-destructive".equals(clazz)) {
-      setAttribute(CLASS_ATTR, "primary");
-    }
-    if("secondary-destructive".equals(clazz)) {
-      setAttribute(CLASS_ATTR, "secondary");
-    }    
     if (type.equals(ACTION_TYPE) && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for action buttons");
     }
