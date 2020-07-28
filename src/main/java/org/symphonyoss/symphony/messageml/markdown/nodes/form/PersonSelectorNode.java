@@ -6,7 +6,7 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
  * @author Lucas Macedo
  * @since 10/21/2019
  */
-public class PersonSelectorNode extends FormElementNode {
+public class PersonSelectorNode extends FormElementNode implements PlaceholderLabelTooltipNode {
   private final static String MARKDOWN = "Person Selector";
 
   private String placeholder;
@@ -22,30 +22,6 @@ public class PersonSelectorNode extends FormElementNode {
   
   @Override
   public String getText() {
-    StringBuilder markdownRepresentation = new StringBuilder();
-
-    if(placeholder != null || label != null || tooltip != null) {
-      markdownRepresentation.append(":");
-    }
-
-    if(placeholder != null) {
-      markdownRepresentation.append("[")
-          .append(placeholder)
-          .append("]");
-    }
-
-    if(label != null) {
-      markdownRepresentation.append("[")
-          .append(label)
-          .append("]");
-    }
-
-    if(tooltip != null) {
-      markdownRepresentation.append("[")
-          .append(tooltip)
-          .append("]");
-    }
-
-    return markdownRepresentation.toString();
+    return generateMarkdownPlaceholderLabelAndTooltip(placeholder, label, tooltip);
   }
 }
