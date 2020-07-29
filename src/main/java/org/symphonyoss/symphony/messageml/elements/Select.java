@@ -45,7 +45,7 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new SelectNode(getAttribute(DATA_PLACEHOLDER_ATTR));
+    return new SelectNode(getAttribute(DATA_PLACEHOLDER_ATTR), getAttribute(LABEL), getAttribute(TITLE));
   }
 
   @Override

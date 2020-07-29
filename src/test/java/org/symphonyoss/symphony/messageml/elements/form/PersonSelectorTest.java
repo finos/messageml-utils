@@ -8,6 +8,9 @@ import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.PersonSelector;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static org.junit.Assert.assertEquals;
 
 public class PersonSelectorTest extends ElementTest {
@@ -18,6 +21,46 @@ public class PersonSelectorTest extends ElementTest {
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR + "\"><div class=\"person-selector\" data-name=\"one-name\" data-placeholder=\"some-placeholder\" data-required=\"true\"/>" + ACTION_BTN_ELEMENT
         + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
     assertDataFromValidParsedTag("one-name", "some-placeholder", true);
+  }
+
+  @Test
+  public void sendValidPersonSelectorWithLabelAndTitleOnPresentationML() throws Exception {
+    context.parseMessageML("<messageML>"
+        + "<form id=\"person-selector-element\">"
+        + "<person-selector label=\"label here\" name=\"ps-name\" title=\"title here\"/>"
+        + ACTION_BTN_ELEMENT
+        + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element personSelector = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(PersonSelector.class, personSelector.getClass());
+
+    String presentationML = context.getPresentationML();
+    String personSelectorRegex = ".*(\"person-selector-(.*?)\").*";
+    Pattern pattern = Pattern.compile(personSelectorRegex);
+    Matcher matcher = pattern.matcher(presentationML);
+    String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
+    
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"person-selector-element\">" +
+        "<div class=\"person-selector-group\" data-generated=\"true\">" +
+        "<label for=\"person-selector-" + uniqueLabelId + "\">label here</label>" +
+        "<span class=\"info-hint\" data-target-id=\"person-selector-" + uniqueLabelId + "\" data-title=\"title here\"></span>" +
+        "<div class=\"person-selector\" data-name=\"ps-name\" id=\"person-selector-" + uniqueLabelId + "\"></div>" +
+        "</div>" +
+        ACTION_BTN_ELEMENT +
+        "</form>" +
+        "</div>";
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, presentationML);
+
+    String expectedMarkdownText = "[label here][title here]";
+    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
+        + "\n---\n", context.getMarkdown());
   }
 
   @Test

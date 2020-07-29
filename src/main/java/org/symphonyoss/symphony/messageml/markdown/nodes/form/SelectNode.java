@@ -6,15 +6,19 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
  * @author Cristiano Faustino
  * @since 06/05/2019
  */
-public class SelectNode extends FormElementNode {
+public class SelectNode extends FormElementNode implements PlaceholderLabelTooltipNode {
   private final static String MARKDOWN = "Dropdown";
   private final static String RIGHT_DELIMITER = "):";
   
   private String placeholder;
+  private String label;
+  private String tooltip;
 
-  public SelectNode(String placeholder) {
+  public SelectNode(String placeholder, String label, String tooltip) {
     super(MARKDOWN, placeholder);
     this.placeholder = placeholder;
+    this.label = label;
+    this.tooltip = tooltip;
   }
   
   @Override
@@ -24,6 +28,6 @@ public class SelectNode extends FormElementNode {
 
   @Override
   public String getText() {
-    return (placeholder != null) ? String.format(":[%s]", placeholder) : "";
+    return generateMarkdownPlaceholderLabelAndTooltip(placeholder, label, tooltip);
   }
 }
