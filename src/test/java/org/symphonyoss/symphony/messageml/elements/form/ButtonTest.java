@@ -125,6 +125,12 @@ public class ButtonTest extends ElementTest {
       Element button = form.getChildren().get(0);
 
       assertEquals("Button class", Button.class, button.getClass());
+      if("primary-destructive".equals(clazz)) {
+        clazz = "primary";
+      }
+      if("secondary-destructive".equals(clazz)) {
+        clazz = "secondary";
+      }
       verifyButtonPresentation((Button) button, null, type, clazz, innerText);
     }
   }

@@ -1,6 +1,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -23,6 +25,8 @@ import java.util.Set;
  * @since 03/21/19
  */
 public class Button extends FormElement {
+  
+  Logger logger = LoggerFactory.getLogger(Button.class);
 
   public static final String MESSAGEML_TAG = "button";
   public static final String ACTION_TYPE = "action";
@@ -43,10 +47,15 @@ public class Button extends FormElement {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case TYPE_ATTR:
-      case CLASS_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
         // The button can a have tooltips but is not a tooltipable element because it dont generate the span with tooltip
+      case CLASS_ATTR:
+        if(getStringAttribute(item).contains("-destructive")) {
+          logger.info("Button class cannot be a destructive one, replacing it accordingly.");
+        }
+        setAttribute(item.getNodeName(), StringUtils.removeEnd(getStringAttribute(item), "-destructive"));
+        break;
       case TooltipableElement.TITLE:
         if(format != FormatEnum.MESSAGEML){
           throwInvalidInputException(item);
