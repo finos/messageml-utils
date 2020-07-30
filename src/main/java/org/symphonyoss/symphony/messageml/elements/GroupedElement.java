@@ -58,7 +58,7 @@ public abstract class GroupedElement extends FormElement {
   @Override
   public void asPresentationML(XmlPrintStream out,
       MessageMLContext context) {
-    String id = String.format("%s-%s", getPresentationMLInputType(), context.generateShortId());
+    String id = String.format("%s-%s", getPresentationMLDivClass(), context.generateShortId());
     Map<String, String> presentationInputAttrs = buildGroupedElementInputAttributes(id);
     Map<String, String> presentationLabelForAttr = new LinkedHashMap<>();
     if (getChildren().isEmpty()) {
