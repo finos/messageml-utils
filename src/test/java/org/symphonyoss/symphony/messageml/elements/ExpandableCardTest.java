@@ -11,27 +11,6 @@ import java.util.Collections;
 
 public class ExpandableCardTest extends ElementTest {
 
-  private void verifyExpandableCard(Element card) throws Exception {
-    assertEquals("Element class", ExpandableCard.class, card.getClass());
-    assertEquals("Element tag name", "expandable-card", card.getMessageMLTag());
-    assertEquals("Element children", 2, card.getChildren().size());
-
-    Element header = card.getChildren().get(0);
-    assertEquals("Element class", ExpandableCardHeader.class, header.getClass());
-    assertEquals("Element tag name", "header", header.getMessageMLTag());
-    assertEquals("Element attributes", Collections.emptyMap(), header.getAttributes());
-    assertEquals("Element children", 1, header.getChildren().size());
-
-    Element body = card.getChildren().get(1);
-    assertEquals("Element class", ExpandableCardBody.class, body.getClass());
-    assertEquals("Element tag name", "body", body.getMessageMLTag());
-    assertEquals("Element children", 1, body.getChildren().size());
-
-    assertEquals("Markdown", "Hello\n\nworld!\n\n", context.getMarkdown());
-    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
-    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
-  }
-
   @Test
   public void testExpandableCard() throws Exception {
     String input =
@@ -166,5 +145,26 @@ public class ExpandableCardTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Shorthand tag \"body\" is not allowed in PresentationML");
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  private void verifyExpandableCard(Element card) throws Exception {
+    assertEquals("Element class", ExpandableCard.class, card.getClass());
+    assertEquals("Element tag name", "expandable-card", card.getMessageMLTag());
+    assertEquals("Element children", 2, card.getChildren().size());
+
+    Element header = card.getChildren().get(0);
+    assertEquals("Element class", ExpandableCardHeader.class, header.getClass());
+    assertEquals("Element tag name", "header", header.getMessageMLTag());
+    assertEquals("Element attributes", Collections.emptyMap(), header.getAttributes());
+    assertEquals("Element children", 1, header.getChildren().size());
+
+    Element body = card.getChildren().get(1);
+    assertEquals("Element class", ExpandableCardBody.class, body.getClass());
+    assertEquals("Element tag name", "body", body.getMessageMLTag());
+    assertEquals("Element children", 1, body.getChildren().size());
+
+    assertEquals("Markdown", "Hello\n\nworld!\n\n", context.getMarkdown());
+    assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
+    assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
 }
