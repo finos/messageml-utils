@@ -9,11 +9,12 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.Collections;
 
-public class CardTest extends ElementTest {
+public class ExpandableCardTest extends ElementTest {
 
   @Test
-  public void testCard() throws Exception {
-    String input = "<messageML><card><header>Hello</header><body>world!</body></card></messageML>";
+  public void testExpandableCard() throws Exception {
+    String input =
+        "<messageML><expandable-card state=\"collapsed\"><header>Hello</header><body>world!</body></expandable-card></messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -21,44 +22,41 @@ public class CardTest extends ElementTest {
     Element card = messageML.getChildren().get(0);
 
     assertEquals("Element children", 1, messageML.getChildren().size());
-    assertEquals("Element attributes", 0, card.getAttributes().size());
-    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><div class=\"card\">"
-            + "<div class=\"cardHeader\">Hello</div>"
-            + "<div class=\"cardBody\">world!</div>"
+    assertEquals("Element attributes", 1, card.getAttributes().size()); // state (mandatory)
+    assertEquals("Attribute", "collapsed", card.getAttribute("state"));
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><div class=\"expandable-card\" data-state=\"collapsed\">"
+            + "<div class=\"expandableCardHeader\">Hello</div>"
+            + "<div class=\"expandableCardBody\">world!</div>"
             + "</div></div>",
         context.getPresentationML());
 
-    verifyCard(card);
+    verifyExpandableCard(card);
 
-    String withAttr = "<messageML><card iconSrc=\"icon.png\" class=\"label\" accent=\"mauve\">"
-        + "<header>Hello</header>"
-        + "<body>world!</body>"
-        + "</card></messageML>";
+    String withAttr = "<messageML><expandable-card state=\"collapsed\"><header>Hello</header><body variant=\"default\">world!</body></expandable-card></messageML>";
 
     context.parseMessageML(withAttr, null, MessageML.MESSAGEML_VERSION);
     messageML = context.getMessageML();
     card = messageML.getChildren().get(0);
+    Element body = card.getChild(1);
 
-    assertEquals("Element attributes", 3, card.getAttributes().size());
-    assertEquals("Attribute", "label", card.getAttribute("class"));
-    assertEquals("Attribute", "icon.png", card.getAttribute("iconSrc"));
-    assertEquals("Attribute", "mauve", card.getAttribute("accent"));
-    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<div class=\"card label\" data-icon-src=\"icon.png\" data-accent-color=\"mauve\">"
-        + "<div class=\"cardHeader\">Hello</div>"
-        + "<div class=\"cardBody\">world!</div>"
-        + "</div>"
-        + "</div>", context.getPresentationML());
+    assertEquals("Element attributes", 1, card.getAttributes().size());
+    assertEquals("Element attributes", 1, body.getAttributes().size());
+    assertEquals("Attribute", "default", body.getAttribute("variant"));
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><div class=\"expandable-card\" data-state=\"collapsed\">"
+        + "<div class=\"expandableCardHeader\">Hello</div>"
+        + "<div class=\"expandableCardBody\" data-variant=\"default\">world!</div>"
+        + "</div></div>", context.getPresentationML());
 
-    verifyCard(card);
+    verifyExpandableCard(card);
   }
 
   @Test
-  public void testCardByPresentationML() throws Exception {
+  public void testExpandableCardByPresentationML() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<div class=\"card\" data-icon-src=\"icon.png\" data-accent-color=\"mauve\">"
-        + "<div class=\"cardHeader\">Hello</div>"
-        + "<div class=\"cardBody\">world!</div>"
+        + "<div class=\"expandable-card\" data-state=\"collapsed\">"
+        + "<div class=\"expandableCardHeader\">Hello</div>"
+        + "<div class=\"expandableCardBody\">world!</div>"
         + "</div>"
         + "</div>";
 
@@ -68,65 +66,65 @@ public class CardTest extends ElementTest {
     Element card = messageML.getChildren().get(0);
 
     assertEquals("Element children", 1, messageML.getChildren().size());
-    assertEquals("Element attributes", 2, card.getAttributes().size());
+    assertEquals("Element attributes", 1, card.getAttributes().size());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "<div class=\"card\" data-icon-src=\"icon.png\" data-accent-color=\"mauve\">"
-            + "<div class=\"cardHeader\">Hello</div>"
-            + "<div class=\"cardBody\">world!</div>"
+            + "<div class=\"expandable-card\" data-state=\"collapsed\">"
+            + "<div class=\"expandableCardHeader\">Hello</div>"
+            + "<div class=\"expandableCardBody\">world!</div>"
             + "</div>"
             + "</div>",
         context.getPresentationML());
 
-    verifyCard(card);
+    verifyExpandableCard(card);
   }
 
   @Test
-  public void testCardInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><card title=\"label\">"
+  public void testExpandableCardInvalidAttr() throws Exception {
+    String invalidAttr = "<messageML><expandable-card title=\"label\">"
         + "<header>Hello</header>"
         + "<body>world!</body>"
-        + "</card></messageML>";
+        + "</expandable-card></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"title\" is not allowed in \"card\"");
+    expectedException.expectMessage("Attribute \"title\" is not allowed in \"expandable-card\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
-  public void testCardHeaderInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><card>"
+  public void testExpandableCardHeaderInvalidAttr() throws Exception {
+    String invalidAttr = "<messageML><expandable-card>"
         + "<header class=\"label\">Hello</header>"
         + "<body>world!</body>"
-        + "</card></messageML>";
+        + "</expandable-card></messageML>";
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"class\" is not allowed in \"header\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
-  public void testCardBodyInvalidAttr() throws Exception {
-    String invalidAttr = "<messageML><card>"
+  public void testExpandableCardBodyInvalidAttr() throws Exception {
+    String invalidAttr = "<messageML><expandable-card>"
         + "<header>Hello</header>"
         + "<body class=\"label\">world!</body>"
-        + "</card></messageML>";
+        + "</expandable-card></messageML>";
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"class\" is not allowed in \"body\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
-  public void testPresentationMLShorthandCard() throws Exception {
+  public void testPresentationMLShorthandExpandableCard() throws Exception {
     String invalidElement = "<div class=\"com.symphony.presentationml\">"
-        + "<card iconSrc=\"icon.png\" class=\"bartitle\">invalid</card>"
+        + "<expandable-card state=\"collapsed\">invalid</expandable-card>"
         + "</div>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Shorthand tag \"card\" is not allowed in PresentationML");
+    expectedException.expectMessage("Shorthand tag \"expandable-card\" is not allowed in PresentationML");
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
-  public void testPresentationMLShorthandCardHeader() throws Exception {
+  public void testPresentationMLShorthandExpandableCardHeader() throws Exception {
     String invalidElement = "<div class=\"com.symphony.presentationml\">"
-        + "<div class=\"card\">"
+        + "<div class=\"expandable-card\">"
         + "<header>invalid</header>"
         + "</div>"
         + "</div>";
@@ -136,10 +134,10 @@ public class CardTest extends ElementTest {
   }
 
   @Test
-  public void testPresentationMLShorthandCardBody() throws Exception {
+  public void testPresentationMLShorthandExpandableCardBody() throws Exception {
     String invalidElement = "<div class=\"com.symphony.presentationml\">"
-        + "<div class=\"card\">"
-        + "<div class=\"cardHeader\">"
+        + "<div class=\"expandable-card\">"
+        + "<div class=\"expandableCardHeader\">"
         + "<body>invalid</body>"
         + "</div>"
         + "</div>"
@@ -149,26 +147,24 @@ public class CardTest extends ElementTest {
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
   }
 
-  private void verifyCard(Element card) throws Exception {
-    assertEquals("Element class", Card.class, card.getClass());
-    assertEquals("Element tag name", "card", card.getMessageMLTag());
+  private void verifyExpandableCard(Element card) throws Exception {
+    assertEquals("Element class", ExpandableCard.class, card.getClass());
+    assertEquals("Element tag name", "expandable-card", card.getMessageMLTag());
     assertEquals("Element children", 2, card.getChildren().size());
 
     Element header = card.getChildren().get(0);
-    assertEquals("Element class", CardHeader.class, header.getClass());
+    assertEquals("Element class", ExpandableCardHeader.class, header.getClass());
     assertEquals("Element tag name", "header", header.getMessageMLTag());
     assertEquals("Element attributes", Collections.emptyMap(), header.getAttributes());
     assertEquals("Element children", 1, header.getChildren().size());
 
     Element body = card.getChildren().get(1);
-    assertEquals("Element class", CardBody.class, body.getClass());
+    assertEquals("Element class", ExpandableCardBody.class, body.getClass());
     assertEquals("Element tag name", "body", body.getMessageMLTag());
-    assertEquals("Element attributes", Collections.emptyMap(), body.getAttributes());
     assertEquals("Element children", 1, body.getChildren().size());
 
     assertEquals("Markdown", "Hello\n\nworld!\n\n", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
-
 }

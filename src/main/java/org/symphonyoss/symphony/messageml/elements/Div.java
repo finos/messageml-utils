@@ -33,6 +33,8 @@ public class Div extends Element {
   private static final String ATTR_ENTITY_ID = "data-entity-id";
   private static final String ATTR_ICON_SRC = "data-icon-src";
   private static final String ATTR_ACCENT_COLOR = "data-accent-color";
+  private static final String ATTR_DATA_STATE = "data-state";
+  private static final String ATTR_DATA_VARIANT = "data-variant";
 
   public Div(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -43,17 +45,12 @@ public class Div extends Element {
       org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ATTR_ENTITY_ID:
-        setAttribute(ATTR_ENTITY_ID, getStringAttribute(item));
-        break;
-
       case ATTR_ICON_SRC:
-        setAttribute(ATTR_ICON_SRC, getStringAttribute(item));
-        break;
-
       case ATTR_ACCENT_COLOR:
-        setAttribute(ATTR_ACCENT_COLOR, getStringAttribute(item));
+      case ATTR_DATA_STATE:
+      case ATTR_DATA_VARIANT:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
-
       default:
         super.buildAttribute(parser, item);
     }
@@ -93,12 +90,19 @@ public class Div extends Element {
     String[] classes = (classAttr != null) ? classAttr.split(" ") : null;
 
     for (String attr : new String[] {ATTR_ICON_SRC, ATTR_ACCENT_COLOR}) {
+      verifyClassSpecificAttribute(attr, classes, Card.PRESENTATIONML_CLASS);
+    }
 
-      if (getAttribute(attr) != null) {
-        if (classes == null || classes.length == 0 || !"card".equals(classes[0])) {
-          throw new InvalidInputException("The attribute \"" + attr + "\" is only allowed if the element "
-              + "class is \"card\".");
-        }
+    verifyClassSpecificAttribute(ATTR_DATA_STATE, classes, ExpandableCard.PRESENTATIONML_CLASS);
+    verifyClassSpecificAttribute(ATTR_DATA_VARIANT, classes, ExpandableCardBody.PRESENTATIONML_CLASS);
+  }
+
+  private void verifyClassSpecificAttribute(String attr, String[] classes, String element)
+      throws InvalidInputException {
+    if (getAttribute(attr) != null) {
+      if (classes == null || classes.length == 0 || !element.equals(classes[0])) {
+        throw new InvalidInputException(String.format("The attribute \"" + attr + "\" is only allowed if the element "
+            + "class is \"%s\".", element));
       }
     }
   }

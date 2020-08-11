@@ -30,6 +30,9 @@ import org.symphonyoss.symphony.messageml.elements.Div;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.Emoji;
 import org.symphonyoss.symphony.messageml.elements.Entity;
+import org.symphonyoss.symphony.messageml.elements.ExpandableCard;
+import org.symphonyoss.symphony.messageml.elements.ExpandableCardBody;
+import org.symphonyoss.symphony.messageml.elements.ExpandableCardHeader;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.FormElement;
 import org.symphonyoss.symphony.messageml.elements.FormatEnum;
@@ -456,16 +459,28 @@ public class MessageMLParser {
         validateFormat(tag);
         return new Card(parent, messageFormat);
 
+      case ExpandableCard.MESSAGEML_TAG:
+        validateFormat(tag);
+        return new ExpandableCard(parent, messageFormat);
+
       case Code.MESSAGEML_TAG:
         return new Code(parent);
 
       case CardHeader.MESSAGEML_TAG:
         validateFormat(tag);
-        return new CardHeader(parent, messageFormat);
+        if(parent instanceof ExpandableCard){
+          return new ExpandableCardHeader(parent, messageFormat);
+        } else {
+          return new CardHeader(parent, messageFormat);
+        }
 
       case CardBody.MESSAGEML_TAG:
         validateFormat(tag);
-        return new CardBody(parent, messageFormat);
+        if(parent instanceof ExpandableCard){
+          return new ExpandableCardBody(parent, messageFormat);
+        } else {
+          return new CardBody(parent, messageFormat);
+        }
 
       case Emoji.MESSAGEML_TAG:
         return new Emoji(parent, ++index);
@@ -636,6 +651,15 @@ public class MessageMLParser {
     } else if (containsAttribute(elementClass, CardHeader.PRESENTATIONML_CLASS)) {
       removeAttribute(element, CLASS_ATTR, CardHeader.PRESENTATIONML_CLASS);
       return new CardHeader(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, ExpandableCard.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, ExpandableCard.PRESENTATIONML_CLASS);
+      return new ExpandableCard(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, ExpandableCardBody.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, ExpandableCardBody.PRESENTATIONML_CLASS);
+      return new ExpandableCardBody(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, ExpandableCardHeader.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, ExpandableCardHeader.PRESENTATIONML_CLASS);
+      return new ExpandableCardHeader(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementClass, PersonSelector.MESSAGEML_TAG)) {
       removeAttribute(element, CLASS_ATTR, PersonSelector.MESSAGEML_TAG);
       return new PersonSelector(parent, FormatEnum.PRESENTATIONML);

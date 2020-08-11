@@ -26,18 +26,18 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import java.util.Collections;
 
 /**
- * Class representing a convenience element for a card header container. Translated to a div element.
+ * Class representing a convenience element for an expandable card header container. Translated to a div element.
  *
- * @author lukasz
- * @since 3/27/17
+ * @author enrico.molino
+ * @since 8/7/20
  */
-public class CardHeader extends Element {
+public class ExpandableCardHeader extends Element {
 
   public static final String MESSAGEML_TAG = "header";
-  public static final String PRESENTATIONML_CLASS = "cardHeader";
+  public static final String PRESENTATIONML_CLASS = "expandableCardHeader";
   private static final String PRESENTATIONML_TAG = "div";
 
-  public CardHeader(Element parent, FormatEnum format) {
+  public ExpandableCardHeader(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
   }
 
@@ -66,8 +66,8 @@ public class CardHeader extends Element {
 
   @Override
   void validate() throws InvalidInputException {
+    assertParent(Collections.singleton(ExpandableCard.class));
     assertNoAttributes();
-    assertParent(Collections.singleton(Card.class));
   }
 
   @Override
