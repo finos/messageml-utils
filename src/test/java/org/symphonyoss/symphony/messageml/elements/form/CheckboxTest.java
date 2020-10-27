@@ -12,6 +12,7 @@ import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CheckboxTest extends ElementTest {
   private String formId;
@@ -28,7 +29,7 @@ public class CheckboxTest extends ElementTest {
     this.text = "Checkbox Text";
     this.checked = "false";
   }
-  
+
   @Test
   public void testPresentationMLCheckBoxWithLinebreaksAndWhitespacesBetweenTags() throws Exception {
     String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
@@ -106,6 +107,32 @@ public class CheckboxTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"dummy\" is not allowed in \"checkbox\"");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testLabelMessageMLCheckbox() throws Exception {
+    String input = "<messageML>\n"
+        + "   <form id=\"example\">\n"
+        + "      <checkbox name=\"fruits\" value=\"orange\">Orange</checkbox> \n"
+        + "      <button type=\"action\" name=\"send-answers\">Submit</button>\n"
+        + "   </form>\n"
+        + "</messageML>";
+    context.parseMessageML(input, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    String id = presentationML.substring(startId + "label for=\"".length(), endId);
+    assertTrue(id.startsWith("checkbox-group-"));
+
+    String expectedResult = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "    <form id=\"example\">"
+        + "       <div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"orange\" id=\"%s\"/><label "
+        + "for=\"%s\">Orange</label></div>"
+        + "        <button type=\"action\" name=\"send-answers\">Submit</button>"
+        + "    </form>"
+        + " </div>", id, id);
+    assertEquals(expectedResult, presentationML);
   }
 
   @Test

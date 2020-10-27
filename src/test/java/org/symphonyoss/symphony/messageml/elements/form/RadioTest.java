@@ -1,6 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -106,6 +107,7 @@ public class RadioTest extends ElementTest {
     assertEquals(expectedMarkdown.toString(), markdown);
     String presentationML = context.getPresentationML();
     String id = getInputId(presentationML);
+    assertTrue(id.startsWith("radio-group-"));
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"radio-group\">" +
