@@ -46,7 +46,6 @@ public class BulletList extends Element {
   public void validate() throws InvalidInputException {
     assertNoText();
     assertContentModel(Collections.<Class<? extends Element>>singleton(ListItem.class));
-    assertContainsChildOfType(Collections.<Class<? extends Element>>singleton(ListItem.class));
   }
 
 }
