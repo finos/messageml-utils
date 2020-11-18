@@ -30,6 +30,9 @@ import org.w3c.dom.Text;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -375,6 +378,24 @@ public abstract class Element {
     if (!permittedValues.contains(attributeValue.toLowerCase())) {
       throw new InvalidInputException(String.format("Attribute \"%s\" of element \"%s\" can only be one of the following values: [%s].", attributeName,
           this.getMessageMLTag(), String.join(", ", permittedValues)));
+    }
+  }
+
+  /**
+   * Checks if attribute contains a date, in the provided format
+   *
+   * @param attributeName name of attribute that will be checked.
+   * @param formatter date format
+   * @throws InvalidInputException
+   */
+  void assertDateFormat(String attributeName, DateTimeFormatter formatter)
+      throws InvalidInputException {
+    String attributeValue = getAttribute(attributeName);
+
+    try {
+      LocalDate.parse(attributeValue, formatter);
+    } catch (DateTimeParseException e) {
+      throw new InvalidInputException(String.format("Attribute \"%s\" has invalid date format", attributeName), e);
     }
   }
 
