@@ -414,6 +414,21 @@ public abstract class Element {
   }
 
   /**
+   * Checks if an attribute length is bigger than allowed
+   *
+   * @param attributeName
+   * @param maxLength
+   * @throws InvalidInputException
+   */
+  void assertAttributeMaxLength(String attributeName, int maxLength) throws InvalidInputException {
+    String attributeValue = getAttribute(attributeName);
+
+    if (attributeValue != null && attributeValue.length() > maxLength) {
+      throw new InvalidInputException(String.format("The attribute \"%s\" length is bigger than maximum allowed [%d]", attributeName, maxLength));
+    }
+  }
+
+  /**
    * Check that the element is an empty element.
    */
   void assertNoContent() throws InvalidInputException {
