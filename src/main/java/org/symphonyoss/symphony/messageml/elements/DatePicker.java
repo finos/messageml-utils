@@ -143,7 +143,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new DatePickerNode(getAttribute(LABEL) != null ? getAttribute(LABEL) : "");
+    return new DatePickerNode(getAttribute(PLACEHOLDER_ATTR));
   }
 
   private void innerAsPresentationML(XmlPrintStream out, Map<String, String> presentationAttrs) {

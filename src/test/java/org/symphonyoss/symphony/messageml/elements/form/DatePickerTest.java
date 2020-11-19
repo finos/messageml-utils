@@ -54,7 +54,7 @@ public class DatePickerTest extends ElementTest {
 
     String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
         + "---\n"
-        + "(DatePicker:)(Button:Send)\n"
+        + "(Date Picker:[Please pick a date])(Button:Send)\n"
         + "---\n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2"
         + ".0\"><form id=\"datepicker-form\"><input name=\"date-travel\" value=\"2020-09-15\" "
@@ -107,7 +107,7 @@ public class DatePickerTest extends ElementTest {
 
     String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
         + "---\n"
-        + "(DatePicker:Departure date)(Button:Send)\n"
+        + "(Date Picker:[Please pick a date])(Button:Send)\n"
         + "---\n";
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" "
         + "data-version=\"2.0\"><form id=\"datepicker-form\"><div class=\"date-picker-group\" "
