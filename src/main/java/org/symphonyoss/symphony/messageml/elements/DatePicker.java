@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Range;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.DatePickerNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.symphonyoss.symphony.messageml.util.pojo.DateInterval;
 import org.w3c.dom.Node;
@@ -138,6 +139,11 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
     } else {
       innerAsPresentationML(out, presentationAttrs);
     }
+  }
+
+  @Override
+  public org.commonmark.node.Node asMarkdown() {
+    return new DatePickerNode(getAttribute(LABEL) != null ? getAttribute(LABEL) : "");
   }
 
   private void innerAsPresentationML(XmlPrintStream out, Map<String, String> presentationAttrs) {
