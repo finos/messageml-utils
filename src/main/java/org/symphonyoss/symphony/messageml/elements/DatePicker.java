@@ -154,6 +154,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   private Map<String, String> buildDataPickerInputAttributes() {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
 
+    presentationAttrs.put(TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
     presentationAttrs.put(NAME_ATTR, getAttribute(NAME_ATTR));
 
     if (getAttribute(VALUE_ATTR) != null) {
