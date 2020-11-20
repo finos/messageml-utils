@@ -22,7 +22,7 @@ public class Form extends Element {
   public static final String MESSAGEML_TAG = "form";
 
   private static final String ID_ATTR = "id";
-  private static final int MAX_COUNT_PER_CHILD_TYPE = 20;
+  private static final int MAX_COUNT_PER_CHILD_TYPE = 50;
 
   private static final String ERR_MSG_MISSING_ACTION_BTN = "The form with id '%s' should have at least one action button";
 
