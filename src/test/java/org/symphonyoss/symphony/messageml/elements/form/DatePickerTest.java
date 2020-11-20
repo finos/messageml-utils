@@ -57,7 +57,7 @@ public class DatePickerTest extends ElementTest {
         + "(Date Picker:[Please pick a date])(Button:Send)\n"
         + "---\n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2"
-        + ".0\"><form id=\"datepicker-form\"><input name=\"date-travel\" value=\"2020-09-15\" "
+        + ".0\"><form id=\"datepicker-form\"><input type=\"date\" name=\"date-travel\" value=\"2020-09-15\" "
         + "placeholder=\"Please pick a date\" min=\"2020-09-01\" max=\"2020-09-29\" "
         + "data-disabled-date=\"[{'type':'date','day':'2020-09-23'},{'type':'range',"
         + "'from':'2020-09-18','to':'2020-09-20'},{'type':'weekdays','daysOfWeek':[0,1]}]\" "
@@ -113,7 +113,7 @@ public class DatePickerTest extends ElementTest {
         + "data-version=\"2.0\"><form id=\"datepicker-form\"><div class=\"date-picker-group\" "
         + "data-generated=\"true\"><label for=\"date-picker-%s\">Departure "
         + "date</label><span class=\"info-hint\" data-target-id=\"date-picker-%s\" "
-        + "data-title=\"This is \\n a hint\"></span><input name=\"date-travel\" "
+        + "data-title=\"This is \\n a hint\"></span><input type=\"date\" name=\"date-travel\" "
         + "value=\"2020-09-15\" placeholder=\"Please pick a date\" min=\"2020-09-01\" "
         + "max=\"2020-09-29\" data-disabled-date=\"[{'type':'date','day':'2020-09-23'},"
         + "{'type':'range','from':'2020-09-18','to':'2020-09-20'},{'type':'weekdays',"
