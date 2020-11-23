@@ -245,4 +245,30 @@ public class DatePickerTest extends ElementTest {
     context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testEmptyMarkdown() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+        + "<date-picker name=\"date-travel\"/>"
+        + ACTION_BTN_ELEMENT + "</form></messageML>";
+    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
+        + "---\n"
+        + "(Date Picker)(Button:Send)\n"
+        + "---\n";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
+  }
+
+  @Test
+  public void testPartialMarkdown() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+        + "<date-picker name=\"date-travel\" placeholder=\"Please pick a date\"/>"
+        + ACTION_BTN_ELEMENT + "</form></messageML>";
+    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
+        + "---\n"
+        + "(Date Picker:[Please pick a date])(Button:Send)\n"
+        + "---\n";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
+  }
+
 }

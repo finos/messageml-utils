@@ -1,8 +1,9 @@
 package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.StringJoiner;
+import java.util.stream.Stream;
 
 public class DatePickerNode extends FormElementNode {
   private final static String MARKDOWN = "Date Picker";
@@ -20,13 +21,11 @@ public class DatePickerNode extends FormElementNode {
 
   @Override
   public String getText() {
-    List<String> text = Arrays.asList(label, tooltip, placeholder)
-        .stream().filter(e -> e != null && !e.isEmpty()).collect(Collectors.toList());
-    if(text.isEmpty()){
-      return "";
-    }
-    StringBuilder result = new StringBuilder(":");
-    text.forEach(word -> result.append("[").append(word).append("]"));
-    return result.toString();
+    return Stream.of(label, tooltip, placeholder)
+        .filter(StringUtils::isNotEmpty)
+        .collect(() -> new StringJoiner("][",":[", "]").setEmptyValue(""),
+            StringJoiner::add,
+            StringJoiner::merge)
+        .toString();
   }
 }
