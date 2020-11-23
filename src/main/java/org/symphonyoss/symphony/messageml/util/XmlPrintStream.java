@@ -19,6 +19,9 @@ import java.util.Stack;
 public class XmlPrintStream extends IndentedPrintStream {
   private final Stack<String> elementStack = new Stack<>();
 
+  private static final String STANDARD_ATTRIBUTE_PATTERN = " %s=\"%s\"";
+  private static final String JSON_ATTRIBUTE_PATTERN = " %s='%s'";
+
   /**
    * Constructor.
    * @param outputStream An OutputStream to which the formatted output will be sent.
@@ -27,15 +30,17 @@ public class XmlPrintStream extends IndentedPrintStream {
     super(outputStream);
   }
 
-  private void startElement(String name, String... attributes) {
+  private void startElement(String name, Object... attributes) {
     println("<" + name);
     indent();
 
     int i = 0;
 
     while (i < attributes.length) {
-      if (i < attributes.length - 1) { println(" " + attributes[i++] + "=\"" + attributes[i++] + "\""); } else {
-        println(" " + attributes[i++]);
+      if (i < attributes.length - 1) {
+        printAttribute(attributes[i++].toString(), attributes[i++]);
+      } else {
+        printAttribute(attributes[i++].toString(), null);
       }
     }
   }
@@ -56,14 +61,16 @@ public class XmlPrintStream extends IndentedPrintStream {
    * the appropriate XML closing tag. This class remembers the tag names.
    * @param name Name of the XML element to open.
    * @param attributes A map of name value pairs which will be used to add attributes to
-   * the element.
+   * the element. Normally you can use {@code Map<String,String>} but if you want specify the attribute format use
+   * {@code Map<String, XMLAttribute>}. In particular, attributes containing json can be processed to avoid escaping of double quote, but
+   * wrapping the attribute in a single quote
    */
-  public void openElement(String name, Map<String, String> attributes) {
+  public void openElement(String name, Map<?, ?> attributes) {
     elementStack.push(name);
     print("<" + name);
 
-    for (Entry<String, String> entry : attributes.entrySet()) {
-      print(" " + entry.getKey() + "=\"" + escape(entry.getValue()) + "\"");
+    for (Entry<?, ?> entry : attributes.entrySet()) {
+      printAttribute(entry.getKey(), entry.getValue());
     }
     if (this.isNoNl()) {
       print(">");
@@ -80,9 +87,11 @@ public class XmlPrintStream extends IndentedPrintStream {
    * The String parameters are taken to be alternatively names and values. Any odd value
    * at the end of the list is added as a valueless attribute.
    * @param name Name of the element.
-   * @param attributes Attributes in name value pairs.
+   * @param attributes Attributes in name value pairs. Normally you can use pair of String,String but
+   * if you want specify the attribute format use pair of String, XMLAttribute. In particular, attributes containing json can be processed to
+   * avoid escaping of double quote, but wrapping the attribute in a single quote
    */
-  public void openElement(String name, String... attributes) {
+  public void openElement(String name, Object... attributes) {
     elementStack.push(name);
     startElement(name, attributes);
     println(">");
@@ -115,9 +124,12 @@ public class XmlPrintStream extends IndentedPrintStream {
    * output in a single operation.
    * @param name Name of the element.
    * @param value Contents of the element.
-   * @param attributes Alternate names and values of attributes for the element.
+   * @param attributes Alternate names and values of attributes for the element. Normally you can
+   * use pair of String,String but if you want specify the attribute format use pair of String, XMLAttribute. In
+   * particular, attributes containing json can be processed to
+   * avoid escaping of double quote, but wrapping the attribute in a single quote
    */
-  public void printElement(String name, String value, String... attributes) {
+  public void printElement(String name, String value, Object... attributes) {
     startElement(name, attributes);
     if (value != null) { println(">" + escape(value) + "</" + name + ">"); } else { println("/>"); }
     outdent();
@@ -127,25 +139,28 @@ public class XmlPrintStream extends IndentedPrintStream {
    * Output a complete element with the given attributes.
    * @param elementName Name of element.
    * @param attributes A map of name value pairs which will be used to add attributes to
-   * the element.
+   * the element. Normally you can use {@code Map<String,String>} but if you want specify the
+   * attribute format use {@code Map<String, XMLAttribute>}. In particular, attributes containing json can be
+   * processed to avoid escaping of double quote, but wrapping the attribute in a single quote
    */
-  public void printElement(String elementName, Map<String, String> attributes) {
+  public void printElement(String elementName, Map<?, ?> attributes) {
     printElement(elementName, null, attributes);
   }
-
 
   /**
    * Output a complete element with the given content and attributes.
    * @param elementName Name of element.
    * @param value Content of element.
    * @param attributes A map of name value pairs which will be used to add attributes to
-   * the element.
+   * the element. Normally you can use {@code Map<String,String>} but if you want specify the
+   * attribute format use {@code Map<String, XMLAttribute>}. In particular, attributes containing json can be
+   * processed to avoid escaping of double quote, but wrapping the attribute in a single quote
    */
-  public void printElement(String elementName, String value, Map<String, String> attributes) {
+  public void printElement(String elementName, String value, Map<?, ?> attributes) {
     print("<" + elementName);
 
-    for (Entry<String, String> entry : attributes.entrySet()) {
-      print(" " + entry.getKey() + "=\"" + escape(entry.getValue()) + "\"");
+    for (Entry<?, ?> entry : attributes.entrySet()) {
+      printAttribute(entry.getKey(), entry.getValue());
     }
 
     if (value != null) {
@@ -176,6 +191,15 @@ public class XmlPrintStream extends IndentedPrintStream {
    * @param in Input string.
    */
   public String escape(String in) {
+    return escape(in, XMLAttribute.Format.STANDARD);
+  }
+
+  /**
+   * Translate reserved XML characters to XML entities.
+   * @param in Input string.
+   * @param format Input format. The Json format does not escape ", but it escapes ' !
+   */
+  public String escape(String in, XMLAttribute.Format format) {
     StringBuffer out = new StringBuffer();
 
     for (char c : in.toCharArray()) {
@@ -190,7 +214,18 @@ public class XmlPrintStream extends IndentedPrintStream {
           out.append("&amp;");
           break;
         case '"':
-          out.append("&quot;");
+          if(XMLAttribute.Format.JSON.equals(format)){
+            out.append(c);
+          } else {
+            out.append("&quot;");
+          }
+          break;
+        case '\'':
+          if(XMLAttribute.Format.JSON.equals(format)){
+            out.append("&apos;");
+          } else {
+            out.append(c);
+          }
           break;
         default:
           out.append(c);
@@ -224,5 +259,24 @@ public class XmlPrintStream extends IndentedPrintStream {
       }
     }
     return s.toString();
+  }
+
+  private void printAttribute(Object attrName, Object attrValue){
+    if(attrValue == null){
+      println(" " + attrName);
+    } else {
+      XMLAttribute.Format format;
+      if(attrValue instanceof XMLAttribute){
+        format = ((XMLAttribute) attrValue).getFormat();
+      } else {
+        format = XMLAttribute.Format.STANDARD;
+      }
+      if(XMLAttribute.Format.JSON.equals(format)){
+        print(String.format(JSON_ATTRIBUTE_PATTERN, attrName, escape(attrValue.toString(), format)));
+      } else {
+        // Standard attribute, wrapped by a double quote
+        print(String.format(STANDARD_ATTRIBUTE_PATTERN, attrName, escape(attrValue.toString(), format)));
+      }
+    }
   }
 }
