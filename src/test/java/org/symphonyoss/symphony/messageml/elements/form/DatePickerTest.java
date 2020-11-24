@@ -36,10 +36,10 @@ public class DatePickerTest extends ElementTest {
         + "      placeholder=\"Please pick a date\"\n"
         + "      min=\"2020-09-01\"\n"
         + "      max=\"2020-09-29\"\n"
-        + "      disabled-date=\"[{'day': '2020-09-23'}, {'from': '2020-09-18', 'to': '2020-09-20'}, "
-        + "{'daysOfWeek': [0,1]}]\""
-        + "      highlighted-date=\"[{'day': '2020-09-24'}, {'from': '2020-09-26', 'to': '2020-09-28'}, "
-        + "{'day': '2020-09-03'}, {'daysOfWeek': [4,6]}]\""
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
         + "      required=\"true\"\n"
         + "      format=\"yyyy-MM-dd\"\n"
         + "    />"
@@ -59,11 +59,11 @@ public class DatePickerTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2"
         + ".0\"><form id=\"datepicker-form\"><input type=\"date\" name=\"date-travel\" value=\"2020-09-15\" "
         + "placeholder=\"Please pick a date\" min=\"2020-09-01\" max=\"2020-09-29\" "
-        + "data-disabled-date=\"[{'type':'date','day':'2020-09-23'},{'type':'range',"
-        + "'from':'2020-09-18','to':'2020-09-20'},{'type':'weekdays','daysOfWeek':[0,1]}]\" "
-        + "data-highlighted-date=\"[{'type':'date','day':'2020-09-24'},{'type':'range',"
-        + "'from':'2020-09-26','to':'2020-09-28'},{'type':'date','day':'2020-09-03'},"
-        + "{'type':'weekdays','daysOfWeek':[4,6]}]\" required=\"true\" "
+        + "data-disabled-date='[{\"type\":\"date\",\"day\":\"2020-09-23\"},{\"type\":\"range\","
+        + "\"from\":\"2020-09-18\",\"to\":\"2020-09-20\"},{\"type\":\"weekdays\",\"daysOfWeek\":[0,1]}]' "
+        + "data-highlighted-date='[{\"type\":\"date\",\"day\":\"2020-09-24\"},{\"type\":\"range\","
+        + "\"from\":\"2020-09-26\",\"to\":\"2020-09-28\"},{\"type\":\"date\",\"day\":\"2020-09-03\"},"
+        + "{\"type\":\"weekdays\",\"daysOfWeek\":[4,6]}]' required=\"true\" "
         + "data-format=\"yyyy-MM-dd\"></input><button type=\"action\" "
         + "name=\"actionName\">Send</button></form></div>";
 
@@ -85,10 +85,10 @@ public class DatePickerTest extends ElementTest {
         + "      placeholder=\"Please pick a date\"\n"
         + "      min=\"2020-09-01\"\n"
         + "      max=\"2020-09-29\"\n"
-        + "      disabled-date=\"[{'day': '2020-09-23'}, {'from': '2020-09-18', 'to': '2020-09-20'}, "
-        + "{'daysOfWeek': [0,1]}]\""
-        + "      highlighted-date=\"[{'day': '2020-09-24'}, {'from': '2020-09-26', 'to': '2020-09-28'}, "
-        + "{'day': '2020-09-03'}, {'daysOfWeek': [4,6]}]\""
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
         + "      required=\"true\"\n"
         + "      format=\"yyyy-MM-dd\"\n"
         + "    />"
@@ -107,7 +107,7 @@ public class DatePickerTest extends ElementTest {
 
     String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
         + "---\n"
-        + "(Date Picker:[Please pick a date])(Button:Send)\n"
+        + "(Date Picker:[Departure date][This is \\n a hint][Please pick a date])(Button:Send)\n"
         + "---\n";
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" "
         + "data-version=\"2.0\"><form id=\"datepicker-form\"><div class=\"date-picker-group\" "
@@ -115,11 +115,11 @@ public class DatePickerTest extends ElementTest {
         + "date</label><span class=\"info-hint\" data-target-id=\"date-picker-%s\" "
         + "data-title=\"This is \\n a hint\"></span><input type=\"date\" name=\"date-travel\" "
         + "value=\"2020-09-15\" placeholder=\"Please pick a date\" min=\"2020-09-01\" "
-        + "max=\"2020-09-29\" data-disabled-date=\"[{'type':'date','day':'2020-09-23'},"
-        + "{'type':'range','from':'2020-09-18','to':'2020-09-20'},{'type':'weekdays',"
-        + "'daysOfWeek':[0,1]}]\" data-highlighted-date=\"[{'type':'date','day':"
-        + "'2020-09-24'},{'type':'range','from':'2020-09-26','to':'2020-09-28'},{'type':"
-        + "'date','day':'2020-09-03'},{'type':'weekdays','daysOfWeek':[4,6]}]\" "
+        + "max=\"2020-09-29\" data-disabled-date='[{\"type\":\"date\",\"day\":\"2020-09-23\"},"
+        + "{\"type\":\"range\",\"from\":\"2020-09-18\",\"to\":\"2020-09-20\"},{\"type\":\"weekdays\","
+        + "\"daysOfWeek\":[0,1]}]' data-highlighted-date='[{\"type\":\"date\",\"day\":"
+        + "\"2020-09-24\"},{\"type\":\"range\",\"from\":\"2020-09-26\",\"to\":\"2020-09-28\"},{\"type\":"
+        + "\"date\",\"day\":\"2020-09-03\"},{\"type\":\"weekdays\",\"daysOfWeek\":[4,6]}]' "
         + "required=\"true\" data-format=\"yyyy-MM-dd\" "
         + "id=\"date-picker-%s\"></input></div><button type=\"action\" "
         + "name=\"actionName\">Send</button></form></div>", uniqueLabelId, uniqueLabelId, uniqueLabelId, uniqueLabelId);
@@ -139,10 +139,10 @@ public class DatePickerTest extends ElementTest {
         + "      placeholder=\"Please pick a date\"\n"
         + "      min=\"2020-09-01\"\n"
         + "      max=\"2020-09-29\"\n"
-        + "      disabled-date=\"[{'day': '2020-09-23'}, {'from': '2020-09-18', 'to': '2020-09-20'}, "
-        + "{'daysOfWeek': [0,1]}]\""
-        + "      highlighted-date=\"[{'day': '2020-09-24'}, {'from': '2020-09-26', 'to': '2020-09-28'}, "
-        + "{'day': '2020-09-03'}, {'daysOfWeek': [4,6]}]\""
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
         + "      required=\"true\"\n"
         + "      format=\"yyyy-MM-dd\"\n"
         + "    />"
@@ -162,10 +162,10 @@ public class DatePickerTest extends ElementTest {
         + "      placeholder=\"Please pick a date\"\n"
         + "      min=\"2020-09-01\"\n"
         + "      max=\"2020-09-29\"\n"
-        + "      disabled-date=\"[{'day': '2020-09-23'}, {'from': '2020-09-18', 'to': '2020-09-20'}, "
-        + "{'daysOfWeek': [0,1]}]\""
-        + "      highlighted-date=\"[{'day': '2020-09-24'}, {'from': '2020-09-26', 'to': '2020-09-28'}, "
-        + "{'day': '2020-09-03'}, {'daysOfWeek': [4,6]\""
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]'"
         + "      required=\"true\"\n"
         + "      format=\"yyyy-MM-dd\"\n"
         + "    />"
@@ -174,8 +174,8 @@ public class DatePickerTest extends ElementTest {
     expectedException.expect(InvalidInputException .class);
     expectedException.expectMessage("Error parsing json in attribute \"highlighted-date\": "
         + "Unexpected end-of-input: expected close marker for Object (start marker at [Source: "
-        + "(String)\"[{'day': '2020-09-24'}, {'from': '2020-09-26', 'to': '2020-09-28'}, {'day': "
-        + "'2020-09-03'}, {'daysOfWeek': [4,6]\"; line: 1, column: 92])");
+        + "(String)\"[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, {\"day\": "
+        + "\"2020-09-03\"}, {\"daysOfWeek\": [4,6]\"; line: 1, column: 92])");
     context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -188,10 +188,10 @@ public class DatePickerTest extends ElementTest {
         + "      placeholder=\"Please pick a date\"\n"
         + "      min=\"2020-09-01\"\n"
         + "      max=\"2020-09-29\"\n"
-        + "      disabled-date=\"[{'day': '2020-09-23'}, {'from': '2020-09-18', 'to': '2020-09-20'}, "
-        + "{'daysOfWeek': [0,1]}]\""
-        + "      highlighted-date=\"[{'day': '2020-09'}, {'from': '2020-09-26', 'to': '2020-09-28'}, "
-        + "{'day': '2020-09-03'}, {'daysOfWeek': [4,6]}]\""
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
         + "      required=\"true\"\n"
         + "      format=\"yyyy-MM-dd\"\n"
         + "    />"
@@ -211,17 +211,17 @@ public class DatePickerTest extends ElementTest {
         + "      placeholder=\"Please pick a date\"\n"
         + "      min=\"2020-09-01\"\n"
         + "      max=\"2020-09-29\"\n"
-        + "      disabled-date=\"[{'day': '2020-09-23'}, {'from': '2020-09-18'}, "
-        + "{'daysOfWeek': [0,1]}]\""
-        + "      highlighted-date=\"[{'day': '2020-09-24'}, {'from': '2020-09-26', 'to': '2020-09-28'}, "
-        + "{'day': '2020-09-03'}, {'daysOfWeek': [4,6]}]\""
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
         + "      required=\"true\"\n"
         + "      format=\"yyyy-MM-dd\"\n"
         + "    />"
         + ACTION_BTN_ELEMENT + "</form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Date interval 'type' is unknown or null");
+    expectedException.expectMessage("Date interval \'type\' is unknown or null");
     context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -243,6 +243,32 @@ public class DatePickerTest extends ElementTest {
     expectedException.expectMessage("The attribute \"name\" length is bigger than maximum allowed"
         + " [64]");
     context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testEmptyMarkdown() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+        + "<date-picker name=\"date-travel\"/>"
+        + ACTION_BTN_ELEMENT + "</form></messageML>";
+    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
+        + "---\n"
+        + "(Date Picker)(Button:Send)\n"
+        + "---\n";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
+  }
+
+  @Test
+  public void testPartialMarkdown() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+        + "<date-picker name=\"date-travel\" placeholder=\"Please pick a date\"/>"
+        + ACTION_BTN_ELEMENT + "</form></messageML>";
+    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
+        + "---\n"
+        + "(Date Picker:[Please pick a date])(Button:Send)\n"
+        + "---\n";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }
 
 }

@@ -1,6 +1,5 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.Range;
@@ -8,6 +7,7 @@ import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.DatePickerNode;
+import org.symphonyoss.symphony.messageml.util.XMLAttribute;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.symphonyoss.symphony.messageml.util.pojo.DateInterval;
 import org.w3c.dom.Node;
@@ -51,7 +51,6 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   public DatePicker(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
     mapper = new ObjectMapper();
-    mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
   }
 
   @Override
@@ -128,7 +127,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   @Override
   public void asPresentationML(XmlPrintStream out,
       MessageMLContext context) {
-    Map<String, String> presentationAttrs = buildDataPickerInputAttributes();
+    Map<String, Object> presentationAttrs = buildDataPickerInputAttributes();
     if (isSplittable()) {
       // open div + adding splittable elements
       presentationAttrs.put(ID_ATTR, splittableAsPresentationML(out, context));
@@ -143,16 +142,16 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new DatePickerNode(getAttribute(PLACEHOLDER_ATTR));
+    return new DatePickerNode(getAttribute(LABEL), getAttribute(TITLE), getAttribute(PLACEHOLDER_ATTR));
   }
 
-  private void innerAsPresentationML(XmlPrintStream out, Map<String, String> presentationAttrs) {
+  private void innerAsPresentationML(XmlPrintStream out, Map<String, Object> presentationAttrs) {
     out.openElement(PRESENTATIONML_TAG, presentationAttrs);
     out.closeElement();
   }
 
-  private Map<String, String> buildDataPickerInputAttributes() {
-    Map<String, String> presentationAttrs = new LinkedHashMap<>();
+  private Map<String, Object> buildDataPickerInputAttributes() {
+    Map<String, Object> presentationAttrs = new LinkedHashMap<>();
 
     presentationAttrs.put(TYPE_ATTR, PRESENTATIONML_INPUT_TYPE);
     presentationAttrs.put(NAME_ATTR, getAttribute(NAME_ATTR));
@@ -193,11 +192,11 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
    * @param attributeName
    * @return
    */
-  private String convertJsonDateToPresentationML(String attributeName) {
+  private XMLAttribute convertJsonDateToPresentationML(String attributeName) {
     try {
       DateInterval[] dateIntervals = mapper.readValue(getAttribute(attributeName), DateInterval[].class);
       String result = mapper.writeValueAsString(dateIntervals);
-      return result.replace("\"", "'");
+      return XMLAttribute.of(result, XMLAttribute.Format.JSON);
     } catch (JsonProcessingException e) {
       // this exception should never happens because this method is called after validation
       throw new IllegalArgumentException(e);
