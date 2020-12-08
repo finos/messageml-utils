@@ -1,11 +1,15 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import static org.junit.Assert.assertEquals;
-
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.util.IDataProvider;
+import org.symphonyoss.symphony.messageml.util.NoOpDataProvider;
+import org.symphonyoss.symphony.messageml.util.NullDataProvider;
+
+import static org.junit.Assert.assertEquals;
 
 public class LinkTest extends ElementTest {
 
@@ -86,5 +90,53 @@ public class LinkTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"href\" must contain an absolute URI");
     context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testLinkNullDataProvider() throws Exception {
+    String invalidUri = "<messageML><a href=\"invalid://hello.org\">Hello world!</a></messageML>";
+    IDataProvider nullProvider = new NullDataProvider();
+    MessageMLContext context = new MessageMLContext(nullProvider);
+
+    context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+    ObjectNode entityJson = context.getEntityJson();
+    String markdown = context.getMarkdown();
+    String text = context.getText();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
+    String expectedJson = "{}";
+    String expectedMarkdown = "invalid://hello.org";
+    String expectedText = "Hello world!";
+
+    assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
+    assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
+    assertEquals("Generated Markdown", expectedMarkdown, markdown);
+    assertEquals("Generated text", expectedText, text);
+  }
+
+  @Test
+  public void testLinkNoOpDataProvider() throws Exception {
+    String invalidUri = "<messageML><a href=\"invalid://hello.org\">Hello world!</a></messageML>";
+    IDataProvider noOpProvider = new NoOpDataProvider();
+    MessageMLContext context = new MessageMLContext(noOpProvider);
+
+    context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+    ObjectNode entityJson = context.getEntityJson();
+    String markdown = context.getMarkdown();
+    String text = context.getText();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
+    String expectedJson = "{}";
+    String expectedMarkdown = "invalid://hello.org";
+    String expectedText = "Hello world!";
+
+    assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
+    assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
+    assertEquals("Generated Markdown", expectedMarkdown, markdown);
+    assertEquals("Generated text", expectedText, text);
   }
 }

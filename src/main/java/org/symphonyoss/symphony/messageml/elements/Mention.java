@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.commonmark.node.Text;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
@@ -159,7 +160,7 @@ public class Mention extends Entity {
 
   @Override
   public String asText() {
-    return "@" + userPresentation.getPrettyName();
+    return StringUtils.isNotBlank(userPresentation.getPrettyName()) ? "@" + userPresentation.getPrettyName() : "";
   }
 
   @Override

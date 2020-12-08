@@ -1,22 +1,18 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.util.IDataProvider;
-import org.symphonyoss.symphony.messageml.util.TestDataProvider;
-import org.symphonyoss.symphony.messageml.util.UserPresentation;
+import org.symphonyoss.symphony.messageml.util.*;
 
 import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.*;
 
 public class MentionTest extends ElementTest {
 
@@ -345,6 +341,114 @@ public class MentionTest extends ElementTest {
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testNullDataProviderMentionByEmail() throws Exception {
+    String input = "<messageML>Hello <mention email=\"bot.user1@localhost.com\"/>!</messageML>";
+
+    IDataProvider nullProvider = new NullDataProvider();
+    MessageMLContext context = new MessageMLContext(nullProvider);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+    ObjectNode entityJson = context.getEntityJson();
+    String markdown = context.getMarkdown();
+    String text = context.getText();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "Hello <span class=\"entity\" data-entity-id=\"mention1\"></span>!" +
+        "</div>";
+    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
+    String expectedMarkdown = "Hello !";
+    String expectedText = "Hello !";
+
+    assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
+    assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
+    assertEquals("Generated Markdown", expectedMarkdown, markdown);
+    assertEquals("Generated text", expectedText, text);
+  }
+
+  @Test
+  public void testNullDataProviderMentionByUid() throws Exception {
+    String input = "<messageML>Hello <mention uid=\"1000\"/>!</messageML>";
+
+    IDataProvider nullProvider = new NullDataProvider();
+    MessageMLContext context = new MessageMLContext(nullProvider);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+    ObjectNode entityJson = context.getEntityJson();
+    String markdown = context.getMarkdown();
+    String text = context.getText();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "Hello <span class=\"entity\" data-entity-id=\"mention1\"></span>!" +
+        "</div>";
+    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
+    String expectedMarkdown = "Hello !";
+    String expectedText = "Hello !";
+
+    assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
+    assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
+    assertEquals("Generated Markdown", expectedMarkdown, markdown);
+    assertEquals("Generated text", expectedText, text);
+  }
+
+  @Test
+  public void testNoOpDataProviderMentionByEmail() throws Exception {
+    String input = "<messageML>Hello <mention email=\"bot.user1@localhost.com\"/>!</messageML>";
+
+    IDataProvider noOpProvider = new NoOpDataProvider();
+    MessageMLContext context = new MessageMLContext(noOpProvider);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+    ObjectNode entityJson = context.getEntityJson();
+    String markdown = context.getMarkdown();
+    String text = context.getText();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "Hello <span class=\"entity\" data-entity-id=\"mention1\">@bot.user1@localhost.com</span>!" +
+        "</div>";
+    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
+    String expectedMarkdown = "Hello @bot.user1@localhost.com!";
+    String expectedText = "Hello @bot.user1@localhost.com!";
+
+    assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
+    assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
+    assertEquals("Generated Markdown", expectedMarkdown, markdown);
+    assertEquals("Generated text", expectedText, text);
+  }
+
+  @Test
+  public void testNoOpDataProviderMentionByUid() throws Exception {
+    String input = "<messageML>Hello <mention uid=\"1000\"/>!</messageML>";
+
+    IDataProvider noOpProvider = new NoOpDataProvider();
+    MessageMLContext context = new MessageMLContext(noOpProvider);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+    ObjectNode entityJson = context.getEntityJson();
+    String markdown = context.getMarkdown();
+    String text = context.getText();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "Hello <span class=\"entity\" data-entity-id=\"mention1\">@1000</span>!" +
+        "</div>";
+    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
+    String expectedMarkdown = "Hello @1000!";
+    String expectedText = "Hello @1000!";
+
+    assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
+    assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
+    assertEquals("Generated Markdown", expectedMarkdown, markdown);
+    assertEquals("Generated text", expectedText, text);
+  }
+
   private void verifyMention(Element messageML, UserPresentation user, String expectedPresentationML, String expectedJson)
       throws Exception {
     assertEquals("Element children", 3, messageML.getChildren().size());
@@ -371,4 +475,5 @@ public class MentionTest extends ElementTest {
     assertEquals("Entity end index", 17, entity.get(0).get("indexEnd").intValue());
     assertEquals("Entity type", "USER_FOLLOW", entity.get(0).get("type").textValue());
   }
+
 }
