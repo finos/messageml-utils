@@ -16,6 +16,7 @@
 
 package org.symphonyoss.symphony.messageml.markdown.nodes;
 
+import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.CustomNode;
 
 /**
@@ -61,7 +62,7 @@ public class MentionNode extends CustomNode {
   }
 
   public String getText() {
-    return PREFIX + prettyName;
+    return StringUtils.isNotBlank(prettyName) ? PREFIX + prettyName : "";
   }
 
 }
