@@ -119,7 +119,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
         );
       }
       try {
-        DateTimeFormatter.ofPattern(getAttribute(FORMAT_ATTR)).toFormat();
+        DateTimeFormatter.ofPattern(getAttribute(FORMAT_ATTR));
       } catch (IllegalArgumentException i) {
         throw new InvalidInputException(
             String.format("Attribute \"%s\" contains an invalid date format", FORMAT_ATTR));
