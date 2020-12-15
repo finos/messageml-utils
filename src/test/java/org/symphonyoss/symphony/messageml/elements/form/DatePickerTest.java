@@ -270,6 +270,86 @@ public class DatePickerTest extends ElementTest {
   }
 
   @Test
+  public void sendSeparator1DateFormat() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+        + "<date-picker \n"
+        + "      name=\"date-travel\"\n"
+        + "      value=\"2020-09-15\"\n"
+        + "      placeholder=\"Please pick a date\"\n"
+        + "      min=\"2020-09-01\"\n"
+        + "      max=\"2020-09-29\"\n"
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
+        + "      required=\"true\"\n"
+        + "      format=\"yyyy/MM/dd\"\n"
+        + "    />"
+        + ACTION_BTN_ELEMENT + "</form></messageML>";
+    context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void sendSeparator2DateFormat() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+        + "<date-picker \n"
+        + "      name=\"date-travel\"\n"
+        + "      value=\"2020-09-15\"\n"
+        + "      placeholder=\"Please pick a date\"\n"
+        + "      min=\"2020-09-01\"\n"
+        + "      max=\"2020-09-29\"\n"
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
+        + "      required=\"true\"\n"
+        + "      format=\"yyyy:MM:dd\"\n"
+        + "    />"
+        + ACTION_BTN_ELEMENT + "</form></messageML>";
+    context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void sendSeparator3DateFormat() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+        + "<date-picker \n"
+        + "      name=\"date-travel\"\n"
+        + "      value=\"2020-09-15\"\n"
+        + "      placeholder=\"Please pick a date\"\n"
+        + "      min=\"2020-09-01\"\n"
+        + "      max=\"2020-09-29\"\n"
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
+        + "      required=\"true\"\n"
+        + "      format=\"yyyy.MM.dd\"\n"
+        + "    />"
+        + ACTION_BTN_ELEMENT + "</form></messageML>";
+    context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void sendSeparator4DateFormat() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+        + "<date-picker \n"
+        + "      name=\"date-travel\"\n"
+        + "      value=\"2020-09-15\"\n"
+        + "      placeholder=\"Please pick a date\"\n"
+        + "      min=\"2020-09-01\"\n"
+        + "      max=\"2020-09-29\"\n"
+        + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+        + "{\"daysOfWeek\": [0,1]}]'"
+        + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+        + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
+        + "      required=\"true\"\n"
+        + "      format=\"yyyy MM dd\"\n"
+        + "    />"
+        + ACTION_BTN_ELEMENT + "</form></messageML>";
+    context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testEmptyMarkdown() throws Exception {
     String input = "<messageML><form id=\"" + formId + "\">"
         + "<date-picker name=\"date-travel\"/>"

@@ -45,7 +45,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
 
   private final ObjectMapper mapper;
 
-  private static final String dateFormatAllowed = "^[0-9Mdy\\/. -]+$";
+  private static final String DATE_FORMAT_ALLOWED = "^[0-9Mdy\\/. -:]+$";
 
   public DatePicker(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -113,9 +113,9 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
     if (getAttribute(FORMAT_ATTR) != null) {
       assertAttributeMaxLength(FORMAT_ATTR, DEFAULT_MAX_LENGTH);
       String format = getAttribute(FORMAT_ATTR);
-      if(!format.matches(dateFormatAllowed)){
+      if(!format.matches(DATE_FORMAT_ALLOWED)){
         throw new InvalidInputException(
-            String.format("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/' as separator", FORMAT_ATTR)
+            String.format("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/', ':' as separator", FORMAT_ATTR)
         );
       }
       try {
