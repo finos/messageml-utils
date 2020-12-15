@@ -265,7 +265,7 @@ public class DatePickerTest extends ElementTest {
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"format\" contains an unsupported date format, "
-        + "only 'M', 'd' and 'y' are supported with a space or '.','-','/' as separator");
+        + "only 'M', 'd' and 'y' are supported with a space or '.','-','/',':' as separator");
     context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
   }
 

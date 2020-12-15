@@ -115,7 +115,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
       String format = getAttribute(FORMAT_ATTR);
       if(!format.matches(DATE_FORMAT_ALLOWED)){
         throw new InvalidInputException(
-            String.format("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/', ':' as separator", FORMAT_ATTR)
+            String.format("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/',':' as separator", FORMAT_ATTR)
         );
       }
       try {
