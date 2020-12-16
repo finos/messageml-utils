@@ -2,7 +2,6 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.Range;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -44,9 +43,9 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   private static final String HIGHLIGHTED_DATE_PRESENTATION_ATTR = "data-highlighted-date";
   private static final String FORMAT_PRESENTATION_ATTR = "data-format";
 
-  private static final Range<Integer> ALLOWED_DAYS = Range.between(0, 6);
-
   private final ObjectMapper mapper;
+
+  private static final String DATE_FORMAT_ALLOWED = "^[0-9Mdy\\/. -:]+$";
 
   public DatePicker(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -113,6 +112,12 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
 
     if (getAttribute(FORMAT_ATTR) != null) {
       assertAttributeMaxLength(FORMAT_ATTR, DEFAULT_MAX_LENGTH);
+      String format = getAttribute(FORMAT_ATTR);
+      if(!format.matches(DATE_FORMAT_ALLOWED)){
+        throw new InvalidInputException(
+            String.format("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/',':' as separator", FORMAT_ATTR)
+        );
+      }
       try {
         DateTimeFormatter.ofPattern(getAttribute(FORMAT_ATTR));
       } catch (IllegalArgumentException i) {
