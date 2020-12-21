@@ -117,6 +117,18 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseMessageMLUmlautsCharacters()
+          throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>Leseübungen</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    String expectedResult = "<div data-format=\"PresentationML\" data-version=\"2.0\">Leseübungen</div>";
+
+    assertEquals(expectedResult, presentationML);
+  }
+
+  @Test
   public void testParseMessageMLTextFieldWithSplittables()
       throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>\n"

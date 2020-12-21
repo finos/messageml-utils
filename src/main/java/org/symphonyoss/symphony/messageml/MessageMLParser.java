@@ -79,6 +79,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -311,7 +312,7 @@ public class MessageMLParser {
       dBuilder.setEntityResolver(new NoOpEntityResolver());
 
       StringReader sr = new StringReader(messageML);
-      ReaderInputStream ris = new ReaderInputStream(sr);
+      ReaderInputStream ris = new ReaderInputStream(sr, StandardCharsets.UTF_8);
 
       Document doc = dBuilder.parse(ris);
 
