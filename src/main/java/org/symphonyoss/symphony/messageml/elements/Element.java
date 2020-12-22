@@ -30,6 +30,9 @@ import org.w3c.dom.Text;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -379,6 +382,24 @@ public abstract class Element {
   }
 
   /**
+   * Checks if attribute contains a date, in the provided format
+   *
+   * @param attributeName name of attribute that will be checked.
+   * @param formatter date format
+   * @throws InvalidInputException
+   */
+  void assertDateFormat(String attributeName, DateTimeFormatter formatter)
+      throws InvalidInputException {
+    String attributeValue = getAttribute(attributeName);
+
+    try {
+      LocalDate.parse(attributeValue, formatter);
+    } catch (DateTimeParseException e) {
+      throw new InvalidInputException(String.format("Attribute \"%s\" has invalid date format", attributeName), e);
+    }
+  }
+
+  /**
    * Checks if an attribute is not null or empty
    *
    * @param attributeName name of attribute that will be checked.
@@ -389,6 +410,21 @@ public abstract class Element {
 
     if (attributeValue == null || attributeValue.trim().isEmpty()) {
       throw new InvalidInputException("The attribute \"" + attributeName + "\" is required");
+    }
+  }
+
+  /**
+   * Checks if an attribute length is bigger than allowed
+   *
+   * @param attributeName
+   * @param maxLength
+   * @throws InvalidInputException
+   */
+  void assertAttributeMaxLength(String attributeName, int maxLength) throws InvalidInputException {
+    String attributeValue = getAttribute(attributeName);
+
+    if (attributeValue != null && attributeValue.length() > maxLength) {
+      throw new InvalidInputException(String.format("The attribute \"%s\" length is bigger than maximum allowed [%d]", attributeName, maxLength));
     }
   }
 

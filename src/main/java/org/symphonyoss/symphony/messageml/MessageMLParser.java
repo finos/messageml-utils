@@ -25,6 +25,7 @@ import org.symphonyoss.symphony.messageml.elements.CashTag;
 import org.symphonyoss.symphony.messageml.elements.Checkbox;
 import org.symphonyoss.symphony.messageml.elements.Chime;
 import org.symphonyoss.symphony.messageml.elements.Code;
+import org.symphonyoss.symphony.messageml.elements.DatePicker;
 import org.symphonyoss.symphony.messageml.elements.DateSelector;
 import org.symphonyoss.symphony.messageml.elements.Div;
 import org.symphonyoss.symphony.messageml.elements.Element;
@@ -513,6 +514,9 @@ public class MessageMLParser {
       case DateSelector.MESSAGEML_TAG:
         return new DateSelector(parent, messageFormat);
 
+      case DatePicker.MESSAGEML_TAG:
+        return new DatePicker(parent, messageFormat);
+
       case TextArea.MESSAGEML_TAG:
         return new TextArea(parent, messageFormat);
 
@@ -629,6 +633,8 @@ public class MessageMLParser {
       return new Checkbox(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementType, Radio.PRESENTATIONML_INPUT_TYPE)) {
       return new Radio(parent, FormatEnum.PRESENTATIONML);
+    } else if(containsAttribute(elementType, DatePicker.PRESENTATIONML_INPUT_TYPE)){
+      return new DatePicker(parent, FormatEnum.PRESENTATIONML);
     } else {
       throw new InvalidInputException(String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
     }
