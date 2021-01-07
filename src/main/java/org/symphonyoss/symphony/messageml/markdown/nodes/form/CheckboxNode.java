@@ -17,7 +17,7 @@ public class CheckboxNode extends FormElementNode {
 
   public CheckboxNode(String label) {
     super(MARKDOWN);
-    this.label = addEscapeCharacter(label);
+    this.label = label;
   }
   
   @Override

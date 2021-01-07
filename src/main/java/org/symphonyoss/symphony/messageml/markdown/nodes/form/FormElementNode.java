@@ -21,7 +21,7 @@ public class FormElementNode extends CustomBlock {
 
   public FormElementNode(String tagRepresentationOnMarkdown, String text) {
     this.tagRepresentationOnMarkdown = tagRepresentationOnMarkdown;
-    this.text = addEscapeCharacter(text);
+    this.text = text;
   }
 
   public FormElementNode(String tagRepresentationOnMarkdown) {
@@ -40,14 +40,5 @@ public class FormElementNode extends CustomBlock {
   public String getText() {
     return text;
   }
-
-  /**
-   * Escape reserved Markdown characters which are part of the message content, to prevent them from being interpreted
-   * as Markdown
-   */
-  public String addEscapeCharacter(String content) {
-    return StringUtils.replaceEach(content, new String[]{"_","*","-","+","`"}, new String[]{"\\_","\\*","\\-","\\+","\\`"});
-  }
-
 
 }

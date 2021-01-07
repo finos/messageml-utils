@@ -15,9 +15,9 @@ public class PersonSelectorNode extends FormElementNode implements PlaceholderLa
 
   public PersonSelectorNode(String placeholder, String label, String tooltip) {
     super(MARKDOWN, placeholder);
-    this.placeholder = addEscapeCharacter(placeholder);
-    this.label = addEscapeCharacter(label);
-    this.tooltip = addEscapeCharacter(tooltip);
+    this.placeholder = placeholder;
+    this.label = label;
+    this.tooltip = tooltip;
   }
   
   @Override

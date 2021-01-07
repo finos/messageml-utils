@@ -16,10 +16,10 @@ public class TextFieldNode extends FormElementNode implements PlaceholderLabelTo
 
   public TextFieldNode(String placeholder, String initialValue, String label, String tooltip) {
     super(MARKDOWN);
-    this.placeholder = addEscapeCharacter(placeholder);
-    this.initialValue = addEscapeCharacter(initialValue);
-    this.label = addEscapeCharacter(label);
-    this.tooltip = addEscapeCharacter(tooltip);
+    this.placeholder = placeholder;
+    this.initialValue = initialValue;
+    this.label = label;
+    this.tooltip = tooltip;
   }
   
   @Override

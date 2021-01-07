@@ -17,7 +17,7 @@ public class RadioNode extends FormElementNode {
 
   public RadioNode(String label) {
     super(MARKDOWN, label);
-    this.label = addEscapeCharacter(label);
+    this.label = label;
   }
   
   @Override
