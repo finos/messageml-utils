@@ -2,7 +2,7 @@ package org.symphonyoss.symphony.messageml.elements.form;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.symphonyoss.symphony.messageml.elements.form.DateSelectorTest.addEscapeCharacter;
+import static org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer.addEscapeCharacter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;

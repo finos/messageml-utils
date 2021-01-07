@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
-import static org.symphonyoss.symphony.messageml.elements.form.DateSelectorTest.addEscapeCharacter;
+import static org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer.addEscapeCharacter;
 
 public class PersonSelectorTest extends ElementTest {
   private static final String FORM_ID_ATTR = "id";

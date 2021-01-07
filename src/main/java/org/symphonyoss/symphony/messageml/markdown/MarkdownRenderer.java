@@ -379,7 +379,7 @@ public class MarkdownRenderer extends AbstractVisitor {
     }
   }
 
-  private String addEscapeCharacter(String content) {
+  public static String addEscapeCharacter(String content) {
     // If the line consists only of repeated reserved Markdown characters, ignore it
     Matcher matcher = NOESCAPE_PATTERN.matcher(content);
     if (!matcher.matches()) {

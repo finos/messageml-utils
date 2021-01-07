@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.symphonyoss.symphony.messageml.elements.form.DateSelectorTest.addEscapeCharacter;
+import static org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer.addEscapeCharacter;
 
 public class SelectOptionTest extends ElementTest {
 
@@ -312,9 +312,9 @@ public class SelectOptionTest extends ElementTest {
 
     StringBuilder expectedMarkdown = new StringBuilder(FORM_MARKDOWN_HEADER);
     expectedMarkdown.append("(Dropdown");
-    String placeholder = addEscapeCharacter(select.getAttribute(DATA_PLACEHOLDER_ATTR));
+    String placeholder = select.getAttribute(DATA_PLACEHOLDER_ATTR);
     expectedMarkdown.append((placeholder!= null || hasLabel || hasTitle) ? ":" : "");
-    expectedMarkdown.append((placeholder != null) ? "[" + placeholder + "]" : "");
+    expectedMarkdown.append((placeholder != null) ? "[" + addEscapeCharacter((placeholder)) + "]" : "");
     expectedMarkdown.append(hasLabel ? "[" + addEscapeCharacter(select.getAttribute(LABEL_ATTR)) + "]" : "");
     expectedMarkdown.append(hasTitle ? "[" + addEscapeCharacter(select.getAttribute(TITLE_ATTR)) + "]" : "");
     expectedMarkdown.append("):\n");

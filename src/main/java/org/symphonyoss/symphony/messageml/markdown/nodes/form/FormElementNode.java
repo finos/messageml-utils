@@ -1,6 +1,5 @@
 package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 
-import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.CustomBlock;
 
 /**
