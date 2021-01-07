@@ -132,6 +132,63 @@ public class DatePickerTest extends ElementTest {
   }
 
   @Test
+  public void testDatePickerWithUnderscores() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">"
+            + "<date-picker \n"
+            + "      name=\"date-travel\"\n"
+            + "      value=\"2020-09-15\"\n"
+            + "      title=\"This_is_a_hint\"\n"
+            + "      label=\"Departure_date\"\n"
+            + "      placeholder=\"Please_pick_a_date\"\n"
+            + "      min=\"2020-09-01\"\n"
+            + "      max=\"2020-09-29\"\n"
+            + "      disabled-date='[{\"day\": \"2020-09-23\"}, {\"from\": \"2020-09-18\", \"to\": \"2020-09-20\"}, "
+            + "{\"daysOfWeek\": [0,1]}]'"
+            + "      highlighted-date='[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, "
+            + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
+            + "      required=\"true\"\n"
+            + "      format=\"yyyy-MM-dd\"\n"
+            + "    />"
+            + ACTION_BTN_ELEMENT + "</form></messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element datePicker = form.getChildren().get(0);
+
+    String presentationML = context.getPresentationML();
+    String datePickerRegex = ".*(\"date-picker-(.*?)\").*";
+    Pattern pattern = Pattern.compile(datePickerRegex);
+    Matcher matcher = pattern.matcher(presentationML);
+    String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
+
+    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
+            + "---\n"
+            + "(Date Picker:[Departure\\_date][This\\_is\\_a\\_hint][Please\\_pick\\_a\\_date])(Button:Send)\n"
+            + "---\n";
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" "
+            + "data-version=\"2.0\"><form id=\"datepicker-form\"><div class=\"date-picker-group\" "
+            + "data-generated=\"true\"><label for=\"date-picker-%s\">Departure_"
+            + "date</label><span class=\"info-hint\" data-target-id=\"date-picker-%s\" "
+            + "data-title=\"This_is_a_hint\"></span><input type=\"date\" name=\"date-travel\" "
+            + "value=\"2020-09-15\" placeholder=\"Please_pick_a_date\" min=\"2020-09-01\" "
+            + "max=\"2020-09-29\" data-disabled-date='[{\"type\":\"date\",\"day\":\"2020-09-23\"},"
+            + "{\"type\":\"range\",\"from\":\"2020-09-18\",\"to\":\"2020-09-20\"},{\"type\":\"weekdays\","
+            + "\"daysOfWeek\":[0,1]}]' data-highlighted-date='[{\"type\":\"date\",\"day\":"
+            + "\"2020-09-24\"},{\"type\":\"range\",\"from\":\"2020-09-26\",\"to\":\"2020-09-28\"},{\"type\":"
+            + "\"date\",\"day\":\"2020-09-03\"},{\"type\":\"weekdays\",\"daysOfWeek\":[4,6]}]' "
+            + "required=\"true\" data-format=\"yyyy-MM-dd\" "
+            + "id=\"date-picker-%s\"></input></div><button type=\"action\" "
+            + "name=\"actionName\">Send</button></form></div>", uniqueLabelId, uniqueLabelId, uniqueLabelId, uniqueLabelId);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(DatePicker.class, datePicker.getClass());
+    assertTrue("Text should be empty", datePicker.getChildren().isEmpty());
+    assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
+    assertEquals("PresentationML", expectedPresentationML, presentationML);
+  }
+
+  @Test
   public void sendMissingFieldOnMessageML() throws Exception {
     String input = "<messageML><form id=\"" + formId + "\">"
         + "<date-picker \n"

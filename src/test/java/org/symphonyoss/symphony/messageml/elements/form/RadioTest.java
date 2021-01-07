@@ -80,6 +80,33 @@ public class RadioTest extends ElementTest {
   }
 
   @Test
+  public void testRadioWithUnderscoreLabel() throws Exception {
+    String input = "<messageML><form id=\"" + formId + "\">" + "<radio name=\"groupId\" value=\"value01\">First_label</radio>" +
+            ACTION_BTN_ELEMENT +
+            "</form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    String expectedMarkdown = "Form (log into desktop client to answer):\n---" + "\n(Radio Button:First\\_label)" +
+            ACTION_BTN_MARKDOWN +
+            "\n---\n";
+    assertEquals(expectedMarkdown, context.getMarkdown());
+    String presentationML = context.getPresentationML();
+    int startId1 = presentationML.indexOf("label for=\"");
+    int endId1 = presentationML.indexOf('"', startId1 + "label for=\"".length());
+    String id1 = presentationML.substring(startId1 + "label for=\"".length(), endId1);
+
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+            "<form id=\"" + formId + "\">" +
+            "<div class=\"radio-group\">" +
+            "<input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
+            "<label for=\"%s\">First_label</label></div>" +
+            ACTION_BTN_ELEMENT +
+            "</form></div>", id1, id1);
+
+    assertEquals(expectedPresentationML, presentationML);
+  }
+
+  @Test
   public void testPresentationMLRadioWithLinebreaksAndWhitespacesBetweenTags() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +

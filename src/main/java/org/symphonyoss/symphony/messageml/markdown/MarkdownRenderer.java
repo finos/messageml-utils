@@ -32,13 +32,10 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.CheckboxNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.DateSelectorNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.PersonSelectorNode;
-import org.symphonyoss.symphony.messageml.markdown.nodes.form.RadioNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextAreaNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
@@ -101,17 +98,9 @@ public class MarkdownRenderer extends AbstractVisitor {
     if (removeNewlines) {
       content = XmlPrintStream.removeNewLines(content);
     }
-
-
-    // If the line consists only of repeated reserved Markdown characters, ignore it
-    Matcher matcher = NOESCAPE_PATTERN.matcher(content);
-    if (!matcher.matches()) {
-      // Otherwise, escape reserved Markdown characters in text nodes to prevent them from being interpreted as MD
-      content = StringUtils.replaceEach(content, new String[]{"_","*","-","+","`"}, new String[]{"\\_","\\*","\\-","\\+","\\`"});
-    }
-
-    writer.write(content);
+    writer.write(addEscapeCharacter(content));
   }
+
 
   @Override
   public void visit(HardLineBreak hardLineBreak) {
@@ -244,14 +233,8 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((TextFieldNode) node);
     } else if (node instanceof TextAreaNode) {
       visit((TextAreaNode) node);
-    } else if (node instanceof DateSelectorNode) {
-      visit((DateSelectorNode) node);
     } else if (node instanceof PersonSelectorNode) {
       visit((PersonSelectorNode) node);
-    } else if (node instanceof CheckboxNode) {
-      visit((CheckboxNode) node);
-    } else if (node instanceof RadioNode) {
-      visit((RadioNode) node);
     } else if (node instanceof FormElementNode) {
       visit((FormElementNode) node);
     }
@@ -265,7 +248,7 @@ public class MarkdownRenderer extends AbstractVisitor {
 
   private void visit(FormElementNode formElement) {
     writer.write(formElement.getOpeningDelimiter());
-    writer.write(formElement.getText());
+    writer.write(addEscapeCharacter(formElement.getText()));
     writer.write(formElement.getClosingDelimiter());
   }
 
@@ -283,7 +266,7 @@ public class MarkdownRenderer extends AbstractVisitor {
 
   private void visit(SelectNode select) {
     writer.write(select.getOpeningDelimiter());
-    writer.write(select.getText());
+    writer.write(addEscapeCharacter(select.getText()));
     writer.write(select.getClosingDelimiter());
     visitChildren(select);
   }
@@ -296,38 +279,20 @@ public class MarkdownRenderer extends AbstractVisitor {
   
   private void visit(TextFieldNode textField) {
     writer.write(textField.getOpeningDelimiter());
-    writer.write(textField.getText());
+    writer.write(addEscapeCharacter(textField.getText()));
     writer.write(textField.getClosingDelimiter());
   }
 
   private void visit(TextAreaNode textArea) {
     writer.write(textArea.getOpeningDelimiter());
-    writer.write(textArea.getText());
+    writer.write(addEscapeCharacter(textArea.getText()));
     writer.write(textArea.getClosingDelimiter());
-  }
-
-  private void visit(DateSelectorNode dateSelector) {
-    writer.write(dateSelector.getOpeningDelimiter());
-    writer.write(dateSelector.getText());
-    writer.write(dateSelector.getClosingDelimiter());
   }
 
   private void visit(PersonSelectorNode personSelector) {
     writer.write(personSelector.getOpeningDelimiter());
-    writer.write(personSelector.getText());
+    writer.write(addEscapeCharacter(personSelector.getText()));
     writer.write(personSelector.getClosingDelimiter());
-  }
-
-  private void visit(CheckboxNode checkbox) {
-    writer.write(checkbox.getOpeningDelimiter());
-    writer.write(checkbox.getText());
-    writer.write(checkbox.getClosingDelimiter());
-  }
-
-  private void visit(RadioNode radio) {
-    writer.write(radio.getOpeningDelimiter());
-    writer.write(radio.getText());
-    writer.write(radio.getClosingDelimiter());
   }
   
   private void visit(KeywordNode keyword) {
@@ -412,6 +377,16 @@ public class MarkdownRenderer extends AbstractVisitor {
       }
       child = next;
     }
+  }
+
+  public static String addEscapeCharacter(String content) {
+    // If the line consists only of repeated reserved Markdown characters, ignore it
+    Matcher matcher = NOESCAPE_PATTERN.matcher(content);
+    if (!matcher.matches()) {
+      // Otherwise, escape reserved Markdown characters in text nodes to prevent them from being interpreted as MD
+      content = StringUtils.replaceEach(content, new String[]{"_","*","-","+","`"}, new String[]{"\\_","\\*","\\-","\\+","\\`"});
+    }
+    return content;
   }
 
   private void putJsonObject(String field, JsonNode value) {

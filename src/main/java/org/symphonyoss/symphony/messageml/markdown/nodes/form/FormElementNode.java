@@ -40,7 +40,4 @@ public class FormElementNode extends CustomBlock {
     return text;
   }
 
-  public void setText(String text) {
-    this.text = text;
-  }
 }
