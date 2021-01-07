@@ -29,6 +29,9 @@ public class TextAreaTest extends ElementTest {
 
   private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)" + ACTION_BTN_MARKDOWN
       + "\n---\n";
+
+  private static final String EXPECTED_MARKDOWN_WITH_UNDERSCORE = "Form (log into desktop client to answer):\n---\n(Text Area:test\\_underscore)" + ACTION_BTN_MARKDOWN
+          + "\n---\n";
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER =
       String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s])" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE);
   private static final String EXPECTED_MARKDOWN_WITH_INITIAL_VALUE =
@@ -59,6 +62,25 @@ public class TextAreaTest extends ElementTest {
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
     assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
     assertTrue("Text should be empty", textArea.getChildren().isEmpty());
+  }
+
+  @Test
+  public void testTextAreaWithUnderscore() throws Exception {
+    String input = String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\">test_underscore</textarea>%s</form></messageML>", NAME_VALUE,
+            ACTION_BTN_ELEMENT);
+    String expectedPresentationML =
+            String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form-id\"><textarea name=\"%s\">test_underscore</textarea>%s</form></div>",
+                    NAME_VALUE, ACTION_BTN_ELEMENT);
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textArea = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextArea.class, textArea.getClass());
+    assertEquals("Markdown", EXPECTED_MARKDOWN_WITH_UNDERSCORE, context.getMarkdown());
+    assertEquals("PresentationML", expectedPresentationML, context.getPresentationML());
   }
 
   @Test

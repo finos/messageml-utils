@@ -13,7 +13,7 @@ public class DateSelectorNode extends FormElementNode {
 
   public DateSelectorNode(String placeholder) {
     super(MARKDOWN, placeholder);
-    this.placeholder = placeholder;
+    this.placeholder = addEscapeCharacter(placeholder);
   }
   
   @Override

@@ -1,5 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.elements.DateSelector;
 import org.symphonyoss.symphony.messageml.elements.Element;
@@ -97,8 +98,13 @@ public class DateSelectorTest extends ElementTest {
         (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
         "></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
-    String expectedMarkdownText = (dataPlaceholder != null) ? ":[" + dataPlaceholder + "]" : "";
+    String expectedMarkdownText = (dataPlaceholder != null) ? ":[" + addEscapeCharacter(dataPlaceholder) + "]" : "";
     assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
         + "\n---\n", context.getMarkdown());
   }
+
+  public static String addEscapeCharacter(String content) {
+    return StringUtils.replaceEach(content, new String[]{"_","*","-","+","`"}, new String[]{"\\_","\\*","\\-","\\+","\\`"});
+  }
+
 }

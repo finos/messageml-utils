@@ -14,9 +14,9 @@ public class DatePickerNode extends FormElementNode {
 
   public DatePickerNode(String label, String tooltip, String placeholder) {
     super(MARKDOWN, placeholder);
-    this.label = label;
-    this.tooltip = tooltip;
-    this.placeholder = placeholder;
+    this.label = addEscapeCharacter(label);
+    this.tooltip = addEscapeCharacter(tooltip);
+    this.placeholder = addEscapeCharacter(placeholder);
   }
 
   @Override

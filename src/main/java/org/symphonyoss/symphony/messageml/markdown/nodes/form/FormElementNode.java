@@ -1,5 +1,6 @@
 package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 
+import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.CustomBlock;
 
 /**
@@ -20,7 +21,7 @@ public class FormElementNode extends CustomBlock {
 
   public FormElementNode(String tagRepresentationOnMarkdown, String text) {
     this.tagRepresentationOnMarkdown = tagRepresentationOnMarkdown;
-    this.text = text;
+    this.text = addEscapeCharacter(text);
   }
 
   public FormElementNode(String tagRepresentationOnMarkdown) {
@@ -40,7 +41,13 @@ public class FormElementNode extends CustomBlock {
     return text;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  /**
+   * Escape reserved Markdown characters which are part of the message content, to prevent them from being interpreted
+   * as Markdown
+   */
+  public String addEscapeCharacter(String content) {
+    return StringUtils.replaceEach(content, new String[]{"_","*","-","+","`"}, new String[]{"\\_","\\*","\\-","\\+","\\`"});
   }
+
+
 }

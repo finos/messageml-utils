@@ -136,6 +136,38 @@ public class CheckboxTest extends ElementTest {
   }
 
   @Test
+  public void testLabelWithUnderscoreMessageMLCheckbox() throws Exception {
+    String input = "<messageML>\n"
+            + "   <form id=\"example\">\n"
+            + "      <checkbox name=\"fruits\" value=\"orange\">Orange_fruit</checkbox> \n"
+            + "      <button type=\"action\" name=\"send-answers\">Send</button>\n"
+            + "   </form>\n"
+            + "</messageML>";
+    context.parseMessageML(input, "", MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    String id = presentationML.substring(startId + "label for=\"".length(), endId);
+    assertTrue(id.startsWith("checkbox-group-"));
+
+    String expectedResult = String.format(
+            "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+                    + "    <form id=\"example\">"
+                    + "       <div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"orange\" id=\"%s\"/><label "
+                    + "for=\"%s\">Orange_fruit</label></div>"
+                    + "        <button type=\"action\" name=\"send-answers\">Send</button>"
+                    + "    </form>"
+                    + " </div>", id, id);
+    assertEquals(expectedResult, presentationML);
+    String expectedMarkdown = "    Form (log into desktop client to answer):\n" +
+            "---\n" +
+            "       (Checkbox:Orange\\_fruit)        (Button:Send)    \n" +
+            "---\n" +
+            " ";
+    assertEquals(expectedMarkdown, context.getMarkdown());
+  }
+
+  @Test
   public void testInvalidPresentationMLCheckboxTwoInputs() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +

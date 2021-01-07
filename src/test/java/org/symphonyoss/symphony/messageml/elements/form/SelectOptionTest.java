@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.symphonyoss.symphony.messageml.elements.form.DateSelectorTest.addEscapeCharacter;
 
 public class SelectOptionTest extends ElementTest {
 
@@ -62,6 +63,25 @@ public class SelectOptionTest extends ElementTest {
     verifySelectPresentation((Select) select, name, true, required, placeholder, true, true);
   }
 
+  @Test
+  public void testSelectWithUnderscore() throws Exception {
+    String name = "complete-required-id";
+    String label = "label-here";
+    String title = "tooltip-here";
+    boolean required = true;
+    String placeholder = "placeholder-here";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select data-placeholder=\""+placeholder+"\" name=\"" + name + "\" required=\"" + required + "\"" +
+            " label=\"" + label + "\" title=\"" + title +
+            "\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELEMENT + "</form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element select = form.getChildren().get(0);
+
+    assertEquals("Select class", Select.class, select.getClass());
+    verifySelectPresentation((Select) select, name, true, required, placeholder, true, true);
+  }
   @Test
   public void testCompleteNotRequiredSelect() throws Exception {
     String name = "complete-id";
@@ -289,13 +309,14 @@ public class SelectOptionTest extends ElementTest {
   private String getExpectedSelectMarkdown(Select select, boolean hasLabel, boolean hasTitle) {
     String FORM_MARKDOWN_HEADER = "Form (log into desktop client to answer):\n---\n";
     String FORM_MARKDOWN_FOOTER = "---\n";
-    
+
     StringBuilder expectedMarkdown = new StringBuilder(FORM_MARKDOWN_HEADER);
     expectedMarkdown.append("(Dropdown");
-    expectedMarkdown.append((select.getAttribute(DATA_PLACEHOLDER_ATTR) != null || hasLabel || hasTitle) ? ":" : "");
-    expectedMarkdown.append((select.getAttribute(DATA_PLACEHOLDER_ATTR) != null) ? "[" + select.getAttribute(DATA_PLACEHOLDER_ATTR) + "]" : "");
-    expectedMarkdown.append(hasLabel ? "[" + select.getAttribute(LABEL_ATTR) + "]" : "");
-    expectedMarkdown.append(hasTitle ? "[" + select.getAttribute(TITLE_ATTR) + "]" : "");
+    String placeholder = addEscapeCharacter(select.getAttribute(DATA_PLACEHOLDER_ATTR));
+    expectedMarkdown.append((placeholder!= null || hasLabel || hasTitle) ? ":" : "");
+    expectedMarkdown.append((placeholder != null) ? "[" + placeholder + "]" : "");
+    expectedMarkdown.append(hasLabel ? "[" + addEscapeCharacter(select.getAttribute(LABEL_ATTR)) + "]" : "");
+    expectedMarkdown.append(hasTitle ? "[" + addEscapeCharacter(select.getAttribute(TITLE_ATTR)) + "]" : "");
     expectedMarkdown.append("):\n");
 
     for (Element option : select.getChildren()) {

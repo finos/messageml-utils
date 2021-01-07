@@ -2,6 +2,7 @@ package org.symphonyoss.symphony.messageml.elements.form;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.symphonyoss.symphony.messageml.elements.form.DateSelectorTest.addEscapeCharacter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
@@ -53,6 +54,37 @@ public class TextFieldTest extends ElementTest {
   }
 
   @Test
+  public void testTextFieldWithUnderscore() throws Exception {
+    String messageMLInput = "<messageML>"
+            + "<form id=\"" + FORM_ID_ATTR + "\">"
+            + "<text-field name=\"text-field\" placeholder=\"placeholder-here\" title=\"title-here\" label=\"label-here\">test_underscore</text-field>"
+            + ACTION_BTN_ELEMENT
+            + "</form></messageML>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element textField = form.getChildren().get(0);
+
+    assertEquals(Form.class, form.getClass());
+    assertEquals(TextField.class, textField.getClass());
+    String presentationML = context.getPresentationML();
+    String uniqueLabelId = getLabelId(presentationML);
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+            "<form id=\"text-field-form\">" +
+            "<div class=\"textfield-group\" data-generated=\"true\">" +
+            "<label for=\"textfield-"+ uniqueLabelId +"\">label-here</label>" +
+            "<span class=\"info-hint\" data-target-id=\"textfield-"+ uniqueLabelId +"\" data-title=\"title-here\"></span>" +
+            "<input type=\"text\" name=\"text-field\" placeholder=\"placeholder-here\" value=\"test_underscore\" id=\"textfield-"+ uniqueLabelId +"\"/></div>" +
+            ACTION_BTN_ELEMENT +
+            "</form></div>";
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+            expectedPresentationML, presentationML);
+    verifyTextFieldMarkdown("placeholder-here", "test_underscore", "label-here", "title-here");
+  }
+
+  @Test
   public void testTextFieldWithAllAttributes() throws Exception {
     String messageMLInput = "<messageML>"
         + "<form id=\"" + FORM_ID_ATTR + "\">"
@@ -72,10 +104,7 @@ public class TextFieldTest extends ElementTest {
     assertEquals(TextField.class, textField.getClass());
 
     String presentationML = context.getPresentationML();
-    String textFieldRegex = ".*(\"textfield-(.*?)\").*";
-    Pattern pattern = Pattern.compile(textFieldRegex);
-    Matcher matcher = pattern.matcher(presentationML);
-    String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
+    String uniqueLabelId = getLabelId(presentationML);
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<form id=\"text-field-form\">"
@@ -668,11 +697,18 @@ public class TextFieldTest extends ElementTest {
     context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
   }
 
+  private String getLabelId(String presentationML) {
+    String textFieldRegex = ".*(\"textfield-(.*?)\").*";
+    Pattern pattern = Pattern.compile(textFieldRegex);
+    Matcher matcher = pattern.matcher(presentationML);
+    return matcher.matches() ? matcher.group(2) : null;
+  }
+
   private String getExpectedTextFieldMarkdown(String placeholder, String initialValue, String label, String title) {
-    String expectedMarkdownText = ((placeholder != null) ? "[" + placeholder + "]" : "") +
-        ((label != null) ? "[" + label + "]" : "") +
-        ((title != null) ? "[" + title + "]" : "") +
-        ((initialValue != null) ? initialValue : "");
+    String expectedMarkdownText = ((placeholder != null) ? "[" + addEscapeCharacter(placeholder) + "]" : "") +
+        ((label != null) ? "[" + addEscapeCharacter(label) + "]" : "") +
+        ((title != null) ? "[" + addEscapeCharacter(title) + "]" : "") +
+        ((initialValue != null) ? addEscapeCharacter(initialValue) : "");
 
     return String.format("Form (log into desktop client to answer):\n---\n(Text Field%s)"+ ACTION_BTN_MARKDOWN + "\n---\n", (!expectedMarkdownText.isEmpty()) ? ":" + expectedMarkdownText : "");
   }
