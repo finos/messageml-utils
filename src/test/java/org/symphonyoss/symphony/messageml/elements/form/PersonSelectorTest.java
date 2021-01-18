@@ -65,6 +65,62 @@ public class PersonSelectorTest extends ElementTest {
   }
 
   @Test
+  public void sendValidPersonSelectorWithSelectedUsersIds() throws Exception {
+    context.parseMessageML("<messageML>" +
+            "  <form id=\"all-elements\">" +
+            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" selected-users-ids=\"123\"/>" +
+            "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
+            "  </form>" +
+            "</messageML>", null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+            "  <form id=\"all-elements\">" +
+            "    <div class=\"person-selector\" data-name=\"person-selector\" data-placeholder=\"Type a person's name\" selected-users-ids=\"123\"></div>" +
+            "    <button type=\"action\" name=\"send-answers\">Send Answers</button>" +
+            "  </form>" +
+            "</div>";
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+            expectedPresentationML, presentationML);
+  }
+
+  @Test
+  public void sendValidPersonSelectorWithSelectedUsersIdsMultiple() throws Exception {
+    context.parseMessageML("<messageML>" +
+            "  <form id=\"all-elements\">" +
+            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" selected-users-ids=\"123,456\"/>" +
+            "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
+            "  </form>" +
+            "</messageML>", null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+            "  <form id=\"all-elements\">" +
+            "    <div class=\"person-selector\" data-name=\"person-selector\" data-placeholder=\"Type a person's name\" selected-users-ids=\"123,456\"></div>" +
+            "    <button type=\"action\" name=\"send-answers\">Send Answers</button>" +
+            "  </form>" +
+            "</div>";
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+            expectedPresentationML, presentationML);
+  }
+
+  @Test
+  public void sendInvalidPersonSelectorWithSelectedUsersIds() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"selected-users-ids\" contains an unsupported format, only user ids separated by comma are supported");
+    context.parseMessageML("<messageML>" +
+            "  <form id=\"all-elements\">" +
+            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" selected-users-ids=\"123,abc\"/>" +
+            "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
+            "  </form>" +
+            "</messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void sendInvalidAttrPersonSelectorOnPresentationML() throws Exception {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"dummy\" is not allowed in \"person-selector\"");
