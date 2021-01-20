@@ -28,6 +28,8 @@ public class PersonSelector extends FormElement implements LabelableElement, Too
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
   private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
+  private static final String SELECTED_USERS_IDS = "selected-users-ids";
+  private static final String SELECTED_USERS_IDS_FORMAT = "^\\d+(,\\d+)*$";
 
   private static final String PRESENTATIONML_TAG = "div";
   private static final String PRESENTATIONML_PLACEHOLDER_ATTR = "data-placeholder";
@@ -66,6 +68,15 @@ public class PersonSelector extends FormElement implements LabelableElement, Too
 
     if(getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
+    }
+
+    if(getAttribute(SELECTED_USERS_IDS) != null){
+      String selectedUsersIds = getAttribute(SELECTED_USERS_IDS);
+      if(!selectedUsersIds.matches(SELECTED_USERS_IDS_FORMAT)){
+        throw new InvalidInputException(
+                String.format("Attribute \"%s\" contains an unsupported format, only user ids separated by comma are supported", SELECTED_USERS_IDS)
+        );
+      }
     }
 
     assertNoContent();
@@ -107,6 +118,7 @@ public class PersonSelector extends FormElement implements LabelableElement, Too
       case REQUIRED_ATTR:
       case LABEL:
       case TITLE:
+      case SELECTED_USERS_IDS:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
@@ -134,6 +146,10 @@ public class PersonSelector extends FormElement implements LabelableElement, Too
       presentationAttrs.put(PRESENTATIONML_REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
     }
 
+    if(getAttribute(SELECTED_USERS_IDS) != null) {
+      presentationAttrs.put(SELECTED_USERS_IDS, getAttribute(SELECTED_USERS_IDS));
+    }
+
     return presentationAttrs;
   }
 
@@ -150,6 +166,11 @@ public class PersonSelector extends FormElement implements LabelableElement, Too
     if (element.hasAttribute(PRESENTATIONML_REQUIRED_ATTR)) {
       element.setAttribute(REQUIRED_ATTR, element.getAttribute(PRESENTATIONML_REQUIRED_ATTR));
       element.removeAttribute(PRESENTATIONML_REQUIRED_ATTR);
+    }
+
+    if (element.hasAttribute(SELECTED_USERS_IDS)) {
+      element.setAttribute(SELECTED_USERS_IDS, element.getAttribute(SELECTED_USERS_IDS));
+      element.removeAttribute(SELECTED_USERS_IDS);
     }
 
     NamedNodeMap attributes = element.getAttributes();
