@@ -31,6 +31,7 @@ import org.w3c.dom.Text;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -396,6 +397,26 @@ public abstract class Element {
       LocalDate.parse(attributeValue, formatter);
     } catch (DateTimeParseException e) {
       throw new InvalidInputException(String.format("Attribute \"%s\" has invalid date format", attributeName), e);
+    }
+  }
+
+  /**
+   * Checks that attribute contains time, in the provided format
+   *
+   * @param attributeName name of attribute that will be checked.
+   * @param formatter time format
+   * @throws InvalidInputException
+   */
+  void assertTimeFormat(String attributeName, DateTimeFormatter formatter)
+          throws InvalidInputException {
+    String attributeValue = getAttribute(attributeName);
+    if(attributeValue == null){
+      return;
+    }
+    try {
+      LocalTime.parse(attributeValue, formatter);
+    } catch (DateTimeParseException e) {
+      throw new InvalidInputException(String.format("Attribute \"%s\" has invalid time format, only HH:mm:ss format is allowed", attributeName), e);
     }
   }
 

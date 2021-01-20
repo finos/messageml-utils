@@ -66,6 +66,7 @@ import org.symphonyoss.symphony.messageml.elements.TableHeaderCell;
 import org.symphonyoss.symphony.messageml.elements.TableRow;
 import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.elements.TextField;
+import org.symphonyoss.symphony.messageml.elements.TimePicker;
 import org.symphonyoss.symphony.messageml.elements.TooltipableElement;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -517,6 +518,9 @@ public class MessageMLParser {
       case DatePicker.MESSAGEML_TAG:
         return new DatePicker(parent, messageFormat);
 
+      case TimePicker.MESSAGEML_TAG:
+        return new TimePicker(parent,messageFormat);
+
       case TextArea.MESSAGEML_TAG:
         return new TextArea(parent, messageFormat);
 
@@ -635,6 +639,8 @@ public class MessageMLParser {
       return new Radio(parent, FormatEnum.PRESENTATIONML);
     } else if(containsAttribute(elementType, DatePicker.PRESENTATIONML_INPUT_TYPE)){
       return new DatePicker(parent, FormatEnum.PRESENTATIONML);
+    } else if(containsAttribute(elementType, TimePicker.PRESENTATIONML_INPUT_TYPE)){
+      return new TimePicker(parent, FormatEnum.PRESENTATIONML);
     } else {
       throw new InvalidInputException(String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
     }
