@@ -65,10 +65,10 @@ public class PersonSelectorTest extends ElementTest {
   }
 
   @Test
-  public void sendValidPersonSelectorWithSelectedUsersIds() throws Exception {
+  public void sendValidPersonSelectorWithValue() throws Exception {
     context.parseMessageML("<messageML>" +
             "  <form id=\"all-elements\">" +
-            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" selected-users-ids=\"123\"/>" +
+            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" value=\"[123]\"/>" +
             "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
             "  </form>" +
             "</messageML>", null, MessageML.MESSAGEML_VERSION);
@@ -77,7 +77,7 @@ public class PersonSelectorTest extends ElementTest {
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
             "  <form id=\"all-elements\">" +
-            "    <div class=\"person-selector\" data-name=\"person-selector\" data-placeholder=\"Type a person's name\" selected-users-ids=\"123\"></div>" +
+            "    <div class=\"person-selector\" data-name=\"person-selector\" data-placeholder=\"Type a person's name\" data-value=\"[123]\"></div>" +
             "    <button type=\"action\" name=\"send-answers\">Send Answers</button>" +
             "  </form>" +
             "</div>";
@@ -87,10 +87,10 @@ public class PersonSelectorTest extends ElementTest {
   }
 
   @Test
-  public void sendValidPersonSelectorWithSelectedUsersIdsMultiple() throws Exception {
+  public void sendValidPersonSelectorWithValueMultipleIds() throws Exception {
     context.parseMessageML("<messageML>" +
             "  <form id=\"all-elements\">" +
-            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" selected-users-ids=\"123,456\"/>" +
+            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" value=\"[123,456]\"/>" +
             "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
             "  </form>" +
             "</messageML>", null, MessageML.MESSAGEML_VERSION);
@@ -99,7 +99,7 @@ public class PersonSelectorTest extends ElementTest {
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
             "  <form id=\"all-elements\">" +
-            "    <div class=\"person-selector\" data-name=\"person-selector\" data-placeholder=\"Type a person's name\" selected-users-ids=\"123,456\"></div>" +
+            "    <div class=\"person-selector\" data-name=\"person-selector\" data-placeholder=\"Type a person's name\" data-value=\"[123,456]\"></div>" +
             "    <button type=\"action\" name=\"send-answers\">Send Answers</button>" +
             "  </form>" +
             "</div>";
@@ -109,12 +109,24 @@ public class PersonSelectorTest extends ElementTest {
   }
 
   @Test
-  public void sendInvalidPersonSelectorWithSelectedUsersIds() throws Exception {
+  public void sendInvalidPersonSelectorWithValueNotALong() throws Exception {
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Attribute \"selected-users-ids\" contains an unsupported format, only user ids separated by comma are supported");
+    expectedException.expectMessage("Attribute \"value\" contains an unsupported format, should be an array of user ids");
     context.parseMessageML("<messageML>" +
             "  <form id=\"all-elements\">" +
-            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" selected-users-ids=\"123,abc\"/>" +
+            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" value=\"[123,abc]\"/>" +
+            "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
+            "  </form>" +
+            "</messageML>", null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void sendInvalidPersonSelectorWithValueWrongFormat() throws Exception {
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"value\" contains an unsupported format, should be an array of user ids");
+    context.parseMessageML("<messageML>" +
+            "  <form id=\"all-elements\">" +
+            "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" value=\"xxyz\"/>" +
             "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
             "  </form>" +
             "</messageML>", null, MessageML.MESSAGEML_VERSION);
