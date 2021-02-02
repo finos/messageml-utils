@@ -140,9 +140,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <jsonassert.version>1.5.0</jsonassert.version>
 
-        <sonar.projectKey>symphonyoss_messageml-utils</sonar.projectKey>
-        <sonar.organization>finos-symphonyoss</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <profiles>
@@ -162,6 +159,12 @@
                     <name>env.SONAR_LOGIN</name>
                 </property>
             </activation>
+            <properties>
+                <sonar.projectKey>symphonyoss_messageml-utils</sonar.projectKey>
+                <sonar.organization>finos-symphonyoss</sonar.organization>
+                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+                <sonar.login>${env.SONAR_LOGIN}</sonar.login>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
