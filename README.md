@@ -1,7 +1,8 @@
 [![Licence](https://img.shields.io/badge/licence-Apache%20Licence%20%282.0%29-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Maven Central](https://img.shields.io/maven-central/v/org.symphonyoss.symphony/messageml.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22messageml%22)
-[![Build Status](https://travis-ci.org/symphonyoss/messageml-utils.svg)](https://travis-ci.org/symphonyoss/messageml-utils)
+[![Build Status](https://github.com/symphonyoss/messageml-utils/workflows/Build/badge.svg)](https://github.com/symphonyoss/messageml-utils/actions)
 [![Validation Status](https://scan.coverity.com/projects/12785/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-messageml-utils)
+[![Maintainability](https://api.codeclimate.com/v1/badges/4a39fc9ecbb545e184a4/maintainability)](https://codeclimate.com/github/symphonyoss/messageml-utils/maintainability)
 [![Test Coverage](https://codeclimate.com/github/symphonyoss/messageml-utils/badges/coverage.svg)](https://codeclimate.com/github/symphonyoss/messageml-utils/coverage)
 
 # Introduction
