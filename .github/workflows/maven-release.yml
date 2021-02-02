@@ -1,6 +1,3 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: Release new version to Maven Central
 
 on:
@@ -26,4 +23,14 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn -B --file pom.xml release:prepare -DdevelopmentVersion=${{ github.event.inputs.dev-version }} -DreleaseVersion=${{ github.event.inputs.release-version }} -DdryRun 
+      run: mvn -B --file pom.xml release:prepare -DdevelopmentVersion=${{ github.event.inputs.dev-version }} -DreleaseVersion=${{ github.event.inputs.release-version }}
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: messageml-${{ github.event.inputs.release-version }}
+        release_name: MessageML ${{ github.event.inputs.release-version }}
+        draft: true
