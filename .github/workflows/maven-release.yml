@@ -15,6 +15,7 @@ on:
 
 jobs:
   build:
+    name: "Release version ${{ github.event.inputs.release-version }}"
 
     runs-on: ubuntu-latest
 
@@ -25,4 +26,4 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn -B release:prepare -DdryRun --file pom.xml
+      run: mvn -B --file pom.xml release:prepare -DdevelopmentVersion=${{ github.event.inputs.dev-version }} -DreleaseVersion=${{ github.event.inputs.release-version }} -DdryRun 
