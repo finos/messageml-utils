@@ -1,0 +1,20 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: 'Release version'
+        required: true
+      dev-version:
+        description: 'Next development version'
+        required: true
+
+jobs:
+  build:
+    name: "Release version ${{ github.event.inputs.release-version }}"
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
