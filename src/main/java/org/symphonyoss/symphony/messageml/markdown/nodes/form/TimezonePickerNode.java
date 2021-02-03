@@ -4,9 +4,9 @@ public class TimezonePickerNode extends FormElementNode implements PlaceholderLa
 
   private final static String MARKDOWN = "Timezone Picker";
 
-  private String label;
-  private String tooltip;
-  private String placeholder;
+  private final String label;
+  private final String tooltip;
+  private final String placeholder;
 
 
   public TimezonePickerNode(String label, String tooltip, String placeholder) {

@@ -17,6 +17,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents the Symphony Element Timezone Picker which is represented with tag name "timezone-picker".
+ * The messageML representation of the element can contain the following fields:
+ * <ul>
+ *   <li> name (required) -> used to identify the picker </li>
+ *   <li> label -> displayed on top of the Element </li>
+ *   <li> title -> description displayed as a hint </li>
+ *   <li> placeholder -> additional information </li>
+ *   <li> value -> default timezone, could be enforced to "" </li>
+ *   <li> required -> specifies that the input field must be filled out before submitting the form </li>
+ *   <li> disabled-timezone -> json object containing list of timezones to be excluded </li>
+ * </ul>
+ *   Value attribute and timezones defined in the disabled-timezone should be valid and belonging to the
+ *   "tz database"
+ */
+
 public class TimezonePicker extends FormElement implements LabelableElement, TooltipableElement {
 
   public static final String MESSAGEML_TAG = "timezone-picker";
