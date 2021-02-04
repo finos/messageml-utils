@@ -135,7 +135,15 @@ public class Styles {
    */
   public static void validate(String styleAttribute) throws InvalidInputException {
     try {
-      final Set<String> inputStyleProperties = Arrays.asList(styleAttribute.split(";")).stream()
+      /**
+       * The split of style properties does not use simply ';' as separator but a regular expression
+       * to avoid splitting when there is a data URI scheme (data:[<media type>][;base64],<data>),
+       * because it contains inside ';' and it must be not split
+       *
+       * This is a workaround, because for now it is the only exception found.
+       * If in the future other similar situation will occurs, please consider if a CSS parser library can be used
+       */
+      final Set<String> inputStyleProperties = Arrays.asList(styleAttribute.split(";(?!base64,)")).stream()
           .filter(input -> !StringUtils.isBlank(input))
           .map(input -> {
               int separator = input.indexOf(":");
