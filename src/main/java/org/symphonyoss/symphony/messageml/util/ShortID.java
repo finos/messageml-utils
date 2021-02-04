@@ -2,6 +2,7 @@ package org.symphonyoss.symphony.messageml.util;
 
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Short id generator. Url-friendly. Non-predictable. Cluster-compatible.
@@ -37,7 +38,7 @@ public class ShortID {
   private final int clusterWorkerId;
   private final char[] shuffled;
   // Counter is used when shortid is called multiple times in one second.
-  private volatile int counter;
+  private final AtomicInteger counter;
   // Remember the last time shortid was called in case counter is needed.
   private volatile long previousSeconds;
 
@@ -45,6 +46,7 @@ public class ShortID {
       int clusterWorkerId) {
     this.random = random;
     this.shuffled = shuffle(alphabet);
+    this.counter = new AtomicInteger();
     this.reduceTime = reduceTime;
     this.version = version;
     this.clusterWorkerId = clusterWorkerId;
@@ -62,18 +64,20 @@ public class ShortID {
 
     long seconds = (long) Math.floor((System.currentTimeMillis() - reduceTime) * 0.001);
 
+    int counterValue;
     if (seconds == previousSeconds) {
-      counter++;
+      counterValue = counter.incrementAndGet();
     } else {
-      counter = 0;
+      counter.set(0);
+      counterValue = 0;
       previousSeconds = seconds;
     }
 
     str = str + encode(version);
     str = str + encode(clusterWorkerId);
 
-    if (counter > 0) {
-      str = str + encode(counter);
+    if (counterValue > 0) {
+      str = str + encode(counterValue);
     }
 
     str = str + encode((int) seconds);
@@ -91,7 +95,7 @@ public class ShortID {
     while (!done) {
       index = ((number >> (4 * loopCounter)) & 0x0f) | randomByte();
       str = str + shuffled[index];
-      done = number < (Math.pow(16, loopCounter + 1));
+      done = number < (Math.pow(16, loopCounter + 1.0));
       loopCounter++;
     }
     return str;
