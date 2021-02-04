@@ -67,6 +67,7 @@ import org.symphonyoss.symphony.messageml.elements.TableRow;
 import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.elements.TextField;
 import org.symphonyoss.symphony.messageml.elements.TimePicker;
+import org.symphonyoss.symphony.messageml.elements.TimezonePicker;
 import org.symphonyoss.symphony.messageml.elements.TooltipableElement;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -519,7 +520,10 @@ public class MessageMLParser {
         return new DatePicker(parent, messageFormat);
 
       case TimePicker.MESSAGEML_TAG:
-        return new TimePicker(parent,messageFormat);
+        return new TimePicker(parent, messageFormat);
+
+      case TimezonePicker.MESSAGEML_TAG:
+        return new TimezonePicker(parent, messageFormat);
 
       case TextArea.MESSAGEML_TAG:
         return new TextArea(parent, messageFormat);
