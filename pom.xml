@@ -100,27 +100,11 @@
 
     <contributors>
         <contributor>
-            <name>Adrian Zarifis</name>
-            <email>adrian.zarifis@symphony.com</email>
-            <organization>Symphony</organization>
-            <roles>
-                <role>QA Engineer</role>
-            </roles>
-        </contributor>
-        <contributor>
             <name>Daniel Nathanson</name>
             <email>daniel.nathanson@symphony.com</email>
             <organization>Symphony Communication Services LLC</organization>
             <roles>
                 <role>Senior Director Platform Engineering</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Paul Teyssier</name>
-            <email>p@symphony.com</email>
-            <organization>Symphony Communication Services LLC</organization>
-            <roles>
-                <role>Senior Director Platform</role>
             </roles>
         </contributor>
     </contributors>
@@ -139,7 +123,6 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <jsonassert.version>1.5.0</jsonassert.version>
-
     </properties>
 
     <profiles>
@@ -155,6 +138,7 @@
         <profile>
             <id>sonar</id>
             <activation>
+                <!-- Automatically run Sonar when credentials are set, i.e master branch, internal PRs -->
                 <property>
                     <name>env.SONAR_LOGIN</name>
                 </property>
@@ -304,6 +288,7 @@
 
     <build>
         <pluginManagement>
+            <!-- Use recent versions of the plugins -->
             <plugins>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -318,6 +303,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <!-- Configure Jacoco to report coverage in Sonar -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

@@ -27,6 +27,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
+          # 11 runtime needed for Sonar, we still build with 8 as a target
           java-version: 11
           server-id: ossrh-distro
           server-username: MAVEN_USERNAME
