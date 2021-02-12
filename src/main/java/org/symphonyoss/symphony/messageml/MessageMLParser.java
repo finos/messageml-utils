@@ -539,12 +539,12 @@ public class MessageMLParser {
   }
 
   private String getAttribute(org.w3c.dom.Element element, String key)
-      throws InvalidInputException {
+          throws InvalidInputException {
     String value = element.getAttribute(key);
-    if(value == null || value.isEmpty()){
-      throw new InvalidInputException(String.format("Invalid MessageML content at element \"%s\": 'data-target-id' attribute missing or empty"));
+    if (value == null || value.isEmpty()) {
+      throw new InvalidInputException(String.format("Invalid MessageML content at element \"%s\": 'data-target-id' attribute missing or empty", key));
     }
-    if(splittableContains(value, TooltipableElement.class)){
+    if (splittableContains(value, TooltipableElement.class)) {
       throw new InvalidInputException(String.format("Invalid MessageML content at element \"%s\": 'data-target-id' value already existing", key));
     }
     return value;

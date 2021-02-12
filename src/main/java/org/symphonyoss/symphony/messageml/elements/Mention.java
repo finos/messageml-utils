@@ -51,7 +51,7 @@ public class Mention extends Entity {
   private String email;
   private String prettyName;
   private Long uid;
-  private boolean fallback = false;
+  private boolean fallback;
 
   public Mention(Element parent, int entityIndex, IDataProvider dataProvider) {
     this(parent, DEFAULT_PRESENTATIONML_TAG, entityIndex, null, false, dataProvider,
@@ -137,7 +137,7 @@ public class Mention extends Entity {
       if (prettyName != null) {
         return new Text(prettyName);
       } else if (email != null) {
-        return new Text((prettyName != null) ? prettyName : email);
+        return new Text(email);
       } else if (uid != null) {
         return new Text(String.valueOf(uid));
       } else {
