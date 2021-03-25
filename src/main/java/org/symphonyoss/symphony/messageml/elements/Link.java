@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -114,6 +115,11 @@ public class Link extends Element {
       throw new InvalidInputException(e.getMessage());
     }
 
+  }
+
+  @Override
+  public void updateBiContext(BiContext biContext){
+    biContext.updateItemInContext(getClass().getSimpleName(), ATTR_HREF);
   }
 
   public URI getUri() {

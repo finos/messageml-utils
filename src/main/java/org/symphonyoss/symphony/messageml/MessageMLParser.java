@@ -15,6 +15,7 @@ import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.elements.Bold;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.Button;
@@ -111,6 +112,7 @@ public class MessageMLParser {
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final Configuration FREEMARKER = new Configuration(Configuration.getVersion());
   private final IDataProvider dataProvider;
+  private final BiContext biContext;
 
   private FormatEnum messageFormat;
   private MessageML messageML;
@@ -131,6 +133,7 @@ public class MessageMLParser {
 
   MessageMLParser(IDataProvider dataProvider) {
     this.dataProvider = dataProvider;
+    this.biContext = new BiContext();
   }
 
   /**
@@ -141,10 +144,8 @@ public class MessageMLParser {
    * @param version string containing the version of the message format
    * @throws InvalidInputException thrown on invalid MessageMLV2 input
    * @throws ProcessingException thrown on errors generating the document tree
-   * @throws IOException thrown on invalid EntityJSON input
    */
-  MessageML parse(String message, String entityJson, String version) throws InvalidInputException, ProcessingException,
-      IOException {
+  MessageML parse(String message, String entityJson, String version) throws InvalidInputException, ProcessingException {
     this.index = 0;
     this.elementIds = new HashSet<>();
     this.splittableComponents = new HashMap<>();
@@ -174,14 +175,10 @@ public class MessageMLParser {
     }
 
     this.messageML = parseMessageML(expandedMessage, version);
+    this.entityJson = this.messageML.asEntityJson(this.entityJson);
 
-    if (this.messageML != null) {
-      this.entityJson = this.messageML.asEntityJson(this.entityJson);
+    return this.messageML;
 
-      return this.messageML;
-    }
-
-    throw new ProcessingException("Internal error. Generated null MessageML from valid input");
   }
 
   /**
@@ -733,6 +730,10 @@ public class MessageMLParser {
 
   public FormatEnum getMessageFormat() {
     return messageFormat;
+  }
+
+  public BiContext getBiContext() {
+    return biContext;
   }
 
   /**

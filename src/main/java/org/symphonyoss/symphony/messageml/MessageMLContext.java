@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -48,6 +49,7 @@ public class MessageMLContext {
   private final MessageMLParser messageMLParser;
   private final MarkdownParser markdownParser;
   private final ShortID shortID;
+
   private MarkdownRenderer markdownRenderer;
   private MessageML messageML;
   private ObjectNode entityJson;
@@ -218,6 +220,20 @@ public class MessageMLContext {
 
   public String generateShortId(){
     return shortID.generate();
+  }
+
+  /**
+   * This method returns a {@link BiContext} which contains all BI data collected while parsing the MessageML.
+   * Make sure you first call {@link #parseMessageML} in order to collect the items first.
+   *
+   */
+  public BiContext getBiContext() {
+    BiContext biContext = messageMLParser.getBiContext();
+    if (biContext.getItems().isEmpty()) {
+      throw new IllegalStateException("The message hasn't been parsed yet so no BI has been collected. "
+              + "Please call MessageMLContext.parseMessageML() first.");
+    }
+    return biContext;
   }
 
 }
