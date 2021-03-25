@@ -116,7 +116,7 @@ public abstract class Element {
    * it is going to create/update a simple BiItem containing the element name and the occurrences.
    */
   void updateBiContext(BiContext context){
-    context.updateItemInContext(getClass().getSimpleName(), getMessageMLTag());
+    context.updateItem(getClass().getSimpleName(), getMessageMLTag());
   }
 
 

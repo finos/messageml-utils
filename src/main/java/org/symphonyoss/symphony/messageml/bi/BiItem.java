@@ -14,7 +14,7 @@ public class BiItem {
 
   private final String name;
 
-  private Map<String, String> attributes;
+  private final Map<String, String> attributes;
 
   public BiItem(String name, Map<String, String> attributes) {
     this.name = name;
@@ -44,19 +44,14 @@ public class BiItem {
    * If the value found is not an integer, then no update will be performed.
    * @param attributeName name of the attribute to be increased in value
    */
-  protected void increaseAttributeCount(String attributeName){
-    int value = 1;
-    if(attributes.containsKey(attributeName)){
-      String valueFound = attributes.get(attributeName);
-    try{
-        value = Integer.parseInt(valueFound) + 1;
-      } catch (NumberFormatException e){
-        logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",
-                attributeName, getName());
-        return;
-      }
+  protected void increaseAttributeCount(String attributeName) {
+    int value;
+    try {
+      value = Integer.parseInt(attributes.getOrDefault(attributeName, "0")) + 1;
+      attributes.put(attributeName, String.valueOf(value));
+    } catch (NumberFormatException e) {
+      logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",
+              attributeName, getName());
     }
-    attributes.put(attributeName, String.valueOf(value));
   }
-
 }

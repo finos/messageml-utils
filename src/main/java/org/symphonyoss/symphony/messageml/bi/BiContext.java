@@ -60,15 +60,12 @@ public class BiContext {
    * @param itemName name of the element to be checked
    * @param attributeName name of the attribute to be increased
    */
-  public void updateItemInContext(String itemName, String attributeName) {
-    Map<String, String> attributes =  new HashMap<>();
+  public void updateItem(String itemName, String attributeName) {
     Optional<BiItem> optionalBiItem = getItemWithName(itemName);
     if(optionalBiItem.isPresent()){
-      BiItem item = optionalBiItem.get();
-      items.remove(item);
-      item.increaseAttributeCount(attributeName);
-      addItem(item);
+      optionalBiItem.get().increaseAttributeCount(attributeName);
     } else {
+      Map<String, String> attributes =  new HashMap<>();
       attributes.put(attributeName, String.valueOf(1));
       addItem(new BiItem(itemName, attributes));
     }

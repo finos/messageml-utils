@@ -25,7 +25,7 @@ public class BiContextTest {
 
   @Test
   public void testUpdateItemInContextWhenItemNotFound() {
-    biContext.updateItemInContext("Link", "href");
+    biContext.updateItem("Link", "href");
 
     assertEquals(1, biContext.getItems().size());
 
@@ -41,7 +41,7 @@ public class BiContextTest {
     BiItem headerItem = new BiItem("Link", linkAttrs);
     biContext.addItem(headerItem);
 
-    biContext.updateItemInContext("Link", "href");
+    biContext.updateItem("Link", "href");
 
     assertEquals(1, biContext.getItems().size());
 
@@ -58,7 +58,7 @@ public class BiContextTest {
     BiItem headerItem = new BiItem("Header", headerAttrs);
     biContext.addItem(headerItem);
 
-    biContext.updateItemInContext("Header", "h1");
+    biContext.updateItem("Header", "h1");
 
     assertEquals(1, biContext.getItems().size());
 

@@ -119,7 +119,7 @@ public class Link extends Element {
 
   @Override
   public void updateBiContext(BiContext biContext){
-    biContext.updateItemInContext(getClass().getSimpleName(), ATTR_HREF);
+    biContext.updateItem(getClass().getSimpleName(), ATTR_HREF);
   }
 
   public URI getUri() {
