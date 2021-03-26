@@ -14,9 +14,9 @@ public class BiItem {
   private static final Logger logger = LoggerFactory.getLogger(BiContext.class);
 
   private final String name;
-  private final Map<String, String> attributes;
+  private final Map<String, Object> attributes;
 
-  public BiItem(String name, Map<String, String> attributes) {
+  public BiItem(String name, Map<String, Object> attributes) {
     this.name = name;
     this.attributes = attributes;
   }
@@ -29,8 +29,8 @@ public class BiItem {
    */
   public BiItem(String name, String attribute) {
     this.name = name;
-    Map<String, String> attributes =  new HashMap<>();
-    attributes.put(attribute, String.valueOf(1));
+    Map<String, Object> attributes =  new HashMap<>();
+    attributes.put(attribute, 1);
     this.attributes = attributes;
 
   }
@@ -48,7 +48,7 @@ public class BiItem {
    * of occurrences for generic attributes of the value or the attribute it self (e.g Button type can be either "action" or "reset").
    * If a specific attribute is not present the respective value will be set to an empty string.
    */
-  public Map<String, String> getAttributes() {
+  public Map<String, Object> getAttributes() {
     return attributes;
   }
 
@@ -61,9 +61,9 @@ public class BiItem {
    */
   protected void increaseAttributeCount(String attributeName) {
     try {
-      int value = Integer.parseInt(attributes.getOrDefault(attributeName, "0")) + 1;
-      attributes.put(attributeName, String.valueOf(value));
-    } catch (NumberFormatException e) {
+      Integer value = (Integer) attributes.getOrDefault(attributeName, 0) + 1;
+      attributes.put(attributeName, value);
+    } catch (ClassCastException e) {
       logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",
               attributeName, getName());
     }

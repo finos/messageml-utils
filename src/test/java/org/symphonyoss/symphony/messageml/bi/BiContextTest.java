@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class BiContextTest {
 
@@ -31,8 +30,8 @@ public class BiContextTest {
 
   @Test
   public void testUpdateItemInContextWhenItemAndAttributeFound() {
-    Map<String, String> linkAttrs = new HashMap<>();
-    linkAttrs.put("href", "1");
+    Map<String, Object> linkAttrs = new HashMap<>();
+    linkAttrs.put("href", 1);
     BiItem headerItem = new BiItem("Link", linkAttrs);
     biContext.addItem(headerItem);
 
@@ -47,9 +46,9 @@ public class BiContextTest {
 
   @Test
   public void testUpdateItemInContextWhenMultipleAttrsItemFound() {
-    Map<String, String> headerAttrs = new HashMap<>();
-    headerAttrs.put("h1", "2");
-    headerAttrs.put("h3", "1");
+    Map<String, Object> headerAttrs = new HashMap<>();
+    headerAttrs.put("h1", 2);
+    headerAttrs.put("h3", 1);
     BiItem headerItem = new BiItem("Header", headerAttrs);
     biContext.addItem(headerItem);
 
@@ -63,10 +62,10 @@ public class BiContextTest {
 
   }
 
-  private Map<String, String> expectedMap() {
-    Map<String, String> expected = new HashMap<>();
-    expected.put("h1", "3");
-    expected.put("h3", "1");
+  private Map<String, Object> expectedMap() {
+    Map<String, Object> expected = new HashMap<>();
+    expected.put("h1", 3);
+    expected.put("h3", 1);
     return expected;
   }
 

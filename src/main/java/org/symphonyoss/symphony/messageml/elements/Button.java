@@ -129,10 +129,10 @@ public class Button extends FormElement {
 
   @Override
   public void updateBiContext(BiContext context) {
-    Map<String, String> attributesMapBi = new HashMap<>();
+    Map<String, Object> attributesMapBi = new HashMap<>();
     attributesMapBi.put(TYPE_ATTR, getAttributes().getOrDefault(TYPE_ATTR, ""));
     attributesMapBi.put(CLASS_ATTR, getAttributes().getOrDefault(CLASS_ATTR, ""));
-    attributesMapBi.put(TooltipableElement.TITLE, getAttributes().containsKey(TooltipableElement.TITLE) ? "1" : StringUtils.EMPTY);
+    attributesMapBi.put(TooltipableElement.TITLE, getAttributes().containsKey(TooltipableElement.TITLE) ? 1 : StringUtils.EMPTY);
     context.addItem(new BiItem("Button", attributesMapBi));
   }
 }

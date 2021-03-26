@@ -352,16 +352,16 @@ public class MessageMLContextTest {
     final String message =
             "<messageML>" +
             "    <form id=\"all-elements\">" +
-            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\"  title =\"This is a title\">Button Text</button>" +
             "    </form>" +
             "</messageML>";
 
-    Map<String, String> expectedFormAttrs = new HashMap<>();
-    expectedFormAttrs.put("form", "1");
-    Map<String, String> expectedButtonAttrs = new HashMap<>();
+    Map<String, Object> expectedFormAttrs = new HashMap<>();
+    expectedFormAttrs.put("form", 1);
+    Map<String, Object> expectedButtonAttrs = new HashMap<>();
     expectedButtonAttrs.put("class", "primary");
     expectedButtonAttrs.put("type", "action");
-    expectedButtonAttrs.put("title", "");
+    expectedButtonAttrs.put("title", 1);
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
@@ -383,17 +383,24 @@ public class MessageMLContextTest {
             "<messageML>" +
             "    <form id=\"all-elements\">" +
             "        <text-field name=\"text-field\" placeholder=\"placeholder-here\" title=\"title-here\" label=\"label-here\">test_underscore</text-field>" +
-            "        <button name=\"example-button2\" class=\"primary\" type=\"action\" title =\"This is a title\">Button Text</button>" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
             "    </form>" +
             "</messageML>";
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
 
+    Map<String, Object> expectedButtonAttrs = new HashMap<>();
+    expectedButtonAttrs.put("class", "primary");
+    expectedButtonAttrs.put("type", "action");
+    expectedButtonAttrs.put("title", "");
+
     assertEquals(3, biContext.getItems().size());
     assertEquals("Form", biContext.getItems().get(0).getName());
     assertEquals("TextField", biContext.getItems().get(1).getName());
-    assertEquals("Button", biContext.getItems().get(2).getName());
+    BiItem buttonItem = biContext.getItems().get(2);
+    assertEquals("Button", buttonItem.getName());
+    assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
   }
 
   @Test
@@ -424,10 +431,10 @@ public class MessageMLContextTest {
               "<emoji shortcode=\"smiley\"/>" +
             "</messageML>";
 
-    Map<String, String> expectedLinkAttrs = new HashMap<>();
-    expectedLinkAttrs.put("href", "2");
-    Map<String, String> expectedEmojisAttrs = new HashMap<>();
-    expectedEmojisAttrs.put("emoji", "1");
+    Map<String, Object> expectedLinkAttrs = new HashMap<>();
+    expectedLinkAttrs.put("href", 2);
+    Map<String, Object> expectedEmojisAttrs = new HashMap<>();
+    expectedEmojisAttrs.put("emoji", 1);
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
@@ -454,10 +461,10 @@ public class MessageMLContextTest {
               "<h5>Hello world!</h5>" +
             "</messageML>";
 
-    Map<String, String> expectedHeadersAttributes = new HashMap<>();
-    expectedHeadersAttributes.put("h1", "1");
-    expectedHeadersAttributes.put("h2","2");
-    expectedHeadersAttributes.put("h5", "1");
+    Map<String, Object> expectedHeadersAttributes = new HashMap<>();
+    expectedHeadersAttributes.put("h1", 1);
+    expectedHeadersAttributes.put("h2",2);
+    expectedHeadersAttributes.put("h5", 1);
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
