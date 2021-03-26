@@ -57,6 +57,6 @@ public class Header extends Element {
 
   @Override
   public void updateBiContext(BiContext context) {
-    context.updateItem(getClass().getSimpleName(), tag);
+    context.updateItem("Header", tag);
   }
 }

@@ -133,6 +133,6 @@ public class Button extends FormElement {
     attributesMapBi.put(TYPE_ATTR, getAttributes().getOrDefault(TYPE_ATTR, ""));
     attributesMapBi.put(CLASS_ATTR, getAttributes().getOrDefault(CLASS_ATTR, ""));
     attributesMapBi.put(TooltipableElement.TITLE, getAttributes().containsKey(TooltipableElement.TITLE) ? "1" : StringUtils.EMPTY);
-    context.addItem(new BiItem(getClass().getSimpleName(), attributesMapBi));
+    context.addItem(new BiItem("Button", attributesMapBi));
   }
 }

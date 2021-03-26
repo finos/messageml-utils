@@ -3,6 +3,7 @@ package org.symphonyoss.symphony.messageml.bi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,12 +14,25 @@ public class BiItem {
   private static final Logger logger = LoggerFactory.getLogger(BiContext.class);
 
   private final String name;
-
   private final Map<String, String> attributes;
 
   public BiItem(String name, Map<String, String> attributes) {
     this.name = name;
     this.attributes = attributes;
+  }
+
+  /**
+   * Constructor which takes an item name and an attribute name and initialize a map of attribute
+   * setting the attribute value by default to 1.
+   * @param name ot the item to be created
+   * @param attribute name of the attribute to be included in the attributes map
+   */
+  public BiItem(String name, String attribute) {
+    this.name = name;
+    Map<String, String> attributes =  new HashMap<>();
+    attributes.put(attribute, String.valueOf(1));
+    this.attributes = attributes;
+
   }
 
   /**
@@ -42,12 +56,12 @@ public class BiItem {
    * If the attribute is found inside the map the corresponding value will be increased, otherwise the attribute will be
    * put in the map with value 1.
    * If the value found is not an integer, then no update will be performed.
+   *
    * @param attributeName name of the attribute to be increased in value
    */
   protected void increaseAttributeCount(String attributeName) {
-    int value;
     try {
-      value = Integer.parseInt(attributes.getOrDefault(attributeName, "0")) + 1;
+      int value = Integer.parseInt(attributes.getOrDefault(attributeName, "0")) + 1;
       attributes.put(attributeName, String.valueOf(value));
     } catch (NumberFormatException e) {
       logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",

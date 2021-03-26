@@ -19,11 +19,6 @@ public class BiContextTest {
   }
 
   @Test
-  public void testGetLibraryVersion() {
-    assertFalse(biContext.getLibraryVersion().isEmpty());
-  }
-
-  @Test
   public void testUpdateItemInContextWhenItemNotFound() {
     biContext.updateItem("Link", "href");
 
