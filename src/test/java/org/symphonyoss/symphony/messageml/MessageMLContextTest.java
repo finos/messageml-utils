@@ -342,9 +342,21 @@ public class MessageMLContextTest {
 
   @Test
   public void testGetBiContextBeforeParsing() {
-    assertThrows(IllegalStateException.class, () -> {
-      context.getBiContext();
-    });
+    BiContext biContext = context.getBiContext();
+
+    assertFalse(biContext.getLibraryVersion().isEmpty());
+    assertTrue(biContext.getItems().isEmpty());
+  }
+
+  @Test
+  public void testGetBiContextWhenOnlyPlainText() throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>Hello World!</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    assertFalse(biContext.getLibraryVersion().isEmpty());
+    assertTrue(biContext.getItems().isEmpty());
   }
 
   @Test

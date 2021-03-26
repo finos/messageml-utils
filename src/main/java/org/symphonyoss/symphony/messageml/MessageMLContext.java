@@ -228,12 +228,7 @@ public class MessageMLContext {
    *
    */
   public BiContext getBiContext() {
-    BiContext biContext = messageMLParser.getBiContext();
-    if (biContext.getItems().isEmpty()) {
-      throw new IllegalStateException("The message hasn't been parsed yet so no BI has been collected. "
-              + "Please call MessageMLContext.parseMessageML() first.");
-    }
-    return biContext;
+    return messageMLParser.getBiContext();
   }
 
 }
