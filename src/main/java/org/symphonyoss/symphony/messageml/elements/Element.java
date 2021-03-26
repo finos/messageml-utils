@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -84,8 +85,6 @@ public abstract class Element {
   /**
    * Informs if the element has an "id" attribute.
    * The parser that builds all elements keeps track of all ids from the elements that have it, in order to ensure unique values.
-   *
-   * @return
    */
   public Boolean hasIdAttribute() {
     // An element, by default, should not have it.
@@ -102,13 +101,24 @@ public abstract class Element {
     for (int i = 0; i < attr.getLength(); i++) {
       buildAttribute(parser, attr.item(i));
     }
-
+    if(!MessageML.MESSAGEML_TAG.equals(getMessageMLTag())) {
+      updateBiContext(parser.getBiContext());
+    }
     NodeList children = element.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
       buildNode(parser, children.item(i));
     }
   }
+
+  /**
+   * Update the BiContext adding information about the MessageML element. If not overridden in the element itself
+   * it is going to create/update a simple BiItem containing the element name and the occurrences.
+   */
+  void updateBiContext(BiContext context){
+    context.updateItem(getClass().getSimpleName(), getMessageMLTag());
+  }
+
 
   /**
    * Parse a DOM attribute into MessageML element properties.

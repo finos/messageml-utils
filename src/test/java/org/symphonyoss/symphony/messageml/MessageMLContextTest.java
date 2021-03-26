@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
@@ -33,10 +34,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.CashTag;
 import org.symphonyoss.symphony.messageml.elements.Element;
@@ -56,6 +58,7 @@ import org.xml.sax.InputSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -335,6 +338,153 @@ public class MessageMLContextTest {
                     "</div>", id1, id1, id2, id2);
 
     assertEquals(expectedResult, presentationML);
+  }
+
+  @Test
+  public void testGetBiContextBeforeParsing() {
+    BiContext biContext = context.getBiContext();
+
+    assertFalse(biContext.getLibraryVersion().isEmpty());
+    assertTrue(biContext.getItems().isEmpty());
+  }
+
+  @Test
+  public void testGetBiContextWhenOnlyPlainText() throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>Hello World!</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    assertFalse(biContext.getLibraryVersion().isEmpty());
+    assertTrue(biContext.getItems().isEmpty());
+  }
+
+  @Test
+  public void testGetBiContextWithOneElementInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+            "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\"  title =\"This is a title\">Button Text</button>" +
+            "    </form>" +
+            "</messageML>";
+
+    Map<String, Object> expectedFormAttrs = new HashMap<>();
+    expectedFormAttrs.put("form", 1);
+    Map<String, Object> expectedButtonAttrs = new HashMap<>();
+    expectedButtonAttrs.put("class", "primary");
+    expectedButtonAttrs.put("type", "action");
+    expectedButtonAttrs.put("title", 1);
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem formItem = biContext.getItems().get(0);
+    assertEquals("Form", formItem.getName());
+    assertEquals(expectedFormAttrs , formItem.getAttributes());
+
+    BiItem buttonItem = biContext.getItems().get(1);
+    assertEquals("Button", buttonItem.getName());
+    assertEquals(expectedButtonAttrs , buttonItem.getAttributes());
+  }
+
+  @Test
+  public void testGetBiContextWithDifferentElementsInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+            "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <text-field name=\"text-field\" placeholder=\"placeholder-here\" title=\"title-here\" label=\"label-here\">test_underscore</text-field>" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
+            "    </form>" +
+            "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    Map<String, Object> expectedButtonAttrs = new HashMap<>();
+    expectedButtonAttrs.put("class", "primary");
+    expectedButtonAttrs.put("type", "action");
+    expectedButtonAttrs.put("title", "");
+
+    assertEquals(3, biContext.getItems().size());
+    assertEquals("Form", biContext.getItems().get(0).getName());
+    assertEquals("TextField", biContext.getItems().get(1).getName());
+    BiItem buttonItem = biContext.getItems().get(2);
+    assertEquals("Button", buttonItem.getName());
+    assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
+  }
+
+  @Test
+  public void testGetBiContextWithSameElementsInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+            "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\" title =\"This is a title\">Button Text</button>" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
+            "    </form>" +
+            "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    assertEquals(3, biContext.getItems().size());
+    assertEquals("Form", biContext.getItems().get(0).getName());
+    assertEquals("Button", biContext.getItems().get(1).getName());
+    assertEquals("Button", biContext.getItems().get(2).getName());
+  }
+
+  @Test
+  public void testGetBiContextDuplicateSimpleTags() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+            "<messageML>" +
+              "<a href=\"https://hello.org\">Hello world!</a>" +
+              "<a href=\"http:google.com\">Google!</a>" +
+              "<emoji shortcode=\"smiley\"/>" +
+            "</messageML>";
+
+    Map<String, Object> expectedLinkAttrs = new HashMap<>();
+    expectedLinkAttrs.put("href", 2);
+    Map<String, Object> expectedEmojisAttrs = new HashMap<>();
+    expectedEmojisAttrs.put("emoji", 1);
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    List<BiItem> biItems = biContext.getItems();
+    assertEquals(2, biItems.size());
+
+    BiItem linkItem = biItems.get(0);
+    assertEquals("Link", linkItem.getName());
+    assertEquals(expectedLinkAttrs, linkItem.getAttributes());
+
+    BiItem emojiItem = biItems.get(1);
+    assertEquals("Emoji", biItems.get(1).getName());
+    assertEquals(expectedEmojisAttrs, emojiItem.getAttributes());
+  }
+
+  @Test
+  public void testGetBiContextWithMultipleHeaders() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+            "<messageML>" +
+              "<h1>Hello world!</h1>" +
+              "<h2>Hello world!</h2>" +
+              "<h2>Hello world!</h2>" +
+              "<h5>Hello world!</h5>" +
+            "</messageML>";
+
+    Map<String, Object> expectedHeadersAttributes = new HashMap<>();
+    expectedHeadersAttributes.put("h1", 1);
+    expectedHeadersAttributes.put("h2",2);
+    expectedHeadersAttributes.put("h5", 1);
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    List<BiItem> biItems = biContext.getItems();
+    assertEquals(1, biItems.size());
+    assertEquals("Header", biItems.get(0).getName());
+    assertEquals(expectedHeadersAttributes, biItems.get(0).getAttributes());
   }
 
   @Test

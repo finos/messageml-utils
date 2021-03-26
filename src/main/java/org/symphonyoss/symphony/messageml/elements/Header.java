@@ -18,6 +18,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
 import org.commonmark.node.StrongEmphasis;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.regex.Pattern;
@@ -33,8 +34,11 @@ public class Header extends Element {
   public static final String MESSAGEML_TAG = "h";
   private static final String MARKDOWN = "**";
 
+  private final String tag;
+
   public Header(Element parent, String tag) {
     super(parent, tag);
+    this.tag = tag;
   }
 
   @Override
@@ -49,5 +53,10 @@ public class Header extends Element {
   @Override
   public void validate() throws InvalidInputException {
     assertPhrasingContent();
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    context.updateItem("Header", tag);
   }
 }
