@@ -38,10 +38,12 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -257,7 +259,7 @@ public abstract class Element {
     }
 
     if(this instanceof SplittableElement && ((SplittableElement) this).isSplittable()){
-      ((SplittableElement)this).splittableRemove().forEach(remove -> attributes.remove(remove));
+      ((SplittableElement)this).splittableRemove().forEach(attributes::remove);
       // open div + adding splittable elements
       String uid = ((SplittableElement)this).splittableAsPresentationML(out, context);
       attributes.put("id", uid);
@@ -381,7 +383,7 @@ public abstract class Element {
    *
    * @param attributeName name of attribute that will be checked.
    * @param permittedValues list of values that are allowed for the specified attribute
-   * @throws InvalidInputException
+   * @throws InvalidInputException when invalid value is found
    */
   void assertAttributeValue(String attributeName, Collection<String> permittedValues) throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
@@ -393,11 +395,22 @@ public abstract class Element {
   }
 
   /**
+   * Checks if the attribute value is a valid boolean
+   * @param attributeName name of attribute that will be checked.
+   * @throws InvalidInputException when invalid boolean is found
+   */
+  void assertAttributeIsBoolean(String attributeName) throws InvalidInputException {
+    Set<String> allowedValues = new HashSet<>(Arrays.asList("true", "false"));
+    assertAttributeValue(attributeName, allowedValues);
+  }
+
+
+  /**
    * Checks if attribute contains a date, in the provided format
    *
    * @param attributeName name of attribute that will be checked.
    * @param formatter date format
-   * @throws InvalidInputException
+   * @throws InvalidInputException when invalid format found
    */
   void assertDateFormat(String attributeName, DateTimeFormatter formatter)
       throws InvalidInputException {
@@ -415,7 +428,7 @@ public abstract class Element {
    *
    * @param attributeName name of attribute that will be checked.
    * @param formatter time format
-   * @throws InvalidInputException
+   * @throws InvalidInputException when invalid format found
    */
   void assertTimeFormat(String attributeName, DateTimeFormatter formatter)
           throws InvalidInputException {
@@ -434,7 +447,7 @@ public abstract class Element {
    * Checks if an attribute is not null or empty
    *
    * @param attributeName name of attribute that will be checked.
-   * @throws InvalidInputException
+   * @throws InvalidInputException when attribute null or empty
    */
   void assertAttributeNotBlank(String attributeName) throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
@@ -447,9 +460,9 @@ public abstract class Element {
   /**
    * Checks if an attribute length is bigger than allowed
    *
-   * @param attributeName
-   * @param maxLength
-   * @throws InvalidInputException
+   * @param attributeName name of attribute that will be checked.
+   * @param maxLength maximum length allowed
+   * @throws InvalidInputException when maxLength exceeded
    */
   void assertAttributeMaxLength(String attributeName, int maxLength) throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
@@ -490,7 +503,6 @@ public abstract class Element {
 
   /**
    * Check that the element's children are limited to phrasing content.
-   * @throws InvalidInputException
    */
   void assertPhrasingContent() throws InvalidInputException {
     assertContentModel(Arrays.asList(TextNode.class, Link.class, Chime.class, Bold.class, Italic.class, Image.class,
@@ -565,7 +577,7 @@ public abstract class Element {
    * This is to enforce that at least one child of the element has one of the types informed.
    *
    * @param elementTypes list of element types to check
-   * @throws InvalidInputException
+   * @throws InvalidInputException when no child of allowed type is found
    */
   void assertContainsChildOfType(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
     boolean hasPermittedElementAsChild = this.getChildren().stream()
@@ -578,11 +590,27 @@ public abstract class Element {
   }
 
   /**
+   * Assert that the element contains at least one child and that this child is one of the allowed types.
+   *
+   * @param elementTypes list of the allowed element types to check
+   * @throws InvalidInputException when no child of allowed type is found or no child at all found
+   */
+  void assertContainsAlwaysChildOfType(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
+    boolean hasPermittedElementAsChild = this.getChildren().stream()
+            .anyMatch(element -> elementTypes.contains(element.getClass()));
+
+    if (this.getChildren().isEmpty() || !hasPermittedElementAsChild) {
+      throw new InvalidInputException(String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
+              getMessageMLTag(), getElementsNameByClassName(elementTypes)));
+    }
+  }
+
+  /**
    * Assert that children with any of the informed types do not exceed the maximum count allowed.
    *
    * @param elementTypes The element types that will be verified in order to ensure that the maximum count was not exceed.
    * @param maxCountPerElementType the maximum quantity, per element type, that is allowed.
-   * @throws InvalidInputException
+   * @throws InvalidInputException when more children than allowed are found
    */
   void assertChildrenNotExceedingMaxCount(Collection<Class<? extends Element>> elementTypes, int maxCountPerElementType) throws InvalidInputException {
     boolean hasExceeded = elementTypes.stream().anyMatch(type -> findElements(type).size() > maxCountPerElementType);
@@ -777,12 +805,12 @@ public abstract class Element {
   /**
    * Check if the element has one of informed element types as a parent at any level.
    *
-   * @param possibleParents
+   * @param possibleParents list of allowed parents
    * @return true if contains; false otherwise.
    */
   private Boolean hasParentAtAnyLevel(Collection<Class<? extends Element>> possibleParents) {
     Element element = this;
-    Boolean parentFound = false;
+    boolean parentFound = false;
 
     while (!parentFound && element.getParent() != null) {
       if (possibleParents.contains(element.getParent().getClass())) {

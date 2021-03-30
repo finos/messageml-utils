@@ -27,7 +27,6 @@ public class DateSelector extends FormElement {
 
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
-  private static final Set<String> VALID_VALUES_FOR_REQUIRED_ATTR = new HashSet<>(Arrays.asList("true", "false"));
 
   private static final String PRESENTATIONML_NAME_ATTR = "data-name";
   private static final String PRESENTATIONML_PLACEHOLDER_ATTR = "data-placeholder";
@@ -59,13 +58,11 @@ public class DateSelector extends FormElement {
   @Override
   public void validate() throws InvalidInputException {
     super.validate();
-
-    if (getAttribute(NAME_ATTR) == null) {
-      throw new InvalidInputException("The attribute \"name\" is required");
-    }
-
+    
+    assertAttributeNotBlank(NAME_ATTR);
+    
     if(getAttribute(REQUIRED_ATTR) != null) {
-      assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
+      assertAttributeIsBoolean(REQUIRED_ATTR);
     }
 
     assertNoContent();

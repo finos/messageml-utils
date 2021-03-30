@@ -20,14 +20,24 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.symphonyoss.symphony.messageml.elements.FormElement.NAME_ATTR;
+import static org.symphonyoss.symphony.messageml.elements.FormElement.TYPE_ATTR;
+
 /**
- * Class representing a Symphony Elements button
- *
- * @author lumoura
- * @since 03/21/19
+ * This class specify the Symphony Element Button represented by tag name "button". A Button can be included either
+ * inside Forms or in UIActions (at least one is required).
+ * Depending on the location, the messageML representation can be different. When is part of a Form it can contain the
+ * following attributes:
+ * <ul>
+ *    <li>name (required) -> used to identify the button</li>
+ *    <li>type -> default "action", specify the type of the button. Allowed values are "action" and "reset"</li>
+ *    <li>class -> can be "primary", "secondary", "tertiary" (deprecated: "primary-destructive","secondary-destructive")</li>
+ *    <li>title -> description displayed as a hint<l/i>
+ * <ul/>
+ * When the Button is included inside a UIAction, only "class" and "title" are allowed as attributes.
  */
-public class Button extends FormElement {
-  
+public class Button extends Element {
+
   Logger logger = LoggerFactory.getLogger(Button.class);
 
   public static final String MESSAGEML_TAG = "button";
@@ -40,32 +50,33 @@ public class Button extends FormElement {
 
   public Button(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
-    setAttribute(TYPE_ATTR, ACTION_TYPE);
+    if (!isUIActionButton()) {
+      setAttribute(TYPE_ATTR, ACTION_TYPE);
+    }
   }
 
   @Override
-  public void buildAttribute(MessageMLParser parser,
-      Node item) throws InvalidInputException {
+  public void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case TYPE_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
-        // The button can a have tooltips but is not a tooltipable element because it dont generate the span with tooltip
+      // The button can a have tooltips but is not a tooltipable element because it dont generate the span with tooltip
       case CLASS_ATTR:
-        if(getStringAttribute(item).contains("-destructive")) {
+        if (getStringAttribute(item).contains("-destructive")) {
           logger.info("Button class cannot be a destructive one, replacing it accordingly.");
         }
         setAttribute(item.getNodeName(), StringUtils.removeEnd(getStringAttribute(item), "-destructive"));
         break;
       case TooltipableElement.TITLE:
-        if(format != FormatEnum.MESSAGEML){
+        if (format != FormatEnum.MESSAGEML) {
           throwInvalidInputException(item);
         }
         setAttribute(TooltipableElement.TITLE, getStringAttribute(item));
         break;
       case TooltipableElement.DATA_TITLE:
-        if(format != FormatEnum.PRESENTATIONML){
+        if (format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
         setAttribute(TooltipableElement.DATA_TITLE, getStringAttribute(item));
@@ -76,8 +87,7 @@ public class Button extends FormElement {
   }
 
   @Override
-  void asPresentationML(XmlPrintStream out,
-      MessageMLContext context) {
+  void asPresentationML(XmlPrintStream out, MessageMLContext context) {
     out.openElement(getPresentationMLTag(), getPresentationMLAttributes());
     for (Element child : getChildren()) {
       child.asPresentationML(out, context);
@@ -87,7 +97,7 @@ public class Button extends FormElement {
 
   private Map<String, String> getPresentationMLAttributes() {
     Map<String, String> attributes = getAttributes();
-    if(format == FormatEnum.MESSAGEML && attributes.containsKey(TooltipableElement.TITLE)){
+    if (format == FormatEnum.MESSAGEML && attributes.containsKey(TooltipableElement.TITLE)) {
       Map<String, String> presentationAttributes = new LinkedHashMap<>(attributes);
       presentationAttributes.put(TooltipableElement.DATA_TITLE, attributes.get(TooltipableElement.TITLE));
       presentationAttributes.remove(TooltipableElement.TITLE);
@@ -103,18 +113,35 @@ public class Button extends FormElement {
 
   @Override
   public void validate() throws InvalidInputException {
-    super.validate();
-
-    String type = getAttribute(TYPE_ATTR);
-    String name = getAttribute(NAME_ATTR);
-    String clazz = getAttribute(CLASS_ATTR);
-
-    if (!VALID_TYPES.contains(type)) {
-      throw new InvalidInputException("Attribute \"type\" must be \"action\" or \"reset\"");
+    assertParentAtAnyLevel(Arrays.asList(Form.class, UIAction.class));
+    validateCommonAttributes();
+    if (isUIActionButton()) {
+      validateUIActionButton();
+    } else {
+      validateFormButton();
     }
+  }
+
+  private void validateCommonAttributes() throws InvalidInputException {
+    String clazz = getAttribute(CLASS_ATTR);
     if (clazz != null && !VALID_CLASSES.contains(clazz)) {
       throw new InvalidInputException("Attribute \"class\" must be \"primary\", \"secondary\", " +
               "\"tertiary\" or \"destructive\" (\"primary-destructive\" and \"secondary-destructive\" are deprecated)");
+    }
+  }
+
+  private void validateUIActionButton() throws InvalidInputException {
+    if (getAttribute(TYPE_ATTR) != null || getAttribute(NAME_ATTR) != null) {
+      throw new InvalidInputException("Attributes \"type\" and \"name\" are not allowed on a button inside a UIAction.");
+    }
+  }
+
+  private void validateFormButton() throws InvalidInputException {
+    String type = getAttribute(TYPE_ATTR);
+    String name = getAttribute(NAME_ATTR);
+
+    if (!VALID_TYPES.contains(type)) {
+      throw new InvalidInputException("Attribute \"type\" must be \"action\" or \"reset\"");
     }
     if (type.equals(ACTION_TYPE) && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for action buttons");
@@ -125,6 +152,10 @@ public class Button extends FormElement {
 
     assertContentModel(Collections.singleton(TextNode.class));
     assertContainsChildOfType(Collections.singleton(TextNode.class));
+  }
+
+  private boolean isUIActionButton() {
+    return this.getParent().getClass().equals(UIAction.class);
   }
 
   @Override

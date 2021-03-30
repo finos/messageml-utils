@@ -70,6 +70,7 @@ import org.symphonyoss.symphony.messageml.elements.TextField;
 import org.symphonyoss.symphony.messageml.elements.TimePicker;
 import org.symphonyoss.symphony.messageml.elements.TimezonePicker;
 import org.symphonyoss.symphony.messageml.elements.TooltipableElement;
+import org.symphonyoss.symphony.messageml.elements.UIAction;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -524,6 +525,9 @@ public class MessageMLParser {
 
       case TextArea.MESSAGEML_TAG:
         return new TextArea(parent, messageFormat);
+
+      case UIAction.MESSAGEML_TAG:
+        return new UIAction(parent, messageFormat);
 
       case LabelableElement.LABEL:
         String id = getAttribute(element, LabelableElement.LABEL_FOR);
