@@ -16,6 +16,7 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
@@ -69,6 +70,9 @@ public abstract class Element {
   private final List<Element> children = new ArrayList<>();
   private final Element parent;
   private final String messageMLTag;
+
+  private static final Set<String> VALID_BOOLEAN_VALUES = new HashSet<>(Arrays.asList("true", "false"));
+  public static final ObjectMapper MAPPER = new ObjectMapper();
 
   Element(Element parent) {
     this(parent, null);
@@ -400,8 +404,7 @@ public abstract class Element {
    * @throws InvalidInputException when invalid boolean is found
    */
   void assertAttributeIsBoolean(String attributeName) throws InvalidInputException {
-    Set<String> allowedValues = new HashSet<>(Arrays.asList("true", "false"));
-    assertAttributeValue(attributeName, allowedValues);
+    assertAttributeValue(attributeName, VALID_BOOLEAN_VALUES);
   }
 
 

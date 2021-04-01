@@ -1,7 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -45,12 +44,9 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
   private static final String FORMAT_ATTR_PATTERN = "^[hHmsa: ]+$";
   private static final String TIME_FORMAT_ALLOWED = "HH:mm:ss";
 
-  private final ObjectMapper mapper;
-
 
   public TimePicker(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
-    mapper = new ObjectMapper();
   }
 
   @Override
@@ -151,7 +147,7 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
                       DISABLED_TIME_RANGE_MAX_LENGTH));
     }
     try {
-      TimeInterval[] timeIntervals = mapper.readValue(disabledTime, TimeInterval[].class);
+      TimeInterval[] timeIntervals = MAPPER.readValue(disabledTime, TimeInterval[].class);
       for (TimeInterval timeInterval : timeIntervals) {
         timeInterval.assertIsValid();
       }
@@ -246,8 +242,8 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
    */
   private XMLAttribute convertJsonTimeToPresentationML(String attributeName) {
     try {
-      TimeInterval[] timeIntervals = mapper.readValue(getAttribute(attributeName), TimeInterval[].class);
-      String result = mapper.writeValueAsString(timeIntervals);
+      TimeInterval[] timeIntervals = MAPPER.readValue(getAttribute(attributeName), TimeInterval[].class);
+      String result = MAPPER.writeValueAsString(timeIntervals);
       return XMLAttribute.of(result, XMLAttribute.Format.JSON);
     } catch (JsonProcessingException e) {
       // this exception should never happens because this method is called after validation

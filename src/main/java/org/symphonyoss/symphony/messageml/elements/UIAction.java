@@ -1,13 +1,11 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -52,8 +50,6 @@ public class UIAction extends Element {
   private static final String PRESENTATIONML_STREAM_ID_ATTR = "data-stream-id";
   private static final String PRESENTATIONML_SIDE_BY_SIDE_ATTR = "data-side-by-side";
 
-
-  private static final ObjectMapper MAPPER = new ObjectMapper();
 
   public UIAction(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -102,7 +98,9 @@ public class UIAction extends Element {
     if (getAttribute(USER_IDS_ATTR) == null && getAttribute(STREAM_ID_ATTR) == null) {
       throw new InvalidInputException("At least one between \"stream-id\" and \"user-ids\" should be present");
     }
-    validateUserIdsAttribute();
+    if (getAttribute(USER_IDS_ATTR) != null) {
+      validateUserIdsAttribute();
+    }
   }
 
   private void assertUIActionAllowedChildren() throws InvalidInputException {
@@ -128,16 +126,13 @@ public class UIAction extends Element {
 
   private void validateUserIdsAttribute() throws InvalidInputException {
     String userIds = getAttribute(USER_IDS_ATTR);
-    List<Long> userIdsList = new ArrayList<>();
-    if (userIds != null) {
-      try {
-        userIdsList = MAPPER.readValue(userIds, MAPPER.getTypeFactory().constructCollectionType(List.class, Long.class));
-      } catch (JsonProcessingException e) {
-        throw new InvalidInputException("Attribute \"user-ids\" contains an unsupported format, should be an array of user ids");
+    try {
+      List<Long> userIdsList = MAPPER.readValue(userIds, MAPPER.getTypeFactory().constructCollectionType(List.class, Long.class));
+      if(userIdsList.size() > MAX_USER_IDS){
+        throw new InvalidInputException("Attribute \"user-ids\" contains more values than allowed. Max value is " + MAX_USER_IDS);
       }
-    }
-    if(userIdsList.size() > MAX_USER_IDS){
-      throw new InvalidInputException("Attribute \"user-ids\" contains more values than allowed. Max value is " + MAX_USER_IDS);
+    } catch (JsonProcessingException e) {
+      throw new InvalidInputException("Attribute \"user-ids\" contains an unsupported format, should be an array of user ids");
     }
   }
 
