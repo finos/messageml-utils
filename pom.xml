@@ -111,7 +111,7 @@
 
     <properties>
         <json.schema.validator.version>2.2.10</json.schema.validator.version>
-        <guava.version>28.0-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <jackson.version>2.10.1</jackson.version>
         <jackson.databind.version>2.10.5.1</jackson.databind.version>
         <commons.io.version>2.4</commons.io.version>
