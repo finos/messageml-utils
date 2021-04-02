@@ -1,6 +1,8 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.symphonyoss.symphony.messageml.elements.Button.ACTION_TYPE;
 import static org.symphonyoss.symphony.messageml.elements.Button.RESET_TYPE;
@@ -26,7 +28,7 @@ public class ButtonTest extends ElementTest {
   private static final String FORM_ID_ATTR = "text-field-form";
 
   @Test
-  public void testCompleteButton() throws Exception {
+  public void testCompleteButtonInForm() throws Exception {
     String type = ACTION_TYPE;
     String name = "action-btn-name";
     String clazz = "primary";
@@ -61,9 +63,8 @@ public class ButtonTest extends ElementTest {
 
   @Test
   public void testSendingResetButtonWithoutActionButton() {
-    String type = RESET_TYPE;
     String innerText = "Reset";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\">" + innerText +
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + RESET_TYPE + "\">" + innerText +
         "</button></form></messageML>";
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -147,7 +148,7 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
-  public void testTypelessButtonWithoutName() throws Exception {
+  public void testTypelessButtonWithoutName() {
     String innerText = "Typeless Button Without Name";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button>" + innerText + "</button></form></messageML>";
 
@@ -161,10 +162,9 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
-  public void testActionButtonWithoutName() throws Exception {
-    String type = ACTION_TYPE;
+  public void testActionButtonWithoutName() {
     String innerText = "Typeless Button Without Name";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + ACTION_TYPE + "\">" + innerText + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -176,10 +176,9 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
-  public void testActionButtonWithBlankName() throws Exception {
-    String type = ACTION_TYPE;
+  public void testActionButtonWithBlankName() {
     String innerText = "Typeless Button Without Name";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\" \">" + innerText + "</button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + ACTION_TYPE + "\" name=\" \">" + innerText + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -191,10 +190,9 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
-  public void testResetButtonWithName() throws Exception {
-    String type = RESET_TYPE;
+  public void testResetButtonWithName() {
     String innerText = "Reset";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\" \">" + innerText + "</button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + RESET_TYPE + "\" name=\" \">" + innerText + "</button></form></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -207,9 +205,8 @@ public class ButtonTest extends ElementTest {
 
   @Test
   public void testActionButtonWithoutTextNode() throws Exception {
-    String type = ACTION_TYPE;
     String name = "btn-name";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\"></button></form></messageML>";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + ACTION_TYPE + "\" name=\"" + name + "\"></button></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The \"button\" element must have at least one child that is any of the following elements: [text content].");
@@ -218,22 +215,21 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
-  public void testMisplacedButton() throws Exception {
+  public void testMisplacedButton() {
     String innerText = "Misplaced Button";
-    String type = RESET_TYPE;
-    String input = "<messageML><button type=\"" + type + "\">" + innerText + "</button></messageML>";
+    String input = "<messageML><button type=\"" + RESET_TYPE + "\">" + innerText + "</button></messageML>";
 
     try {
       context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
       fail("Should have thrown an exception on button out of a form tag");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Element \"button\" can only be a inner child of the following elements: [form]", e.getMessage());
+      assertEquals("Exception message", "Element \"button\" can only be a inner child of the following elements: [form, uiaction]", e.getMessage());
     }
   }
 
   @Test
-  public void testBadTypeButton() throws Exception {
+  public void testBadTypeButton() {
     String innerText = "Invalid Type Button";
     String type = "potato";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\">" + innerText + "</button></form></messageML>";
@@ -248,11 +244,10 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
-  public void testBadClassButton() throws Exception {
+  public void testBadClassButton() {
     String innerText = "Invalid Class Button";
-    String type = RESET_TYPE;
     String clazz = "outclassed";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" class=\"" + clazz + "\">" + innerText
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + RESET_TYPE + "\" class=\"" + clazz + "\">" + innerText
             + "</button></form></messageML>";
 
     try {
@@ -267,11 +262,10 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
-  public void testBadAttributeButton() throws Exception {
+  public void testBadAttributeButton() {
     String innerText = "Invalid Attribute Button";
-    String type = RESET_TYPE;
     String invalidAttribute = "invalid-attribute";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" " + invalidAttribute + "=\"invalid\">" + innerText
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + RESET_TYPE + "\" " + invalidAttribute + "=\"invalid\">" + innerText
             + "</button></form></messageML>";
 
     try {
@@ -297,12 +291,54 @@ public class ButtonTest extends ElementTest {
     
     assertEquals("Button name attribute", "div-button", button.getAttribute(NAME_ATTR));
     assertEquals("Button type attribute", "action", button.getAttribute(TYPE_ATTR));
-    assertEquals("Button clazz attribute", null, button.getAttribute(CLASS_ATTR));
+    assertNull("Button clazz attribute", button.getAttribute(CLASS_ATTR));
     assertEquals("Button inner text", "SELECT", button.getChild(0).asText());
 
     assertEquals("Button markdown", "Form (log into desktop client to answer):\n---\n(Button:SELECT)\n\n\n---\n", context.getMarkdown());
     assertEquals("Button presentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"example\"><div><button type=\"action\" name=\"div-button\">SELECT</button></div></form></div>",
         context.getPresentationML());
+  }
+
+  @Test
+  public void testButtonInUIAction() throws Exception {
+    String input = "<messageML><ui-action action=\"open-im\" user-ids=\"[123]\">" +
+            "<button>Open by stream ID</button>" +
+            "</ui-action></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element uiAction = messageML.getChildren().get(0);
+    Element button = uiAction.getChildren().get(0);
+
+    assertEquals("Button class", Button.class, button.getClass());
+    assertTrue(button.getAttributes().isEmpty());
+  }
+
+  @Test
+  public void testButtonWithAttributesInUIAction() throws Exception {
+    String input = "<messageML><ui-action action=\"open-im\" user-ids=\"[123]\">" +
+            "<button class=\"primary\" title=\"This is a UIAction button\">Open by stream ID</button>" +
+            "</ui-action></messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element uiAction = messageML.getChildren().get(0);
+    Element button = uiAction.getChildren().get(0);
+
+    assertEquals("Button class", Button.class, button.getClass());
+    assertEquals(2, button.getAttributes().size());
+  }
+
+  @Test
+  public void testButtonWithInvalidAttributesInUIAction() throws Exception {
+    String input = "<messageML><ui-action action=\"open-im\" user-ids=\"[123]\">" +
+            "<button type=\"reset\">Open by stream ID</button>" +
+            "</ui-action></messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attributes \"type\" and \"name\" are not allowed on a button inside a UIAction.");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
   private String getNamePresentationML(String name) {

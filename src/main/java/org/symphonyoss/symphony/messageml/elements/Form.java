@@ -51,12 +51,10 @@ public class Form extends Element {
   @Override
   protected void buildAttribute(MessageMLParser parser,
       Node item) throws InvalidInputException {
-    switch (item.getNodeName()) {
-      case ID_ATTR:
-        setAttribute(ID_ATTR, getStringAttribute(item));
-        break;
-      default:
-        throwInvalidInputException(item);
+    if (ID_ATTR.equals(item.getNodeName())) {
+      setAttribute(ID_ATTR, getStringAttribute(item));
+    } else {
+      throwInvalidInputException(item);
     }
   }
 

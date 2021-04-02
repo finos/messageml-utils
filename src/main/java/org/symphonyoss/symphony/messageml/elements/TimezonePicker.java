@@ -1,7 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -51,8 +50,6 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
   private static final int DISABLED_TIMEZONE_MAX_LENGTH = 1024;
   private static final String PRESENTATIONML_TAG = "div";
   private static final String CLASS_ATTR = "class";
-
-  private static final ObjectMapper MAPPER = new ObjectMapper();
 
   public TimezonePicker(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);

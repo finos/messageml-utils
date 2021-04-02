@@ -1,7 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -43,13 +42,10 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   private static final String HIGHLIGHTED_DATE_PRESENTATION_ATTR = "data-highlighted-date";
   private static final String FORMAT_PRESENTATION_ATTR = "data-format";
 
-  private final ObjectMapper mapper;
-
   private static final String DATE_FORMAT_ALLOWED = "^[0-9Mdy\\/. -:]+$";
 
   public DatePicker(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
-    mapper = new ObjectMapper();
   }
 
   @Override
@@ -199,8 +195,8 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
    */
   private XMLAttribute convertJsonDateToPresentationML(String attributeName) {
     try {
-      DateInterval[] dateIntervals = mapper.readValue(getAttribute(attributeName), DateInterval[].class);
-      String result = mapper.writeValueAsString(dateIntervals);
+      DateInterval[] dateIntervals = MAPPER.readValue(getAttribute(attributeName), DateInterval[].class);
+      String result = MAPPER.writeValueAsString(dateIntervals);
       return XMLAttribute.of(result, XMLAttribute.Format.JSON);
     } catch (JsonProcessingException e) {
       // this exception should never happens because this method is called after validation
@@ -223,7 +219,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
                 DATE_RANGE_MAX_LENGTH));
       }
       try {
-        DateInterval[] dateIntervals = mapper.readValue(attributeValue, DateInterval[].class);
+        DateInterval[] dateIntervals = MAPPER.readValue(attributeValue, DateInterval[].class);
         for(DateInterval dateInterval:dateIntervals){
           dateInterval.assertIsValid();
         }
