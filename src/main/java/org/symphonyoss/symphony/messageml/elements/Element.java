@@ -45,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
@@ -103,26 +104,52 @@ public abstract class Element {
   public void buildAll(MessageMLParser parser, org.w3c.dom.Element element) throws InvalidInputException,
       ProcessingException {
     NamedNodeMap attr = element.getAttributes();
-
     for (int i = 0; i < attr.getLength(); i++) {
       buildAttribute(parser, attr.item(i));
     }
-    if(!MessageML.MESSAGEML_TAG.equals(getMessageMLTag())) {
-      updateBiContext(parser.getBiContext());
-    }
+
     NodeList children = element.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
       buildNode(parser, children.item(i));
     }
+
+    if(!MessageML.MESSAGEML_TAG.equals(getMessageMLTag())) {
+      updateBiContext(parser.getBiContext());
+    }
   }
 
   /**
-   * Update the BiContext adding information about the MessageML element. If not overridden in the element itself
-   * it is going to create/update a simple BiItem containing the element name and the occurrences.
+   * Update the BiContext adding information about the MessageML element. By default is checking if the element contains
+   * any style or class, to be overridden in every element we want to define additional items.
    */
-  void updateBiContext(BiContext context){
-    context.updateItem(getClass().getSimpleName(), getMessageMLTag());
+  void updateBiContext(BiContext context) {
+    if (getAttribute(STYLE_ATTR) != null) {
+      context.updateItem("StylesCustom");
+    }
+    if (getAttribute(CLASS_ATTR) != null) {
+      computeClassAttributeBi(context);
+    }
+  }
+
+  /**
+   * Class attribute inside an element can contain multiple classes separate by space, this method is going to split
+   * the attribute to extract all different classes if found and fill the corresponding BiItem.
+   *
+   * @param context bi context to be updated
+   */
+  void computeClassAttributeBi(BiContext context) {
+    String styleClass = getAttribute(CLASS_ATTR);
+    String[] styles = styleClass.trim().split("[ ]+");
+    for (String style : styles) {
+      if (style.startsWith("tempo-")) {
+        context.updateItem("StylesClassTempo");
+      } else if (style.equals("entity")) {
+        context.updateItem("Entities");
+      } else {
+        context.updateItem("StylesClassOther");
+      }
+    }
   }
 
 
@@ -300,6 +327,27 @@ public abstract class Element {
     }
 
     return b.toString();
+  }
+
+  /**
+   * This method checks recursively inside all children of an element and returns the count of a give type passed
+   * as input
+   */
+  public Integer countChildrenOfType(Class<? extends Element> type) {
+    Integer count = 0;
+    Stack<Element> stack = new Stack<>();
+    Element current = this;
+    stack.push(current);
+    while(!stack.isEmpty()) {
+      current = stack.pop();
+      if(current.getClass() == type) {
+        count ++;
+      }
+      for(Element child: current.getChildren()) {
+        stack.push(child);
+      }
+    }
+    return count;
   }
 
   /**

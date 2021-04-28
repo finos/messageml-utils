@@ -18,6 +18,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
@@ -93,5 +94,25 @@ public class ExpandableCard extends Element {
 
     assertAttributeNotBlank(ATTR_STATE);
     assertAttributeValue(ATTR_STATE, allowedStates);
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItem("ExpandableCards");
+    if(getAttribute(ATTR_STATE) == null) {
+      return;
+    }
+    switch (getAttribute(ATTR_STATE)) {
+      case "collapsed":
+        context.updateItem("ExpandableCardsCollapsed");
+        break;
+      case "cropped":
+        context.updateItem("ExpandableCardsCropped");
+        break;
+      case "expanded":
+        context.updateItem("ExpandableCardsExpanded");
+        break;
+    }
   }
 }

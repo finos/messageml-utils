@@ -3,6 +3,8 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class OrderedListTest extends ElementTest {
@@ -29,4 +31,16 @@ public class OrderedListTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testListsBi() throws Exception {
+    String input = "<messageML><ol><li>Item 1</li></ol></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals("Lists", item.getName());
+    assertEquals(1, item.getAttributes().get("count"));
+  }
 }

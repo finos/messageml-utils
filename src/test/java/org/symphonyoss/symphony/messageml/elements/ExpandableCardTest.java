@@ -1,13 +1,17 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ExpandableCardTest extends ElementTest {
 
@@ -145,6 +149,34 @@ public class ExpandableCardTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Shorthand tag \"body\" is not allowed in PresentationML");
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testCardsBi() throws Exception {
+    String input = "<messageML>" +
+            "<expandable-card state=\"collapsed\"><header>Hello</header><body>world!</body></expandable-card>" +
+            "<expandable-card state=\"cropped\"><header>Hello</header><body>world!</body></expandable-card>" +
+            "<expandable-card state=\"cropped\"><header>Hello</header><body>world!</body></expandable-card>" +
+            "<expandable-card state=\"expanded\"><header>Hello</header><body>world!</body></expandable-card>" +
+            "</messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> expectedBiItems = getExpectedCardBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedCardBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem("ExpandableCards", Collections.singletonMap("count", 4)));
+    biItems.add(new BiItem("ExpandableCardsCollapsed", Collections.singletonMap("count", 1)));
+    biItems.add(new BiItem("ExpandableCardsCropped", Collections.singletonMap("count", 2)));
+    biItems.add(new BiItem("ExpandableCardsExpanded", Collections.singletonMap("count", 1)));
+    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 394)));
+    return  biItems;
   }
 
   private void verifyExpandableCard(Element card) throws Exception {

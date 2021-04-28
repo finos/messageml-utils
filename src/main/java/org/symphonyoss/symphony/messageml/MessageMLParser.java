@@ -177,7 +177,13 @@ public class MessageMLParser {
 
     this.messageML = parseMessageML(expandedMessage, version);
     this.entityJson = this.messageML.asEntityJson(this.entityJson);
+    int entityJsonSize = this.entityJson.toString().length();
 
+    biContext.addItemWithValue("MessageLength", message.length());
+    // if entityJson is empty entityJson.toString={}
+    if(entityJsonSize > 2) {
+      biContext.addItemWithValue("EntitiesJSONSize", entityJsonSize);
+    }
     return this.messageML;
 
   }
@@ -258,6 +264,9 @@ public class MessageMLParser {
     // Expand the template
     template.process(data, sw);
 
+    if(sw.toString().length() != message.length()) {
+      biContext.updateItem("UseFreeMarker");
+    }
     return sw.toString();
   }
 

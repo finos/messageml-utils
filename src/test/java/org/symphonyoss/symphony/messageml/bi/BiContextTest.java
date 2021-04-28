@@ -18,55 +18,81 @@ public class BiContextTest {
   }
 
   @Test
+  public void testUpdateItemWithAttrNameInContextWhenItemNotFound() {
+    biContext.updateItem("RadioButton", "button");
+
+    assertEquals(1, biContext.getItems().size());
+
+    BiItem biItem = biContext.getItems().get(0);
+    assertEquals("RadioButton", biItem.getName());
+    assertEquals("{button=1}", biItem.getAttributes().toString());
+  }
+
+  @Test
+  public void testUpdateItemWithAttrNameWhenItemAndAttributeFound() {
+    Map<String, Object> linkAttrs = new HashMap<>();
+    linkAttrs.put("button", 1);
+    BiItem headerItem = new BiItem("RadioButton", linkAttrs);
+    biContext.addItem(headerItem);
+
+    biContext.updateItem("RadioButton", "button");
+
+    assertEquals(1, biContext.getItems().size());
+
+    BiItem biItem = biContext.getItems().get(0);
+    assertEquals("RadioButton", biItem.getName());
+    assertEquals("{button=2}", biItem.getAttributes().toString());
+  }
+
+  @Test
   public void testUpdateItemInContextWhenItemNotFound() {
-    biContext.updateItem("Link", "href");
+    biContext.updateItem("Link");
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
     assertEquals("Link", biItem.getName());
-    assertEquals("{href=1}", biItem.getAttributes().toString());
+    assertEquals("{count=1}", biItem.getAttributes().toString());
   }
 
   @Test
   public void testUpdateItemInContextWhenItemAndAttributeFound() {
     Map<String, Object> linkAttrs = new HashMap<>();
-    linkAttrs.put("href", 1);
+    linkAttrs.put("count", 1);
     BiItem headerItem = new BiItem("Link", linkAttrs);
     biContext.addItem(headerItem);
 
-    biContext.updateItem("Link", "href");
+    biContext.updateItem("Link");
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
     assertEquals("Link", biItem.getName());
-    assertEquals("{href=2}", biItem.getAttributes().toString());
+    assertEquals("{count=2}", biItem.getAttributes().toString());
   }
 
   @Test
-  public void testUpdateItemInContextWhenMultipleAttrsItemFound() {
-    Map<String, Object> headerAttrs = new HashMap<>();
-    headerAttrs.put("h1", 2);
-    headerAttrs.put("h3", 1);
-    BiItem headerItem = new BiItem("Header", headerAttrs);
-    biContext.addItem(headerItem);
-
-    biContext.updateItem("Header", "h1");
+  public void testAddItemWithValue() {
+    biContext.addItemWithValue("EntityJSONSize", 1000);
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
-    assertEquals("Header", biItem.getName());
-    assertEquals(expectedMap(), biItem.getAttributes());
-
+    assertEquals("EntityJSONSize", biItem.getName());
+    assertEquals("{count=1000}", biItem.getAttributes().toString());
   }
 
-  private Map<String, Object> expectedMap() {
-    Map<String, Object> expected = new HashMap<>();
-    expected.put("h1", 3);
-    expected.put("h3", 1);
-    return expected;
+  @Test
+  public void testUpdateItemWithMaxValue() {
+    biContext.updateItemWithMaxValue("TableMaxColumns", 4);
+    biContext.updateItemWithMaxValue("TableMaxColumns", 6);
+    biContext.updateItemWithMaxValue("TableMaxColumns", 1);
+
+    assertEquals(1, biContext.getItems().size());
+
+    BiItem biItem = biContext.getItems().get(0);
+    assertEquals("TableMaxColumns", biItem.getName());
+    assertEquals("{count=6}", biItem.getAttributes().toString());
   }
 
 }

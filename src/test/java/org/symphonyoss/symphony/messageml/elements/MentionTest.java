@@ -5,13 +5,18 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class MentionTest extends ElementTest {
@@ -448,6 +453,30 @@ public class MentionTest extends ElementTest {
     assertEquals("Generated Markdown", expectedMarkdown, markdown);
     assertEquals("Generated text", expectedText, text);
   }
+
+  @Test
+  public void testMentionBi() throws Exception {
+    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
+    String input = "<messageML>Hello <mention uid=\"1\"/>, <mention email=\"bot.user1@localhost.com\"/>!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedMentionBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedMentionBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem("Mentions", Collections.singletonMap("count", 2)));
+    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 239)));
+    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 92)));
+    return  biItems;
+  }
+
 
   private void verifyMention(Element messageML, UserPresentation user, String expectedPresentationML, String expectedJson)
       throws Exception {

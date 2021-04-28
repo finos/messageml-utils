@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A BiItem can be any MessageML element such as <text-field>, <emoji>, <h1>, etc.
@@ -32,7 +33,6 @@ public class BiItem {
     Map<String, Object> attributes =  new HashMap<>();
     attributes.put(attribute, 1);
     this.attributes = attributes;
-
   }
 
   /**
@@ -68,4 +68,34 @@ public class BiItem {
               attributeName, getName());
     }
   }
+
+  /**
+   * If the attribute is found inside the map this method will set the corresponding value with the max found between the
+   * current one and the one in input, otherwise the attribute will be put in the map with the attribute value passed as input.
+   * If the value found is not an integer, then no update will be performed
+   *
+   * @param attributeName name of the attribute to be checked
+   * @param attributeValue value of the attribute to be checked
+   */
+  protected void setMaxAttribute(String attributeName, Object attributeValue) {
+    try {
+      Integer currentValue = (Integer) attributes.getOrDefault(attributeName, 0);
+      Integer newValue = (Integer) attributeValue;
+      if(newValue > currentValue) {
+        attributes.put(attributeName, newValue);
+      }
+    } catch (ClassCastException e) {
+      logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",
+              attributeName, getName());
+    }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    BiItem biItem = (BiItem) o;
+    return Objects.equals(name, biItem.name) && Objects.equals(attributes, biItem.attributes);
+  }
+
 }

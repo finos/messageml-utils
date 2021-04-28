@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
@@ -89,5 +91,23 @@ public class HeaderTest extends ElementTest {
         context.getPresentationML());
     assertEquals("Markdown", "**Hello @Bot User01!**", context.getMarkdown());
     assertEquals("Plaintext", "Hello @Bot User01!", context.getText());
+  }
+
+  @Test
+  public void testHeaderBi() throws Exception {
+    String input = "<messageML>" +
+            "<h1>Big title</h1>" +
+            "<h4>Subtitle</h4>" +
+            "<h4>Another subtitle</h4>" +
+            "<h6>text</h6>" +
+            "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals("Headers", item.getName());
+    assertEquals(4, item.getAttributes().get("count"));
   }
 }

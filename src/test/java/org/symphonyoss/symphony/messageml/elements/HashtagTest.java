@@ -2,12 +2,17 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class HashtagTest extends ElementTest {
 
@@ -196,6 +201,26 @@ public class HashtagTest extends ElementTest {
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testHashtagBi() throws Exception {
+    String input = "<messageML><hash tag=\"Hello\"/><hash tag=\"world\"/><hash tag=\"HelloWorld\"/></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedHashtagBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedHashtagBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem("Hashtags", Collections.singletonMap("count", 3)));
+    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 396)));
+    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 85)));
+    return  biItems;
+  }
   private void verifyHashTag(Element messageML, String expectedPresentationML, String expectedJson, String expectedText,
       String expectedMarkdown) throws Exception {
     assertEquals("Element children", 3, messageML.getChildren().size());

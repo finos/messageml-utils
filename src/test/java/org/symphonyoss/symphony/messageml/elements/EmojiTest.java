@@ -1,13 +1,20 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EmojiTest extends ElementTest{
 
@@ -92,6 +99,28 @@ public class EmojiTest extends ElementTest{
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance) , context.getEntities());
   }
+
+  @Test
+  public void testEmojiBi() throws Exception {
+    String input = "<messageML><emoji shortcode=\"smiley\"><b>Test of content</b></emoji></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedEmojiBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedEmojiBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem("Emojis", Collections.singletonMap("count", 1)));
+    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 139)));
+    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 79)));
+    return  biItems;
+  }
+
 
   private void verifyEmojiPresentation(Emoji emoji, String shortcode, String family, String size, String unicode) throws
       JsonProcessingException {

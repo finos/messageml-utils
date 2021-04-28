@@ -18,6 +18,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -49,5 +50,11 @@ public class Code extends Element {
   public void validate() throws InvalidInputException {
     assertNoAttributes();
     assertPhrasingContent();
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItem("Codes");
   }
 }

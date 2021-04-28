@@ -4,7 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -44,9 +47,21 @@ public class BiContext {
   }
 
   /**
+   * Add a specific item to the context. Used for simple items where we want to keep track of the size/value of the
+   * entity
+   * @param itemName  name of the item to be added
+   * @param itemValue   value to be assigned
+   */
+  public void addItemWithValue(String itemName, Object itemValue) {
+    BiItem item = new BiItem(itemName, Collections.singletonMap("count", itemValue));
+    items.add(item);
+  }
+
+
+  /**
    * Used for simple messageML elements (like Paragraphs, Links, Headers) where we only want to keep the count of attributes found.
    * It checks if the context already has an item for the element and if that's the case it will increase the count of
-   * the specific attribute. If context does not have the item it will create a new one with default values.
+   * the specific attribute found with attributeName. If context does not have the item it will create a new one with default values.
    *
    * @param itemName      name of the element to be checked
    * @param attributeName name of the attribute to be increased
@@ -57,6 +72,42 @@ public class BiContext {
       optionalBiItem.get().increaseAttributeCount(attributeName);
     } else {
       addItem(new BiItem(itemName, attributeName));
+    }
+  }
+
+  /**
+   * Used for simple messageML elements (like Paragraphs, Links, Headers) where we only want to keep the count of attributes found.
+   * It checks if the context already has an item for the element and if that's the case it will increase the count of
+   * the specific attribute. If context does not have the item it will create a new one with default values.
+   *
+   * @param itemName      name of the element to be checked
+   */
+  public void updateItem(String itemName) {
+    String attributeName = "count";
+    Optional<BiItem> optionalBiItem = getItemWithName(itemName);
+    if (optionalBiItem.isPresent()) {
+      optionalBiItem.get().increaseAttributeCount(attributeName);
+    } else {
+      addItem(new BiItem(itemName, attributeName));
+    }
+  }
+
+  /**
+   * Used for simple messageML elements (like Paragraphs, Links, Headers) where we only want to keep the count of attributes found.
+   * It checks if the context already has an item for the element and if that's the case it will increase the count of
+   * the specific attribute. If context does not have the item it will create a new one with default values.
+   *
+   * @param itemName      name of the element to be checked
+   */
+  public void updateItemWithMaxValue(String itemName, Object attributeValue) {
+    String attributeName = "count";
+    Optional<BiItem> optionalBiItem = getItemWithName(itemName);
+    if (optionalBiItem.isPresent()) {
+      optionalBiItem.get().setMaxAttribute(attributeName, attributeValue);
+    } else {
+      Map<String, Object> attributesMap = new HashMap<>();
+      attributesMap.put(attributeName, attributeValue);
+      addItem(new BiItem(itemName, attributesMap));
     }
   }
 

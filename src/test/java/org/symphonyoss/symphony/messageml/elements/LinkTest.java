@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.NoOpDataProvider;
@@ -138,5 +140,18 @@ public class LinkTest extends ElementTest {
     assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
     assertEquals("Generated Markdown", expectedMarkdown, markdown);
     assertEquals("Generated text", expectedText, text);
+  }
+
+  @Test
+  public void testLinkBi() throws Exception {
+    String input = "<messageML><a href=\"https://hello.org\">Hello world!</a></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals("Links", item.getName());
+    assertEquals(1, item.getAttributes().get("count"));
   }
 }

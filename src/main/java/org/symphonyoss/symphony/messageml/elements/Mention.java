@@ -22,6 +22,7 @@ import org.commonmark.node.Node;
 import org.commonmark.node.Text;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -239,4 +240,9 @@ public class Mention extends Entity {
     return ENTITY_TYPE;
   }
 
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItem("Mentions");
+  }
 }

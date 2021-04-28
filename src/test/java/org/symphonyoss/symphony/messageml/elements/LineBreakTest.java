@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.Collections;
@@ -56,5 +58,18 @@ public class LineBreakTest extends ElementTest {
     String presentationML = context.getPresentationML();
     assertEquals("PresentationML",
         "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello<br/>world!</div>", presentationML);
+  }
+
+  @Test
+  public void testLineBreakBi() throws Exception {
+    String input = "<messageML>Hello<br/>world!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals("LineBreaks", item.getName());
+    assertEquals(1, item.getAttributes().get("count"));
   }
 }

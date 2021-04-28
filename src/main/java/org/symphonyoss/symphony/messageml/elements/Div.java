@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.commonmark.node.Node;
 import org.commonmark.node.Paragraph;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -105,5 +106,11 @@ public class Div extends Element {
             + "class is \"%s\".", element));
       }
     }
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItem("Divs");
   }
 }

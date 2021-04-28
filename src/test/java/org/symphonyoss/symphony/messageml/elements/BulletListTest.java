@@ -3,6 +3,8 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class BulletListTest extends ElementTest {
@@ -27,6 +29,23 @@ public class BulletListTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The \"ul\" element must have at least one child that is any of the following elements: [listitem].");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testListsBi() throws Exception {
+    String input = "<messageML>" +
+            "<ol><li>ItemList1</li></ol>" +
+            "<ul><li>ItemList2</li></ul>" +
+            "<ul><li>ItemList3</li></ul>" +
+            "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals("Lists", item.getName());
+    assertEquals(3, item.getAttributes().get("count"));
   }
 
 }

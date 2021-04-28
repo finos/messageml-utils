@@ -2,12 +2,17 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class CashtagTest extends ElementTest {
 
@@ -200,6 +205,27 @@ public class CashtagTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Shorthand tag \"cash\" is not allowed in PresentationML");
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testCashtagBi() throws Exception {
+    String input = "<messageML><cash tag=\"Hello\"/><cash tag=\"world\"/><cash tag=\"HelloWorld\"/></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedCashtagsBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedCashtagsBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem("Cashtags", Collections.singletonMap("count", 3)));
+    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 426)));
+    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 85)));
+    return  biItems;
   }
 
 

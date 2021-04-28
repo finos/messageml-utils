@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.w3c.dom.Node;
 
@@ -58,5 +59,20 @@ public class Image extends Element {
   @Override
   public boolean areNestedElementsAllowed() {
     return false;
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItem("Images");
+    String srcValue = getAttribute(ATTR_SRC);
+    if(srcValue != null) {
+      if(srcValue.startsWith("data:image")) {
+        context.updateItem("ImagesData");
+      }
+      if(srcValue.startsWith("http")) {
+        context.updateItem("ImagesURL");
+      }
+    }
   }
 }

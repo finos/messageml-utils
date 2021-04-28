@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.HardLineBreak;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -64,5 +65,11 @@ public class LineBreak extends Element {
   @Override
   public String toString() {
     return "\n";
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItem("LineBreaks");
   }
 }
