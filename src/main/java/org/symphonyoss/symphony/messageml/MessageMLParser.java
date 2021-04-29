@@ -140,11 +140,12 @@ public class MessageMLParser {
   /**
    * Parse the text contents of the message and optionally EntityJSON into a MessageMLV2 message. Expands
    * Freemarker templates and generates a MessageML document tree.
-   * @param message string containing a MessageMLV2 message with optional Freemarker templates
+   *
+   * @param message    string containing a MessageMLV2 message with optional Freemarker templates
    * @param entityJson string containing EntityJSON data
-   * @param version string containing the version of the message format
+   * @param version    string containing the version of the message format
    * @throws InvalidInputException thrown on invalid MessageMLV2 input
-   * @throws ProcessingException thrown on errors generating the document tree
+   * @throws ProcessingException   thrown on errors generating the document tree
    */
   MessageML parse(String message, String entityJson, String version) throws InvalidInputException, ProcessingException {
     this.index = 0;
@@ -153,7 +154,7 @@ public class MessageMLParser {
     String expandedMessage;
 
     if (StringUtils.isBlank(message)) {
-     throw new InvalidInputException("Error parsing message: the message cannot be null or empty");
+      throw new InvalidInputException("Error parsing message: the message cannot be null or empty");
     }
 
     if (StringUtils.isNotBlank(entityJson)) {
@@ -181,7 +182,7 @@ public class MessageMLParser {
 
     biContext.addItemWithValue("MessageLength", message.length());
     // if entityJson is empty entityJson.toString={}
-    if(entityJsonSize > 2) {
+    if (entityJsonSize > 2) {
       biContext.addItemWithValue("EntitiesJSONSize", entityJsonSize);
     }
     return this.messageML;
@@ -264,7 +265,7 @@ public class MessageMLParser {
     // Expand the template
     template.process(data, sw);
 
-    if(sw.toString().length() != message.length()) {
+    if (sw.toString().length() != message.length()) {
       biContext.updateItem("UseFreeMarker");
     }
     return sw.toString();
@@ -391,16 +392,16 @@ public class MessageMLParser {
         return new HorizontalRule(parent);
 
       case Span.MESSAGEML_TAG:
-        if(TooltipableElement.isTooltipNode(element)){
+        if (TooltipableElement.isTooltipNode(element)) {
           String id = getAttribute(element, TooltipableElement.DATA_TARGET_ID);
           createSplittable(id, TooltipableElement.class, null);
           String title = getAttribute(element, TooltipableElement.DATA_TITLE);
           addSplittableData(id, TooltipableElement.class, TooltipableElement.TITLE, title);
           return null;
         } else if (containsAttribute(elementClass, Entity.PRESENTATIONML_CLASS)) {
-            return createEntity(element, parent);
+          return createEntity(element, parent);
         } else {
-            return new Span(parent);
+          return new Span(parent);
         }
 
       case Div.MESSAGEML_TAG:
@@ -479,7 +480,7 @@ public class MessageMLParser {
 
       case CardHeader.MESSAGEML_TAG:
         validateFormat(tag);
-        if(parent instanceof ExpandableCard){
+        if (parent instanceof ExpandableCard) {
           return new ExpandableCardHeader(parent, messageFormat);
         } else {
           return new CardHeader(parent, messageFormat);
@@ -487,7 +488,7 @@ public class MessageMLParser {
 
       case CardBody.MESSAGEML_TAG:
         validateFormat(tag);
-        if(parent instanceof ExpandableCard){
+        if (parent instanceof ExpandableCard) {
           return new ExpandableCardBody(parent, messageFormat);
         } else {
           return new CardBody(parent, messageFormat);
@@ -549,13 +550,16 @@ public class MessageMLParser {
   }
 
   private String getAttribute(org.w3c.dom.Element element, String key)
-          throws InvalidInputException {
+      throws InvalidInputException {
     String value = element.getAttribute(key);
     if (value == null || value.isEmpty()) {
-      throw new InvalidInputException(String.format("Invalid MessageML content at element \"%s\": 'data-target-id' attribute missing or empty", key));
+      throw new InvalidInputException(
+          String.format("Invalid MessageML content at element \"%s\": 'data-target-id' attribute missing or empty",
+              key));
     }
     if (splittableContains(value, TooltipableElement.class)) {
-      throw new InvalidInputException(String.format("Invalid MessageML content at element \"%s\": 'data-target-id' value already existing", key));
+      throw new InvalidInputException(
+          String.format("Invalid MessageML content at element \"%s\": 'data-target-id' value already existing", key));
     }
     return value;
   }
@@ -568,7 +572,8 @@ public class MessageMLParser {
    */
   public void loadElementId(String id) throws InvalidInputException {
     if (!elementIds.add(id)) {
-      throw new InvalidInputException(String.format("Elements must have unique ids. The following value is not unique: [%s].", id));
+      throw new InvalidInputException(
+          String.format("Elements must have unique ids. The following value is not unique: [%s].", id));
     }
   }
 
@@ -576,9 +581,10 @@ public class MessageMLParser {
    * Returns the attributes corresponding to the id for a splittable element
    * (used internally during parsing)
    */
-  public Optional<Map<String, String>> getSplittableAttributes(String id, Class<? extends SplittableElement> clazz) throws InvalidInputException {
+  public Optional<Map<String, String>> getSplittableAttributes(String id, Class<? extends SplittableElement> clazz)
+      throws InvalidInputException {
     SplittableData data = splittableComponents.get(id);
-    if(data == null){
+    if (data == null) {
       return Optional.empty();
     }
     return data.getAttributes(clazz);
@@ -588,9 +594,10 @@ public class MessageMLParser {
    * Returns all attributes corresponding to the id
    * (used internally during parsing)
    */
-  public Optional<Map<Class<? extends SplittableElement>, Map<String, String>>> getAllSplittableAttributes(String id) throws InvalidInputException {
+  public Optional<Map<Class<? extends SplittableElement>, Map<String, String>>> getAllSplittableAttributes(String id)
+      throws InvalidInputException {
     SplittableData data = splittableComponents.get(id);
-    if(data == null){
+    if (data == null) {
       return Optional.empty();
     }
     return Optional.of(data.getAllAttributes());
@@ -600,15 +607,16 @@ public class MessageMLParser {
    * Returns all values corresponding to the id
    * (used internally during parsing)
    */
-  public Optional<Map<Class<? extends SplittableElement>, Pair<String, String>>> getAllSplittableValues(String id) throws InvalidInputException {
+  public Optional<Map<Class<? extends SplittableElement>, Pair<String, String>>> getAllSplittableValues(String id)
+      throws InvalidInputException {
     SplittableData data = splittableComponents.get(id);
-    if(data == null){
+    if (data == null) {
       return Optional.empty();
     }
     return Optional.of(data.getAllValues());
   }
 
-  private void createSplittable(String id, Class<? extends SplittableElement> clazz, Pair<String,String> value)
+  private void createSplittable(String id, Class<? extends SplittableElement> clazz, Pair<String, String> value)
       throws InvalidInputException {
     SplittableData data = splittableComponents.get(id);
     if (data == null) {
@@ -621,7 +629,8 @@ public class MessageMLParser {
   /**
    * Add a splittable element value in the map
    */
-  private void addSplittableData(String id, Class<? extends SplittableElement> clazz, String attributeName, String attributeValue) {
+  private void addSplittableData(String id, Class<? extends SplittableElement> clazz, String attributeName,
+      String attributeValue) {
     SplittableData data = splittableComponents.get(id);
     if (data == null) {
       data = new SplittableData();
@@ -633,9 +642,9 @@ public class MessageMLParser {
   /**
    * Checks if the splittable map contains the element
    */
-  private boolean splittableContains(String id, Class<? extends SplittableElement> clazz){
+  private boolean splittableContains(String id, Class<? extends SplittableElement> clazz) {
     SplittableData data = splittableComponents.get(id);
-    if(data != null) {
+    if (data != null) {
       return data.exists(clazz);
     }
     return false;
@@ -651,17 +660,18 @@ public class MessageMLParser {
       return new Checkbox(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementType, Radio.PRESENTATIONML_INPUT_TYPE)) {
       return new Radio(parent, FormatEnum.PRESENTATIONML);
-    } else if(containsAttribute(elementType, DatePicker.PRESENTATIONML_INPUT_TYPE)){
+    } else if (containsAttribute(elementType, DatePicker.PRESENTATIONML_INPUT_TYPE)) {
       return new DatePicker(parent, FormatEnum.PRESENTATIONML);
-    } else if(containsAttribute(elementType, TimePicker.PRESENTATIONML_INPUT_TYPE)){
+    } else if (containsAttribute(elementType, TimePicker.PRESENTATIONML_INPUT_TYPE)) {
       return new TimePicker(parent, FormatEnum.PRESENTATIONML);
     } else {
-      throw new InvalidInputException(String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
+      throw new InvalidInputException(
+          String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
     }
   }
 
   private Element createElementFromDiv(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
-    if(element.hasAttribute(SplittableElement.PRESENTATIONML_DIV_FLAG)){
+    if (element.hasAttribute(SplittableElement.PRESENTATIONML_DIV_FLAG)) {
       // Special div created by a splittable element, it is not converted in MessageML or in PresentationML tree object
       return null;
     }
@@ -696,7 +706,7 @@ public class MessageMLParser {
     } else if (containsAttribute(elementClass, Checkbox.PRESENTATIONML_DIV_CLASS)) {
       removeAttribute(element, CLASS_ATTR, Checkbox.PRESENTATIONML_DIV_CLASS);
       return new Checkbox(parent, FormatEnum.PRESENTATIONML);
-    }  else if (containsAttribute(elementClass, Radio.PRESENTATIONML_DIV_CLASS)) {
+    } else if (containsAttribute(elementClass, Radio.PRESENTATIONML_DIV_CLASS)) {
       removeAttribute(element, CLASS_ATTR, Radio.PRESENTATIONML_DIV_CLASS);
       return new Radio(parent, FormatEnum.PRESENTATIONML);
     } else {
@@ -720,14 +730,14 @@ public class MessageMLParser {
     JsonNode value = entity.path(Entity.ID_FIELD).path(0).path(Entity.VALUE_FIELD);
 
     if (!type.isMissingNode() && !value.isMissingNode()) {
-    switch (type.textValue()) {
-      case CashTag.ENTITY_TYPE:
+      switch (type.textValue()) {
+        case CashTag.ENTITY_TYPE:
           return new CashTag(parent, tag, value.asText());
-      case HashTag.ENTITY_TYPE:
+        case HashTag.ENTITY_TYPE:
           return new HashTag(parent, tag, value.asText());
-      case Mention.ENTITY_TYPE:
+        case Mention.ENTITY_TYPE:
           return new Mention(parent, tag, value.asLong(), dataProvider);
-      default:
+        default:
           break;
       }
     }
@@ -754,44 +764,49 @@ public class MessageMLParser {
    */
   static final class SplittableData {
 
-    private final Map<Class<? extends SplittableElement>, Pair<String, String>> valuesBySplittable = new LinkedHashMap<>();
-    private final Map<Class<? extends SplittableElement>, Map<String, String>> attributesBySplittable = new LinkedHashMap<>();
+    private final Map<Class<? extends SplittableElement>, Pair<String, String>> valuesBySplittable =
+        new LinkedHashMap<>();
+    private final Map<Class<? extends SplittableElement>, Map<String, String>> attributesBySplittable =
+        new LinkedHashMap<>();
 
-    public void create(Class<? extends SplittableElement> splittable, Pair<String, String> value) throws InvalidInputException {
-      if(valuesBySplittable.containsKey(splittable)){
-        throw new InvalidInputException("Invalid MessageML content, multiple splittable elements with the same id created");
+    public void create(Class<? extends SplittableElement> splittable, Pair<String, String> value)
+        throws InvalidInputException {
+      if (valuesBySplittable.containsKey(splittable)) {
+        throw new InvalidInputException(
+            "Invalid MessageML content, multiple splittable elements with the same id created");
       }
-      if(value != null) {
+      if (value != null) {
         valuesBySplittable.put(splittable, value);
       }
       attributesBySplittable.put(splittable, new LinkedHashMap<>());
     }
 
-    public boolean exists(Class<? extends SplittableElement> splittable){
+    public boolean exists(Class<? extends SplittableElement> splittable) {
       return valuesBySplittable.containsKey(splittable);
     }
 
-    public Map<Class<? extends SplittableElement>, Pair<String, String>> getAllValues(){
+    public Map<Class<? extends SplittableElement>, Pair<String, String>> getAllValues() {
       return new LinkedHashMap<>(valuesBySplittable);
     }
 
-    public void addAttribute(Class<? extends SplittableElement> splittable, String attributeName, String attributeValue){
+    public void addAttribute(Class<? extends SplittableElement> splittable, String attributeName,
+        String attributeValue) {
       Map<String, String> attributes = attributesBySplittable.get(splittable);
-      if(attributes == null){
+      if (attributes == null) {
         throw new UnsupportedOperationException("Create new SplittableData before adding attributes");
       }
       attributes.put(attributeName, attributeValue);
     }
 
-    public Optional<Map<String, String>> getAttributes(Class<? extends SplittableElement> splittable){
+    public Optional<Map<String, String>> getAttributes(Class<? extends SplittableElement> splittable) {
       Map<String, String> attributes = attributesBySplittable.get(splittable);
-      if(attributes == null){
+      if (attributes == null) {
         return Optional.empty();
       }
       return Optional.of(new LinkedHashMap<>(attributes));
     }
 
-    public Map<Class<? extends SplittableElement>, Map<String, String>> getAllAttributes(){
+    public Map<Class<? extends SplittableElement>, Map<String, String>> getAllAttributes() {
       return new LinkedHashMap<>(attributesBySplittable);
     }
   }

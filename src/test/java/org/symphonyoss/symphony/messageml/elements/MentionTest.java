@@ -294,8 +294,9 @@ public class MentionTest extends ElementTest {
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "Hello <span class=\"entity\" data-entity-id=\"mention1\">@Bot User01</span>!</div>";
-    JsonNode expectedEntityJSON = MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
-        + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
+    JsonNode expectedEntityJSON =
+        MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
+            + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
 
     String presentationML = context.getPresentationML();
     JsonNode entityJson = context.getEntityJson();
@@ -326,8 +327,9 @@ public class MentionTest extends ElementTest {
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "Hello <span class=\"entity\" data-entity-id=\"mention1\">1</span>!</div>";
-    JsonNode expectedEntityJSON = MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
-        + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
+    JsonNode expectedEntityJSON =
+        MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
+            + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
     String expectedText = "Hello 1!";
 
     String presentationML = mockContext.getPresentationML();
@@ -363,7 +365,8 @@ public class MentionTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "Hello <span class=\"entity\" data-entity-id=\"mention1\"></span>!" +
         "</div>";
-    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
+    String expectedJson =
+        "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
     String expectedMarkdown = "Hello !";
     String expectedText = "Hello !";
 
@@ -390,7 +393,8 @@ public class MentionTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "Hello <span class=\"entity\" data-entity-id=\"mention1\"></span>!" +
         "</div>";
-    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
+    String expectedJson =
+        "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
     String expectedMarkdown = "Hello !";
     String expectedText = "Hello !";
 
@@ -417,7 +421,8 @@ public class MentionTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "Hello <span class=\"entity\" data-entity-id=\"mention1\">@bot.user1@localhost.com</span>!" +
         "</div>";
-    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
+    String expectedJson =
+        "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
     String expectedMarkdown = "Hello @bot.user1@localhost.com!";
     String expectedText = "Hello @bot.user1@localhost.com!";
 
@@ -444,7 +449,8 @@ public class MentionTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "Hello <span class=\"entity\" data-entity-id=\"mention1\">@1000</span>!" +
         "</div>";
-    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
+    String expectedJson =
+        "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
     String expectedMarkdown = "Hello @1000!";
     String expectedText = "Hello @1000!";
 
@@ -474,11 +480,12 @@ public class MentionTest extends ElementTest {
     biItems.add(new BiItem("Mentions", Collections.singletonMap("count", 2)));
     biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 239)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 92)));
-    return  biItems;
+    return biItems;
   }
 
 
-  private void verifyMention(Element messageML, UserPresentation user, String expectedPresentationML, String expectedJson)
+  private void verifyMention(Element messageML, UserPresentation user, String expectedPresentationML,
+      String expectedJson)
       throws Exception {
     assertEquals("Element children", 3, messageML.getChildren().size());
 

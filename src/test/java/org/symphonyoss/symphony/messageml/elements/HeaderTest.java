@@ -32,7 +32,8 @@ public class HeaderTest extends ElementTest {
       assertEquals("Element children", 1, header.getChildren().size());
       assertEquals("Child element", "Hello world!", header.getChildren().get(0).asText());
       assertEquals("PresentationML",
-          "<div data-format=\"PresentationML\" data-version=\"2.0\"><h" + level + ">Hello world!</h" + level + "></div>",
+          "<div data-format=\"PresentationML\" data-version=\"2.0\"><h" + level + ">Hello world!</h" + level
+              + "></div>",
           context.getPresentationML());
       assertEquals("Markdown", "**Hello world!**", context.getMarkdown());
       assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
@@ -96,11 +97,11 @@ public class HeaderTest extends ElementTest {
   @Test
   public void testHeaderBi() throws Exception {
     String input = "<messageML>" +
-            "<h1>Big title</h1>" +
-            "<h4>Subtitle</h4>" +
-            "<h4>Another subtitle</h4>" +
-            "<h6>text</h6>" +
-            "</messageML>";
+        "<h1>Big title</h1>" +
+        "<h4>Subtitle</h4>" +
+        "<h4>Another subtitle</h4>" +
+        "<h6>text</h6>" +
+        "</messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     BiContext biContext = context.getBiContext();

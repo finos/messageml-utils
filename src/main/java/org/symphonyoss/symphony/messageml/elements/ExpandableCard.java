@@ -100,7 +100,7 @@ public class ExpandableCard extends Element {
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
     context.updateItem("ExpandableCards");
-    if(getAttribute(ATTR_STATE) == null) {
+    if (getAttribute(ATTR_STATE) == null) {
       return;
     }
     switch (getAttribute(ATTR_STATE)) {

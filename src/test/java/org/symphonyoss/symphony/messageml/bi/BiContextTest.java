@@ -13,7 +13,7 @@ public class BiContextTest {
   public BiContext biContext;
 
   @Before
-  public void setUp(){
+  public void setUp() {
     biContext = new BiContext();
   }
 

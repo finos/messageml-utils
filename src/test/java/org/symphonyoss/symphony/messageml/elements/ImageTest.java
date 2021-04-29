@@ -71,9 +71,9 @@ public class ImageTest extends ElementTest {
   @Test
   public void testImageBi() throws Exception {
     String input = "<messageML><img src=\"https://yourimg.com/test/myimage.svg\"/>" +
-            "<img src=\"data:image/svg+xml;base64,PHN2ZyBpZD0i...DcuMjcsMTYuN=\"/>" +
-            "<img src=\"https://yourimg.com/test/anotherimage.svg\"/>" +
-            "</messageML>";
+        "<img src=\"data:image/svg+xml;base64,PHN2ZyBpZD0i...DcuMjcsMTYuN=\"/>" +
+        "<img src=\"https://yourimg.com/test/anotherimage.svg\"/>" +
+        "</messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     List<BiItem> expectedBiItems = getExpectedImageBiItems();
@@ -90,6 +90,6 @@ public class ImageTest extends ElementTest {
     biItems.add(new BiItem("ImagesURL", Collections.singletonMap("count", 2)));
     biItems.add(new BiItem("ImagesData", Collections.singletonMap("count", 1)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 193)));
-    return  biItems;
+    return biItems;
   }
 }

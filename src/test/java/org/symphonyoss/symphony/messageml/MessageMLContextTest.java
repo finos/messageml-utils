@@ -19,7 +19,6 @@ package org.symphonyoss.symphony.messageml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
@@ -100,7 +99,7 @@ public class MessageMLContextTest {
     final String data = getPayload("payloads/templated_message_all_tags.json");
 
     final String expectedPresentationML = getPayload("payloads/expanded_single_jira_ticket.presentationml");
-    final JsonNode expectedEntityJson =  MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entityjson"));
+    final JsonNode expectedEntityJson = MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entityjson"));
     final String expectedMarkdown = getPayload("payloads/expanded_single_jira_ticket.markdown");
     final JsonNode expectedEntities = MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entities"));
 
@@ -122,7 +121,7 @@ public class MessageMLContextTest {
 
   @Test
   public void testParseMessageMLUmlautsCharacters()
-          throws InvalidInputException, IOException, ProcessingException {
+      throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>Leseübungen</messageML>";
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
@@ -151,13 +150,13 @@ public class MessageMLContextTest {
 
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "   <form id=\"example\">"
-        + "     <div class=\"textfield-group\" data-generated=\"true\"><label for=\"%s\">Username</label>"
+            + "   <form id=\"example\">"
+            + "     <div class=\"textfield-group\" data-generated=\"true\"><label for=\"%s\">Username</label>"
             + "<span class=\"info-hint\" data-target-id=\"%s\" data-title=\"This only \\n accept regex characters\"></span>"
             + "<input type=\"text\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" data-pattern-error-message=\"\" id=\"%s\"/></div>"
-        + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
-        + "   </form>"
-        + " </div>", id, id, id);
+            + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
+            + "   </form>"
+            + " </div>", id, id, id);
 
     assertEquals(expectedResult, presentationML);
   }
@@ -246,15 +245,15 @@ public class MessageMLContextTest {
 
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "   <form id=\"example\">"
-        + "     <div class=\"dropdown-group\" data-generated=\"true\"><label for=\"%s\">Cities</label><span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate your \\n favorite city\"></span><select name=\"cities\" id=\"%s\">"
-        + "       <option selected=\"true\" value=\"ny\">New York</option>"
-        + "       <option value=\"van\">Vancouver</option>"
-        + "       <option value=\"par\">Paris</option>     "
-        + "</select></div>"
-        + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
-        + "   </form>"
-        + " </div>", id, id, id);
+            + "   <form id=\"example\">"
+            + "     <div class=\"dropdown-group\" data-generated=\"true\"><label for=\"%s\">Cities</label><span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate your \\n favorite city\"></span><select name=\"cities\" id=\"%s\">"
+            + "       <option selected=\"true\" value=\"ny\">New York</option>"
+            + "       <option value=\"van\">Vancouver</option>"
+            + "       <option value=\"par\">Paris</option>     "
+            + "</select></div>"
+            + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
+            + "   </form>"
+            + " </div>", id, id, id);
     assertEquals(expectedResult, presentationML);
   }
 
@@ -263,10 +262,10 @@ public class MessageMLContextTest {
       throws InvalidInputException, IOException, ProcessingException {
     final String message =
         "<messageML>"
-        + "  <form id=\"example\">"
-        + "    <button title=\"Tooltip text \\n should appear on hover\" name=\"send-answers\" type=\"action\">Submit</button>"
-        + "  </form>"
-        + "</messageML>";
+            + "  <form id=\"example\">"
+            + "    <button title=\"Tooltip text \\n should appear on hover\" name=\"send-answers\" type=\"action\">Submit</button>"
+            + "  </form>"
+            + "</messageML>";
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
@@ -283,13 +282,13 @@ public class MessageMLContextTest {
 
   @Test
   public void testParseMessageMLCheckboxWithLabels()
-          throws InvalidInputException, IOException, ProcessingException {
+      throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>\n"
-            + "   <form id=\"example\">\n"
-            + "      <checkbox name=\"fruits\" value=\"orange\">Orange</checkbox> \n"
-            + "       <button type=\"action\" name=\"actionName\">Send</button>\n"
-            + "   </form>\n"
-            + "</messageML>";
+        + "   <form id=\"example\">\n"
+        + "      <checkbox name=\"fruits\" value=\"orange\">Orange</checkbox> \n"
+        + "       <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "   </form>\n"
+        + "</messageML>";
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
     MessageML messageML = context.getMessageML();
@@ -299,23 +298,23 @@ public class MessageMLContextTest {
 
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "    <form id=\"example\">"
-        + "       <div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"orange\" id=\"%s\"/><label for=\"%s\">Orange</label></div>"
-        + "         <button type=\"action\" name=\"actionName\">Send</button>"
-        + "    </form> </div>", id, id);
+            + "    <form id=\"example\">"
+            + "       <div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"orange\" id=\"%s\"/><label for=\"%s\">Orange</label></div>"
+            + "         <button type=\"action\" name=\"actionName\">Send</button>"
+            + "    </form> </div>", id, id);
 
     assertEquals(expectedResult, presentationML);
   }
 
   @Test
   public void testParseMessageMLRadioWithLabels()
-          throws InvalidInputException, IOException, ProcessingException {
+      throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML><form id=\"radio-form\">" +
-            "       <radio name=\"groupId\" value=\"value01\">First</radio>" +
-            "       <radio name=\"groupId\" value=\"value02\">Second</radio>" +
-            "       <button type=\"action\" name=\"actionName\">Send</button>" +
-            "   </form>" +
-            "</messageML>";
+        "       <radio name=\"groupId\" value=\"value01\">First</radio>" +
+        "       <radio name=\"groupId\" value=\"value02\">Second</radio>" +
+        "       <button type=\"action\" name=\"actionName\">Send</button>" +
+        "   </form>" +
+        "</messageML>";
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
     MessageML messageML = context.getMessageML();
@@ -328,15 +327,15 @@ public class MessageMLContextTest {
     String id2 = presentationML.substring(startId2 + "label for=\"".length(), endId2);
 
     String expectedResult = String.format(
-            "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
-                    "<form id=\"radio-form\">" +
-                    "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
-                    "<label for=\"%s\">First</label></div>" +
-                    "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
-                    "<label for=\"%s\">Second</label></div>" +
-                    "       <button type=\"action\" name=\"actionName\">Send</button>" +
-                    "   </form>" +
-                    "</div>", id1, id1, id2, id2);
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+            "<form id=\"radio-form\">" +
+            "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
+            "<label for=\"%s\">First</label></div>" +
+            "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
+            "<label for=\"%s\">Second</label></div>" +
+            "       <button type=\"action\" name=\"actionName\">Send</button>" +
+            "   </form>" +
+            "</div>", id1, id1, id2, id2);
 
     assertEquals(expectedResult, presentationML);
   }
@@ -397,7 +396,7 @@ public class MessageMLContextTest {
     biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap("count", 1)));
     biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 1548)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 2984)));
-    return  biItems;
+    return biItems;
   }
 
 
@@ -407,7 +406,7 @@ public class MessageMLContextTest {
     final String data = getPayload("payloads/expanded_single_jira_ticket.entityjson");
 
     final String expectedPresentationML = getPayload("payloads/expanded_single_jira_ticket.presentationml");
-    final JsonNode expectedEntityJson =  MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entityjson"));
+    final JsonNode expectedEntityJson = MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entityjson"));
     final String expectedMarkdown = getPayload("payloads/expanded_single_jira_ticket.markdown");
     final JsonNode expectedEntities = MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entities"));
 
@@ -466,9 +465,11 @@ public class MessageMLContextTest {
     Element form = messageML.getChild(1);
     checkNode(form, "form", Pair.of("id", "example"));
     Element select = form.getChild(4);
-    checkNode(select, "select", Pair.of("title", "Indicate your \\n favorite city"), Pair.of("label", "Cities"), Pair.of("name", "cities"));
+    checkNode(select, "select", Pair.of("title", "Indicate your \\n favorite city"), Pair.of("label", "Cities"),
+        Pair.of("name", "cities"));
     Element button = form.getChild(7);
-    checkNode(button, "button", Pair.of("type", "action"), Pair.of("name", "send-answers"), Pair.of("data-title", "Tooltip text"));
+    checkNode(button, "button", Pair.of("type", "action"), Pair.of("name", "send-answers"),
+        Pair.of("data-title", "Tooltip text"));
     Element textField = form.getChild(12);
     checkNode(textField, "text-field",
         Pair.of("data-pattern-error-message", "error message"),
@@ -490,19 +491,21 @@ public class MessageMLContextTest {
         Pair.of("label", "Awesome users"));
   }
 
-  private void checkNode(Element element, String elementName, Pair<String, String>... attributes){
+  private void checkNode(Element element, String elementName, Pair<String, String>... attributes) {
     assertEquals(elementName, element.getMessageMLTag());
-    Map<String,String> actualAttributes = new LinkedHashMap<>(element.getAttributes());
-    if(attributes != null){
-      for(Pair<String, String> attribute:attributes){
+    Map<String, String> actualAttributes = new LinkedHashMap<>(element.getAttributes());
+    if (attributes != null) {
+      for (Pair<String, String> attribute : attributes) {
         String key = attribute.getKey();
-        assertTrue(String.format("Attribute %s not found in tag %s", key, elementName), actualAttributes.containsKey(key));
-        assertEquals(String.format("Attribute %s in tag %s is expected to be %s but it is %s", key, elementName, attribute.getValue(), actualAttributes.get(key)),
+        assertTrue(String.format("Attribute %s not found in tag %s", key, elementName),
+            actualAttributes.containsKey(key));
+        assertEquals(String.format("Attribute %s in tag %s is expected to be %s but it is %s", key, elementName,
+            attribute.getValue(), actualAttributes.get(key)),
             attribute.getValue(), actualAttributes.get(key));
         actualAttributes.remove(key);
       }
     }
-    if(!MessageML.MESSAGEML_TAG.equals(elementName)) {
+    if (!MessageML.MESSAGEML_TAG.equals(elementName)) {
       assertTrue(String.format("Unexpected attributes found in tag %s: %s", elementName,
           StringUtils.join(actualAttributes.keySet(), ',')), actualAttributes.isEmpty());
     }
@@ -568,7 +571,7 @@ public class MessageMLContextTest {
     biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap("count", 1)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 46)));
     biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 35)));
-    return  biItems;
+    return biItems;
   }
 
   @Test
@@ -609,11 +612,11 @@ public class MessageMLContextTest {
 
     try {
       context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
-    fail("Should have thrown an exception");
+      fail("Should have thrown an exception");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message",
-              "Error parsing EntityJSON: Syntax error in template \"messageML\" in line 1, column 14:\n"
+          "Error parsing EntityJSON: Syntax error in template \"messageML\" in line 1, column 14:\n"
               + "Encountered \"}\", but was expecting one of:\n"
               + "    <STRING_LITERAL>\n"
               + "    <RAW_STRING>\n"
@@ -1012,8 +1015,9 @@ public class MessageMLContextTest {
   public void testEscapeReservedCharsFromMessageML() throws Exception {
     String messageML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : \" &lt; &gt; ? "
         + "<i>italic</i> <b>bold</b> <hash tag=\"hashtag\"/>";
-    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
-        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String excpectedPresentationML =
+        "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+            + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
     String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
         + "_italic_ **bold** #hashtag";
     JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
@@ -1050,8 +1054,9 @@ public class MessageMLContextTest {
         + "    }\n"
         + "  ]\n"
         + "}");
-    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
-        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String excpectedPresentationML =
+        "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+            + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
     String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
         + "_italic_ **bold** #hashtag";
     JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
@@ -1089,8 +1094,9 @@ public class MessageMLContextTest {
         + "    }\n"
         + "  ]\n"
         + "}");
-    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
-        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String excpectedPresentationML =
+        "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+            + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
     String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
         + "_italic_ **bold** #hashtag";
     JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
@@ -1134,8 +1140,7 @@ public class MessageMLContextTest {
 
   private String getPayload(String filename) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
-    try(Scanner scanner = new Scanner(classLoader.getResourceAsStream(filename)))
-    {
+    try (Scanner scanner = new Scanner(classLoader.getResourceAsStream(filename))) {
       return scanner.useDelimiter("\\A").next();
     }
   }

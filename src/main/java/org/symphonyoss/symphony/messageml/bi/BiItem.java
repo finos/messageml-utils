@@ -25,12 +25,13 @@ public class BiItem {
   /**
    * Constructor which takes an item name and an attribute name and initialize a map of attribute
    * setting the attribute value by default to 1.
-   * @param name ot the item to be created
+   *
+   * @param name      ot the item to be created
    * @param attribute name of the attribute to be included in the attributes map
    */
   public BiItem(String name, String attribute) {
     this.name = name;
-    Map<String, Object> attributes =  new HashMap<>();
+    Map<String, Object> attributes = new HashMap<>();
     attributes.put(attribute, 1);
     this.attributes = attributes;
   }
@@ -65,7 +66,7 @@ public class BiItem {
       attributes.put(attributeName, value);
     } catch (ClassCastException e) {
       logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",
-              attributeName, getName());
+          attributeName, getName());
     }
   }
 
@@ -74,26 +75,26 @@ public class BiItem {
    * current one and the one in input, otherwise the attribute will be put in the map with the attribute value passed as input.
    * If the value found is not an integer, then no update will be performed
    *
-   * @param attributeName name of the attribute to be checked
+   * @param attributeName  name of the attribute to be checked
    * @param attributeValue value of the attribute to be checked
    */
   protected void setMaxAttribute(String attributeName, Object attributeValue) {
     try {
       Integer currentValue = (Integer) attributes.getOrDefault(attributeName, 0);
       Integer newValue = (Integer) attributeValue;
-      if(newValue > currentValue) {
+      if (newValue > currentValue) {
         attributes.put(attributeName, newValue);
       }
     } catch (ClassCastException e) {
       logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",
-              attributeName, getName());
+          attributeName, getName());
     }
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) { return true; }
+    if (o == null || getClass() != o.getClass()) { return false; }
     BiItem biItem = (BiItem) o;
     return Objects.equals(name, biItem.name) && Objects.equals(attributes, biItem.attributes);
   }

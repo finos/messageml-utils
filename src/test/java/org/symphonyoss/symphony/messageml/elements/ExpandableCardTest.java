@@ -37,7 +37,8 @@ public class ExpandableCardTest extends ElementTest {
 
     verifyExpandableCard(card);
 
-    String withAttr = "<messageML><expandable-card state=\"collapsed\"><header>Hello</header><body variant=\"default\">world!</body></expandable-card></messageML>";
+    String withAttr =
+        "<messageML><expandable-card state=\"collapsed\"><header>Hello</header><body variant=\"default\">world!</body></expandable-card></messageML>";
 
     context.parseMessageML(withAttr, null, MessageML.MESSAGEML_VERSION);
     messageML = context.getMessageML();
@@ -47,10 +48,11 @@ public class ExpandableCardTest extends ElementTest {
     assertEquals("Element attributes", 1, card.getAttributes().size());
     assertEquals("Element attributes", 1, body.getAttributes().size());
     assertEquals("Attribute", "default", body.getAttribute("variant"));
-    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><div class=\"expandable-card\" data-state=\"collapsed\">"
-        + "<div class=\"expandableCardHeader\">Hello</div>"
-        + "<div class=\"expandableCardBody\" data-variant=\"default\">world!</div>"
-        + "</div></div>", context.getPresentationML());
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><div class=\"expandable-card\" data-state=\"collapsed\">"
+            + "<div class=\"expandableCardHeader\">Hello</div>"
+            + "<div class=\"expandableCardBody\" data-variant=\"default\">world!</div>"
+            + "</div></div>", context.getPresentationML());
 
     verifyExpandableCard(card);
   }
@@ -154,11 +156,11 @@ public class ExpandableCardTest extends ElementTest {
   @Test
   public void testCardsBi() throws Exception {
     String input = "<messageML>" +
-            "<expandable-card state=\"collapsed\"><header>Hello</header><body>world!</body></expandable-card>" +
-            "<expandable-card state=\"cropped\"><header>Hello</header><body>world!</body></expandable-card>" +
-            "<expandable-card state=\"cropped\"><header>Hello</header><body>world!</body></expandable-card>" +
-            "<expandable-card state=\"expanded\"><header>Hello</header><body>world!</body></expandable-card>" +
-            "</messageML>";
+        "<expandable-card state=\"collapsed\"><header>Hello</header><body>world!</body></expandable-card>" +
+        "<expandable-card state=\"cropped\"><header>Hello</header><body>world!</body></expandable-card>" +
+        "<expandable-card state=\"cropped\"><header>Hello</header><body>world!</body></expandable-card>" +
+        "<expandable-card state=\"expanded\"><header>Hello</header><body>world!</body></expandable-card>" +
+        "</messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> expectedBiItems = getExpectedCardBiItems();
@@ -176,7 +178,7 @@ public class ExpandableCardTest extends ElementTest {
     biItems.add(new BiItem("ExpandableCardsCropped", Collections.singletonMap("count", 2)));
     biItems.add(new BiItem("ExpandableCardsExpanded", Collections.singletonMap("count", 1)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 394)));
-    return  biItems;
+    return biItems;
   }
 
   private void verifyExpandableCard(Element card) throws Exception {

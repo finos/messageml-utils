@@ -30,7 +30,8 @@ public class CashTag extends Keyword {
   public static final String MESSAGEML_TAG = "cash";
   public static final String PREFIX = "$";
   public static final String ENTITY_TYPE = "org.symphonyoss.fin.security";
-  public static final String CASHTAG_PATTERN = "^(?!(?:[0-9,.]+$))(?!(?:[0-9,.]+(m|b|t|mm|bn|M|B|T|MM|BN|\\+|\\-|\\)|\\(|\\[|\\]|\\*|\\/)(\\s|$)))[^\\s\\$]*[^\\s!@#$%^&*()+=<>,.\\/?`~:;'\"\\\\|\\-]+[^\\s\\$]*$";
+  public static final String CASHTAG_PATTERN =
+      "^(?!(?:[0-9,.]+$))(?!(?:[0-9,.]+(m|b|t|mm|bn|M|B|T|MM|BN|\\+|\\-|\\)|\\(|\\[|\\]|\\*|\\/)(\\s|$)))[^\\s\\$]*[^\\s!@#$%^&*()+=<>,.\\/?`~:;'\"\\\\|\\-]+[^\\s\\$]*$";
   private static final String ENTITY_SUBTYPE = "org.symphonyoss.fin.security.id.ticker";
   private static final String ENTITY_VERSION = "1.0";
 

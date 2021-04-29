@@ -29,7 +29,8 @@ public class SpanTest extends ElementTest {
     assertEquals("Element children", 1, span.getChildren().size());
     assertEquals("Child element", TextNode.class, span.getChildren().get(0).getClass());
     assertEquals("Child element text", "world", span.getChildren().get(0).asText());
-    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello <span>world</span>!</div>",
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello <span>world</span>!</div>",
         context.getPresentationML());
     assertEquals("Markdown", "Hello world!", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());

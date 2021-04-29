@@ -57,6 +57,7 @@ public class Emoji extends Entity {
 
   /**
    * It is deprecated, use getShortcode() instead
+   *
    * @return annotation
    */
   public String getAnnotation() {
@@ -151,7 +152,8 @@ public class Emoji extends Entity {
     if (this.shortcode == null) {
       throw new InvalidInputException("Either the attribute \"shortcode\" or \"annotation\" are required");
     } else if (!this.shortcode.matches(SHORTCODE_PATTERN)) {
-      throw new InvalidInputException("Shortcode or Annotation parameter may only contain alphanumeric characters, underscore, plus sign and dash");
+      throw new InvalidInputException(
+          "Shortcode or Annotation parameter may only contain alphanumeric characters, underscore, plus sign and dash");
     }
 
     assertPhrasingContent();
@@ -178,7 +180,8 @@ public class Emoji extends Entity {
         this.size = getStringAttribute(item);
         break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName() + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throw new InvalidInputException(
+            "Attribute \"" + item.getNodeName() + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
   }
 

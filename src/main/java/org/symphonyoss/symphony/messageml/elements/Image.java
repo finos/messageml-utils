@@ -66,11 +66,11 @@ public class Image extends Element {
     super.updateBiContext(context);
     context.updateItem("Images");
     String srcValue = getAttribute(ATTR_SRC);
-    if(srcValue != null) {
-      if(srcValue.startsWith("data:image")) {
+    if (srcValue != null) {
+      if (srcValue.startsWith("data:image")) {
         context.updateItem("ImagesData");
       }
-      if(srcValue.startsWith("http")) {
+      if (srcValue.startsWith("http")) {
         context.updateItem("ImagesURL");
       }
     }

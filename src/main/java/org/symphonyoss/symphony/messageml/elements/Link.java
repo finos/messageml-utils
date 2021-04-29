@@ -118,7 +118,7 @@ public class Link extends Element {
   }
 
   @Override
-  public void updateBiContext(BiContext biContext){
+  public void updateBiContext(BiContext biContext) {
     super.updateBiContext(biContext);
     biContext.updateItem("Links");
   }

@@ -65,10 +65,10 @@ public class TableCell extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    if(getAttribute(ATTR_ROWSPAN) != null) {
+    if (getAttribute(ATTR_ROWSPAN) != null) {
       context.updateItem("TableCellsRowSpan");
     }
-    if(getAttribute(ATTR_COLSPAN) != null) {
+    if (getAttribute(ATTR_COLSPAN) != null) {
       context.updateItem("TableCellsColSpan");
     }
   }

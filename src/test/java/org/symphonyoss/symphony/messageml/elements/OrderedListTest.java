@@ -27,7 +27,8 @@ public class OrderedListTest extends ElementTest {
     String input = "<messageML><ol></ol></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The \"ol\" element must have at least one child that is any of the following elements: [listitem].");
+    expectedException.expectMessage(
+        "The \"ol\" element must have at least one child that is any of the following elements: [listitem].");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 

@@ -49,8 +49,9 @@ public class BiContext {
   /**
    * Add a specific item to the context. Used for simple items where we want to keep track of the size/value of the
    * entity
+   *
    * @param itemName  name of the item to be added
-   * @param itemValue   value to be assigned
+   * @param itemValue value to be assigned
    */
   public void addItemWithValue(String itemName, Object itemValue) {
     BiItem item = new BiItem(itemName, Collections.singletonMap("count", itemValue));
@@ -80,7 +81,7 @@ public class BiContext {
    * It checks if the context already has an item for the element and if that's the case it will increase the count of
    * the specific attribute. If context does not have the item it will create a new one with default values.
    *
-   * @param itemName      name of the element to be checked
+   * @param itemName name of the element to be checked
    */
   public void updateItem(String itemName) {
     String attributeName = "count";
@@ -97,7 +98,7 @@ public class BiContext {
    * It checks if the context already has an item for the element and if that's the case it will increase the count of
    * the specific attribute. If context does not have the item it will create a new one with default values.
    *
-   * @param itemName      name of the element to be checked
+   * @param itemName name of the element to be checked
    */
   public void updateItemWithMaxValue(String itemName, Object attributeValue) {
     String attributeName = "count";

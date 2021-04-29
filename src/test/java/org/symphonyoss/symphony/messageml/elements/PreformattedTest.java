@@ -40,7 +40,8 @@ public class PreformattedTest extends ElementTest {
     assertEquals("Attribute", "label", pre.getAttribute("class"));
 
 
-    String styleAttr = "<messageML><pre style=\"border-bottom:10 px;border-left-color:red\">Hello world!</pre></messageML>";
+    String styleAttr =
+        "<messageML><pre style=\"border-bottom:10 px;border-left-color:red\">Hello world!</pre></messageML>";
     context.parseMessageML(styleAttr, null, MessageML.MESSAGEML_VERSION);
     pre = context.getMessageML().getChildren().get(0);
     assertEquals("Attribute count", 1, pre.getAttributes().size());

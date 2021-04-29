@@ -107,7 +107,8 @@ public class LinkTest extends ElementTest {
     String markdown = context.getMarkdown();
     String text = context.getText();
 
-    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
     String expectedJson = "{}";
     String expectedMarkdown = "invalid://hello.org";
     String expectedText = "Hello world!";
@@ -131,7 +132,8 @@ public class LinkTest extends ElementTest {
     String markdown = context.getMarkdown();
     String text = context.getText();
 
-    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
     String expectedJson = "{}";
     String expectedMarkdown = "invalid://hello.org";
     String expectedText = "Hello world!";

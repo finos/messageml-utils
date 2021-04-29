@@ -40,16 +40,16 @@ public class Span extends Element {
   @Override
   protected void buildAttribute(MessageMLParser parser,
       Node item) throws InvalidInputException {
-      switch (item.getNodeName()) {
-        case ATTR_ENTITY_ID:
+    switch (item.getNodeName()) {
+      case ATTR_ENTITY_ID:
         // A span can be also generated to contains a tooltip
-        case TooltipableElement.DATA_TITLE:
-        case TooltipableElement.DATA_TARGET_ID:
-          setAttribute(item.getNodeName(), getStringAttribute(item));
-          break;
-        default:
-          super.buildAttribute(parser, item);
-      }
+      case TooltipableElement.DATA_TITLE:
+      case TooltipableElement.DATA_TARGET_ID:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
+        break;
+      default:
+        super.buildAttribute(parser, item);
+    }
   }
 
   @Override
@@ -71,7 +71,7 @@ public class Span extends Element {
           + "class is \"entity\".");
     }
 
-    if ("entity".equals(getAttribute(CLASS_ATTR)) && getAttribute(ATTR_ENTITY_ID) == null)  {
+    if ("entity".equals(getAttribute(CLASS_ATTR)) && getAttribute(ATTR_ENTITY_ID) == null) {
       throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is required if the element "
           + "class is \"entity\".");
     }

@@ -74,15 +74,15 @@ public class CashtagTest extends ElementTest {
     String input = "<messageML>Hello <cash tag=\"_hello#w-o-r-l-d_\"/>!</messageML>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">$_hello#w-o-r-l-d_</span>!"
-            + "</div>";
+        + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">$_hello#w-o-r-l-d_</span>!"
+        + "</div>";
     String expectedJson = "{\"keyword1\":{"
-            + "\"type\":\"org.symphonyoss.fin.security\","
-            + "\"version\":\"1.0\","
-            + "\"id\":[{"
-            + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
-            + "\"value\":\"_hello#w-o-r-l-d_\""
-            + "}]}}";
+        + "\"type\":\"org.symphonyoss.fin.security\","
+        + "\"version\":\"1.0\","
+        + "\"id\":[{"
+        + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
+        + "\"value\":\"_hello#w-o-r-l-d_\""
+        + "}]}}";
     String expectedText = "_hello#w-o-r-l-d_";
     String expectedMarkdown = "Hello $_hello#w-o-r-l-d_!";
 
@@ -168,7 +168,9 @@ public class CashtagTest extends ElementTest {
     String input = "<messageML>Hello <cash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s", CashTag.CASHTAG_PATTERN));
+    expectedException.expectMessage(
+        String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s",
+            CashTag.CASHTAG_PATTERN));
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -187,7 +189,9 @@ public class CashtagTest extends ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s", CashTag.CASHTAG_PATTERN));
+    expectedException.expectMessage(
+        String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s",
+            CashTag.CASHTAG_PATTERN));
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
@@ -225,7 +229,7 @@ public class CashtagTest extends ElementTest {
     biItems.add(new BiItem("Cashtags", Collections.singletonMap("count", 3)));
     biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 426)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 85)));
-    return  biItems;
+    return biItems;
   }
 
 

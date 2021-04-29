@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
-import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -137,15 +136,15 @@ public class HashtagTest extends ElementTest {
     String input = "<messageML>Hello <hash tag=\"crazy#world\"/>!</messageML>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">#crazy#world</span>!"
-            + "</div>";
+        + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">#crazy#world</span>!"
+        + "</div>";
     String expectedJson = "{\"keyword1\":{"
-            + "\"type\":\"org.symphonyoss.taxonomy\","
-            + "\"version\":\"1.0\","
-            + "\"id\":[{"
-            + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
-            + "\"value\":\"crazy#world\""
-            + "}]}}";
+        + "\"type\":\"org.symphonyoss.taxonomy\","
+        + "\"version\":\"1.0\","
+        + "\"id\":[{"
+        + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
+        + "\"value\":\"crazy#world\""
+        + "}]}}";
     String expectedText = "crazy#world";
     String expectedMarkdown = "Hello #crazy#world!";
 
@@ -161,7 +160,9 @@ public class HashtagTest extends ElementTest {
     String input = "<messageML>Hello <hash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s", HashTag.HASHTAG_PATTERN));
+    expectedException.expectMessage(
+        String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s",
+            HashTag.HASHTAG_PATTERN));
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -180,7 +181,9 @@ public class HashtagTest extends ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s", HashTag.HASHTAG_PATTERN));
+    expectedException.expectMessage(
+        String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s",
+            HashTag.HASHTAG_PATTERN));
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
@@ -219,8 +222,9 @@ public class HashtagTest extends ElementTest {
     biItems.add(new BiItem("Hashtags", Collections.singletonMap("count", 3)));
     biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 396)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 85)));
-    return  biItems;
+    return biItems;
   }
+
   private void verifyHashTag(Element messageML, String expectedPresentationML, String expectedJson, String expectedText,
       String expectedMarkdown) throws Exception {
     assertEquals("Element children", 3, messageML.getChildren().size());
