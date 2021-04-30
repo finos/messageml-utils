@@ -29,6 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
@@ -291,6 +292,12 @@ public class ElementTest {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message", "Element \"body\" can only be a child of the following elements: [card]", e.getMessage());
     }
+  }
+
+  protected void assertSameBiItem(BiItem expected, BiItem actual) {
+    // assertEquals(actual, expected);
+    assertEquals(expected.getName(), actual.getName());
+    assertEquals(expected.getAttributes(), actual.getAttributes());
   }
 
 }

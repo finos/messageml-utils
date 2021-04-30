@@ -2,11 +2,24 @@ package org.symphonyoss.symphony.messageml.elements.form;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.*;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -245,4 +258,59 @@ public class TimezonePickerTest extends ElementTest {
 
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }
+
+  private static Stream<Arguments> messageMlStream() {
+    return Stream.of(
+        Arguments.of(
+            "<timezone-picker name=\"disabled\" label=\"label01\" title=\"title01\" "
+            + "placeholder=\"placeholder01\" required=\"true\" value=\"America/Indiana/Vincennes\" "
+            + "disabled-timezone='[\"America/Detroit\", \"America/Indiana/Marengo\", "
+            + "\"America/Indiana/Petersburg\"]' />\n",
+            Stream.of(new Object[][] {
+                {BiFields.PLACEHOLDER.getFieldName(), 1},
+                {BiFields.TITLE.getFieldName(), 1},
+                {BiFields.LABEL.getFieldName(), 1},
+                {BiFields.REQUIRED.getFieldName(), 1},
+                {BiFields.DEFAULT.getFieldName(), 1},
+                {BiFields.VALIDATION_OPTIONS.getFieldName(), 1},
+                {BiFields.VALIDATION.getFieldName(), 1},
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
+
+        Arguments.of(
+            "<timezone-picker name=\"disabled\" label=\"label01\" title=\"title01\" "
+                + "placeholder=\"placeholder01\"/>", Stream.of(new Object[][] {
+                {BiFields.PLACEHOLDER.getFieldName(), 1},
+                {BiFields.TITLE.getFieldName(), 1},
+                {BiFields.LABEL.getFieldName(), 1},
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("messageMlStream")
+  void testBiContextTimeZonePicker_withValidation(String timeZoneML, Map<String, Object> expectedAttributes)
+      throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+    String input = String.format(
+        "<messageML>\n "
+            + "<form id=\"form_id\">\n "
+            + "%s\n"
+            + "<button name=\"name\">Submit</button>\n "
+            + "</form>\n </messageML>",
+        timeZoneML);
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    BiItem timeZonePickerBiItemExpected = new BiItem(BiFields.TIMEZONE_PICKER.getFieldName(),
+        expectedAttributes.entrySet()
+            .stream()
+            .collect(Collectors.toMap(e ->
+                String.valueOf(e.getKey()), Map.Entry::getValue)));
+
+    Assertions.assertEquals(3, items.size());
+    Assertions.assertEquals(BiFields.TIMEZONE_PICKER.getFieldName(), items.get(0).getName());
+    assertSameBiItem(timeZonePickerBiItemExpected, items.get(0));
+  }
+
 }

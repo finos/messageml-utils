@@ -1,10 +1,12 @@
 package org.symphonyoss.symphony.messageml.bi;
 
+import joptsimple.internal.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -60,8 +62,32 @@ public class BiContext {
     }
   }
 
+  public void updateItem(String itemName, Map<String, Object> attributes) {
+    Optional<BiItem> optionalBiItem = getItemWithName(itemName);
+    if (optionalBiItem.isPresent()) {
+      attributes.forEach((key, value) -> {
+        if (!value.equals(Strings.EMPTY) && optionalBiItem.get().getAttributes().get(key) != null) {
+          optionalBiItem.get().increaseAttributeCount(key);
+        } else if (optionalBiItem.get().getAttributes().get(key) == null) {
+          optionalBiItem.get().getAttributes().put(key, value);
+        }
+      });
+    } else {
+      addItem(new BiItem(itemName, attributes));
+    }
+  }
+
   private Optional<BiItem> getItemWithName(String itemName) {
     return getItems().stream().filter(item -> item.getName().equals(itemName)).findFirst();
+  }
+
+  public boolean isAttributeSet(String itemName, String attributeName) {
+    Optional<BiItem> optionalBiTem = getItemWithName(itemName);
+    if (optionalBiTem.isPresent() && optionalBiTem.get().getAttributes() != null
+        && optionalBiTem.get().getAttributes().get(attributeName) != null) {
+      return true;
+    }
+    return false;
   }
 
   private static String extractVersion() {

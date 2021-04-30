@@ -2,19 +2,24 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextAreaNode;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class representing a Text Area inside a Form.
  * @author Sandro Ribeiro
  * @since 06/12/2019
  */
-public class TextArea extends FormElement implements RegexElement, LabelableElement, TooltipableElement, MinMaxLengthElement{
+public class TextArea extends FormElement implements RegexElement, LabelableElement, TooltipableElement, MinMaxLengthElement {
 
   public static final String MESSAGEML_TAG = "textarea";
 
@@ -123,5 +128,31 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
   @Override
   public Integer getMaxValueAllowed() {
     return MAX_ALLOWED_LENGTH;
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+    this.computeAndPutValidationProperties(attributesMapBi);
+
+    if (this.hasElementInitialValue()) {
+      attributesMapBi.put(BiFields.DEFAULT.getFieldName(), 1);
+    }
+
+    context.addItem(new BiItem(BiFields.TEXT_AREA.getFieldName(), attributesMapBi));
+  }
+
+  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
+    boolean validationPattern = getAttribute(PATTERN_ATTR) != null;
+
+    if (validationPattern) {
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION.getFieldName(), 1);
+    }
   }
 }

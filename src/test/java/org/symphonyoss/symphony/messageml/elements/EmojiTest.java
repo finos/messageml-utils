@@ -7,7 +7,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.util.BiFields;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class EmojiTest extends ElementTest{
 
@@ -91,6 +99,27 @@ public class EmojiTest extends ElementTest{
     assertEquals("Markdown", expectedMarkdown, context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance) , context.getEntities());
+  }
+
+  @Test
+  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
+      ProcessingException {
+    String input = "<messageML><emoji shortcode=\"smiley\">Test of content</emoji></messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = context.getBiContext().getItems();
+
+    Map<String, Object> emojiExpectedAttributes =
+        Collections.singletonMap(Emoji.MESSAGEML_TAG, 1);
+    Map<String, Object> entityExpectedAttributes =
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), null);
+
+    BiItem emojiBiItemExpected = new BiItem(Emoji.class.getSimpleName(), emojiExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+
+    assertEquals(2, items.size());
+    assertSameBiItem(emojiBiItemExpected, items.get(0));
+    assertSameBiItem(entityBiItemExpected, items.get(1));
   }
 
   private void verifyEmojiPresentation(Emoji emoji, String shortcode, String family, String size, String unicode) throws

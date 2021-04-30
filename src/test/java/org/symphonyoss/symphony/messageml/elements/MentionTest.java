@@ -5,10 +5,15 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.*;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -447,6 +452,29 @@ public class MentionTest extends ElementTest {
     assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
     assertEquals("Generated Markdown", expectedMarkdown, markdown);
     assertEquals("Generated text", expectedText, text);
+  }
+
+  @Test
+  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
+      ProcessingException {
+    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
+
+    String input = "<messageML>Hello <mention uid=\"1\"/>!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = context.getBiContext().getItems();
+
+    Map<String, Object> mentionExpectedAttributes =
+        Collections.singletonMap(Mention.MESSAGEML_TAG, 1);
+    Map<String, Object> entityExpectedAttributes =
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId");
+
+    BiItem mentionBiItemExpected = new BiItem(Mention.class.getSimpleName(), mentionExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+
+    assertEquals(2, items.size());
+    assertSameBiItem(mentionBiItemExpected, items.get(0));
+    assertSameBiItem(entityBiItemExpected, items.get(1));
   }
 
   private void verifyMention(Element messageML, UserPresentation user, String expectedPresentationML, String expectedJson)

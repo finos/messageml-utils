@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
@@ -61,6 +63,7 @@ import java.util.stream.Collectors;
  * @since 3/27/17
  */
 public abstract class Element {
+  private static final Logger logger = LoggerFactory.getLogger(Element.class);
   public static final String CLASS_ATTR = "class";
   public static final String STYLE_ATTR = "style";
   protected static final String ID_ATTR = "id";
@@ -103,17 +106,18 @@ public abstract class Element {
   public void buildAll(MessageMLParser parser, org.w3c.dom.Element element) throws InvalidInputException,
       ProcessingException {
     NamedNodeMap attr = element.getAttributes();
-
     for (int i = 0; i < attr.getLength(); i++) {
       buildAttribute(parser, attr.item(i));
     }
-    if(!MessageML.MESSAGEML_TAG.equals(getMessageMLTag())) {
-      updateBiContext(parser.getBiContext());
-    }
+
     NodeList children = element.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
       buildNode(parser, children.item(i));
+    }
+
+    if (!MessageML.MESSAGEML_TAG.equals(getMessageMLTag())) {
+      updateBiContext(parser.getBiContext());
     }
   }
 
@@ -125,6 +129,57 @@ public abstract class Element {
     context.updateItem(getClass().getSimpleName(), getMessageMLTag());
   }
 
+  /**
+   * Puts 1 if the key is found within element's attributes
+   *
+   * @param attributesMap map of BI properties to update BI context
+   * @param propertyKey   BI's property key to put in the given map
+   * {@link org.symphonyoss.symphony.messageml.util.BiFields}
+   * @param attributeKey  the attribute key of the element
+   */
+  protected void putOneIfPresent(Map<String, Object> attributesMap, String propertyKey,
+      String attributeKey) {
+    if (getAttributes().get(attributeKey) != null) {
+      attributesMap.put(propertyKey, 1);
+    }
+  }
+
+  /**
+   * Gets the key's value from element's attributes and put it in the given map as a String
+   *
+   * @param attributesMap map of BI properties to update BI context
+   * @param propertyKey   BI's property key to put in the given map
+   * {@link org.symphonyoss.symphony.messageml.util.BiFields}
+   * @param attributeKey  the attribute key of the element
+   */
+  protected void putStringIfPresent(Map<String, Object> attributesMap, String propertyKey,
+      String attributeKey) {
+    String value = getAttribute(attributeKey);
+    if (value != null) {
+      attributesMap.put(propertyKey, value);
+    }
+  }
+
+  /**
+   * Gets the key's value from element's attributes and put it in the given map as an Integer
+   *
+   * @param attributesMap map of BI properties to update BI context
+   * @param propertyKey   BI's property key to put in the given map
+   * {@link org.symphonyoss.symphony.messageml.util.BiFields}
+   * @param attributeKey  the attribute key of the element
+   */
+  protected void putIntegerIfPresent(Map<String, Object> attributesMap, String propertyKey,
+      String attributeKey) {
+    String value = getAttribute(attributeKey);
+    if (value != null) {
+      try {
+        attributesMap.put(propertyKey, Integer.parseInt(value));
+      } catch (NumberFormatException e) {
+        logger.warn("Attribute {} for element {} should be an integer value. The property will not be put in BI context.",
+            attributeKey, this.getClass().getSimpleName());
+      }
+    }
+  }
 
   /**
    * Parse a DOM attribute into MessageML element properties.

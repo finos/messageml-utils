@@ -5,9 +5,15 @@ import static org.junit.Assert.assertNotNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class CashtagTest extends ElementTest {
 
@@ -202,6 +208,26 @@ public class CashtagTest extends ElementTest {
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
+      ProcessingException {
+
+    String input = "<messageML>Hello <cash tag=\"world\"/>!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = context.getBiContext().getItems();
+
+    Map<String, Object> cashTagExpectedAttributes =
+        Collections.singletonMap(CashTag.MESSAGEML_TAG, 1);
+    Map<String, Object> entityExpectedAttributes =
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "org.symphonyoss.fin.security.id.ticker");
+
+    BiItem cashTagBiItemExpected = new BiItem(CashTag.class.getSimpleName(), cashTagExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+
+    assertEquals(2, items.size());
+    assertSameBiItem(cashTagBiItemExpected, items.get(0));
+    assertSameBiItem(entityBiItemExpected, items.get(1));
+  }
 
   private void verifyCashTag(Element messageML, String expectedPresentationML, String expectedJson, String expectedText,
       String expectedMarkdown) throws Exception {

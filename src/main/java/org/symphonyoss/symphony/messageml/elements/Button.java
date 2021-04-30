@@ -9,6 +9,7 @@ import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
@@ -161,9 +162,10 @@ public class Button extends Element {
   @Override
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
-    attributesMapBi.put(TYPE_ATTR, getAttributes().getOrDefault(TYPE_ATTR, ""));
-    attributesMapBi.put(CLASS_ATTR, getAttributes().getOrDefault(CLASS_ATTR, ""));
-    attributesMapBi.put(TooltipableElement.TITLE, getAttributes().containsKey(TooltipableElement.TITLE) ? 1 : StringUtils.EMPTY);
-    context.addItem(new BiItem("Button", attributesMapBi));
+
+    this.putStringIfPresent(attributesMapBi, BiFields.STYLE_COLOR.getFieldName(), CLASS_ATTR);
+    this.putStringIfPresent(attributesMapBi, BiFields.TYPE.getFieldName(), TYPE_ATTR);
+
+    context.addItem(new BiItem(BiFields.BUTTON.getFieldName(), attributesMapBi));
   }
 }

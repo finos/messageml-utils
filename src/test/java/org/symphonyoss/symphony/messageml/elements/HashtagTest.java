@@ -5,9 +5,15 @@ import static org.junit.Assert.assertNotNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class HashtagTest extends ElementTest {
 
@@ -194,6 +200,27 @@ public class HashtagTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Shorthand tag \"hash\" is not allowed in PresentationML");
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
+      ProcessingException {
+    String input = "<messageML>Hello <hash tag=\"world\"/>!</messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = context.getBiContext().getItems();
+
+    Map<String, Object> hashTagExpectedAttributes =
+        Collections.singletonMap(HashTag.MESSAGEML_TAG, 1);
+    Map<String, Object> entityExpectedAttributes =
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "org.symphonyoss.taxonomy.hashtag");
+
+    BiItem hashTagBiItemExpected = new BiItem(HashTag.class.getSimpleName(), hashTagExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+
+    assertEquals(2, items.size());
+    assertSameBiItem(hashTagBiItemExpected, items.get(0));
+    assertSameBiItem(entityBiItemExpected, items.get(1));
   }
 
   private void verifyHashTag(Element messageML, String expectedPresentationML, String expectedJson, String expectedText,

@@ -48,6 +48,7 @@ import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.TextNode;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
 import org.w3c.dom.Document;
@@ -58,6 +59,7 @@ import org.xml.sax.InputSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -371,22 +373,21 @@ public class MessageMLContextTest {
     Map<String, Object> expectedFormAttrs = new HashMap<>();
     expectedFormAttrs.put("form", 1);
     Map<String, Object> expectedButtonAttrs = new HashMap<>();
-    expectedButtonAttrs.put("class", "primary");
-    expectedButtonAttrs.put("type", "action");
-    expectedButtonAttrs.put("title", 1);
+    expectedButtonAttrs.put(BiFields.STYLE_COLOR.getFieldName(), "primary");
+    expectedButtonAttrs.put(BiFields.TYPE.getFieldName(), "action");
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
 
     assertEquals(2, biContext.getItems().size());
 
-    BiItem formItem = biContext.getItems().get(0);
-    assertEquals("Form", formItem.getName());
-    assertEquals(expectedFormAttrs , formItem.getAttributes());
-
-    BiItem buttonItem = biContext.getItems().get(1);
-    assertEquals("Button", buttonItem.getName());
+    BiItem buttonItem = biContext.getItems().get(0);
+    assertEquals(BiFields.BUTTON.getFieldName(), buttonItem.getName());
     assertEquals(expectedButtonAttrs , buttonItem.getAttributes());
+
+    BiItem formItem = biContext.getItems().get(1);
+    assertEquals(BiFields.FORM.getFieldName(), formItem.getName());
+    assertEquals(expectedFormAttrs , formItem.getAttributes());
   }
 
   @Test
@@ -403,14 +404,13 @@ public class MessageMLContextTest {
     BiContext biContext = context.getBiContext();
 
     Map<String, Object> expectedButtonAttrs = new HashMap<>();
-    expectedButtonAttrs.put("class", "primary");
-    expectedButtonAttrs.put("type", "action");
-    expectedButtonAttrs.put("title", "");
+    expectedButtonAttrs.put(BiFields.STYLE_COLOR.getFieldName(), "primary");
+    expectedButtonAttrs.put(BiFields.TYPE.getFieldName(), "action");
 
     assertEquals(3, biContext.getItems().size());
-    assertEquals("Form", biContext.getItems().get(0).getName());
-    assertEquals("TextField", biContext.getItems().get(1).getName());
-    BiItem buttonItem = biContext.getItems().get(2);
+    assertEquals("TextField", biContext.getItems().get(0).getName());
+    assertEquals("Form", biContext.getItems().get(2).getName());
+    BiItem buttonItem = biContext.getItems().get(1);
     assertEquals("Button", buttonItem.getName());
     assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
   }
@@ -429,9 +429,9 @@ public class MessageMLContextTest {
     BiContext biContext = context.getBiContext();
 
     assertEquals(3, biContext.getItems().size());
-    assertEquals("Form", biContext.getItems().get(0).getName());
+    assertEquals("Button", biContext.getItems().get(0).getName());
     assertEquals("Button", biContext.getItems().get(1).getName());
-    assertEquals("Button", biContext.getItems().get(2).getName());
+    assertEquals("Form", biContext.getItems().get(2).getName());
   }
 
   @Test
@@ -443,24 +443,27 @@ public class MessageMLContextTest {
               "<emoji shortcode=\"smiley\"/>" +
             "</messageML>";
 
-    Map<String, Object> expectedLinkAttrs = new HashMap<>();
-    expectedLinkAttrs.put("href", 2);
-    Map<String, Object> expectedEmojisAttrs = new HashMap<>();
-    expectedEmojisAttrs.put("emoji", 1);
+    Map<String, Object> expectedLinkAttrs = Collections.singletonMap("href", 2);
+    Map<String, Object> expectedEmojisAttrs = Collections.singletonMap("emoji", 1);
+    Map<String, Object> expectedEntityAttrs = Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), null);
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
 
     List<BiItem> biItems = biContext.getItems();
-    assertEquals(2, biItems.size());
+    assertEquals(3, biItems.size());
 
     BiItem linkItem = biItems.get(0);
     assertEquals("Link", linkItem.getName());
     assertEquals(expectedLinkAttrs, linkItem.getAttributes());
 
     BiItem emojiItem = biItems.get(1);
-    assertEquals("Emoji", biItems.get(1).getName());
+    assertEquals("Emoji", emojiItem.getName());
     assertEquals(expectedEmojisAttrs, emojiItem.getAttributes());
+
+    BiItem entityItem = biItems.get(2);
+    assertEquals(BiFields.ENTITY.getFieldName(), entityItem.getName());
+    assertEquals(expectedEntityAttrs, entityItem.getAttributes());
   }
 
   @Test

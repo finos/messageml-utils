@@ -3,18 +3,19 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.DateSelectorNode;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Class representing a date-selector element inside a Symphony Elements form.
@@ -58,9 +59,9 @@ public class DateSelector extends FormElement {
   @Override
   public void validate() throws InvalidInputException {
     super.validate();
-    
+
     assertAttributeNotBlank(NAME_ATTR);
-    
+
     if(getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeIsBoolean(REQUIRED_ATTR);
     }
@@ -119,6 +120,18 @@ public class DateSelector extends FormElement {
     }
 
     return presentationAttrs;
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+    // no default values to check
+    // no validations to check
+
+    context.addItem(new BiItem(BiFields.DATE_SELECTOR.getFieldName(), attributesMapBi));
   }
 
   void buildElementFromDiv(MessageMLParser parser, org.w3c.dom.Element element) throws InvalidInputException, ProcessingException {

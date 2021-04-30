@@ -3,8 +3,11 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TimePickerNode;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 import org.symphonyoss.symphony.messageml.util.XMLAttribute;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.symphonyoss.symphony.messageml.util.pojo.TimeInterval;
@@ -12,6 +15,7 @@ import org.w3c.dom.Node;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -131,6 +135,54 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
     return new TimePickerNode(getAttribute(LABEL), getAttribute(TITLE), getAttribute(PLACEHOLDER_ATTR));
   }
 
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getFieldName(), VALUE_ATTR);
+    this.putIntegerIfPresent(attributesMapBi, BiFields.INPUT_STEP.getFieldName(), STEP_ATTR);
+    this.computeAndPutValidationProperties(attributesMapBi);
+
+    context.addItem(new BiItem(BiFields.TIME_PICKER.getFieldName(), attributesMapBi));
+  }
+
+  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
+    boolean validationMin = getAttribute(MIN_ATTR) != null;
+    boolean validationMax = getAttribute(MAX_ATTR) != null;
+    boolean validationPattern = getAttribute(FORMAT_ATTR) != null;
+    boolean validationOptions = getAttribute(DISABLED_TIME_ATTR) != null;
+    boolean validationStrict = getAttribute(STRICT_ATTR) != null;
+    boolean hasValidation = validationMin || validationMax || validationPattern || validationOptions
+        || validationStrict;
+
+    if (validationMin) {
+      attributesMapBi.put(BiFields.VALIDATION_MIN.getFieldName(), 1);
+    }
+
+    if (validationMax) {
+      attributesMapBi.put(BiFields.VALIDATION_MAX.getFieldName(), 1);
+    }
+
+    if (validationPattern) {
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getFieldName(), 1);
+    }
+
+    if (validationOptions) {
+      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getFieldName(), 1);
+    }
+
+    if (validationStrict) {
+      attributesMapBi.put(BiFields.VALIDATION_STRICT.getFieldName(), 1);
+    }
+
+    if (hasValidation) {
+      attributesMapBi.put(BiFields.VALIDATION.getFieldName(), 1);
+    }
+  }
 
   private void innerAsPresentationML(XmlPrintStream out, Map<String, Object> presentationAttrs) {
     out.printElement(PRESENTATIONML_TAG, presentationAttrs);

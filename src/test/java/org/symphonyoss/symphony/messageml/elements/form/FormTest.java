@@ -1,10 +1,18 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.*;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.util.BiFields;
 
 import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class FormTest extends ElementTest {
   private static final String ID_ATTR = "id";
@@ -87,6 +95,26 @@ public class FormTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Elements must have unique ids. The following value is not unique: [" + notUniqueId + "].");
     context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+  }
+
+
+  @Test
+  public void testBiContextForm() throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+    String input = "<messageML>"
+        + "<form id=\"all-elements\">"
+        + "<button name=\"example-button2\">Button Text</button>"
+        + "</form>"
+        + "</messageML>";
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    BiItem formBiItemExpected = new BiItem(BiFields.FORM.getFieldName(),
+        Collections.singletonMap(BiFields.FORM.getMessageMlAttribute(), 1));
+
+    assertEquals(2, items.size());
+    assertSameBiItem(formBiItemExpected, items.get(1));
   }
 
   private String getExpectedFormPresentationML(Form form) {
