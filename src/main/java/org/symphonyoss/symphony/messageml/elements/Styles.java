@@ -1,6 +1,5 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -156,7 +155,7 @@ public class Styles {
           .collect(Collectors.toSet());
       inputStyleProperties.removeAll(ALLOWED_PROPERTIES);
       if (!inputStyleProperties.isEmpty()) {
-        throw new InvalidInputException("Invalid property(s): [" + Joiner.on(",").join(inputStyleProperties) + "] in the \"style\" attribute");
+        throw new InvalidInputException("Invalid property(s): " + inputStyleProperties + " in the \"style\" attribute");
       }
     } catch (IllegalArgumentException ex) {
       throw new InvalidInputException("Unparseable \"style\" attribute: " + styleAttribute, ex);

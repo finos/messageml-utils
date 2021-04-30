@@ -110,8 +110,7 @@
     </contributors>
 
     <properties>
-        <json.schema.validator.version>2.2.10</json.schema.validator.version>
-        <guava.version>28.0-jre</guava.version>
+        <json.schema.validator.version>2.2.14</json.schema.validator.version>
         <jackson.version>2.10.1</jackson.version>
         <jackson.databind.version>2.10.5.1</jackson.databind.version>
         <commons.io.version>2.7</commons.io.version>
@@ -243,20 +242,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.java-json-tools</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>${json.schema.validator.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

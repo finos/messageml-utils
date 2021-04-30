@@ -15,8 +15,8 @@ public class StylesTest extends ElementTest {
   @Test
   public void validateInvalidPropertyValidProperty() throws Exception {
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Invalid property(s): [back] in the \"style\" attribute");
-    Styles.validate("back:c;background:values values values;background-attachment:values");
+    expectedException.expectMessage("Invalid property(s): [back, back2] in the \"style\" attribute");
+    Styles.validate("back:c;back2:c;background:values values values;background-attachment:values");
   }
 
   @Test
