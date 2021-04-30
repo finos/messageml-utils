@@ -1,6 +1,6 @@
 package org.symphonyoss.symphony.messageml.bi;
 
-import joptsimple.internal.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,11 +66,10 @@ public class BiContext {
     Optional<BiItem> optionalBiItem = getItemWithName(itemName);
     if (optionalBiItem.isPresent()) {
       attributes.forEach((key, value) -> {
-        if (!value.equals(Strings.EMPTY) && optionalBiItem.get().getAttributes().get(key) != null) {
+        if (!StringUtils.isEmpty(String.valueOf(value))
+            && optionalBiItem.get().getAttributes().get(key) != null) {
           optionalBiItem.get().increaseAttributeCount(key);
-        } else if (optionalBiItem.get().getAttributes().get(key) == null) {
-          optionalBiItem.get().getAttributes().put(key, value);
-        }
+        } else { optionalBiItem.get().getAttributes().putIfAbsent(key, value); }
       });
     } else {
       addItem(new BiItem(itemName, attributes));
@@ -83,11 +82,8 @@ public class BiContext {
 
   public boolean isAttributeSet(String itemName, String attributeName) {
     Optional<BiItem> optionalBiTem = getItemWithName(itemName);
-    if (optionalBiTem.isPresent() && optionalBiTem.get().getAttributes() != null
-        && optionalBiTem.get().getAttributes().get(attributeName) != null) {
-      return true;
-    }
-    return false;
+    return optionalBiTem.isPresent() && optionalBiTem.get().getAttributes() != null
+        && optionalBiTem.get().getAttributes().get(attributeName) != null;
   }
 
   private static String extractVersion() {

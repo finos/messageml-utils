@@ -1,6 +1,5 @@
 package org.symphonyoss.symphony.messageml.bi;
 
-import joptsimple.internal.Strings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +73,7 @@ public class BiItem {
 
   private Integer getZeroIfEmptyString(String attributeName) {
     Object value = attributes.getOrDefault(attributeName, 0);
-    if (value.equals(StringUtils.EMPTY)) {
+    if (StringUtils.isEmpty(String.valueOf(value))) {
       return 0;
     }
     return (Integer) value;
