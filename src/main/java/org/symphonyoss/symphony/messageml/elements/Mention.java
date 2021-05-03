@@ -241,7 +241,7 @@ public class Mention extends Entity {
   }
 
   @Override
-  void updateBiContext(BiContext context) {
+  public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
     context.updateItem("Mentions");
   }

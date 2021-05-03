@@ -3,16 +3,29 @@ package org.symphonyoss.symphony.messageml.elements.form;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.Checkbox;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CheckboxTest extends ElementTest {
   private String formId;
@@ -353,6 +366,62 @@ public class CheckboxTest extends ElementTest {
     expectedException.expectMessage("Element \"form\" cannot have more than 50 children of the following elements: [checkbox, radio].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  private static Stream<Arguments> messageMlStream() {
+    return Stream.of(
+        Arguments.of(
+            "<checkbox name=\"id1\">Red</checkbox>"
+                + "<checkbox name=\"id2\" value=\"value02\" checked=\"false\">Green</checkbox>"
+                + "<checkbox name=\"id3\" value=\"value03\" label=\"labelOne\" checked=\"true\">Red</checkbox>"
+                + "<checkbox name=\"id4\" value=\"value04\" checked=\"false\">Yellow</checkbox>"
+                + "<checkbox name=\"id5\" value=\"value02\" label=\"labelTwo\" checked=\"true\">Blue</checkbox>",
+            Stream.of(new Object[][] {
+                {BiFields.LABEL.getFieldName(), 2},
+                {BiFields.OPTIONS_COUNT.getFieldName(), 5},
+                {BiFields.DEFAULT.getFieldName(), 1},
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
+
+        Arguments.of(
+            "<checkbox name=\"id1\">Red</checkbox>"
+                + "<checkbox name=\"id2\" value=\"value02\">Green</checkbox>"
+                + "<checkbox name=\"id3\" value=\"value03\" label=\"labelOne\">Red</checkbox>"
+                + "<checkbox name=\"id4\" value=\"value04\" checked=\"false\">Yellow</checkbox>"
+                + "<checkbox name=\"id5\" value=\"value02\" label=\"labelTwo\">Blue</checkbox>",
+            Stream.of(new Object[][] {
+                {BiFields.LABEL.getFieldName(), 2},
+                {BiFields.OPTIONS_COUNT.getFieldName(), 5},
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("messageMlStream")
+  void testBiContextCheckBox(String checkBoxML, Map<String, Object> expectedAttributes)
+      throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+
+    String input = String.format(
+        "<messageML>\n "
+            + "<form id=\"form_id\">\n "
+            + "%s\n"
+            + "<button name=\"name01\">Submit</button>"
+            + "</form>\n </messageML>",
+        checkBoxML);
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    BiItem checkBoxBiItemExpected = new BiItem(BiFields.CHECKBOX.getFieldName(),
+        expectedAttributes.entrySet()
+            .stream()
+            .collect(Collectors.toMap(e ->
+                String.valueOf(e.getKey()), Map.Entry::getValue)));
+
+    Assertions.assertEquals(3, items.size());
+    Assertions.assertEquals(BiFields.CHECKBOX.getFieldName(), items.get(0).getName());
+    assertSameBiItem(checkBoxBiItemExpected, items.get(0));
+    assertMessageLengthBiItem(items.get(2), input.length());
   }
 
   private String buildMessageMLFromParameters(String name, String value, String text, String checked, boolean shouldSendCheckedAttribute) {
