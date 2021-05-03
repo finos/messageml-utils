@@ -37,6 +37,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.CashTag;
@@ -59,6 +60,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -223,6 +225,130 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testGetBiContextWithOneElementInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\"  title =\"This is a title\">Button Text</button>"
+            +
+            "    </form>" +
+            "</messageML>";
+
+    Map<String, Object> expectedMessageLengthAttrs = new HashMap<>();
+    expectedMessageLengthAttrs.put(BiFields.COUNT.getFieldName(), message.length());
+    Map<String, Object> expectedButtonAttrs = new HashMap<>();
+    expectedButtonAttrs.put(BiFields.STYLE_COLOR.getFieldName(), "primary");
+    expectedButtonAttrs.put(BiFields.TYPE.getFieldName(), "action");
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem buttonItem = biContext.getItems().get(0);
+    assertEquals(BiFields.BUTTON.getFieldName(), buttonItem.getName());
+    assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
+
+    BiItem messageLengthItem = biContext.getItems().get(1);
+    assertEquals(BiFields.MESSAGE_LENGTH.getFieldName(), messageLengthItem.getName());
+    assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
+  }
+
+  @Test
+  public void testGetBiContextWithDifferentElementsInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <text-field name=\"text-field\" placeholder=\"placeholder-here\" title=\"title-here\" label=\"label-here\">test_underscore</text-field>" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
+            "    </form>" +
+            "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    Map<String, Object> expectedButtonAttrs = new HashMap<>();
+    expectedButtonAttrs.put(BiFields.STYLE_COLOR.getFieldName(), "primary");
+    expectedButtonAttrs.put(BiFields.TYPE.getFieldName(), "action");
+
+    assertEquals(3, biContext.getItems().size());
+    assertEquals(BiFields.TEXT_FIELD.getFieldName(), biContext.getItems().get(0).getName());
+
+    Map<String, Object> expectedMessageLengthAttrs = new HashMap<>();
+    expectedMessageLengthAttrs.put(BiFields.COUNT.getFieldName(), message.length());
+    BiItem messgaeLengthItem = new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), expectedMessageLengthAttrs);
+    assertEquals(BiFields.MESSAGE_LENGTH.getFieldName(), biContext.getItems().get(2).getName());
+    assertEquals(expectedMessageLengthAttrs, messgaeLengthItem.getAttributes());
+
+    BiItem buttonItem = biContext.getItems().get(1);
+    assertEquals("Button", buttonItem.getName());
+    assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
+  }
+
+  @Test
+  public void testGetBiContextWithSameElementsInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\" title =\"This is a title\">Button Text</button>" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
+            "    </form>" +
+            "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    assertEquals(3, biContext.getItems().size());
+    assertEquals(BiFields.BUTTON.getFieldName(), biContext.getItems().get(0).getName());
+    assertEquals(BiFields.BUTTON.getFieldName(), biContext.getItems().get(1).getName());
+    assertEquals(BiFields.MESSAGE_LENGTH.getFieldName(), biContext.getItems().get(2).getName());
+  }
+
+  @Test
+  public void testGetBiContextDuplicateSimpleTags() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>" +
+            "<a href=\"https://hello.org\">Hello world!</a>" +
+            "<a href=\"http:google.com\">Google!</a>" +
+            "<emoji shortcode=\"smiley\"/>" +
+            "</messageML>";
+
+    Map<String, Object> expectedLinkAttrs = Collections.singletonMap(BiFields.COUNT.getFieldName(), 2);
+    Map<String, Object> expectedEmojisAttrs = Collections.singletonMap(BiFields.COUNT.getFieldName(), 1);
+    Map<String, Object> expectedEntityAttrs = Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), null);
+    Map<String, Object> expectedMessageLengthAttrs = Collections.singletonMap(BiFields.COUNT.getFieldName(), message.length());
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    List<BiItem> biItems = biContext.getItems();
+    assertEquals(5, biItems.size());
+
+    BiItem linkItem = biItems.get(0);
+    assertEquals(BiFields.LINKS.getFieldName(), linkItem.getName());
+    assertEquals(expectedLinkAttrs, linkItem.getAttributes());
+
+    BiItem entityItem = biItems.get(1);
+    assertEquals(BiFields.ENTITY.getFieldName(), entityItem.getName());
+    assertEquals(expectedEntityAttrs, entityItem.getAttributes());
+
+    BiItem emojiItem = biItems.get(2);
+    assertEquals(BiFields.EMOJIS.getFieldName(), emojiItem.getName());
+    assertEquals(expectedEmojisAttrs, emojiItem.getAttributes());
+
+    BiItem messageLengthItem = biItems.get(3);
+    assertEquals(BiFields.MESSAGE_LENGTH.getFieldName(), messageLengthItem.getName());
+    assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
+
+    BiItem entityJsonItem = biItems.get(4);
+    assertNotNull(entityJsonItem);
+    assertEquals(BiFields.ENTITY_JSON_SIZE.getFieldName(), entityJsonItem.getName());
+    assertNotNull(entityJsonItem.getAttributes());
+    assertNotNull(entityJsonItem.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertTrue((Integer) entityJsonItem.getAttributes().get(BiFields.COUNT.getFieldName()) > 2);
+  }
+
+  @Test
   public void testParseMessageMLDropdownWithSplittables()
       throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>\n"
@@ -384,7 +510,7 @@ public class MessageMLContextTest {
     biItems.add(new BiItem("Headers", Collections.singletonMap("count", 1)));
     biItems.add(new BiItem("Images", Collections.singletonMap("count", 3)));
     biItems.add(new BiItem("ImagesURL", Collections.singletonMap("count", 3)));
-    biItems.add(new BiItem("Links", Collections.singletonMap("count", 1)));
+    biItems.add(new BiItem(BiFields.LINKS.getFieldName(), Collections.singletonMap("count", 1)));
     biItems.add(new BiItem("Spans", Collections.singletonMap("count", 15)));
     biItems.add(new BiItem("Divs", Collections.singletonMap("count", 5)));
     biItems.add(new BiItem("Mentions", Collections.singletonMap("count", 1)));
@@ -394,8 +520,10 @@ public class MessageMLContextTest {
     biItems.add(new BiItem("StylesClassOther", Collections.singletonMap("count", 8)));
     biItems.add(new BiItem("StylesClassTempo", Collections.singletonMap("count", 15)));
     biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 1548)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap("count", 1548)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 2984)));
+    biItems.add(new BiItem("Entity",
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId")));
     return biItems;
   }
 
@@ -570,7 +698,7 @@ public class MessageMLContextTest {
     List<BiItem> biItems = new ArrayList<>();
     biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap("count", 1)));
     biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 46)));
-    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 35)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap("count", 35)));
     return biItems;
   }
 

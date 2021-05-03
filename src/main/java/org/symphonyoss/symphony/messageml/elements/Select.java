@@ -17,12 +17,17 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -92,6 +97,18 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   @Override
   public String getElementId(){
     return ELEMENT_ID;
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), DATA_PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+
+    context.addItem(new BiItem(BiFields.SELECT.getFieldName(), attributesMapBi));
   }
 
   private void assertOnlyOneOptionSelected() throws InvalidInputException {

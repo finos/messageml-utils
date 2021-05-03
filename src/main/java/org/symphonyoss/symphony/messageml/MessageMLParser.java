@@ -16,6 +16,7 @@ import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.elements.Bold;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.Button;
@@ -180,10 +181,10 @@ public class MessageMLParser {
     this.entityJson = this.messageML.asEntityJson(this.entityJson);
     int entityJsonSize = this.entityJson.toString().length();
 
-    biContext.addItemWithValue("MessageLength", message.length());
+    biContext.addItemWithValue(BiFields.MESSAGE_LENGTH.getFieldName(), message.length());
     // if entityJson is empty entityJson.toString={}
     if (entityJsonSize > 2) {
-      biContext.addItemWithValue("EntitiesJSONSize", entityJsonSize);
+      biContext.addItemWithValue(BiFields.ENTITY_JSON_SIZE.getFieldName(), entityJsonSize);
     }
     return this.messageML;
 

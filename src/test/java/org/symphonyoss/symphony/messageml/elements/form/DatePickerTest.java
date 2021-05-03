@@ -5,15 +5,28 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.DatePicker;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author enrico.molino (17/11/2020)
@@ -431,5 +444,85 @@ public class DatePickerTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }
+
+  private static Stream<Arguments> messageMlStream() {
+    return Stream.of(
+        Arguments.of(
+            "<date-picker name=\"rules\" value=\"2020-08-28\" label=\"label01\" "
+                + "title=\"title01\" min=\"2021-01-04\" max=\"2021-01-27\" "
+                + "disabled-date='[{\"from\": \"2021-01-13\", \"to\": \"2021-01-15\"},"
+                + " {\"from\": \"2021-01-19\", \"to\": \"2021-01-21\"}, {\"day\": \"2021-01-06\"}, "
+                + "{\"daysOfWeek\": [0,6]}]' "
+                + "highlighted-date='[{\"day\": \"2021-01-05\"}, {\"day\": \"2021-01-26\"}]' "
+                + "format=\"ddMMyyyy\" "
+                + "placeholder=\"placeholder01\" required=\"true\"/>",
+            Stream.of(new Object[][] {
+                {BiFields.PLACEHOLDER.getFieldName(), 1},
+                {BiFields.TITLE.getFieldName(), 1},
+                {BiFields.LABEL.getFieldName(), 1},
+                {BiFields.DEFAULT.getFieldName(), 1},
+                {BiFields.VALIDATION.getFieldName(), 1},
+                {BiFields.VALIDATION_OPTIONS.getFieldName(), 1},
+                {BiFields.VALIDATION_MIN.getFieldName(), 1},
+                {BiFields.VALIDATION_MAX.getFieldName(), 1},
+                {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
+                {BiFields.HIGHLIGHTED_OPTIONS.getFieldName(), 1},
+                {BiFields.REQUIRED.getFieldName(), 1},
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
+
+        Arguments.of(
+            "<date-picker name=\"rules\" value=\"2020-08-28\" label=\"label01\" "
+                + "title=\"title01\" min=\"2021-01-04\" max=\"2021-01-27\" "
+                + "disabled-date='[{\"from\": \"2021-01-13\", \"to\": \"2021-01-15\"},"
+                + " {\"from\": \"2021-01-19\", \"to\": \"2021-01-21\"}, {\"day\": \"2021-01-06\"}, "
+                + "{\"daysOfWeek\": [0,6]}]' "
+                + "highlighted-date='[{\"day\": \"2021-01-05\"}, {\"day\": \"2021-01-26\"}]' "
+                + "format=\"ddMMyyyy\" "
+                + "placeholder=\"placeholder01\" required=\"true\"/>",
+            Stream.of(new Object[][] {
+                {BiFields.PLACEHOLDER.getFieldName(), 1},
+                {BiFields.TITLE.getFieldName(), 1},
+                {BiFields.LABEL.getFieldName(), 1},
+                {BiFields.DEFAULT.getFieldName(), 1},
+                {BiFields.VALIDATION.getFieldName(), 1},
+                {BiFields.VALIDATION_OPTIONS.getFieldName(), 1},
+                {BiFields.VALIDATION_MIN.getFieldName(), 1},
+                {BiFields.VALIDATION_MAX.getFieldName(), 1},
+                {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
+                {BiFields.HIGHLIGHTED_OPTIONS.getFieldName(), 1},
+                {BiFields.REQUIRED.getFieldName(), 1},
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("messageMlStream")
+  void testBiContextDatePicker_withValidations(String dataPickerML, Map<String, Object> expectedAttributes)
+      throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+
+    String input = String.format(
+        "<messageML>\n "
+            + "<form id=\"form_id\">\n "
+            + "%s\n"
+            + "<button name=\"name01\">Submit</button>"
+            + "</form>\n </messageML>",
+        dataPickerML);
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    BiItem datePickerBiItemExpected = new BiItem(BiFields.DATE_SELECTOR.getFieldName(),
+        expectedAttributes.entrySet()
+            .stream()
+            .collect(Collectors.toMap(e ->
+                String.valueOf(e.getKey()), Map.Entry::getValue)));
+
+    Assertions.assertEquals(3, items.size());
+    Assertions.assertEquals(BiFields.DATE_SELECTOR.getFieldName(), items.get(0).getName());
+    assertSameBiItem(datePickerBiItemExpected, items.get(0));
+    assertMessageLengthBiItem(items.get(2), input.length());
+  }
+
 
 }
