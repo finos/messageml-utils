@@ -6,17 +6,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -479,38 +475,11 @@ public class MentionTest extends ElementTest {
     assertTrue(expectedBiItems.containsAll(biItems));
   }
 
-  @Test
-  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
-      ProcessingException {
-    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
-    ((TestDataProvider) dataProvider).setUserPresentation(user);
-
-    String input = "<messageML>Hello <mention uid=\"1\"/>!</messageML>";
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    List<BiItem> items = context.getBiContext().getItems();
-
-    Map<String, Object> mentionExpectedAttributes =
-        Collections.singletonMap(BiFields.COUNT.getFieldName(), 1);
-    Map<String, Object> entityExpectedAttributes =
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId");
-
-    BiItem mentionBiItemExpected = new BiItem(BiFields.MENTIONS.getFieldName(), mentionExpectedAttributes);
-    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
-
-    assertEquals(4, items.size());
-    assertSameBiItem(entityBiItemExpected, items.get(0));
-    assertSameBiItem(mentionBiItemExpected, items.get(1));
-    assertMessageLengthBiItem(items.get(2), input.length());
-    assertEntityJsonBiItem(items.get(3));
-  }
-
   private List<BiItem> getExpectedMentionBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.MENTIONS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 2)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId")));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId")));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 239)));
-    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 92)));
+    biItems.add(new BiItem("Mentions", Collections.singletonMap("count", 2)));
+    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 239)));
+    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 92)));
     return biItems;
   }
 

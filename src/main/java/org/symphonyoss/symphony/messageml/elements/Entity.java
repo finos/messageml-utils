@@ -21,13 +21,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
-import org.symphonyoss.symphony.messageml.bi.BiContext;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
-import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.w3c.dom.Node;
-
-import java.util.Collections;
 
 /**
  * @author lukasz
@@ -98,13 +93,6 @@ public abstract class Entity extends Element {
     if (this.format == FormatEnum.PRESENTATIONML && this.entityId == null) {
       throw new InvalidInputException("The attribute \"data-entity-id\" is required");
     }
-  }
-
-  @Override
-  public void updateBiContext(BiContext context) {
-    super.updateBiContext(context);
-    context.addItem(new BiItem(BiFields.ENTITY.getFieldName(),
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), this.getEntitySubType())));
   }
 
   String getEntityId(int index) {

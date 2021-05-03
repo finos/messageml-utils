@@ -1,24 +1,15 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
 import org.junit.Test;
-import org.symphonyoss.symphony.messageml.MessageMLContext;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
-import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.PersonSelector;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer.addEscapeCharacter;
@@ -216,55 +207,6 @@ public class PersonSelectorTest extends ElementTest {
         "\"><div><div class=\"person-selector\" data-name=\"some-name\"></div></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
     assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector)\n\n" + ACTION_BTN_MARKDOWN
         + "\n---\n", context.getMarkdown());
-  }
-
-  @Test
-  public void testBiContextPersonSelector()
-      throws InvalidInputException, IOException, ProcessingException {
-    MessageMLContext messageMLContext = new MessageMLContext(null);
-    String input = "<messageML>"
-        + "<form id=\"form_id\">"
-        + "<person-selector name=\"name01\" title=\"title01\" label=\"label01\" "
-        + "placeholder=\"placeholder01\" required=\"true\"/>"
-        + "<person-selector name=\"name02\" title=\"title02\" "
-        + "placeholder=\"placeholder02\"/>"
-        + "<button name=\"person-selector\">Submit</button>"
-        + "</form>"
-        + "</messageML>";
-
-    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    List<BiItem> items = messageMLContext.getBiContext().getItems();
-
-    Map<Object, Object> expectedAttributesFirst = Stream.of(new Object[][] {
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.TITLE.getFieldName(), 1},
-        {BiFields.LABEL.getFieldName(), 1},
-        {BiFields.REQUIRED.getFieldName(), 1},
-    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
-
-    Map<Object, Object> expectedAttributesSecond = Stream.of(new Object[][] {
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.TITLE.getFieldName(), 1},
-    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
-
-    BiItem personSelectorFirstBiItemExpected = new BiItem(BiFields.PERSON_SELECTOR.getFieldName(),
-        expectedAttributesFirst.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
-
-    BiItem personSelectorSecondBiItemExpected = new BiItem(BiFields.PERSON_SELECTOR.getFieldName(),
-        expectedAttributesSecond.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
-
-    assertEquals(4, items.size());
-    assertEquals(BiFields.PERSON_SELECTOR.getFieldName(), items.get(0).getName());
-    assertEquals(BiFields.PERSON_SELECTOR.getFieldName(), items.get(1).getName());
-    assertSameBiItem(personSelectorFirstBiItemExpected, items.get(0));
-    assertSameBiItem(personSelectorSecondBiItemExpected, items.get(1));
-    assertMessageLengthBiItem(items.get(3), input.length());
   }
 
   private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {

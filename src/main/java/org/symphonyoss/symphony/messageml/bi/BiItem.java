@@ -1,6 +1,5 @@
 package org.symphonyoss.symphony.messageml.bi;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +62,7 @@ public class BiItem {
    */
   protected void increaseAttributeCount(String attributeName) {
     try {
-      Integer value = getZeroIfEmptyString(attributeName);
-      value ++;
+      Integer value = (Integer) attributes.getOrDefault(attributeName, 0) + 1;
       attributes.put(attributeName, value);
     } catch (ClassCastException e) {
       logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",
@@ -91,14 +89,6 @@ public class BiItem {
       logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",
           attributeName, getName());
     }
-  }
-
-  private Integer getZeroIfEmptyString(String attributeName) {
-    Object value = attributes.getOrDefault(attributeName, 0);
-    if (StringUtils.isEmpty(String.valueOf(value))) {
-      return 0;
-    }
-    return (Integer) value;
   }
 
   @Override

@@ -6,14 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.rules.ExpectedException;
-import org.symphonyoss.symphony.messageml.MessageMLContext;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
-import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
@@ -21,15 +14,9 @@ import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.RegexElement;
 import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TextAreaTest extends ElementTest {
 
@@ -400,63 +387,4 @@ public class TextAreaTest extends ElementTest {
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
-
-  private static Stream<Arguments> messageMlStream() {
-    return Stream.of(
-        Arguments.of(
-            "<textarea name=\"req\" required=\"true\" label=\"My label\" title=\"title01\" "
-                + "pattern=\"^[a-zA-Z]{3,3}$\" pattern-error-message=\"error message\" "
-                + "placeholder=\"placeholder01\"> With initial value</textarea>\n",
-            Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.DEFAULT.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
-                {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
-                {BiFields.VALIDATION.getFieldName(), 1},
-            }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
-
-
-
-        Arguments.of(
-            "<textarea name=\"req\" required=\"true\" label=\"My label\" title=\"title01\" "
-                + "placeholder=\"placeholder01\"/>\n", Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
-            }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
-    );
-  }
-
-  @ParameterizedTest
-  @MethodSource("messageMlStream")
-  void testBiContextTextArea_withValidation(String textAreaML, Map<String, Object> expectedAttributes)
-      throws InvalidInputException, IOException, ProcessingException {
-    MessageMLContext messageMLContext = new MessageMLContext(null);
-
-    String input = String.format(
-        "<messageML>\n "
-            + "<form id=\"form_id\">\n "
-            + "%s\n"
-            + "<button name=\"name01\">Submit</button>\n "
-            + "</form>\n </messageML>",
-        textAreaML);
-
-    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    List<BiItem> items = messageMLContext.getBiContext().getItems();
-
-    BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_AREA.getFieldName(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
-
-    Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.TEXT_AREA.getFieldName(), items.get(0).getName());
-    assertSameBiItem(textAreaBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
-  }
-
 }

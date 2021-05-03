@@ -21,7 +21,6 @@ import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
@@ -121,7 +120,7 @@ public class Link extends Element {
   @Override
   public void updateBiContext(BiContext biContext) {
     super.updateBiContext(biContext);
-    biContext.updateItem(BiFields.LINKS.getFieldName());
+    biContext.updateItem("Links");
   }
 
   public URI getUri() {

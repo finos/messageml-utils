@@ -2,28 +2,14 @@ package org.symphonyoss.symphony.messageml.elements.form;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.symphonyoss.symphony.messageml.MessageMLContext;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
-import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.*;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TimePickerTest extends ElementTest {
 
@@ -373,122 +359,6 @@ public class TimePickerTest extends ElementTest {
             + "---\n";
 
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
-  }
-
-  private static Stream<Arguments> messageMlStream() {
-    return Stream.of(
-        Arguments.of(
-            "<time-picker name=\"name01\" label=\"label01\" placeholder=\"placeholder01\" \n "
-                + "title=\"title01\" required=\"true\" value=\"13:51:06\" min=\"08:00:00\" "
-                + "max=\"17:00:00\" format=\"hhmmssa\" disabled-time='[{\"from\": \"12:00:00\", "
-                + "\"to\": \"14:00:00\"}, \n {\"time\": \"15:00:00\"}]' step=\"600\" "
-                + "strict=\"true\"/>",
-            Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.INPUT_STEP.getFieldName(), 600},
-                {BiFields.DEFAULT.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
-                {BiFields.VALIDATION_MIN.getFieldName(), 1},
-                {BiFields.VALIDATION_MAX.getFieldName(), 1},
-                {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
-                {BiFields.VALIDATION_OPTIONS.getFieldName(), 1},
-                {BiFields.VALIDATION_STRICT.getFieldName(), 1},
-                {BiFields.VALIDATION.getFieldName(), 1},
-            }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
-
-        Arguments.of(
-            "<time-picker name=\"name01\" label=\"label01\" placeholder=\"placeholder01\" "
-                + "title=\"title01\" required=\"true\" value=\"13:51:06\"/>",
-            Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.DEFAULT.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
-            }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
-    );
-  }
-
-  @ParameterizedTest
-  @MethodSource("messageMlStream")
-  void testBiContextTimePicker_withValidation(String timePickerML,
-      Map<String, Object> expectedAttributes)
-      throws InvalidInputException, IOException, ProcessingException {
-    MessageMLContext messageMLContext = new MessageMLContext(null);
-    String input = String.format(
-        "<messageML>\n "
-            + "<form id=\"form_id\">\n "
-            + "%s\n"
-            + "<button name=\"time-picker\">Submit</button>\n "
-            + "</form>\n </messageML>",
-        timePickerML);
-
-    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    List<BiItem> items = messageMLContext.getBiContext().getItems();
-
-    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getFieldName(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
-
-    Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.TIME_PICKER.getFieldName(), items.get(0).getName());
-    assertSameBiItem(timePickerBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
-  }
-
-  @Test
-  public void testBiContextTimePicker_BadAttribute() {
-    MessageMLContext messageMLContext = new MessageMLContext(null);
-    String badInput = "<messageML>\n"
-        + "  <form id=\"form_id\">\n"
-        + "      <time-picker name=\"name01\" label=\"label01\" placeholder=\"placeholder01\" "
-        + "title=\"title01\" required=\"true\" value=\"13:51:06\" min=\"08:00:00\" "
-        + "max=\"17:00:00\" format=\"hhmmssa\" disabled-time='[{\"from\": \"12:00:00\", \"to\": "
-        + "\"14:00:00\"}, "
-        + "{\"time\": \"15:00:00\"}]' step=\"abc\" strict=\"true\"/>\n"
-        + "      <button name=\"time-picker\">Submit</button>\n"
-        + "  </form>\n"
-        + "</messageML>";
-
-    Exception exception = assertThrows(Exception.class,
-        () -> messageMLContext.parseMessageML(badInput, null, MessageML.MESSAGEML_VERSION));
-
-    Assertions.assertEquals("Attribute \"step\" should be a number.", exception.getMessage());
-
-    List<BiItem> items = messageMLContext.getBiContext().getItems();
-
-    Map<Object, Object> expectedAttributes = Stream.of(new Object[][] {
-        {BiFields.TITLE.getFieldName(), 1},
-        {BiFields.LABEL.getFieldName(), 1},
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.DEFAULT.getFieldName(), 1},
-        {BiFields.REQUIRED.getFieldName(), 1},
-        {BiFields.VALIDATION_MIN.getFieldName(), 1},
-        {BiFields.VALIDATION_MAX.getFieldName(), 1},
-        {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
-        {BiFields.VALIDATION_OPTIONS.getFieldName(), 1},
-        {BiFields.VALIDATION_STRICT.getFieldName(), 1},
-        {BiFields.VALIDATION.getFieldName(), 1},
-    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
-
-    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getFieldName(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
-
-    Assertions.assertEquals(
-        1, items.size(),
-        "As time-picker is firstly parsed and failed, context is not filled with form and button");
-    Assertions.assertNull(
-        items.get(0).getAttributes().get(BiFields.INPUT_STEP),
-        "Input_Step BI property is not set in context as the attribute value is not correct");
-    Assertions.assertEquals(BiFields.TIME_PICKER.getFieldName(), items.get(0).getName());
-    assertSameBiItem(timePickerBiItemExpected, items.get(0));
   }
 
 }

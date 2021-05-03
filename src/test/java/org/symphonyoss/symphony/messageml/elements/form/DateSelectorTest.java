@@ -1,25 +1,15 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
 import org.junit.Test;
-import org.symphonyoss.symphony.messageml.MessageMLContext;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
-import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.DateSelector;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
 import static org.junit.Assert.assertEquals;
 import static org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer.addEscapeCharacter;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DateSelectorTest extends ElementTest {
   private static final String FORM_ID_ATTR = "id";
@@ -95,40 +85,6 @@ public class DateSelectorTest extends ElementTest {
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
         "\"><div><div class=\"date-selector\" data-name=\"some-name\"></div></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
     assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector)\n\n" + ACTION_BTN_MARKDOWN + "\n---\n", context.getMarkdown());
-  }
-
-  @Test
-  public void testBiContextDateSelector()
-      throws InvalidInputException, IOException, ProcessingException {
-    MessageMLContext messageMLContext = new MessageMLContext(null);
-    String input = "<messageML>"
-        + "<form id=\"form_id\">"
-
-        + "<date-selector name=\"rules\" "
-        + "placeholder=\"placeholder01\" required=\"true\"/>"
-
-        + "<button name=\"date-picker\">Submit</button>"
-        + "</form>"
-        + "</messageML>";
-
-    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    List<BiItem> items = messageMLContext.getBiContext().getItems();
-
-    Map<Object, Object> expectedAttributes = Stream.of(new Object[][] {
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.REQUIRED.getFieldName(), 1},
-    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
-
-    BiItem datePickerBiItemExpected = new BiItem(BiFields.DATE_SELECTOR.getFieldName(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
-
-    assertEquals(3, items.size());
-    assertEquals(BiFields.DATE_SELECTOR.getFieldName(), items.get(0).getName());
-    assertSameBiItem(datePickerBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
   }
 
   private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {

@@ -6,20 +6,15 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class CashtagTest extends ElementTest {
-
-  private static final String CASHTAG_ENTITY_SUBTYPE = "org.symphonyoss.fin.security.id.ticker";
 
   @Test
   public void testCashTag() throws Exception {
@@ -229,37 +224,11 @@ public class CashtagTest extends ElementTest {
     assertTrue(expectedBiItems.containsAll(biItems));
   }
 
-  @Test
-  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
-      ProcessingException {
-
-    String input = "<messageML>Hello <cash tag=\"world\"/>!</messageML>";
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-    List<BiItem> items = context.getBiContext().getItems();
-
-    Map<String, Object> cashTagExpectedAttributes =
-        Collections.singletonMap(BiFields.COUNT.getFieldName(), 1);
-    Map<String, Object> entityExpectedAttributes =
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), CASHTAG_ENTITY_SUBTYPE);
-
-    BiItem cashTagBiItemExpected = new BiItem(BiFields.CASHTAGS.getFieldName(), cashTagExpectedAttributes);
-    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
-
-    assertEquals(4, items.size());
-    assertSameBiItem(entityBiItemExpected, items.get(0));
-    assertSameBiItem(cashTagBiItemExpected, items.get(1));
-    assertMessageLengthBiItem(items.get(2), input.length());
-    assertEntityJsonBiItem(items.get(3));
-  }
-
   private List<BiItem> getExpectedCashtagsBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.CASHTAGS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 3)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), CASHTAG_ENTITY_SUBTYPE)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), CASHTAG_ENTITY_SUBTYPE)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), CASHTAG_ENTITY_SUBTYPE)));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 426)));
-    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 85)));
+    biItems.add(new BiItem("Cashtags", Collections.singletonMap("count", 3)));
+    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 426)));
+    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 85)));
     return biItems;
   }
 

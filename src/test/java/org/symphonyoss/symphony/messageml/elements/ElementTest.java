@@ -18,7 +18,6 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,8 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
-import org.symphonyoss.symphony.messageml.bi.BiFields;
-import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
@@ -296,22 +293,4 @@ public class ElementTest {
     }
   }
 
-  protected void assertSameBiItem(BiItem expected, BiItem actual) {
-    assertEquals(expected, actual);
-  }
-
-  protected void assertEntityJsonBiItem(BiItem entityJsonItem) {
-    assertNotNull(entityJsonItem);
-    assertEquals(BiFields.ENTITY_JSON_SIZE.getFieldName(), entityJsonItem.getName());
-    assertNotNull(entityJsonItem.getAttributes());
-    assertNotNull(entityJsonItem.getAttributes().get(BiFields.COUNT.getFieldName()));
-    assertTrue((Integer) entityJsonItem.getAttributes().get(BiFields.COUNT.getFieldName()) > 2);
-  }
-
-  protected void assertMessageLengthBiItem(BiItem messageLengthItem, int expectedLength) {
-    assertEquals(BiFields.MESSAGE_LENGTH.getFieldName(), messageLengthItem.getName());
-    assertNotNull(messageLengthItem.getAttributes());
-    assertNotNull(messageLengthItem.getAttributes().get(BiFields.COUNT.getFieldName()));
-    assertEquals(expectedLength, messageLengthItem.getAttributes().get(BiFields.COUNT.getFieldName()));
-  }
 }
