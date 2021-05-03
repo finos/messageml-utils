@@ -8,13 +8,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
-import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class EmojiTest extends ElementTest {
 
@@ -116,11 +119,35 @@ public class EmojiTest extends ElementTest {
     assertTrue(expectedBiItems.containsAll(biItems));
   }
 
+  @Test
+  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
+      ProcessingException {
+    String input = "<messageML><emoji shortcode=\"smiley\">Test of content</emoji></messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = context.getBiContext().getItems();
+
+    Map<String, Object> emojiExpectedAttributes =
+        Collections.singletonMap(BiFields.COUNT.getFieldName(), 1);
+    Map<String, Object> entityExpectedAttributes =
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), null);
+
+    BiItem emojiBiItemExpected = new BiItem(BiFields.EMOJIS.getFieldName(), emojiExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+
+    assertEquals(4, items.size());
+    assertSameBiItem(entityBiItemExpected, items.get(0));
+    assertSameBiItem(emojiBiItemExpected, items.get(1));
+    assertMessageLengthBiItem(items.get(2), input.length());
+    assertEntityJsonBiItem(items.get(3));
+  }
+
   private List<BiItem> getExpectedEmojiBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem("Emojis", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("EntitiesJSONSize", Collections.singletonMap("count", 139)));
-    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 79)));
+    biItems.add(new BiItem(BiFields.EMOJIS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), null)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 139)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 79)));
     return biItems;
   }
 

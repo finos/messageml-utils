@@ -1,15 +1,24 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.Option;
 import org.symphonyoss.symphony.messageml.elements.Select;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -294,6 +303,57 @@ public class SelectOptionTest extends ElementTest {
     expectedException.expectMessage("Element \"span\" is not allowed in \"option\"");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testBiContextSelect()
+      throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+    String input = "<messageML>\n"
+        + "  <form id=\"form_id\">\n"
+        + "<select name=\"init\" required=\"true\" title=\"title01\" label=\"label01\" "
+        + "data-placeholder=\"placeholder01\">\n"
+        + "      <option value=\"opt1\">Unselected option 1</option>\n"
+        + "      <option value=\"opt2\" selected=\"true\">With selected option</option>\n"
+        + "      <option value=\"opt3\">Unselected option 2</option>\n"
+        + "      </select>\n"
+        + "      <button name=\"dropdown\">Submit</button>\n"
+        + "  </form>\n"
+        + "</messageML>";
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    Map<Object, Object> selectExpectedAttributes = Stream.of(new Object[][] {
+        {BiFields.TITLE.getFieldName(), 1},
+        {BiFields.LABEL.getFieldName(), 1},
+        {BiFields.PLACEHOLDER.getFieldName(), 1},
+        {BiFields.REQUIRED.getFieldName(), 1},
+    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
+
+    Map<Object, Object> optionExpectedAttributes = Stream.of(new Object[][] {
+        {BiFields.DEFAULT.getFieldName(), 1},
+        {BiFields.OPTIONS_COUNT.getFieldName(), 3},
+    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
+
+    BiItem selectBiItemExpected = new BiItem(BiFields.SELECT.getFieldName(),
+        selectExpectedAttributes.entrySet()
+            .stream()
+            .collect(Collectors.toMap(e ->
+                String.valueOf(e.getKey()), Map.Entry::getValue)));
+
+    BiItem optionBiItemExpected = new BiItem(BiFields.OPTION.getFieldName(),
+        optionExpectedAttributes.entrySet()
+            .stream()
+            .collect(Collectors.toMap(e ->
+                String.valueOf(e.getKey()), Map.Entry::getValue)));
+
+    assertEquals(4, items.size());
+    assertEquals(BiFields.OPTION.getFieldName(), items.get(0).getName());
+    assertEquals(BiFields.SELECT.getFieldName(), items.get(1).getName());
+    assertSameBiItem(optionBiItemExpected, items.get(0));
+    assertSameBiItem(selectBiItemExpected, items.get(1));
+    assertMessageLengthBiItem(items.get(3), input.length());
   }
 
   private String getRequiredPresentationML(String required) {

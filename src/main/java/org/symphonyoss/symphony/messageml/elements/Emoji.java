@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.util.EmojiShortcodeToUnicode;
@@ -211,9 +212,9 @@ public class Emoji extends Entity {
   }
 
   @Override
-  void updateBiContext(BiContext context) {
+  public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem("Emojis");
+    context.updateItem(BiFields.EMOJIS.getFieldName());
   }
 
   private String asDefaultRepresentation() {

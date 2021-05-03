@@ -8,15 +8,24 @@ import static org.symphonyoss.symphony.messageml.elements.Button.ACTION_TYPE;
 import static org.symphonyoss.symphony.messageml.elements.Button.RESET_TYPE;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.Button;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ButtonTest extends ElementTest {
 
@@ -339,6 +348,30 @@ public class ButtonTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attributes \"type\" and \"name\" are not allowed on a button inside a UIAction.");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testBiContextButton() throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+    String input = "<messageML>"
+        + "<form id=\"all-elements\">"
+        + "<button name=\"name01\" class=\"primary\" type=\"action\">Button Text</button>"
+        + "</form>"
+        + "</messageML>";
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    Map<String, Object> buttonExpectedAttributes = Stream.of(new String[][] {
+        {BiFields.STYLE_COLOR.getFieldName(), "primary"},
+        {BiFields.TYPE.getFieldName(), "action"},
+    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
+
+    BiItem buttonBiItemExpected = new BiItem(BiFields.BUTTON.getFieldName(), buttonExpectedAttributes);
+
+    assertEquals(2, items.size());
+    assertSameBiItem(buttonBiItemExpected, items.get(0));
+    assertMessageLengthBiItem(items.get(1), input.length());
   }
 
   private String getNamePresentationML(String name) {

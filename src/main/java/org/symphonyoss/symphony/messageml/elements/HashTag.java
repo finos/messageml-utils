@@ -86,7 +86,7 @@ public class HashTag extends Keyword {
   }
 
   @Override
-  void updateBiContext(BiContext context) {
+  public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
     context.updateItem("Hashtags");
   }
