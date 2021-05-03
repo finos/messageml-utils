@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -160,8 +161,8 @@ public class CardTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals("Cards", item.getName());
-    assertEquals(1, item.getAttributes().get("count"));
+    assertEquals(BiFields.CARD.getFieldName(), item.getName());
+    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getFieldName()));
   }
 
   private void verifyCard(Element card) throws Exception {

@@ -58,7 +58,7 @@ public class BiContextTest {
   @Test
   public void testUpdateItemInContextWhenItemAndAttributeFound() {
     Map<String, Object> linkAttrs = new HashMap<>();
-    linkAttrs.put("count", 1);
+    linkAttrs.put(BiFields.COUNT.getFieldName(), 1);
     BiItem headerItem = new BiItem("Link", linkAttrs);
     biContext.addItem(headerItem);
 

@@ -154,7 +154,7 @@ public class LinkTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals(BiFields.LINKS.getFieldName(), item.getName());
-    assertEquals(1, item.getAttributes().get("count"));
+    assertEquals(BiFields.LINK.getFieldName(), item.getName());
+    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getFieldName()));
   }
 }

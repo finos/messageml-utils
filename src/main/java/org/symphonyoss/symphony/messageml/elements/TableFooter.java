@@ -17,6 +17,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.Collections;
@@ -48,6 +49,6 @@ public class TableFooter extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem("TableFooters");
+    context.updateItem(BiFields.TABLE_FOOTER.getFieldName());
   }
 }

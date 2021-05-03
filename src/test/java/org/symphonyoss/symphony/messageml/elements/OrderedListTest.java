@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -41,7 +42,7 @@ public class OrderedListTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals("Lists", item.getName());
-    assertEquals(1, item.getAttributes().get("count"));
+    assertEquals(BiFields.BULLET_LIST.getFieldName(), item.getName());
+    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getFieldName()));
   }
 }

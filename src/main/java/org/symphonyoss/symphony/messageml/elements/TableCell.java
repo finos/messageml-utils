@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 
@@ -66,10 +67,10 @@ public class TableCell extends Element {
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
     if (getAttribute(ATTR_ROWSPAN) != null) {
-      context.updateItem("TableCellsRowSpan");
+      context.updateItem(BiFields.TABLE_CELL_ROW_SPAN.getFieldName());
     }
     if (getAttribute(ATTR_COLSPAN) != null) {
-      context.updateItem("TableCellsColSpan");
+      context.updateItem(BiFields.TABLE_CELL_COL_SPAN.getFieldName());
     }
   }
 }

@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.w3c.dom.Node;
 
@@ -80,6 +81,6 @@ public class Span extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem("Spans");
+    context.updateItem(BiFields.SPAN.getFieldName());
   }
 }

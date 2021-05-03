@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -86,10 +87,11 @@ public class ImageTest extends ElementTest {
 
   private List<BiItem> getExpectedImageBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem("Images", Collections.singletonMap("count", 3)));
-    biItems.add(new BiItem("ImagesURL", Collections.singletonMap("count", 2)));
-    biItems.add(new BiItem("ImagesData", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 193)));
+    biItems.add(new BiItem(BiFields.IMAGE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 3)));
+    biItems.add(new BiItem(BiFields.IMAGE_URL.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 2)));
+    biItems.add(new BiItem(BiFields.IMAGE_DATA.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(
+        BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 193)));
     return biItems;
   }
 }
