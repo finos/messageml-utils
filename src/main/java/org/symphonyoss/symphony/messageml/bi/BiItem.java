@@ -80,12 +80,11 @@ public class BiItem {
    * @param attributeName  name of the attribute to be checked
    * @param attributeValue value of the attribute to be checked
    */
-  protected void setMaxAttribute(String attributeName, Object attributeValue) {
+  protected void setMaxAttribute(String attributeName, Integer attributeValue) {
     try {
       Integer currentValue = (Integer) attributes.getOrDefault(attributeName, 0);
-      Integer newValue = (Integer) attributeValue;
-      if (newValue > currentValue) {
-        attributes.put(attributeName, newValue);
+      if (attributeValue > currentValue) {
+        attributes.put(attributeName, attributeValue);
       }
     } catch (ClassCastException e) {
       logger.warn("Attribute {} for element {} does not contain an integer value. The count will not be increased.",

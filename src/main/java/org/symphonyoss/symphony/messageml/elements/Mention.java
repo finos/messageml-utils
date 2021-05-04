@@ -244,6 +244,6 @@ public class Mention extends Entity {
   @Override
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.MENTIONS.getFieldName());
+    context.updateItemCount(BiFields.MENTIONS.getFieldName());
   }
 }

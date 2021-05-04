@@ -121,7 +121,7 @@ public class Link extends Element {
   @Override
   public void updateBiContext(BiContext biContext) {
     super.updateBiContext(biContext);
-    biContext.updateItem(BiFields.LINK.getFieldName());
+    biContext.updateItemCount(BiFields.LINK.getFieldName());
   }
 
   public URI getUri() {

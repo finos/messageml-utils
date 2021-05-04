@@ -19,7 +19,7 @@ public class BiContextTest {
 
   @Test
   public void testUpdateItemWithAttrNameInContextWhenItemNotFound() {
-    biContext.updateItem("RadioButton", "button");
+    biContext.updateItemCount("RadioButton", "button");
 
     assertEquals(1, biContext.getItems().size());
 
@@ -35,7 +35,7 @@ public class BiContextTest {
     BiItem headerItem = new BiItem("RadioButton", linkAttrs);
     biContext.addItem(headerItem);
 
-    biContext.updateItem("RadioButton", "button");
+    biContext.updateItemCount("RadioButton", "button");
 
     assertEquals(1, biContext.getItems().size());
 
@@ -46,7 +46,7 @@ public class BiContextTest {
 
   @Test
   public void testUpdateItemInContextWhenItemNotFound() {
-    biContext.updateItem("Link");
+    biContext.updateItemCount("Link");
 
     assertEquals(1, biContext.getItems().size());
 
@@ -62,7 +62,7 @@ public class BiContextTest {
     BiItem headerItem = new BiItem("Link", linkAttrs);
     biContext.addItem(headerItem);
 
-    biContext.updateItem("Link");
+    biContext.updateItemCount("Link");
 
     assertEquals(1, biContext.getItems().size());
 

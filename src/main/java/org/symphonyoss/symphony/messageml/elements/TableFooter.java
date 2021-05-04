@@ -49,6 +49,6 @@ public class TableFooter extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.TABLE_FOOTER.getFieldName());
+    context.updateItemCount(BiFields.TABLE_FOOTER.getFieldName());
   }
 }

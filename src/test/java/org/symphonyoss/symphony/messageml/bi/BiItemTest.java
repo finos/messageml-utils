@@ -79,14 +79,14 @@ public class BiItemTest {
   public void testSetMaxAttributetWhenInvalidFormat() {
     String attributeName = "attribute1";
     Map<String, Object> attributes = new HashMap<>();
-    attributes.put(attributeName, 4);
+    attributes.put(attributeName, "notInteger");
     BiItem biItem = new BiItem("element1", attributes);
-    biItem.setMaxAttribute(attributeName, "notInteger");
+    biItem.setMaxAttribute(attributeName, 4);
 
     //nothing should change
     assertEquals(1, biItem.getAttributes().size());
     assertTrue(biItem.getAttributes().containsKey(attributeName));
-    assertEquals(4, biItem.getAttributes().get(attributeName));
+    assertEquals("notInteger", biItem.getAttributes().get(attributeName));
   }
 
 }

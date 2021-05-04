@@ -56,6 +56,6 @@ public class Code extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.CODE.getFieldName());
+    context.updateItemCount(BiFields.CODE.getFieldName());
   }
 }

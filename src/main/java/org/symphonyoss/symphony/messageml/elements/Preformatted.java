@@ -61,6 +61,6 @@ public class Preformatted extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.PREFORMATTED.getFieldName());
+    context.updateItemCount(BiFields.PREFORMATTED.getFieldName());
   }
 }

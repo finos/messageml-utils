@@ -89,6 +89,6 @@ public class HashTag extends Keyword {
   @Override
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.HASHTAGS.getFieldName());
+    context.updateItemCount(BiFields.HASHTAGS.getFieldName());
   }
 }

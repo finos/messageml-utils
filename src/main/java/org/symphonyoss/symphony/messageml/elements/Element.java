@@ -130,7 +130,7 @@ public abstract class Element {
    */
   void updateBiContext(BiContext context) {
     if (getAttribute(STYLE_ATTR) != null) {
-      context.updateItem(BiFields.STYLES_CUSTOM.getFieldName());
+      context.updateItemCount(BiFields.STYLES_CUSTOM.getFieldName());
     }
     if (getAttribute(CLASS_ATTR) != null) {
       computeClassAttributeBi(context);
@@ -143,16 +143,16 @@ public abstract class Element {
    *
    * @param context bi context to be updated
    */
-  void computeClassAttributeBi(BiContext context) {
+  private void computeClassAttributeBi(BiContext context) {
     String styleClass = getAttribute(CLASS_ATTR);
     String[] styles = styleClass.trim().split("[ ]+");
     for (String style : styles) {
       if (style.startsWith("tempo-")) {
-        context.updateItem(BiFields.STYLES_CLASS_TEMPO.getFieldName());
+        context.updateItemCount(BiFields.STYLES_CLASS_TEMPO.getFieldName());
       } else if (style.equals("entity")) {
-        context.updateItem("Entities");
+        context.updateItemCount("Entities");
       } else {
-        context.updateItem(BiFields.STYLES_CLASS_OTHER.getFieldName());
+        context.updateItemCount(BiFields.STYLES_CLASS_OTHER.getFieldName());
       }
     }
   }
@@ -389,8 +389,8 @@ public abstract class Element {
   }
 
   /**
-   * This method checks recursively inside all children of an element and returns the count of a give type passed
-   * as input
+   * This method applies a breadth-first traversal of a tree of elements counting the number of elements found which
+   * belong to the class type passed as input
    */
   public Integer countChildrenOfType(Class<? extends Element> type) {
     Integer count = 0;

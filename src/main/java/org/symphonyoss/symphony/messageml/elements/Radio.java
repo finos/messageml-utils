@@ -26,7 +26,6 @@ import org.w3c.dom.Node;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Class representing Radio Buttons - Symphony Elements.
@@ -117,7 +116,7 @@ public class Radio extends GroupedElement implements LabelableElement{
     this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
     this.computeAndPutDefault(context, attributesMapBi);
 
-    context.updateItem(BiFields.RADIO.getFieldName(), attributesMapBi);
+    context.updateItemCount(BiFields.RADIO.getFieldName(), attributesMapBi);
   }
 
   /**

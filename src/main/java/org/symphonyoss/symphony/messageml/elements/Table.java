@@ -56,7 +56,7 @@ public class Table extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.TABLE.getFieldName());
+    context.updateItemCount(BiFields.TABLE.getFieldName());
     context.updateItemWithMaxValue(BiFields.TABLE_ROW_MAX.getFieldName(), countChildrenOfType(TableRow.class));
   }
 }

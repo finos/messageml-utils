@@ -112,6 +112,6 @@ public class Div extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.DIV.getFieldName());
+    context.updateItemCount(BiFields.DIV.getFieldName());
   }
 }

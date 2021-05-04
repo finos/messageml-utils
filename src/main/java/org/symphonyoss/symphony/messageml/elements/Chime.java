@@ -89,6 +89,6 @@ public class Chime extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.CHIME.getFieldName());
+    context.updateItemCount(BiFields.CHIME.getFieldName());
   }
 }

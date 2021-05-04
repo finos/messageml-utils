@@ -68,7 +68,7 @@ public class BiContext {
    * @param itemName      name of the element to be checked
    * @param attributeName name of the attribute to be increased
    */
-  public void updateItem(String itemName, String attributeName) {
+  public void updateItemCount(String itemName, String attributeName) {
     Optional<BiItem> optionalBiItem = getItemWithName(itemName);
     if (optionalBiItem.isPresent()) {
       optionalBiItem.get().increaseAttributeCount(attributeName);
@@ -84,7 +84,7 @@ public class BiContext {
    *
    * @param itemName name of the element to be checked
    */
-  public void updateItem(String itemName) {
+  public void updateItemCount(String itemName) {
     Optional<BiItem> optionalBiItem = getItemWithName(itemName);
     if (optionalBiItem.isPresent()) {
       optionalBiItem.get().increaseAttributeCount(BiFields.COUNT.getFieldName());
@@ -102,7 +102,7 @@ public class BiContext {
    * @param itemName name of the element to be checked
    * @param attributes map of attributes for the given element
    */
-  public void updateItem(String itemName, Map<String, Object> attributes) {
+  public void updateItemCount(String itemName, Map<String, Object> attributes) {
     Optional<BiItem> optionalBiItem = getItemWithName(itemName);
     if (optionalBiItem.isPresent()) {
       attributes.forEach((key, value) -> {
@@ -117,13 +117,14 @@ public class BiContext {
   }
 
   /**
-   * Used for simple messageML elements (like Paragraphs, Links, Headers) where we only want to keep the count of attributes found.
-   * It checks if the context already has an item for the element and if that's the case it will increase the count of
-   * the specific attribute. If context does not have the item it will create a new one with default values.
+   * Used for messageML elements in which we want to keep track of the maximum value found inside the message (like max
+   * number of columns used for a table). It checks if the context already has an item for that element and if that's
+   * the case it will copute the max value and update the item accordingly. If context does not have the item it will
+   * create a new one with max value the one passed in input.
    *
    * @param itemName name of the element to be checked
    */
-  public void updateItemWithMaxValue(String itemName, Object attributeValue) {
+  public void updateItemWithMaxValue(String itemName, Integer attributeValue) {
     Optional<BiItem> optionalBiItem = getItemWithName(itemName);
     if (optionalBiItem.isPresent()) {
       optionalBiItem.get().setMaxAttribute(BiFields.COUNT.getFieldName(), attributeValue);

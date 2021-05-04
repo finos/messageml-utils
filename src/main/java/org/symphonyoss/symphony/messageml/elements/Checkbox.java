@@ -85,7 +85,7 @@ public class Checkbox extends GroupedElement implements LabelableElement {
     this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
     this.computeAndPutDefault(context, attributesMapBi);
 
-    context.updateItem(BiFields.CHECKBOX.getFieldName(), attributesMapBi);
+    context.updateItemCount(BiFields.CHECKBOX.getFieldName(), attributesMapBi);
   }
 
   /**

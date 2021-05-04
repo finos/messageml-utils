@@ -98,6 +98,6 @@ public class Card extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.CARD.getFieldName());
+    context.updateItemCount(BiFields.CARD.getFieldName());
   }
 }

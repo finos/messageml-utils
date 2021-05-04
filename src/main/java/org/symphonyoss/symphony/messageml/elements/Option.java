@@ -54,7 +54,7 @@ public class Option extends FormElement {
     attributesMapBi.put(BiFields.OPTIONS_COUNT.getFieldName(), 1);
     this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getFieldName(), SELECTED_ATTR);
 
-    context.updateItem(BiFields.OPTION.getFieldName(), attributesMapBi);
+    context.updateItemCount(BiFields.OPTION.getFieldName(), attributesMapBi);
   }
 
   @Override

@@ -51,6 +51,6 @@ public class Paragraph extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem(BiFields.PARAGRAPH.getFieldName());
+    context.updateItemCount(BiFields.PARAGRAPH.getFieldName());
   }
 }

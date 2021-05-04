@@ -267,7 +267,7 @@ public class MessageMLParser {
     template.process(data, sw);
 
     if (sw.toString().length() != message.length()) {
-      biContext.updateItem("UseFreeMarker");
+      biContext.updateItemCount("UseFreeMarker");
     }
     return sw.toString();
   }
