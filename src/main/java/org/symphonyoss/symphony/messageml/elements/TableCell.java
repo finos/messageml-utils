@@ -67,10 +67,10 @@ public class TableCell extends Element {
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
     if (getAttribute(ATTR_ROWSPAN) != null) {
-      context.updateItemCount(BiFields.TABLE_CELL_ROW_SPAN.getFieldName());
+      context.updateItemCount(BiFields.TABLE_CELL_ROW_SPAN.getValue());
     }
     if (getAttribute(ATTR_COLSPAN) != null) {
-      context.updateItemCount(BiFields.TABLE_CELL_COL_SPAN.getFieldName());
+      context.updateItemCount(BiFields.TABLE_CELL_COL_SPAN.getValue());
     }
   }
 }

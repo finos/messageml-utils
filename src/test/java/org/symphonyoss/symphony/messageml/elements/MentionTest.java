@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
-import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -490,12 +489,12 @@ public class MentionTest extends ElementTest {
     List<BiItem> items = context.getBiContext().getItems();
 
     Map<String, Object> mentionExpectedAttributes =
-        Collections.singletonMap(BiFields.COUNT.getFieldName(), 1);
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1);
     Map<String, Object> entityExpectedAttributes =
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId");
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId");
 
-    BiItem mentionBiItemExpected = new BiItem(BiFields.MENTIONS.getFieldName(), mentionExpectedAttributes);
-    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+    BiItem mentionBiItemExpected = new BiItem(BiFields.MENTIONS.getValue(), mentionExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
 
     assertEquals(4, items.size());
     assertSameBiItem(entityBiItemExpected, items.get(0));
@@ -506,11 +505,11 @@ public class MentionTest extends ElementTest {
 
   private List<BiItem> getExpectedMentionBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.MENTIONS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 2)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId")));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId")));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 239)));
-    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 92)));
+    biItems.add(new BiItem(BiFields.MENTIONS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 239)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 92)));
     return biItems;
   }
 

@@ -103,8 +103,8 @@ public abstract class Entity extends Element {
   @Override
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.addItem(new BiItem(BiFields.ENTITY.getFieldName(),
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), this.getEntitySubType())));
+    context.addItem(new BiItem(BiFields.ENTITY.getValue(),
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), this.getEntitySubType())));
   }
 
   String getEntityId(int index) {

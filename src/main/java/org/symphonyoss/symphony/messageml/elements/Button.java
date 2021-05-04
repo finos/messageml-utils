@@ -163,9 +163,9 @@ public class Button extends Element {
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    this.putStringIfPresent(attributesMapBi, BiFields.STYLE_COLOR.getFieldName(), CLASS_ATTR);
-    this.putStringIfPresent(attributesMapBi, BiFields.TYPE.getFieldName(), TYPE_ATTR);
+    this.putStringIfPresent(attributesMapBi, BiFields.STYLE_COLOR.getValue(), CLASS_ATTR);
+    this.putStringIfPresent(attributesMapBi, BiFields.TYPE.getValue(), TYPE_ATTR);
 
-    context.addItem(new BiItem(BiFields.BUTTON.getFieldName(), attributesMapBi));
+    context.addItem(new BiItem(BiFields.BUTTON.getValue(), attributesMapBi));
   }
 }

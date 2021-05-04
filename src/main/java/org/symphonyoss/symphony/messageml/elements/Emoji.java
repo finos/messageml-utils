@@ -214,7 +214,7 @@ public class Emoji extends Entity {
   @Override
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.EMOJIS.getFieldName());
+    context.updateItemCount(BiFields.EMOJIS.getValue());
   }
 
   private String asDefaultRepresentation() {

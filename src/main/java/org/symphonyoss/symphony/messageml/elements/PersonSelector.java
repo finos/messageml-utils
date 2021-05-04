@@ -211,12 +211,12 @@ public class PersonSelector extends FormElement implements LabelableElement, Too
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
 
-    context.addItem(new BiItem(BiFields.PERSON_SELECTOR.getFieldName(), attributesMapBi));
+    context.addItem(new BiItem(BiFields.PERSON_SELECTOR.getValue(), attributesMapBi));
   }
 
 }

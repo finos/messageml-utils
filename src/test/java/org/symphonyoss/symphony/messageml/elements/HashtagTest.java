@@ -230,12 +230,12 @@ public class HashtagTest extends ElementTest {
     List<BiItem> items = context.getBiContext().getItems();
 
     Map<String, Object> hashTagExpectedAttributes =
-        Collections.singletonMap(BiFields.COUNT.getFieldName(), 1);
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1);
     Map<String, Object> entityExpectedAttributes =
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "org.symphonyoss.taxonomy.hashtag");
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag");
 
-    BiItem hashTagBiItemExpected = new BiItem(BiFields.HASHTAGS.getFieldName(), hashTagExpectedAttributes);
-    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+    BiItem hashTagBiItemExpected = new BiItem(BiFields.HASHTAGS.getValue(), hashTagExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
 
     assertEquals(4, items.size());
     assertSameBiItem(entityBiItemExpected, items.get(0));
@@ -246,12 +246,12 @@ public class HashtagTest extends ElementTest {
 
   private List<BiItem> getExpectedHashtagBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.HASHTAGS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 3)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "org.symphonyoss.taxonomy.hashtag")));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "org.symphonyoss.taxonomy.hashtag")));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "org.symphonyoss.taxonomy.hashtag")));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 396)));
-    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 85)));
+    biItems.add(new BiItem(BiFields.HASHTAGS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 3)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 396)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 85)));
     return biItems;
   }
 

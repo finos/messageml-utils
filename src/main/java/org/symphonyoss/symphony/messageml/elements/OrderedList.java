@@ -55,6 +55,6 @@ public class OrderedList extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.BULLET_LIST.getFieldName());
+    context.updateItemCount(BiFields.BULLET_LIST.getValue());
   }
 }

@@ -384,29 +384,29 @@ public class TimePickerTest extends ElementTest {
                 + "\"to\": \"14:00:00\"}, \n {\"time\": \"15:00:00\"}]' step=\"600\" "
                 + "strict=\"true\"/>",
             Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.INPUT_STEP.getFieldName(), 600},
-                {BiFields.DEFAULT.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
-                {BiFields.VALIDATION_MIN.getFieldName(), 1},
-                {BiFields.VALIDATION_MAX.getFieldName(), 1},
-                {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
-                {BiFields.VALIDATION_OPTIONS.getFieldName(), 1},
-                {BiFields.VALIDATION_STRICT.getFieldName(), 1},
-                {BiFields.VALIDATION.getFieldName(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.INPUT_STEP.getValue(), 600},
+                {BiFields.DEFAULT.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
+                {BiFields.VALIDATION_MIN.getValue(), 1},
+                {BiFields.VALIDATION_MAX.getValue(), 1},
+                {BiFields.VALIDATION_PATTERN.getValue(), 1},
+                {BiFields.VALIDATION_OPTIONS.getValue(), 1},
+                {BiFields.VALIDATION_STRICT.getValue(), 1},
+                {BiFields.VALIDATION.getValue(), 1},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
 
         Arguments.of(
             "<time-picker name=\"name01\" label=\"label01\" placeholder=\"placeholder01\" "
                 + "title=\"title01\" required=\"true\" value=\"13:51:06\"/>",
             Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.DEFAULT.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.DEFAULT.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
     );
   }
@@ -428,14 +428,14 @@ public class TimePickerTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getFieldName(),
+    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getValue(),
         expectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.TIME_PICKER.getFieldName(), items.get(0).getName());
+    Assertions.assertEquals(BiFields.TIME_PICKER.getValue(), items.get(0).getName());
     assertSameBiItem(timePickerBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }
@@ -462,20 +462,20 @@ public class TimePickerTest extends ElementTest {
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
     Map<Object, Object> expectedAttributes = Stream.of(new Object[][] {
-        {BiFields.TITLE.getFieldName(), 1},
-        {BiFields.LABEL.getFieldName(), 1},
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.DEFAULT.getFieldName(), 1},
-        {BiFields.REQUIRED.getFieldName(), 1},
-        {BiFields.VALIDATION_MIN.getFieldName(), 1},
-        {BiFields.VALIDATION_MAX.getFieldName(), 1},
-        {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
-        {BiFields.VALIDATION_OPTIONS.getFieldName(), 1},
-        {BiFields.VALIDATION_STRICT.getFieldName(), 1},
-        {BiFields.VALIDATION.getFieldName(), 1},
+        {BiFields.TITLE.getValue(), 1},
+        {BiFields.LABEL.getValue(), 1},
+        {BiFields.PLACEHOLDER.getValue(), 1},
+        {BiFields.DEFAULT.getValue(), 1},
+        {BiFields.REQUIRED.getValue(), 1},
+        {BiFields.VALIDATION_MIN.getValue(), 1},
+        {BiFields.VALIDATION_MAX.getValue(), 1},
+        {BiFields.VALIDATION_PATTERN.getValue(), 1},
+        {BiFields.VALIDATION_OPTIONS.getValue(), 1},
+        {BiFields.VALIDATION_STRICT.getValue(), 1},
+        {BiFields.VALIDATION.getValue(), 1},
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
-    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getFieldName(),
+    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getValue(),
         expectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
@@ -487,7 +487,7 @@ public class TimePickerTest extends ElementTest {
     Assertions.assertNull(
         items.get(0).getAttributes().get(BiFields.INPUT_STEP),
         "Input_Step BI property is not set in context as the attribute value is not correct");
-    Assertions.assertEquals(BiFields.TIME_PICKER.getFieldName(), items.get(0).getName());
+    Assertions.assertEquals(BiFields.TIME_PICKER.getValue(), items.get(0).getName());
     assertSameBiItem(timePickerBiItemExpected, items.get(0));
   }
 

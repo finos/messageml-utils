@@ -134,25 +134,25 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
     this.computeAndPutValidationProperties(attributesMapBi);
 
     if (this.hasElementInitialValue()) {
-      attributesMapBi.put(BiFields.DEFAULT.getFieldName(), 1);
+      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
     }
 
-    context.addItem(new BiItem(BiFields.TEXT_AREA.getFieldName(), attributesMapBi));
+    context.addItem(new BiItem(BiFields.TEXT_AREA.getValue(), attributesMapBi));
   }
 
   private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
     boolean validationPattern = getAttribute(PATTERN_ATTR) != null;
 
     if (validationPattern) {
-      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getFieldName(), 1);
-      attributesMapBi.put(BiFields.VALIDATION.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 }

@@ -717,16 +717,16 @@ public class TextFieldTest extends ElementTest {
                 + "label=\"label01\" pattern=\"^[a-zA-Z]{3,3}$\" pattern-error-message=\"errorMessage01\" "
                 + "minlength=\"3\" maxlength=\"10\" masked=\"true\">text</text-field>",
             Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.TYPE.getFieldName(), BiFields.TYPE_MASKED_TRUE.getFieldName()},
-                {BiFields.DEFAULT.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
-                {BiFields.VALIDATION_MIN.getFieldName(), 1},
-                {BiFields.VALIDATION_MAX.getFieldName(), 1},
-                {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
-                {BiFields.VALIDATION.getFieldName(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.TYPE.getValue(), BiFields.TYPE_MASKED_TRUE.getValue()},
+                {BiFields.DEFAULT.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
+                {BiFields.VALIDATION_MIN.getValue(), 1},
+                {BiFields.VALIDATION_MAX.getValue(), 1},
+                {BiFields.VALIDATION_PATTERN.getValue(), 1},
+                {BiFields.VALIDATION.getValue(), 1},
 
             }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
 
@@ -734,25 +734,25 @@ public class TextFieldTest extends ElementTest {
             "<text-field name=\"name01\" title=\"title01\" placeholder=\"placeholder01\" required=\"true\" "
                 + "label=\"label01\" pattern=\"^[a-zA-Z]{3,3}$\" pattern-error-message=\"errorMessage01\" "
                 + "minlength=\"3\" maxlength=\"10\" masked=\"false\"/>", Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.TYPE.getFieldName(), BiFields.TYPE_MASKED_FALSE.getFieldName()},
-                {BiFields.REQUIRED.getFieldName(), 1},
-                {BiFields.VALIDATION_MIN.getFieldName(), 1},
-                {BiFields.VALIDATION_MAX.getFieldName(), 1},
-                {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
-                {BiFields.VALIDATION.getFieldName(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.TYPE.getValue(), BiFields.TYPE_MASKED_FALSE.getValue()},
+                {BiFields.REQUIRED.getValue(), 1},
+                {BiFields.VALIDATION_MIN.getValue(), 1},
+                {BiFields.VALIDATION_MAX.getValue(), 1},
+                {BiFields.VALIDATION_PATTERN.getValue(), 1},
+                {BiFields.VALIDATION.getValue(), 1},
 
             }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
 
         Arguments.of(
             "<text-field name=\"name01\" title=\"title01\" placeholder=\"placeholder01\" required=\"true\" "
                 + "label=\"label01\"/>", Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
 
             }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
     );
@@ -775,14 +775,14 @@ public class TextFieldTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_FIELD.getFieldName(),
+    BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_FIELD.getValue(),
         expectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.TEXT_FIELD.getFieldName(), items.get(0).getName());
+    Assertions.assertEquals(BiFields.TEXT_FIELD.getValue(), items.get(0).getName());
     assertSameBiItem(textAreaBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }

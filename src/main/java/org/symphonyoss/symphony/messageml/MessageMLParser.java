@@ -181,10 +181,10 @@ public class MessageMLParser {
     this.entityJson = this.messageML.asEntityJson(this.entityJson);
     int entityJsonSize = this.entityJson.toString().length();
 
-    biContext.addItemWithValue(BiFields.MESSAGE_LENGTH.getFieldName(), message.length());
+    biContext.addItemWithValue(BiFields.MESSAGE_LENGTH.getValue(), message.length());
     // if entityJson is empty entityJson.toString={}
     if (entityJsonSize > 2) {
-      biContext.addItemWithValue(BiFields.ENTITY_JSON_SIZE.getFieldName(), entityJsonSize);
+      biContext.addItemWithValue(BiFields.ENTITY_JSON_SIZE.getValue(), entityJsonSize);
     }
     return this.messageML;
 
@@ -267,7 +267,7 @@ public class MessageMLParser {
     template.process(data, sw);
 
     if (sw.toString().length() != message.length()) {
-      biContext.updateItemCount("UseFreeMarker");
+      biContext.updateItemCount(BiFields.FREEMARKER.getValue());
     }
     return sw.toString();
   }

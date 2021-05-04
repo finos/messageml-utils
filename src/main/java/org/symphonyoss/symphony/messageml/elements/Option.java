@@ -51,10 +51,10 @@ public class Option extends FormElement {
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    attributesMapBi.put(BiFields.OPTIONS_COUNT.getFieldName(), 1);
-    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getFieldName(), SELECTED_ATTR);
+    attributesMapBi.put(BiFields.OPTIONS_COUNT.getValue(), 1);
+    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getValue(), SELECTED_ATTR);
 
-    context.updateItemCount(BiFields.OPTION.getFieldName(), attributesMapBi);
+    context.updateItemCount(BiFields.OPTION.getValue(), attributesMapBi);
   }
 
   @Override

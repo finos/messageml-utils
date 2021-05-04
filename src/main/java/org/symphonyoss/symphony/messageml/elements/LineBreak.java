@@ -71,6 +71,6 @@ public class LineBreak extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.LINE_BREAK.getFieldName());
+    context.updateItemCount(BiFields.LINE_BREAK.getValue());
   }
 }

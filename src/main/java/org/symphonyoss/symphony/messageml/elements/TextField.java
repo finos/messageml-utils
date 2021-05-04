@@ -196,17 +196,17 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
     Map<String, Object> attributesMapBi = new HashMap<>();
 
     this.putTypeIfPresent(attributesMapBi);
-    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
     this.computeAndPutValidationProperties(attributesMapBi);
 
     if (this.hasElementInitialValue()) {
-      attributesMapBi.put(BiFields.DEFAULT.getFieldName(), 1);
+      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
     }
 
-    context.addItem(new BiItem(BiFields.TEXT_FIELD.getFieldName(), attributesMapBi));
+    context.addItem(new BiItem(BiFields.TEXT_FIELD.getValue(), attributesMapBi));
   }
 
   @Override
@@ -258,9 +258,9 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
     String value = getAttributes().get(MASKED_ATTR);
 
     if (value != null && Boolean.TRUE.equals(Boolean.valueOf(value))) {
-      attributesMap.put(BiFields.TYPE.getFieldName(), BiFields.TYPE_MASKED_TRUE.getFieldName());
+      attributesMap.put(BiFields.TYPE.getValue(), BiFields.TYPE_MASKED_TRUE.getValue());
     } else if (value != null && Boolean.FALSE.equals(Boolean.valueOf(value))) {
-      attributesMap.put(BiFields.TYPE.getFieldName(), BiFields.TYPE_MASKED_FALSE.getFieldName());
+      attributesMap.put(BiFields.TYPE.getValue(), BiFields.TYPE_MASKED_FALSE.getValue());
     }
   }
 
@@ -271,19 +271,19 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
     boolean hasValidation = validationMin || validationMax || validationPattern;
 
     if (validationMin) {
-      attributesMapBi.put(BiFields.VALIDATION_MIN.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_MIN.getValue(), 1);
     }
 
     if (validationMax) {
-      attributesMapBi.put(BiFields.VALIDATION_MAX.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_MAX.getValue(), 1);
     }
 
     if (validationPattern) {
-      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
     }
 
     if (hasValidation) {
-      attributesMapBi.put(BiFields.VALIDATION.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 }

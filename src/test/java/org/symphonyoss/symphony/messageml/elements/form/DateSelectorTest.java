@@ -115,18 +115,18 @@ public class DateSelectorTest extends ElementTest {
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
     Map<Object, Object> expectedAttributes = Stream.of(new Object[][] {
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.REQUIRED.getFieldName(), 1},
+        {BiFields.PLACEHOLDER.getValue(), 1},
+        {BiFields.REQUIRED.getValue(), 1},
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
-    BiItem datePickerBiItemExpected = new BiItem(BiFields.DATE_SELECTOR.getFieldName(),
+    BiItem datePickerBiItemExpected = new BiItem(BiFields.DATE_SELECTOR.getValue(),
         expectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     assertEquals(3, items.size());
-    assertEquals(BiFields.DATE_SELECTOR.getFieldName(), items.get(0).getName());
+    assertEquals(BiFields.DATE_SELECTOR.getValue(), items.get(0).getName());
     assertSameBiItem(datePickerBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }

@@ -561,9 +561,9 @@ public class RadioTest extends ElementTest {
                 + "<radio name=\"groupId\" value=\"value03\">blue</radio>"
                 + "<radio name=\"groupId\" value=\"value04\" label=\"label04\" checked=\"false\">yellow</radio>",
             Stream.of(new Object[][] {
-                {BiFields.LABEL.getFieldName(), 2},
-                {BiFields.OPTIONS_COUNT.getFieldName(), 4},
-                {BiFields.DEFAULT.getFieldName(), 1},
+                {BiFields.LABEL.getValue(), 2},
+                {BiFields.OPTIONS_COUNT.getValue(), 4},
+                {BiFields.DEFAULT.getValue(), 1},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
 
         Arguments.of(
@@ -572,8 +572,8 @@ public class RadioTest extends ElementTest {
                 + "<radio name=\"groupId\" value=\"value03\">blue</radio>"
                 + "<radio name=\"groupId\" value=\"value04\" label=\"label04\">yellow</radio>",
             Stream.of(new Object[][] {
-                {BiFields.LABEL.getFieldName(), 2},
-                {BiFields.OPTIONS_COUNT.getFieldName(), 4},
+                {BiFields.LABEL.getValue(), 2},
+                {BiFields.OPTIONS_COUNT.getValue(), 4},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
     );
   }
@@ -596,14 +596,14 @@ public class RadioTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem checkBoxBiItemExpected = new BiItem(BiFields.RADIO.getFieldName(),
+    BiItem checkBoxBiItemExpected = new BiItem(BiFields.RADIO.getValue(),
         expectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     Assertions.assertEquals(4, items.size());
-    Assertions.assertEquals(BiFields.RADIO.getFieldName(), items.get(0).getName());
+    Assertions.assertEquals(BiFields.RADIO.getValue(), items.get(0).getName());
     assertSameBiItem(checkBoxBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(3), input.length());
   }

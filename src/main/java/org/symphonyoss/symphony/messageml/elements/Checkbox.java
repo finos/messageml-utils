@@ -81,11 +81,11 @@ public class Checkbox extends GroupedElement implements LabelableElement {
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    attributesMapBi.put(BiFields.OPTIONS_COUNT.getFieldName(), 1);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
+    attributesMapBi.put(BiFields.OPTIONS_COUNT.getValue(), 1);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
     this.computeAndPutDefault(context, attributesMapBi);
 
-    context.updateItemCount(BiFields.CHECKBOX.getFieldName(), attributesMapBi);
+    context.updateItemCount(BiFields.CHECKBOX.getValue(), attributesMapBi);
   }
 
   /**
@@ -102,10 +102,10 @@ public class Checkbox extends GroupedElement implements LabelableElement {
   private void computeAndPutDefault(BiContext context, Map<String, Object> attributesMapBi) {
     String isChecked = getAttribute(CHECKED_ATTR);
     boolean isDefaultAlreadySet =
-        context.isAttributeSet(BiFields.CHECKBOX.getFieldName(), BiFields.DEFAULT.getFieldName());
+        context.isAttributeSet(BiFields.CHECKBOX.getValue(), BiFields.DEFAULT.getValue());
 
     if (isChecked != null && Boolean.TRUE.equals(Boolean.valueOf(isChecked)) && !isDefaultAlreadySet) {
-      attributesMapBi.put(BiFields.DEFAULT.getFieldName(), 1);
+      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
     }
   }
 

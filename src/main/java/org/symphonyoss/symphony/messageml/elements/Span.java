@@ -81,6 +81,6 @@ public class Span extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.SPAN.getFieldName());
+    context.updateItemCount(BiFields.SPAN.getValue());
   }
 }

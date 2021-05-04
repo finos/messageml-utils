@@ -13,12 +13,9 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Class representing a date-selector element inside a Symphony Elements form.
@@ -112,12 +109,12 @@ public class DateSelector extends FormElement {
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
     // no default values to check
     // no validations to check
 
-    context.addItem(new BiItem(BiFields.DATE_SELECTOR.getFieldName(), attributesMapBi));
+    context.addItem(new BiItem(BiFields.DATE_SELECTOR.getValue(), attributesMapBi));
   }
 
   private Map<String, String> buildDateSelectorInputAttributes() {

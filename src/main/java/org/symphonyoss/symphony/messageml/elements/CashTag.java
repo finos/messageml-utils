@@ -90,6 +90,6 @@ public class CashTag extends Keyword {
   @Override
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.CASHTAGS.getFieldName());
+    context.updateItemCount(BiFields.CASHTAGS.getValue());
   }
 }

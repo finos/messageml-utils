@@ -174,11 +174,11 @@ public class ExpandableCardTest extends ElementTest {
 
   private List<BiItem> getExpectedCardBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 4)));
-    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_COLLAPSED.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
-    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_CROPPED.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 2)));
-    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_EXPANDED.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
-    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 394)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 4)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_COLLAPSED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_CROPPED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_EXPANDED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 394)));
     return biItems;
   }
 

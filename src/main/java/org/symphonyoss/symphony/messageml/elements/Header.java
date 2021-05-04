@@ -59,6 +59,6 @@ public class Header extends Element {
   @Override
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.HEADER.getFieldName());
+    context.updateItemCount(BiFields.HEADER.getValue());
   }
 }

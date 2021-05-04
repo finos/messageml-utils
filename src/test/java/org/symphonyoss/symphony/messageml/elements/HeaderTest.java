@@ -109,7 +109,7 @@ public class HeaderTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals(BiFields.HEADER.getFieldName(), item.getName());
-    assertEquals(4, item.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertEquals(BiFields.HEADER.getValue(), item.getName());
+    assertEquals(4, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

@@ -55,7 +55,7 @@ public class BiContext {
    * @param itemValue value to be assigned
    */
   public void addItemWithValue(String itemName, Object itemValue) {
-    BiItem item = new BiItem(itemName, Collections.singletonMap(BiFields.COUNT.getFieldName(), itemValue));
+    BiItem item = new BiItem(itemName, Collections.singletonMap(BiFields.COUNT.getValue(), itemValue));
     items.add(item);
   }
 
@@ -87,9 +87,9 @@ public class BiContext {
   public void updateItemCount(String itemName) {
     Optional<BiItem> optionalBiItem = getItemWithName(itemName);
     if (optionalBiItem.isPresent()) {
-      optionalBiItem.get().increaseAttributeCount(BiFields.COUNT.getFieldName());
+      optionalBiItem.get().increaseAttributeCount(BiFields.COUNT.getValue());
     } else {
-      addItem(new BiItem(itemName, BiFields.COUNT.getFieldName()));
+      addItem(new BiItem(itemName, BiFields.COUNT.getValue()));
     }
   }
 
@@ -127,10 +127,10 @@ public class BiContext {
   public void updateItemWithMaxValue(String itemName, Integer attributeValue) {
     Optional<BiItem> optionalBiItem = getItemWithName(itemName);
     if (optionalBiItem.isPresent()) {
-      optionalBiItem.get().setMaxAttribute(BiFields.COUNT.getFieldName(), attributeValue);
+      optionalBiItem.get().setMaxAttribute(BiFields.COUNT.getValue(), attributeValue);
     } else {
       Map<String, Object> attributesMap = new HashMap<>();
-      attributesMap.put(BiFields.COUNT.getFieldName(), attributeValue);
+      attributesMap.put(BiFields.COUNT.getValue(), attributeValue);
       addItem(new BiItem(itemName, attributesMap));
     }
   }

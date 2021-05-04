@@ -107,7 +107,7 @@ public class ChimeTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals(BiFields.CHIME.getFieldName(), item.getName());
-    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertEquals(BiFields.CHIME.getValue(), item.getName());
+    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

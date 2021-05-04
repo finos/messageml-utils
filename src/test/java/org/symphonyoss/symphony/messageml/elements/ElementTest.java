@@ -302,16 +302,16 @@ public class ElementTest {
 
   protected void assertEntityJsonBiItem(BiItem entityJsonItem) {
     assertNotNull(entityJsonItem);
-    assertEquals(BiFields.ENTITY_JSON_SIZE.getFieldName(), entityJsonItem.getName());
+    assertEquals(BiFields.ENTITY_JSON_SIZE.getValue(), entityJsonItem.getName());
     assertNotNull(entityJsonItem.getAttributes());
-    assertNotNull(entityJsonItem.getAttributes().get(BiFields.COUNT.getFieldName()));
-    assertTrue((Integer) entityJsonItem.getAttributes().get(BiFields.COUNT.getFieldName()) > 2);
+    assertNotNull(entityJsonItem.getAttributes().get(BiFields.COUNT.getValue()));
+    assertTrue((Integer) entityJsonItem.getAttributes().get(BiFields.COUNT.getValue()) > 2);
   }
 
   protected void assertMessageLengthBiItem(BiItem messageLengthItem, int expectedLength) {
-    assertEquals(BiFields.MESSAGE_LENGTH.getFieldName(), messageLengthItem.getName());
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), messageLengthItem.getName());
     assertNotNull(messageLengthItem.getAttributes());
-    assertNotNull(messageLengthItem.getAttributes().get(BiFields.COUNT.getFieldName()));
-    assertEquals(expectedLength, messageLengthItem.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertNotNull(messageLengthItem.getAttributes().get(BiFields.COUNT.getValue()));
+    assertEquals(expectedLength, messageLengthItem.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

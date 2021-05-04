@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Class representing dropdown menu - Symphony Elements.
@@ -103,12 +102,12 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), DATA_PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), DATA_PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
 
-    context.addItem(new BiItem(BiFields.SELECT.getFieldName(), attributesMapBi));
+    context.addItem(new BiItem(BiFields.SELECT.getValue(), attributesMapBi));
   }
 
   private void assertOnlyOneOptionSelected() throws InvalidInputException {

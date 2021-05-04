@@ -236,32 +236,32 @@ public class PersonSelectorTest extends ElementTest {
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
     Map<Object, Object> expectedAttributesFirst = Stream.of(new Object[][] {
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.TITLE.getFieldName(), 1},
-        {BiFields.LABEL.getFieldName(), 1},
-        {BiFields.REQUIRED.getFieldName(), 1},
+        {BiFields.PLACEHOLDER.getValue(), 1},
+        {BiFields.TITLE.getValue(), 1},
+        {BiFields.LABEL.getValue(), 1},
+        {BiFields.REQUIRED.getValue(), 1},
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
     Map<Object, Object> expectedAttributesSecond = Stream.of(new Object[][] {
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.TITLE.getFieldName(), 1},
+        {BiFields.PLACEHOLDER.getValue(), 1},
+        {BiFields.TITLE.getValue(), 1},
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
-    BiItem personSelectorFirstBiItemExpected = new BiItem(BiFields.PERSON_SELECTOR.getFieldName(),
+    BiItem personSelectorFirstBiItemExpected = new BiItem(BiFields.PERSON_SELECTOR.getValue(),
         expectedAttributesFirst.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
-    BiItem personSelectorSecondBiItemExpected = new BiItem(BiFields.PERSON_SELECTOR.getFieldName(),
+    BiItem personSelectorSecondBiItemExpected = new BiItem(BiFields.PERSON_SELECTOR.getValue(),
         expectedAttributesSecond.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     assertEquals(4, items.size());
-    assertEquals(BiFields.PERSON_SELECTOR.getFieldName(), items.get(0).getName());
-    assertEquals(BiFields.PERSON_SELECTOR.getFieldName(), items.get(1).getName());
+    assertEquals(BiFields.PERSON_SELECTOR.getValue(), items.get(0).getName());
+    assertEquals(BiFields.PERSON_SELECTOR.getValue(), items.get(1).getName());
     assertSameBiItem(personSelectorFirstBiItemExpected, items.get(0));
     assertSameBiItem(personSelectorSecondBiItemExpected, items.get(1));
     assertMessageLengthBiItem(items.get(3), input.length());

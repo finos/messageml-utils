@@ -408,13 +408,13 @@ public class TextAreaTest extends ElementTest {
                 + "pattern=\"^[a-zA-Z]{3,3}$\" pattern-error-message=\"error message\" "
                 + "placeholder=\"placeholder01\"> With initial value</textarea>\n",
             Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.DEFAULT.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
-                {BiFields.VALIDATION_PATTERN.getFieldName(), 1},
-                {BiFields.VALIDATION.getFieldName(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.DEFAULT.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
+                {BiFields.VALIDATION_PATTERN.getValue(), 1},
+                {BiFields.VALIDATION.getValue(), 1},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
 
 
@@ -422,10 +422,10 @@ public class TextAreaTest extends ElementTest {
         Arguments.of(
             "<textarea name=\"req\" required=\"true\" label=\"My label\" title=\"title01\" "
                 + "placeholder=\"placeholder01\"/>\n", Stream.of(new Object[][] {
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
     );
   }
@@ -447,14 +447,14 @@ public class TextAreaTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_AREA.getFieldName(),
+    BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_AREA.getValue(),
         expectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.TEXT_AREA.getFieldName(), items.get(0).getName());
+    Assertions.assertEquals(BiFields.TEXT_AREA.getValue(), items.get(0).getName());
     assertSameBiItem(textAreaBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }

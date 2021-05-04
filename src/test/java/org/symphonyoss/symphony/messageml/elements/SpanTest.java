@@ -65,7 +65,7 @@ public class SpanTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals(BiFields.SPAN.getFieldName(), item.getName());
-    assertEquals(2, item.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertEquals(BiFields.SPAN.getValue(), item.getName());
+    assertEquals(2, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

@@ -49,6 +49,6 @@ public class TableHeader extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.TABLE_HEADER.getFieldName());
+    context.updateItemCount(BiFields.TABLE_HEADER.getValue());
   }
 }

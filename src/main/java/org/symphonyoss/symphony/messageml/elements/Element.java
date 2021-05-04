@@ -130,7 +130,7 @@ public abstract class Element {
    */
   void updateBiContext(BiContext context) {
     if (getAttribute(STYLE_ATTR) != null) {
-      context.updateItemCount(BiFields.STYLES_CUSTOM.getFieldName());
+      context.updateItemCount(BiFields.STYLES_CUSTOM.getValue());
     }
     if (getAttribute(CLASS_ATTR) != null) {
       computeClassAttributeBi(context);
@@ -148,11 +148,11 @@ public abstract class Element {
     String[] styles = styleClass.trim().split("[ ]+");
     for (String style : styles) {
       if (style.startsWith("tempo-")) {
-        context.updateItemCount(BiFields.STYLES_CLASS_TEMPO.getFieldName());
+        context.updateItemCount(BiFields.STYLES_CLASS_TEMPO.getValue());
       } else if (style.equals("entity")) {
-        context.updateItemCount("Entities");
+        context.updateItemCount(BiFields.ENTITIES.getValue());
       } else {
-        context.updateItemCount(BiFields.STYLES_CLASS_OTHER.getFieldName());
+        context.updateItemCount(BiFields.STYLES_CLASS_OTHER.getValue());
       }
     }
   }

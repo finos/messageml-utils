@@ -82,7 +82,7 @@ public class PreformattedTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals(BiFields.PREFORMATTED.getFieldName(), item.getName());
-    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertEquals(BiFields.PREFORMATTED.getValue(), item.getName());
+    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

@@ -363,11 +363,11 @@ public class ButtonTest extends ElementTest {
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
     Map<String, Object> buttonExpectedAttributes = Stream.of(new String[][] {
-        {BiFields.STYLE_COLOR.getFieldName(), "primary"},
-        {BiFields.TYPE.getFieldName(), "action"},
+        {BiFields.STYLE_COLOR.getValue(), "primary"},
+        {BiFields.TYPE.getValue(), "action"},
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
-    BiItem buttonBiItemExpected = new BiItem(BiFields.BUTTON.getFieldName(), buttonExpectedAttributes);
+    BiItem buttonBiItemExpected = new BiItem(BiFields.BUTTON.getValue(), buttonExpectedAttributes);
 
     assertEquals(2, items.size());
     assertSameBiItem(buttonBiItemExpected, items.get(0));

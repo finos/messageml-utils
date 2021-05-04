@@ -325,32 +325,32 @@ public class SelectOptionTest extends ElementTest {
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
     Map<Object, Object> selectExpectedAttributes = Stream.of(new Object[][] {
-        {BiFields.TITLE.getFieldName(), 1},
-        {BiFields.LABEL.getFieldName(), 1},
-        {BiFields.PLACEHOLDER.getFieldName(), 1},
-        {BiFields.REQUIRED.getFieldName(), 1},
+        {BiFields.TITLE.getValue(), 1},
+        {BiFields.LABEL.getValue(), 1},
+        {BiFields.PLACEHOLDER.getValue(), 1},
+        {BiFields.REQUIRED.getValue(), 1},
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
     Map<Object, Object> optionExpectedAttributes = Stream.of(new Object[][] {
-        {BiFields.DEFAULT.getFieldName(), 1},
-        {BiFields.OPTIONS_COUNT.getFieldName(), 3},
+        {BiFields.DEFAULT.getValue(), 1},
+        {BiFields.OPTIONS_COUNT.getValue(), 3},
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
-    BiItem selectBiItemExpected = new BiItem(BiFields.SELECT.getFieldName(),
+    BiItem selectBiItemExpected = new BiItem(BiFields.SELECT.getValue(),
         selectExpectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
-    BiItem optionBiItemExpected = new BiItem(BiFields.OPTION.getFieldName(),
+    BiItem optionBiItemExpected = new BiItem(BiFields.OPTION.getValue(),
         optionExpectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     assertEquals(4, items.size());
-    assertEquals(BiFields.OPTION.getFieldName(), items.get(0).getName());
-    assertEquals(BiFields.SELECT.getFieldName(), items.get(1).getName());
+    assertEquals(BiFields.OPTION.getValue(), items.get(0).getName());
+    assertEquals(BiFields.SELECT.getValue(), items.get(1).getName());
     assertSameBiItem(optionBiItemExpected, items.get(0));
     assertSameBiItem(selectBiItemExpected, items.get(1));
     assertMessageLengthBiItem(items.get(3), input.length());

@@ -155,22 +155,22 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getFieldName(), VALUE_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getValue(), VALUE_ATTR);
     this.computeAndPutValidationProperties(attributesMapBi);
 
-    context.addItem(new BiItem(BiFields.TIMEZONE_PICKER.getFieldName(), attributesMapBi));
+    context.addItem(new BiItem(BiFields.TIMEZONE_PICKER.getValue(), attributesMapBi));
   }
 
   private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
     boolean validationOptions = getAttribute(DISABLED_TIMEZONE_ATTR) != null;
 
     if (validationOptions) {
-      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getFieldName(), 1);
-      attributesMapBi.put(BiFields.VALIDATION.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getValue(), 1);
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 

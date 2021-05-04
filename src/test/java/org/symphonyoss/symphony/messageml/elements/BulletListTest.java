@@ -46,8 +46,8 @@ public class BulletListTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals(BiFields.BULLET_LIST.getFieldName(), item.getName());
-    assertEquals(3, item.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertEquals(BiFields.BULLET_LIST.getValue(), item.getName());
+    assertEquals(3, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 
 }

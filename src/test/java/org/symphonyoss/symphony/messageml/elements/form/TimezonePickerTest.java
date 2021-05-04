@@ -267,21 +267,21 @@ public class TimezonePickerTest extends ElementTest {
                 + "disabled-timezone='[\"America/Detroit\", \"America/Indiana/Marengo\", "
                 + "\"America/Indiana/Petersburg\"]' />\n",
             Stream.of(new Object[][] {
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
-                {BiFields.REQUIRED.getFieldName(), 1},
-                {BiFields.DEFAULT.getFieldName(), 1},
-                {BiFields.VALIDATION_OPTIONS.getFieldName(), 1},
-                {BiFields.VALIDATION.getFieldName(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
+                {BiFields.DEFAULT.getValue(), 1},
+                {BiFields.VALIDATION_OPTIONS.getValue(), 1},
+                {BiFields.VALIDATION.getValue(), 1},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
 
         Arguments.of(
             "<timezone-picker name=\"disabled\" label=\"label01\" title=\"title01\" "
                 + "placeholder=\"placeholder01\"/>", Stream.of(new Object[][] {
-                {BiFields.PLACEHOLDER.getFieldName(), 1},
-                {BiFields.TITLE.getFieldName(), 1},
-                {BiFields.LABEL.getFieldName(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
     );
   }
@@ -302,14 +302,14 @@ public class TimezonePickerTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem timeZonePickerBiItemExpected = new BiItem(BiFields.TIMEZONE_PICKER.getFieldName(),
+    BiItem timeZonePickerBiItemExpected = new BiItem(BiFields.TIMEZONE_PICKER.getValue(),
         expectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.TIMEZONE_PICKER.getFieldName(), items.get(0).getName());
+    Assertions.assertEquals(BiFields.TIMEZONE_PICKER.getValue(), items.get(0).getName());
     assertSameBiItem(timeZonePickerBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }

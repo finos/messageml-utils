@@ -103,19 +103,19 @@ public class ExpandableCard extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.EXPANDABLE_CARDS.getFieldName());
+    context.updateItemCount(BiFields.EXPANDABLE_CARDS.getValue());
     if (getAttribute(ATTR_STATE) == null) {
       return;
     }
     switch (getAttribute(ATTR_STATE)) {
       case COLLAPSED:
-        context.updateItemCount(BiFields.EXPANDABLE_CARDS_COLLAPSED.getFieldName());
+        context.updateItemCount(BiFields.EXPANDABLE_CARDS_COLLAPSED.getValue());
         break;
       case CROPPED:
-        context.updateItemCount(BiFields.EXPANDABLE_CARDS_CROPPED.getFieldName());
+        context.updateItemCount(BiFields.EXPANDABLE_CARDS_CROPPED.getValue());
         break;
       case EXPANDED:
-        context.updateItemCount(BiFields.EXPANDABLE_CARDS_EXPANDED.getFieldName());
+        context.updateItemCount(BiFields.EXPANDABLE_CARDS_EXPANDED.getValue());
         break;
     }
   }

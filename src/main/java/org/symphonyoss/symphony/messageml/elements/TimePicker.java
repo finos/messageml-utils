@@ -139,15 +139,15 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
   public void updateBiContext(BiContext context) {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
-    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getFieldName(), TITLE);
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getFieldName(), PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getFieldName(), LABEL);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getFieldName(), REQUIRED_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getFieldName(), VALUE_ATTR);
-    this.putIntegerIfPresent(attributesMapBi, BiFields.INPUT_STEP.getFieldName(), STEP_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getValue(), VALUE_ATTR);
+    this.putIntegerIfPresent(attributesMapBi, BiFields.INPUT_STEP.getValue(), STEP_ATTR);
     this.computeAndPutValidationProperties(attributesMapBi);
 
-    context.addItem(new BiItem(BiFields.TIME_PICKER.getFieldName(), attributesMapBi));
+    context.addItem(new BiItem(BiFields.TIME_PICKER.getValue(), attributesMapBi));
   }
 
   private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
@@ -160,27 +160,27 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
         || validationStrict;
 
     if (validationMin) {
-      attributesMapBi.put(BiFields.VALIDATION_MIN.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_MIN.getValue(), 1);
     }
 
     if (validationMax) {
-      attributesMapBi.put(BiFields.VALIDATION_MAX.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_MAX.getValue(), 1);
     }
 
     if (validationPattern) {
-      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
     }
 
     if (validationOptions) {
-      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getValue(), 1);
     }
 
     if (validationStrict) {
-      attributesMapBi.put(BiFields.VALIDATION_STRICT.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION_STRICT.getValue(), 1);
     }
 
     if (hasValidation) {
-      attributesMapBi.put(BiFields.VALIDATION.getFieldName(), 1);
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 

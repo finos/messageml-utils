@@ -87,11 +87,11 @@ public class ImageTest extends ElementTest {
 
   private List<BiItem> getExpectedImageBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.IMAGE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 3)));
-    biItems.add(new BiItem(BiFields.IMAGE_URL.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 2)));
-    biItems.add(new BiItem(BiFields.IMAGE_DATA.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.IMAGE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 3)));
+    biItems.add(new BiItem(BiFields.IMAGE_URL.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.IMAGE_DATA.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
     biItems.add(new BiItem(
-        BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 193)));
+        BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 193)));
     return biItems;
   }
 }

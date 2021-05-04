@@ -65,14 +65,14 @@ public class Image extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.IMAGE.getFieldName());
+    context.updateItemCount(BiFields.IMAGE.getValue());
     String srcValue = getAttribute(ATTR_SRC);
     if (srcValue != null) {
       if (srcValue.startsWith("data:image")) {
-        context.updateItemCount(BiFields.IMAGE_DATA.getFieldName());
+        context.updateItemCount(BiFields.IMAGE_DATA.getValue());
       }
       if (srcValue.startsWith("http")) {
-        context.updateItemCount(BiFields.IMAGE_URL.getFieldName());
+        context.updateItemCount(BiFields.IMAGE_URL.getValue());
       }
     }
   }

@@ -128,12 +128,12 @@ public class EmojiTest extends ElementTest {
     List<BiItem> items = context.getBiContext().getItems();
 
     Map<String, Object> emojiExpectedAttributes =
-        Collections.singletonMap(BiFields.COUNT.getFieldName(), 1);
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1);
     Map<String, Object> entityExpectedAttributes =
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), null);
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), null);
 
-    BiItem emojiBiItemExpected = new BiItem(BiFields.EMOJIS.getFieldName(), emojiExpectedAttributes);
-    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+    BiItem emojiBiItemExpected = new BiItem(BiFields.EMOJIS.getValue(), emojiExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
 
     assertEquals(4, items.size());
     assertSameBiItem(entityBiItemExpected, items.get(0));
@@ -144,10 +144,10 @@ public class EmojiTest extends ElementTest {
 
   private List<BiItem> getExpectedEmojiBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.EMOJIS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), null)));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 139)));
-    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 79)));
+    biItems.add(new BiItem(BiFields.EMOJIS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), null)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 139)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 79)));
     return biItems;
   }
 

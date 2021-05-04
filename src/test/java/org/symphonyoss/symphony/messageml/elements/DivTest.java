@@ -95,7 +95,7 @@ public class DivTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals(BiFields.DIV.getFieldName(), item.getName());
-    assertEquals(2, item.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertEquals(BiFields.DIV.getValue(), item.getName());
+    assertEquals(2, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

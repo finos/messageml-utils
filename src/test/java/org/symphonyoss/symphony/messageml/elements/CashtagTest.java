@@ -238,12 +238,12 @@ public class CashtagTest extends ElementTest {
     List<BiItem> items = context.getBiContext().getItems();
 
     Map<String, Object> cashTagExpectedAttributes =
-        Collections.singletonMap(BiFields.COUNT.getFieldName(), 1);
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1);
     Map<String, Object> entityExpectedAttributes =
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), CASHTAG_ENTITY_SUBTYPE);
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), CASHTAG_ENTITY_SUBTYPE);
 
-    BiItem cashTagBiItemExpected = new BiItem(BiFields.CASHTAGS.getFieldName(), cashTagExpectedAttributes);
-    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getFieldName(), entityExpectedAttributes);
+    BiItem cashTagBiItemExpected = new BiItem(BiFields.CASHTAGS.getValue(), cashTagExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
 
     assertEquals(4, items.size());
     assertSameBiItem(entityBiItemExpected, items.get(0));
@@ -254,12 +254,12 @@ public class CashtagTest extends ElementTest {
 
   private List<BiItem> getExpectedCashtagsBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.CASHTAGS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 3)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), CASHTAG_ENTITY_SUBTYPE)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), CASHTAG_ENTITY_SUBTYPE)));
-    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(), Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), CASHTAG_ENTITY_SUBTYPE)));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 426)));
-    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 85)));
+    biItems.add(new BiItem(BiFields.CASHTAGS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 3)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), CASHTAG_ENTITY_SUBTYPE)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), CASHTAG_ENTITY_SUBTYPE)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), CASHTAG_ENTITY_SUBTYPE)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 426)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 85)));
     return biItems;
   }
 

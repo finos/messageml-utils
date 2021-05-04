@@ -377,9 +377,9 @@ public class CheckboxTest extends ElementTest {
                 + "<checkbox name=\"id4\" value=\"value04\" checked=\"false\">Yellow</checkbox>"
                 + "<checkbox name=\"id5\" value=\"value02\" label=\"labelTwo\" checked=\"true\">Blue</checkbox>",
             Stream.of(new Object[][] {
-                {BiFields.LABEL.getFieldName(), 2},
-                {BiFields.OPTIONS_COUNT.getFieldName(), 5},
-                {BiFields.DEFAULT.getFieldName(), 1},
+                {BiFields.LABEL.getValue(), 2},
+                {BiFields.OPTIONS_COUNT.getValue(), 5},
+                {BiFields.DEFAULT.getValue(), 1},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
 
         Arguments.of(
@@ -389,8 +389,8 @@ public class CheckboxTest extends ElementTest {
                 + "<checkbox name=\"id4\" value=\"value04\" checked=\"false\">Yellow</checkbox>"
                 + "<checkbox name=\"id5\" value=\"value02\" label=\"labelTwo\">Blue</checkbox>",
             Stream.of(new Object[][] {
-                {BiFields.LABEL.getFieldName(), 2},
-                {BiFields.OPTIONS_COUNT.getFieldName(), 5},
+                {BiFields.LABEL.getValue(), 2},
+                {BiFields.OPTIONS_COUNT.getValue(), 5},
             }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
     );
   }
@@ -412,14 +412,14 @@ public class CheckboxTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem checkBoxBiItemExpected = new BiItem(BiFields.CHECKBOX.getFieldName(),
+    BiItem checkBoxBiItemExpected = new BiItem(BiFields.CHECKBOX.getValue(),
         expectedAttributes.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
     Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.CHECKBOX.getFieldName(), items.get(0).getName());
+    Assertions.assertEquals(BiFields.CHECKBOX.getValue(), items.get(0).getName());
     assertSameBiItem(checkBoxBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }

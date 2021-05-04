@@ -66,7 +66,7 @@ public class ParagraphTest extends ElementTest {
     assertEquals(2, biContext.getItems().size());
 
     BiItem item = biContext.getItems().get(0);
-    assertEquals(BiFields.PARAGRAPH.getFieldName(), item.getName());
-    assertEquals(2, item.getAttributes().get(BiFields.COUNT.getFieldName()));
+    assertEquals(BiFields.PARAGRAPH.getValue(), item.getName());
+    assertEquals(2, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }
