@@ -596,14 +596,10 @@ public class RadioTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem checkBoxBiItemExpected = new BiItem(BiFields.RADIO.getValue(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
+    BiItem checkBoxBiItemExpected = new BiItem(BiFields.RADIO.getValue(), expectedAttributes);
 
-    Assertions.assertEquals(4, items.size());
-    Assertions.assertEquals(BiFields.RADIO.getValue(), items.get(0).getName());
+    assertEquals(4, items.size());
+    assertEquals(BiFields.RADIO.getValue(), items.get(0).getName());
     assertSameBiItem(checkBoxBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(3), input.length());
   }

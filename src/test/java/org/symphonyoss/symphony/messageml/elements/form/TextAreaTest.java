@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -447,14 +446,10 @@ public class TextAreaTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_AREA.getValue(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
+    BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_AREA.getValue(), expectedAttributes);
 
-    Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.TEXT_AREA.getValue(), items.get(0).getName());
+    assertEquals(3, items.size());
+    assertEquals(BiFields.TEXT_AREA.getValue(), items.get(0).getName());
     assertSameBiItem(textAreaBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }

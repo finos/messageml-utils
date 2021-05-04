@@ -412,11 +412,7 @@ public class CheckboxTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem checkBoxBiItemExpected = new BiItem(BiFields.CHECKBOX.getValue(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
+    BiItem checkBoxBiItemExpected = new BiItem(BiFields.CHECKBOX.getValue(), expectedAttributes);
 
     Assertions.assertEquals(3, items.size());
     Assertions.assertEquals(BiFields.CHECKBOX.getValue(), items.get(0).getName());

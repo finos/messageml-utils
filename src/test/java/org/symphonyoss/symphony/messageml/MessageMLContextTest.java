@@ -470,7 +470,7 @@ public class MessageMLContextTest {
   public void testGetBiContextBeforeParsing() {
     BiContext biContext = context.getBiContext();
 
-    assertFalse(biContext.getLibraryVersion().isEmpty());
+    assertFalse(BiContext.LIBRARY_VERSION.isEmpty());
     assertTrue(biContext.getItems().isEmpty());
   }
 
@@ -481,7 +481,7 @@ public class MessageMLContextTest {
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
 
-    assertFalse(biContext.getLibraryVersion().isEmpty());
+    assertFalse(BiContext.LIBRARY_VERSION.isEmpty());
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);

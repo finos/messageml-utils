@@ -512,14 +512,10 @@ public class DatePickerTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem datePickerBiItemExpected = new BiItem(BiFields.DATE_SELECTOR.getValue(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
+    BiItem datePickerBiItemExpected = new BiItem(BiFields.DATE_SELECTOR.getValue(), expectedAttributes);
 
-    Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.DATE_SELECTOR.getValue(), items.get(0).getName());
+    assertEquals(3, items.size());
+    assertEquals(BiFields.DATE_SELECTOR.getValue(), items.get(0).getName());
     assertSameBiItem(datePickerBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }

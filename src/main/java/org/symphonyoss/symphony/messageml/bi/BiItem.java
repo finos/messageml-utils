@@ -108,4 +108,8 @@ public class BiItem {
     return Objects.equals(name, biItem.name) && Objects.equals(attributes, biItem.attributes);
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, attributes);
+  }
 }

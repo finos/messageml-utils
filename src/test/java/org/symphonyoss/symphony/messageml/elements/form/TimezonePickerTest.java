@@ -302,14 +302,10 @@ public class TimezonePickerTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem timeZonePickerBiItemExpected = new BiItem(BiFields.TIMEZONE_PICKER.getValue(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
+    BiItem timeZonePickerBiItemExpected = new BiItem(BiFields.TIMEZONE_PICKER.getValue(), expectedAttributes);
 
-    Assertions.assertEquals(3, items.size());
-    Assertions.assertEquals(BiFields.TIMEZONE_PICKER.getValue(), items.get(0).getName());
+    assertEquals(3, items.size());
+    assertEquals(BiFields.TIMEZONE_PICKER.getValue(), items.get(0).getName());
     assertSameBiItem(timeZonePickerBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(2), input.length());
   }

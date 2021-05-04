@@ -70,7 +70,7 @@ public enum BiFields {
   MESSAGE_LENGTH("MessageLength"),
   ENTITY_JSON_SIZE("EntitiesJSONSize"),
   FREEMARKER("UseFreeMarker"),
-  COUNT("count");
+  COUNT("Count");
 
   private final String value;
 

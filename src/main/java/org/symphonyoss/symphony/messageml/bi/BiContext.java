@@ -18,19 +18,11 @@ import java.util.Optional;
 public class BiContext {
   private static final Logger logger = LoggerFactory.getLogger(BiContext.class);
 
-  private final String libraryVersion;
+  public static final String LIBRARY_VERSION = extractVersion();
   private final List<BiItem> items;
 
   public BiContext() {
-    this.libraryVersion = extractVersion();
     this.items = new ArrayList<>();
-  }
-
-  /**
-   * Returns the messageML library version in use. Format is the following: "MessageML #version"
-   */
-  public String getLibraryVersion() {
-    return libraryVersion;
   }
 
   public List<BiItem> getItems() {

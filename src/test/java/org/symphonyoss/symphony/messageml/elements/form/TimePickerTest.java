@@ -1,5 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TimePickerTest extends ElementTest {
@@ -428,11 +430,7 @@ public class TimePickerTest extends ElementTest {
     messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getValue(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
+    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getValue(), expectedAttributes);
 
     Assertions.assertEquals(3, items.size());
     Assertions.assertEquals(BiFields.TIME_PICKER.getValue(), items.get(0).getName());
@@ -481,13 +479,12 @@ public class TimePickerTest extends ElementTest {
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
-    Assertions.assertEquals(
-        1, items.size(),
-        "As time-picker is firstly parsed and failed, context is not filled with form and button");
-    Assertions.assertNull(
-        items.get(0).getAttributes().get(BiFields.INPUT_STEP),
+    assertEquals("As time-picker is firstly parsed and failed, context is not filled with form and button",
+        1, items.size());
+    assertNull(
+        items.get(0).getAttributes().get(BiFields.INPUT_STEP.getValue()),
         "Input_Step BI property is not set in context as the attribute value is not correct");
-    Assertions.assertEquals(BiFields.TIME_PICKER.getValue(), items.get(0).getName());
+    assertEquals(BiFields.TIME_PICKER.getValue(), items.get(0).getName());
     assertSameBiItem(timePickerBiItemExpected, items.get(0));
   }
 

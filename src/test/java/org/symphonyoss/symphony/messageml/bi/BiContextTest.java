@@ -52,7 +52,7 @@ public class BiContextTest {
 
     BiItem biItem = biContext.getItems().get(0);
     assertEquals("Link", biItem.getName());
-    assertEquals("{count=1}", biItem.getAttributes().toString());
+    assertEquals("{Count=1}", biItem.getAttributes().toString());
   }
 
   @Test
@@ -68,7 +68,7 @@ public class BiContextTest {
 
     BiItem biItem = biContext.getItems().get(0);
     assertEquals("Link", biItem.getName());
-    assertEquals("{count=2}", biItem.getAttributes().toString());
+    assertEquals("{Count=2}", biItem.getAttributes().toString());
   }
 
   @Test
@@ -79,7 +79,7 @@ public class BiContextTest {
 
     BiItem biItem = biContext.getItems().get(0);
     assertEquals("EntityJSONSize", biItem.getName());
-    assertEquals("{count=1000}", biItem.getAttributes().toString());
+    assertEquals("{Count=1000}", biItem.getAttributes().toString());
   }
 
   @Test
@@ -92,7 +92,7 @@ public class BiContextTest {
 
     BiItem biItem = biContext.getItems().get(0);
     assertEquals("TableMaxColumns", biItem.getName());
-    assertEquals("{count=6}", biItem.getAttributes().toString());
+    assertEquals("{Count=6}", biItem.getAttributes().toString());
   }
 
 }
