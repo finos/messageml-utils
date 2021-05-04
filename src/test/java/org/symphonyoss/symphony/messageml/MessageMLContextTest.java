@@ -325,7 +325,7 @@ public class MessageMLContextTest {
     assertEquals(5, biItems.size());
 
     BiItem linkItem = biItems.get(0);
-    assertEquals(BiFields.LINKS.getFieldName(), linkItem.getName());
+    assertEquals(BiFields.LINK.getFieldName(), linkItem.getName());
     assertEquals(expectedLinkAttrs, linkItem.getAttributes());
 
     BiItem entityItem = biItems.get(1);
@@ -485,8 +485,8 @@ public class MessageMLContextTest {
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
-    assertEquals("MessageLength", biItem.getName());
-    assertEquals(35, biItem.getAttributes().get("count"));
+    assertEquals(BiFields.MESSAGE_LENGTH.getFieldName(), biItem.getName());
+    assertEquals(35, biItem.getAttributes().get(BiFields.COUNT.getFieldName()));
 
   }
 
@@ -506,23 +506,29 @@ public class MessageMLContextTest {
 
   private List<BiItem> getExpectedBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem("LineBreaks", Collections.singletonMap("count", 2)));
-    biItems.add(new BiItem("Headers", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("Images", Collections.singletonMap("count", 3)));
-    biItems.add(new BiItem("ImagesURL", Collections.singletonMap("count", 3)));
-    biItems.add(new BiItem(BiFields.LINKS.getFieldName(), Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("Spans", Collections.singletonMap("count", 15)));
-    biItems.add(new BiItem("Divs", Collections.singletonMap("count", 5)));
-    biItems.add(new BiItem("Mentions", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("Cards", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("Entities", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("StylesCustom", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("StylesClassOther", Collections.singletonMap("count", 8)));
-    biItems.add(new BiItem("StylesClassTempo", Collections.singletonMap("count", 15)));
-    biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap("count", 1548)));
-    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 2984)));
-    biItems.add(new BiItem("Entity",
+    biItems.add(new BiItem(BiFields.LINE_BREAK.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 2)));
+    biItems.add(new BiItem(BiFields.HEADER.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.IMAGE.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 3)));
+    biItems.add(new BiItem(BiFields.IMAGE_URL.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 3)));
+    biItems.add(new BiItem(BiFields.LINK.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.SPAN.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 15)));
+    biItems.add(new BiItem(BiFields.DIV.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 5)));
+    biItems.add(
+        new BiItem(BiFields.MENTIONS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.CARD.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem("Entities", Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(
+        new BiItem(BiFields.STYLES_CUSTOM.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.STYLES_CLASS_OTHER.getFieldName(),
+        Collections.singletonMap(BiFields.COUNT.getFieldName(), 8)));
+    biItems.add(new BiItem(BiFields.STYLES_CLASS_TEMPO.getFieldName(),
+        Collections.singletonMap(BiFields.COUNT.getFieldName(), 15)));
+    biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(),
+        Collections.singletonMap(BiFields.COUNT.getFieldName(), 1548)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(),
+        Collections.singletonMap(BiFields.COUNT.getFieldName(), 2984)));
+    biItems.add(new BiItem(BiFields.ENTITY.getFieldName(),
         Collections.singletonMap(BiFields.ENTITY_TYPE.getFieldName(), "com.symphony.user.userId")));
     return biItems;
   }
@@ -696,9 +702,11 @@ public class MessageMLContextTest {
 
   private List<BiItem> getExpectedFreemarkerBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 46)));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(), Collections.singletonMap("count", 35)));
+    biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(),
+        Collections.singletonMap(BiFields.COUNT.getFieldName(), 46)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getFieldName(),
+        Collections.singletonMap(BiFields.COUNT.getFieldName(), 35)));
     return biItems;
   }
 

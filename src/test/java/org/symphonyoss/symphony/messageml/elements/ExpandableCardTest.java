@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -173,11 +174,11 @@ public class ExpandableCardTest extends ElementTest {
 
   private List<BiItem> getExpectedCardBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem("ExpandableCards", Collections.singletonMap("count", 4)));
-    biItems.add(new BiItem("ExpandableCardsCollapsed", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("ExpandableCardsCropped", Collections.singletonMap("count", 2)));
-    biItems.add(new BiItem("ExpandableCardsExpanded", Collections.singletonMap("count", 1)));
-    biItems.add(new BiItem("MessageLength", Collections.singletonMap("count", 394)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 4)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_COLLAPSED.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_CROPPED.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 2)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_EXPANDED.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 1)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getFieldName(), Collections.singletonMap(BiFields.COUNT.getFieldName(), 394)));
     return biItems;
   }
 

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
@@ -129,7 +130,7 @@ public abstract class Element {
    */
   void updateBiContext(BiContext context) {
     if (getAttribute(STYLE_ATTR) != null) {
-      context.updateItem("StylesCustom");
+      context.updateItem(BiFields.STYLES_CUSTOM.getFieldName());
     }
     if (getAttribute(CLASS_ATTR) != null) {
       computeClassAttributeBi(context);
@@ -147,11 +148,11 @@ public abstract class Element {
     String[] styles = styleClass.trim().split("[ ]+");
     for (String style : styles) {
       if (style.startsWith("tempo-")) {
-        context.updateItem("StylesClassTempo");
+        context.updateItem(BiFields.STYLES_CLASS_TEMPO.getFieldName());
       } else if (style.equals("entity")) {
         context.updateItem("Entities");
       } else {
-        context.updateItem("StylesClassOther");
+        context.updateItem(BiFields.STYLES_CLASS_OTHER.getFieldName());
       }
     }
   }

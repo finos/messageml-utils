@@ -21,6 +21,7 @@ import org.commonmark.node.Node;
 import org.commonmark.node.Paragraph;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -111,6 +112,6 @@ public class Div extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem("Divs");
+    context.updateItem(BiFields.DIV.getFieldName());
   }
 }
