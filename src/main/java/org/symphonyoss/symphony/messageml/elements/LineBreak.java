@@ -20,6 +20,7 @@ import org.commonmark.node.HardLineBreak;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -70,6 +71,6 @@ public class LineBreak extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem("LineBreaks");
+    context.updateItem(BiFields.LINE_BREAK.getFieldName());
   }
 }

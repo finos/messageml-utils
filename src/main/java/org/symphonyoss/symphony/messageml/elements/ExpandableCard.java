@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
@@ -42,7 +43,10 @@ public class ExpandableCard extends Element {
   private static final String PRESENTATIONML_TAG = "div";
   private static final String ATTR_STATE = "state";
   private static final String PRESENTATIONML_STATE = "data-state";
-  private static final List<String> allowedStates = Arrays.asList("collapsed", "cropped", "expanded");
+  private static final String COLLAPSED = "collapsed";
+  private static final String CROPPED = "cropped";
+  private static final String EXPANDED = "expanded";
+  private static final List<String> allowedStates = Arrays.asList(COLLAPSED, CROPPED, EXPANDED);
 
   public ExpandableCard(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -99,19 +103,19 @@ public class ExpandableCard extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem("ExpandableCards");
+    context.updateItem(BiFields.EXPANDABLE_CARDS.getFieldName());
     if (getAttribute(ATTR_STATE) == null) {
       return;
     }
     switch (getAttribute(ATTR_STATE)) {
-      case "collapsed":
-        context.updateItem("ExpandableCardsCollapsed");
+      case COLLAPSED:
+        context.updateItem(BiFields.EXPANDABLE_CARDS_COLLAPSED.getFieldName());
         break;
-      case "cropped":
-        context.updateItem("ExpandableCardsCropped");
+      case CROPPED:
+        context.updateItem(BiFields.EXPANDABLE_CARDS_CROPPED.getFieldName());
         break;
-      case "expanded":
-        context.updateItem("ExpandableCardsExpanded");
+      case EXPANDED:
+        context.updateItem(BiFields.EXPANDABLE_CARDS_EXPANDED.getFieldName());
         break;
     }
   }

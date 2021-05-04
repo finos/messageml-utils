@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
@@ -60,6 +61,6 @@ public class Preformatted extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem("Pres");
+    context.updateItem(BiFields.PREFORMATTED.getFieldName());
   }
 }

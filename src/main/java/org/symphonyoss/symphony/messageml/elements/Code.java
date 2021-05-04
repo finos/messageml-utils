@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 /**
@@ -55,6 +56,6 @@ public class Code extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItem("Codes");
+    context.updateItem(BiFields.CODE.getFieldName());
   }
 }

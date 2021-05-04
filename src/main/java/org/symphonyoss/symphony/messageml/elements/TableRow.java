@@ -18,6 +18,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 
@@ -55,6 +56,6 @@ public class TableRow extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemWithMaxValue("TableColumnsMax", countChildrenOfType(TableCell.class));
+    context.updateItemWithMaxValue(BiFields.TABLE_COLUMN_MAX.getFieldName(), countChildrenOfType(TableCell.class));
   }
 }
