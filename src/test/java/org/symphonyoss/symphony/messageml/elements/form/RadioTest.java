@@ -598,10 +598,10 @@ public class RadioTest extends ElementTest {
 
     BiItem checkBoxBiItemExpected = new BiItem(BiFields.RADIO.getValue(), expectedAttributes);
 
-    assertEquals(4, items.size());
+    assertEquals(5, items.size());
     assertEquals(BiFields.RADIO.getValue(), items.get(0).getName());
     assertSameBiItem(checkBoxBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(3), input.length());
+    assertMessageLengthBiItem(items.get(4), input.length());
   }
 
   static String getInputId(String presentationML) {

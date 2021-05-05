@@ -432,10 +432,10 @@ public class TimePickerTest extends ElementTest {
 
     BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getValue(), expectedAttributes);
 
-    Assertions.assertEquals(3, items.size());
+    Assertions.assertEquals(4, items.size());
     Assertions.assertEquals(BiFields.TIME_PICKER.getValue(), items.get(0).getName());
     assertSameBiItem(timePickerBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
+    assertMessageLengthBiItem(items.get(3), input.length());
   }
 
   @Test

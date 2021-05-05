@@ -13,6 +13,7 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -348,12 +349,15 @@ public class SelectOptionTest extends ElementTest {
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
-    assertEquals(4, items.size());
+    BiItem formBiItemExpected = new BiItem(BiFields.FORM.getValue(), Collections.emptyMap());
+
+    assertEquals(5, items.size());
     assertEquals(BiFields.OPTION.getValue(), items.get(0).getName());
     assertEquals(BiFields.SELECT.getValue(), items.get(1).getName());
     assertSameBiItem(optionBiItemExpected, items.get(0));
     assertSameBiItem(selectBiItemExpected, items.get(1));
-    assertMessageLengthBiItem(items.get(3), input.length());
+    assertSameBiItem(formBiItemExpected, items.get(3));
+    assertMessageLengthBiItem(items.get(4), input.length());
   }
 
   private String getRequiredPresentationML(String required) {

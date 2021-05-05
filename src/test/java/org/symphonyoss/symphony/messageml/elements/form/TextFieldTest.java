@@ -776,10 +776,10 @@ public class TextFieldTest extends ElementTest {
 
     BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_FIELD.getValue(), expectedAttributes);
 
-    assertEquals(3, items.size());
+    assertEquals(4, items.size());
     assertEquals(BiFields.TEXT_FIELD.getValue(), items.get(0).getName());
     assertSameBiItem(textAreaBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
+    assertMessageLengthBiItem(items.get(3), input.length());
   }
 
 

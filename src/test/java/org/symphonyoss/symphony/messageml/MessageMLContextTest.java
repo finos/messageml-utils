@@ -243,13 +243,17 @@ public class MessageMLContextTest {
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
 
-    assertEquals(2, biContext.getItems().size());
+    assertEquals(3, biContext.getItems().size());
 
     BiItem buttonItem = biContext.getItems().get(0);
     assertEquals(BiFields.BUTTON.getValue(), buttonItem.getName());
     assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
 
-    BiItem messageLengthItem = biContext.getItems().get(1);
+    BiItem formItem = biContext.getItems().get(1);
+    assertEquals(BiFields.FORM.getValue(), formItem.getName());
+    assertEquals(Collections.emptyMap(), formItem.getAttributes());
+
+    BiItem messageLengthItem = biContext.getItems().get(2);
     assertEquals(BiFields.MESSAGE_LENGTH.getValue(), messageLengthItem.getName());
     assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
   }
@@ -271,14 +275,14 @@ public class MessageMLContextTest {
     expectedButtonAttrs.put(BiFields.STYLE_COLOR.getValue(), "primary");
     expectedButtonAttrs.put(BiFields.TYPE.getValue(), "action");
 
-    assertEquals(3, biContext.getItems().size());
+    assertEquals(4, biContext.getItems().size());
     assertEquals(BiFields.TEXT_FIELD.getValue(), biContext.getItems().get(0).getName());
 
     Map<String, Object> expectedMessageLengthAttrs = new HashMap<>();
     expectedMessageLengthAttrs.put(BiFields.COUNT.getValue(), message.length());
-    BiItem messgaeLengthItem = new BiItem(BiFields.MESSAGE_LENGTH.getValue(), expectedMessageLengthAttrs);
-    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biContext.getItems().get(2).getName());
-    assertEquals(expectedMessageLengthAttrs, messgaeLengthItem.getAttributes());
+    BiItem messageLengthItem = new BiItem(BiFields.MESSAGE_LENGTH.getValue(), expectedMessageLengthAttrs);
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biContext.getItems().get(3).getName());
+    assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
 
     BiItem buttonItem = biContext.getItems().get(1);
     assertEquals("Button", buttonItem.getName());
@@ -298,10 +302,10 @@ public class MessageMLContextTest {
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
 
-    assertEquals(3, biContext.getItems().size());
+    assertEquals(4, biContext.getItems().size());
     assertEquals(BiFields.BUTTON.getValue(), biContext.getItems().get(0).getName());
     assertEquals(BiFields.BUTTON.getValue(), biContext.getItems().get(1).getName());
-    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biContext.getItems().get(2).getName());
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biContext.getItems().get(3).getName());
   }
 
   @Test

@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer.addEscapeCharacter;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -124,11 +125,13 @@ public class DateSelectorTest extends ElementTest {
             .stream()
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
+    BiItem formBiItemExpected = new BiItem(BiFields.FORM.getValue(), Collections.emptyMap());
 
-    assertEquals(3, items.size());
+    assertEquals(4, items.size());
     assertEquals(BiFields.DATE_SELECTOR.getValue(), items.get(0).getName());
     assertSameBiItem(datePickerBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
+    assertSameBiItem(formBiItemExpected, items.get(2));
+    assertMessageLengthBiItem(items.get(3), input.length());
   }
 
   private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {

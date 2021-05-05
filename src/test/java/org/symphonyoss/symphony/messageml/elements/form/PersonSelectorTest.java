@@ -259,12 +259,13 @@ public class PersonSelectorTest extends ElementTest {
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
-    assertEquals(4, items.size());
+
+    assertEquals(5, items.size());
     assertEquals(BiFields.PERSON_SELECTOR.getValue(), items.get(0).getName());
     assertEquals(BiFields.PERSON_SELECTOR.getValue(), items.get(1).getName());
     assertSameBiItem(personSelectorFirstBiItemExpected, items.get(0));
     assertSameBiItem(personSelectorSecondBiItemExpected, items.get(1));
-    assertMessageLengthBiItem(items.get(3), input.length());
+    assertMessageLengthBiItem(items.get(4), input.length());
   }
 
   private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {

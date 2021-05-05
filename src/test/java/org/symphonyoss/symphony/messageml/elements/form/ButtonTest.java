@@ -20,6 +20,7 @@ import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -368,10 +369,12 @@ public class ButtonTest extends ElementTest {
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
     BiItem buttonBiItemExpected = new BiItem(BiFields.BUTTON.getValue(), buttonExpectedAttributes);
+    BiItem formBiItemExpected = new BiItem(BiFields.FORM.getValue(), Collections.emptyMap());
 
-    assertEquals(2, items.size());
+    assertEquals(3, items.size());
     assertSameBiItem(buttonBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(1), input.length());
+    assertSameBiItem(formBiItemExpected, items.get(1));
+    assertMessageLengthBiItem(items.get(2), input.length());
   }
 
   private String getNamePresentationML(String name) {

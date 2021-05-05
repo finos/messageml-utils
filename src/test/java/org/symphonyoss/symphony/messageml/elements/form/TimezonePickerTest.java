@@ -304,9 +304,9 @@ public class TimezonePickerTest extends ElementTest {
 
     BiItem timeZonePickerBiItemExpected = new BiItem(BiFields.TIMEZONE_PICKER.getValue(), expectedAttributes);
 
-    assertEquals(3, items.size());
+    assertEquals(4, items.size());
     assertEquals(BiFields.TIMEZONE_PICKER.getValue(), items.get(0).getName());
     assertSameBiItem(timeZonePickerBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
+    assertMessageLengthBiItem(items.get(3), input.length());
   }
 }

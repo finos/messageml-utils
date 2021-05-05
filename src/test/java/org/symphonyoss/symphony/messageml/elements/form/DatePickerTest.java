@@ -514,10 +514,10 @@ public class DatePickerTest extends ElementTest {
 
     BiItem datePickerBiItemExpected = new BiItem(BiFields.DATE_SELECTOR.getValue(), expectedAttributes);
 
-    assertEquals(3, items.size());
+    assertEquals(4, items.size());
     assertEquals(BiFields.DATE_SELECTOR.getValue(), items.get(0).getName());
     assertSameBiItem(datePickerBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
+    assertMessageLengthBiItem(items.get(3), input.length());
   }
 
 

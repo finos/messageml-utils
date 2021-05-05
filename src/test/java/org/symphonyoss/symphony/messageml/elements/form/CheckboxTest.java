@@ -414,10 +414,10 @@ public class CheckboxTest extends ElementTest {
 
     BiItem checkBoxBiItemExpected = new BiItem(BiFields.CHECKBOX.getValue(), expectedAttributes);
 
-    Assertions.assertEquals(3, items.size());
+    Assertions.assertEquals(4, items.size());
     Assertions.assertEquals(BiFields.CHECKBOX.getValue(), items.get(0).getName());
     assertSameBiItem(checkBoxBiItemExpected, items.get(0));
-    assertMessageLengthBiItem(items.get(2), input.length());
+    assertMessageLengthBiItem(items.get(3), input.length());
   }
 
   private String buildMessageMLFromParameters(String name, String value, String text, String checked, boolean shouldSendCheckedAttribute) {
