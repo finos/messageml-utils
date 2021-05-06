@@ -496,11 +496,10 @@ public class MentionTest extends ElementTest {
     BiItem mentionBiItemExpected = new BiItem(BiFields.MENTIONS.getValue(), mentionExpectedAttributes);
     BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
 
-    assertEquals(4, items.size());
+    assertEquals(3, items.size());
     assertSameBiItem(entityBiItemExpected, items.get(0));
     assertSameBiItem(mentionBiItemExpected, items.get(1));
     assertMessageLengthBiItem(items.get(2), input.length());
-    assertEntityJsonBiItem(items.get(3));
   }
 
   private List<BiItem> getExpectedMentionBiItems() {
@@ -508,7 +507,6 @@ public class MentionTest extends ElementTest {
     biItems.add(new BiItem(BiFields.MENTIONS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 239)));
     biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 92)));
     return biItems;
   }

@@ -267,8 +267,12 @@ public abstract class Element {
     Element child = context.createElement(element, this);
     if (child != null) {
       child.buildAll(context, element);
-      child.validate();
-
+      try {
+        child.validate();
+      } catch (InvalidInputException e) {
+        context.clearBiContext();
+        throw e;
+      }
       if (child.hasIdAttribute()) {
         context.loadElementId(child.getAttribute(ID_ATTR));
       }

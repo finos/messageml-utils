@@ -114,8 +114,8 @@ public class MessageMLParser {
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final Configuration FREEMARKER = new Configuration(Configuration.getVersion());
   private final IDataProvider dataProvider;
-  private final BiContext biContext;
 
+  private BiContext biContext;
   private FormatEnum messageFormat;
   private MessageML messageML;
   private ObjectNode entityJson;
@@ -135,7 +135,6 @@ public class MessageMLParser {
 
   MessageMLParser(IDataProvider dataProvider) {
     this.dataProvider = dataProvider;
-    this.biContext = new BiContext();
   }
 
   /**
@@ -149,6 +148,7 @@ public class MessageMLParser {
    * @throws ProcessingException   thrown on errors generating the document tree
    */
   MessageML parse(String message, String entityJson, String version) throws InvalidInputException, ProcessingException {
+    clearBiContext();
     this.index = 0;
     this.elementIds = new HashSet<>();
     this.splittableComponents = new HashMap<>();
@@ -159,6 +159,7 @@ public class MessageMLParser {
     }
 
     if (StringUtils.isNotBlank(entityJson)) {
+      this.biContext.addItemWithValue(BiFields.ENTITY_JSON_SIZE.getValue(), entityJson.length());
       try {
         this.entityJson = (ObjectNode) MAPPER.readTree(entityJson);
       } catch (JsonProcessingException e) {
@@ -179,15 +180,8 @@ public class MessageMLParser {
 
     this.messageML = parseMessageML(expandedMessage, version);
     this.entityJson = this.messageML.asEntityJson(this.entityJson);
-    int entityJsonSize = this.entityJson.toString().length();
-
-    biContext.addItemWithValue(BiFields.MESSAGE_LENGTH.getValue(), message.length());
-    // if entityJson is empty entityJson.toString={}
-    if (entityJsonSize > 2) {
-      biContext.addItemWithValue(BiFields.ENTITY_JSON_SIZE.getValue(), entityJsonSize);
-    }
+    this.biContext.addItemWithValue(BiFields.MESSAGE_LENGTH.getValue(), message.length());
     return this.messageML;
-
   }
 
   /**
@@ -267,7 +261,7 @@ public class MessageMLParser {
     template.process(data, sw);
 
     if (sw.toString().length() != message.length()) {
-      biContext.updateItemCount(BiFields.FREEMARKER.getValue());
+      this.biContext.updateItemCount(BiFields.FREEMARKER.getValue());
     }
     return sw.toString();
   }
@@ -757,7 +751,11 @@ public class MessageMLParser {
   }
 
   public BiContext getBiContext() {
-    return biContext;
+    return this.biContext;
+  }
+
+  public void clearBiContext() {
+    this.biContext = new BiContext();
   }
 
   /**

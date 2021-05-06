@@ -300,14 +300,6 @@ public class ElementTest {
     assertEquals(expected, actual);
   }
 
-  protected void assertEntityJsonBiItem(BiItem entityJsonItem) {
-    assertNotNull(entityJsonItem);
-    assertEquals(BiFields.ENTITY_JSON_SIZE.getValue(), entityJsonItem.getName());
-    assertNotNull(entityJsonItem.getAttributes());
-    assertNotNull(entityJsonItem.getAttributes().get(BiFields.COUNT.getValue()));
-    assertTrue((Integer) entityJsonItem.getAttributes().get(BiFields.COUNT.getValue()) > 2);
-  }
-
   protected void assertMessageLengthBiItem(BiItem messageLengthItem, int expectedLength) {
     assertEquals(BiFields.MESSAGE_LENGTH.getValue(), messageLengthItem.getName());
     assertNotNull(messageLengthItem.getAttributes());

@@ -237,11 +237,10 @@ public class HashtagTest extends ElementTest {
     BiItem hashTagBiItemExpected = new BiItem(BiFields.HASHTAGS.getValue(), hashTagExpectedAttributes);
     BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
 
-    assertEquals(4, items.size());
+    assertEquals(3, items.size());
     assertSameBiItem(entityBiItemExpected, items.get(0));
     assertSameBiItem(hashTagBiItemExpected, items.get(1));
     assertMessageLengthBiItem(items.get(2), input.length());
-    assertEntityJsonBiItem(items.get(3));
   }
 
   private List<BiItem> getExpectedHashtagBiItems() {
@@ -250,7 +249,6 @@ public class HashtagTest extends ElementTest {
     biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
-    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 396)));
     biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 85)));
     return biItems;
   }
