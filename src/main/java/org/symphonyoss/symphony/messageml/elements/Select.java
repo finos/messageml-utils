@@ -17,13 +17,17 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.SelectNode;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing dropdown menu - Symphony Elements.
@@ -92,6 +96,18 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   @Override
   public String getElementId(){
     return ELEMENT_ID;
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), DATA_PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
+
+    context.addItem(new BiItem(BiFields.SELECT.getValue(), attributesMapBi));
   }
 
   private void assertOnlyOneOptionSelected() throws InvalidInputException {

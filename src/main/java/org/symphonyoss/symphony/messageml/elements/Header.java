@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.Node;
 import org.commonmark.node.StrongEmphasis;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.regex.Pattern;
@@ -57,6 +58,7 @@ public class Header extends Element {
 
   @Override
   public void updateBiContext(BiContext context) {
-    context.updateItem("Header", tag);
+    super.updateBiContext(context);
+    context.updateItemCount(BiFields.HEADER.getValue());
   }
 }

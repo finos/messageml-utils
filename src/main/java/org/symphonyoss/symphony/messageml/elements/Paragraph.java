@@ -17,6 +17,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 
 /**
  * Class representing a paragraph.
@@ -44,5 +46,11 @@ public class Paragraph extends Element {
   @Override
   public String toString() {
     return "\n\n";
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItemCount(BiFields.PARAGRAPH.getValue());
   }
 }

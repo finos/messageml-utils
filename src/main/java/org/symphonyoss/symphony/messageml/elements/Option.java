@@ -1,12 +1,16 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.OptionNode;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing a Symphony Elements option
@@ -41,6 +45,16 @@ public class Option extends FormElement {
     assertParent(Collections.singleton(Select.class));
     assertContentModel(Collections.singleton(TextNode.class));
     assertContainsChildOfType(Collections.singleton(TextNode.class));
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    attributesMapBi.put(BiFields.OPTIONS_COUNT.getValue(), 1);
+    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getValue(), SELECTED_ATTR);
+
+    context.updateItemCount(BiFields.OPTION.getValue(), attributesMapBi);
   }
 
   @Override

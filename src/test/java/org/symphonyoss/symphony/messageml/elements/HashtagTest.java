@@ -2,12 +2,20 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class HashtagTest extends ElementTest {
 
@@ -132,15 +140,15 @@ public class HashtagTest extends ElementTest {
     String input = "<messageML>Hello <hash tag=\"crazy#world\"/>!</messageML>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">#crazy#world</span>!"
-            + "</div>";
+        + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">#crazy#world</span>!"
+        + "</div>";
     String expectedJson = "{\"keyword1\":{"
-            + "\"type\":\"org.symphonyoss.taxonomy\","
-            + "\"version\":\"1.0\","
-            + "\"id\":[{"
-            + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
-            + "\"value\":\"crazy#world\""
-            + "}]}}";
+        + "\"type\":\"org.symphonyoss.taxonomy\","
+        + "\"version\":\"1.0\","
+        + "\"id\":[{"
+        + "\"type\":\"org.symphonyoss.taxonomy.hashtag\","
+        + "\"value\":\"crazy#world\""
+        + "}]}}";
     String expectedText = "crazy#world";
     String expectedMarkdown = "Hello #crazy#world!";
 
@@ -156,7 +164,9 @@ public class HashtagTest extends ElementTest {
     String input = "<messageML>Hello <hash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s", HashTag.HASHTAG_PATTERN));
+    expectedException.expectMessage(
+        String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s",
+            HashTag.HASHTAG_PATTERN));
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -175,7 +185,9 @@ public class HashtagTest extends ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s", HashTag.HASHTAG_PATTERN));
+    expectedException.expectMessage(
+        String.format("Values of the attribute 'tag' for the element 'hash' must match the pattern %s",
+            HashTag.HASHTAG_PATTERN));
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
@@ -194,6 +206,53 @@ public class HashtagTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Shorthand tag \"hash\" is not allowed in PresentationML");
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testHashtagBi() throws Exception {
+    String input = "<messageML><hash tag=\"Hello\"/><hash tag=\"world\"/><hash tag=\"HelloWorld\"/></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedHashtagBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  @Test
+  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
+      ProcessingException {
+    String input = "<messageML>Hello <hash tag=\"world\"/>!</messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = context.getBiContext().getItems();
+
+    Map<String, Object> hashTagExpectedAttributes =
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1);
+    Map<String, Object> entityExpectedAttributes =
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag");
+
+    BiItem hashTagBiItemExpected = new BiItem(BiFields.HASHTAGS.getValue(), hashTagExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
+
+    assertEquals(4, items.size());
+    assertSameBiItem(entityBiItemExpected, items.get(0));
+    assertSameBiItem(hashTagBiItemExpected, items.get(1));
+    assertMessageLengthBiItem(items.get(2), input.length());
+    assertEntityJsonBiItem(items.get(3));
+  }
+
+  private List<BiItem> getExpectedHashtagBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem(BiFields.HASHTAGS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 3)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "org.symphonyoss.taxonomy.hashtag")));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 396)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 85)));
+    return biItems;
   }
 
   private void verifyHashTag(Element messageML, String expectedPresentationML, String expectedJson, String expectedText,

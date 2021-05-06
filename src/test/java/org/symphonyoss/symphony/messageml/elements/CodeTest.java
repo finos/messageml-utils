@@ -6,6 +6,9 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 public class CodeTest extends ElementTest {
@@ -253,7 +256,7 @@ public class CodeTest extends ElementTest {
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
   }
-  
+
   @Test
   public void testCodeWithBreaks() throws Exception {
     String inputMarkdown = "```\nfoo\nbar\n```";
@@ -287,7 +290,8 @@ public class CodeTest extends ElementTest {
     assertEquals("Markdown", "```\n foo bar \n```\n", context.getMarkdown());
     assertEquals("Plaintext", "\nfoo\n\nbar\n", context.getText());
 
-    inputPresentationMl = "<div data-format=\"PresentationML\" data-version=\"2.0\">\n<code>\nfoo\n\nbar\n</code>\n</div>";
+    inputPresentationMl =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">\n<code>\nfoo\n\nbar\n</code>\n</div>";
     context.parseMessageML(inputPresentationMl, null, MessageML.MESSAGEML_VERSION);
     assertEquals("Markdown", " \n```\n foo bar \n```\n ", context.getMarkdown());
     assertEquals("Plaintext", " \nfoo\n\nbar\n ", context.getText());
@@ -348,5 +352,20 @@ public class CodeTest extends ElementTest {
     assertEquals("Text", expectedText, context.getText());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
+  }
+
+  @Test
+  public void testCodeBi() throws Exception {
+    String input = "<messageML>" +
+        "<code>System.out.println(\"Hello world!\");</code>" +
+        "<code>_Hello_ **world!**</code></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals(BiFields.CODE.getValue(), item.getName());
+    assertEquals(2, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

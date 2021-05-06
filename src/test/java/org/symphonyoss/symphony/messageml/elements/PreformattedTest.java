@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.Collections;
@@ -38,7 +41,8 @@ public class PreformattedTest extends ElementTest {
     assertEquals("Attribute", "label", pre.getAttribute("class"));
 
 
-    String styleAttr = "<messageML><pre style=\"border-bottom:10 px;border-left-color:red\">Hello world!</pre></messageML>";
+    String styleAttr =
+        "<messageML><pre style=\"border-bottom:10 px;border-left-color:red\">Hello world!</pre></messageML>";
     context.parseMessageML(styleAttr, null, MessageML.MESSAGEML_VERSION);
     pre = context.getMessageML().getChildren().get(0);
     assertEquals("Attribute count", 1, pre.getAttributes().size());
@@ -67,5 +71,18 @@ public class PreformattedTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The element type \"span\" must be terminated by the matching end-tag \"</span>\"");
     context.parseMessageML(invalidMarkup, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testPreBi() throws Exception {
+    String input = "<messageML><pre>Hello world!</pre></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals(BiFields.PREFORMATTED.getValue(), item.getName());
+    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

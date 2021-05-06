@@ -18,6 +18,8 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.w3c.dom.Node;
 
@@ -39,16 +41,16 @@ public class Span extends Element {
   @Override
   protected void buildAttribute(MessageMLParser parser,
       Node item) throws InvalidInputException {
-      switch (item.getNodeName()) {
-        case ATTR_ENTITY_ID:
+    switch (item.getNodeName()) {
+      case ATTR_ENTITY_ID:
         // A span can be also generated to contains a tooltip
-        case TooltipableElement.DATA_TITLE:
-        case TooltipableElement.DATA_TARGET_ID:
-          setAttribute(item.getNodeName(), getStringAttribute(item));
-          break;
-        default:
-          super.buildAttribute(parser, item);
-      }
+      case TooltipableElement.DATA_TITLE:
+      case TooltipableElement.DATA_TARGET_ID:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
+        break;
+      default:
+        super.buildAttribute(parser, item);
+    }
   }
 
   @Override
@@ -70,9 +72,15 @@ public class Span extends Element {
           + "class is \"entity\".");
     }
 
-    if ("entity".equals(getAttribute(CLASS_ATTR)) && getAttribute(ATTR_ENTITY_ID) == null)  {
+    if ("entity".equals(getAttribute(CLASS_ATTR)) && getAttribute(ATTR_ENTITY_ID) == null) {
       throw new InvalidInputException("The attribute \"" + ATTR_ENTITY_ID + "\" is required if the element "
           + "class is \"entity\".");
     }
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItemCount(BiFields.SPAN.getValue());
   }
 }

@@ -1,13 +1,18 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ImageTest extends ElementTest {
 
@@ -62,5 +67,31 @@ public class ImageTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"img\" may not have child elements or text content");
     context.parseMessageML(invalidContent, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testImageBi() throws Exception {
+    String input = "<messageML><img src=\"https://yourimg.com/test/myimage.svg\"/>" +
+        "<img src=\"data:image/svg+xml;base64,PHN2ZyBpZD0i...DcuMjcsMTYuN=\"/>" +
+        "<img src=\"https://yourimg.com/test/anotherimage.svg\"/>" +
+        "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedImageBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedImageBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem(BiFields.IMAGE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 3)));
+    biItems.add(new BiItem(BiFields.IMAGE_URL.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.IMAGE_DATA.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(
+        BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 193)));
+    return biItems;
   }
 }

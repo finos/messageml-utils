@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.NoOpDataProvider;
@@ -105,7 +108,8 @@ public class LinkTest extends ElementTest {
     String markdown = context.getMarkdown();
     String text = context.getText();
 
-    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
     String expectedJson = "{}";
     String expectedMarkdown = "invalid://hello.org";
     String expectedText = "Hello world!";
@@ -129,7 +133,8 @@ public class LinkTest extends ElementTest {
     String markdown = context.getMarkdown();
     String text = context.getText();
 
-    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
     String expectedJson = "{}";
     String expectedMarkdown = "invalid://hello.org";
     String expectedText = "Hello world!";
@@ -138,5 +143,18 @@ public class LinkTest extends ElementTest {
     assertEquals("Generated EntityJSON", expectedJson, MAPPER.writeValueAsString(entityJson));
     assertEquals("Generated Markdown", expectedMarkdown, markdown);
     assertEquals("Generated text", expectedText, text);
+  }
+
+  @Test
+  public void testLinkBi() throws Exception {
+    String input = "<messageML><a href=\"https://hello.org\">Hello world!</a></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals(BiFields.LINK.getValue(), item.getName());
+    assertEquals(1, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

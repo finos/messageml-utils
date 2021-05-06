@@ -20,9 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
@@ -45,22 +48,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
  * Base class for MessageML elements. Contains methods for constructing MessageML document trees and their
  * PresentationML and Markdown representation, overridden in subclasses if special treatment is required.
- *
+ * <p>
  * By default all elements support the "class" and "style" attributes and translate to PresentationML as container elements
  * including their children. To override this behaviour (e.g. to make the element empty), overload the respective
  * methods in subclasses of this class.
- *
+ * <p>
  * The intended use of this class is primarily internal. The main entry point are parse() methods in
  * {@link MessageMLContext}.
+ *
  * @author lukasz
  * @since 3/27/17
  */
 public abstract class Element {
+  private static final Logger logger = LoggerFactory.getLogger(Element.class);
   public static final String CLASS_ATTR = "class";
   public static final String STYLE_ATTR = "style";
   protected static final String ID_ATTR = "id";
@@ -103,28 +109,105 @@ public abstract class Element {
   public void buildAll(MessageMLParser parser, org.w3c.dom.Element element) throws InvalidInputException,
       ProcessingException {
     NamedNodeMap attr = element.getAttributes();
-
     for (int i = 0; i < attr.getLength(); i++) {
       buildAttribute(parser, attr.item(i));
     }
-    if(!MessageML.MESSAGEML_TAG.equals(getMessageMLTag())) {
-      updateBiContext(parser.getBiContext());
-    }
+
     NodeList children = element.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
       buildNode(parser, children.item(i));
     }
+
+    if (!MessageML.MESSAGEML_TAG.equals(getMessageMLTag())) {
+      updateBiContext(parser.getBiContext());
+    }
   }
 
   /**
-   * Update the BiContext adding information about the MessageML element. If not overridden in the element itself
-   * it is going to create/update a simple BiItem containing the element name and the occurrences.
+   * Update the BiContext adding information about the MessageML element. By default is checking if the element contains
+   * any style or class, to be overridden in every element we want to define additional items.
    */
-  void updateBiContext(BiContext context){
-    context.updateItem(getClass().getSimpleName(), getMessageMLTag());
+  void updateBiContext(BiContext context) {
+    if (getAttribute(STYLE_ATTR) != null) {
+      context.updateItemCount(BiFields.STYLES_CUSTOM.getValue());
+    }
+    if (getAttribute(CLASS_ATTR) != null) {
+      computeClassAttributeBi(context);
+    }
   }
 
+  /**
+   * Class attribute inside an element can contain multiple classes separate by space, this method is going to split
+   * the attribute to extract all different classes if found and fill the corresponding BiItem.
+   *
+   * @param context bi context to be updated
+   */
+  private void computeClassAttributeBi(BiContext context) {
+    String styleClass = getAttribute(CLASS_ATTR);
+    String[] styles = styleClass.trim().split("[ ]+");
+    for (String style : styles) {
+      if (style.startsWith("tempo-")) {
+        context.updateItemCount(BiFields.STYLES_CLASS_TEMPO.getValue());
+      } else if (style.equals("entity")) {
+        context.updateItemCount(BiFields.ENTITIES.getValue());
+      } else {
+        context.updateItemCount(BiFields.STYLES_CLASS_OTHER.getValue());
+      }
+    }
+  }
+
+  /**
+   * Puts 1 if the key is found within element's attributes
+   *
+   * @param attributesMap map of BI properties to update BI context
+   * @param propertyKey   BI's property key to put in the given map
+   * {@link org.symphonyoss.symphony.messageml.bi.BiFields}
+   * @param attributeKey  the attribute key of the element
+   */
+  protected void putOneIfPresent(Map<String, Object> attributesMap, String propertyKey,
+      String attributeKey) {
+    if (getAttributes().get(attributeKey) != null) {
+      attributesMap.put(propertyKey, 1);
+    }
+  }
+
+  /**
+   * Gets the key's value from element's attributes and put it in the given map as a String
+   *
+   * @param attributesMap map of BI properties to update BI context
+   * @param propertyKey   BI's property key to put in the given map
+   * {@link org.symphonyoss.symphony.messageml.bi.BiFields}
+   * @param attributeKey  the attribute key of the element
+   */
+  protected void putStringIfPresent(Map<String, Object> attributesMap, String propertyKey,
+      String attributeKey) {
+    String value = getAttribute(attributeKey);
+    if (value != null) {
+      attributesMap.put(propertyKey, value);
+    }
+  }
+
+  /**
+   * Gets the key's value from element's attributes and put it in the given map as an Integer
+   *
+   * @param attributesMap map of BI properties to update BI context
+   * @param propertyKey   BI's property key to put in the given map
+   * {@link org.symphonyoss.symphony.messageml.bi.BiFields}
+   * @param attributeKey  the attribute key of the element
+   */
+  protected void putIntegerIfPresent(Map<String, Object> attributesMap, String propertyKey,
+      String attributeKey) {
+    String value = getAttribute(attributeKey);
+    if (value != null) {
+      try {
+        attributesMap.put(propertyKey, Integer.parseInt(value));
+      } catch (NumberFormatException e) {
+        logger.warn("Attribute {} for element {} should be an integer value. The property will not be put in BI context.",
+            attributeKey, this.getClass().getSimpleName());
+      }
+    }
+  }
 
   /**
    * Parse a DOM attribute into MessageML element properties.
@@ -140,11 +223,13 @@ public abstract class Element {
         attributes.put(STYLE_ATTR, styleAttribute);
         break;
       default:
-        if((this instanceof RegexElement && RegexElement.ALL_REGEX_ATTRS.contains(item.getNodeName()))
-        || (this instanceof MinMaxLengthElement && MinMaxLengthElement.ALL_MIN_MAX_ATTRS.contains(item.getNodeName()))
-        || (format == FormatEnum.MESSAGEML && this instanceof SplittableElement && ((SplittableElement) this).isSplittableNodeComponent(item))){
+        if ((this instanceof RegexElement && RegexElement.ALL_REGEX_ATTRS.contains(item.getNodeName()))
+            || (this instanceof MinMaxLengthElement && MinMaxLengthElement.ALL_MIN_MAX_ATTRS.contains(
+            item.getNodeName()))
+            || (format == FormatEnum.MESSAGEML && this instanceof SplittableElement
+            && ((SplittableElement) this).isSplittableNodeComponent(item))) {
           attributes.put(item.getNodeName(), getStringAttribute(item));
-        } else if(format == FormatEnum.PRESENTATIONML
+        } else if (format == FormatEnum.PRESENTATIONML
             && this instanceof SplittableElement
             && ID_ATTR.equals(item.getNodeName())) {
           ((SplittableElement) this).fillAttributes(parser, item, attributes);
@@ -157,7 +242,8 @@ public abstract class Element {
   /**
    * Build a text node or a MessageML element based on the provided DOM node.
    */
-  protected void buildNode(MessageMLParser context, org.w3c.dom.Node node) throws InvalidInputException, ProcessingException {
+  protected void buildNode(MessageMLParser context, org.w3c.dom.Node node)
+      throws InvalidInputException, ProcessingException {
     switch (node.getNodeType()) {
       case org.w3c.dom.Node.TEXT_NODE:
         buildText((Text) node);
@@ -179,7 +265,7 @@ public abstract class Element {
   private void buildElement(MessageMLParser context, org.w3c.dom.Element element) throws InvalidInputException,
       ProcessingException {
     Element child = context.createElement(element, this);
-    if(child != null){
+    if (child != null) {
       child.buildAll(context, element);
       child.validate();
 
@@ -188,14 +274,14 @@ public abstract class Element {
       }
 
       addChild(child);
-    } else if(element.getNodeName().equals(Div.MESSAGEML_TAG)) {
+    } else if (element.getNodeName().equals(Div.MESSAGEML_TAG)) {
       /*
       When converting from PresentationML -> MessageML tree object some elements are not converted
       like the div generated by SplittableElement (context.createElement(element, this) returns null).
       However, children of this div must not be lost and they must be attached to the current element
        */
       org.w3c.dom.Node node = element.getFirstChild();
-      while(node != null){
+      while (node != null) {
         buildNode(context, node);
         node = node.getNextSibling();
       }
@@ -254,18 +340,18 @@ public abstract class Element {
       MessageMLContext context) {
     Map<String, String> attributes = new LinkedHashMap<>();
 
-    if(this instanceof RegexElement){
-      RegexElement regexElement = (RegexElement)this;
+    if (this instanceof RegexElement) {
+      RegexElement regexElement = (RegexElement) this;
       attributes.putAll(regexElement.getOtherAttributes());
       attributes.putAll(regexElement.getRegexAttrForPresentationML());
     } else {
       attributes.putAll(getAttributes());
     }
 
-    if(this instanceof SplittableElement && ((SplittableElement) this).isSplittable()){
-      ((SplittableElement)this).splittableRemove().forEach(attributes::remove);
+    if (this instanceof SplittableElement && ((SplittableElement) this).isSplittable()) {
+      ((SplittableElement) this).splittableRemove().forEach(attributes::remove);
       // open div + adding splittable elements
-      String uid = ((SplittableElement)this).splittableAsPresentationML(out, context);
+      String uid = ((SplittableElement) this).splittableAsPresentationML(out, context);
       attributes.put("id", uid);
       // render element
       innerAsPresentationML(out, context, attributes);
@@ -277,8 +363,8 @@ public abstract class Element {
   }
 
   private void innerAsPresentationML(XmlPrintStream out,
-      MessageMLContext context, Map<String, String> attributes){
-    if(areNestedElementsAllowed()){
+      MessageMLContext context, Map<String, String> attributes) {
+    if (areNestedElementsAllowed()) {
       out.openElement(getPresentationMLTag(), attributes);
       for (Element child : getChildren()) {
         child.asPresentationML(out, context);
@@ -303,6 +389,27 @@ public abstract class Element {
   }
 
   /**
+   * This method applies a breadth-first traversal of a tree of elements counting the number of elements found which
+   * belong to the class type passed as input
+   */
+  public Integer countChildrenOfType(Class<? extends Element> type) {
+    Integer count = 0;
+    Stack<Element> stack = new Stack<>();
+    Element current = this;
+    stack.push(current);
+    while (!stack.isEmpty()) {
+      current = stack.pop();
+      if (current.getClass() == type) {
+        count++;
+      }
+      for (Element child : current.getChildren()) {
+        stack.push(child);
+      }
+    }
+    return count;
+  }
+
+  /**
    * Return the EntityJSON representation of the node.
    */
   ObjectNode asEntityJson(ObjectNode parent) {
@@ -313,11 +420,11 @@ public abstract class Element {
    * Check the syntax and contents of the element.
    */
   void validate() throws InvalidInputException {
-    if(this instanceof RegexElement){
-      ((RegexElement)this).validateRegex();
+    if (this instanceof RegexElement) {
+      ((RegexElement) this).validateRegex();
     }
-    if(this instanceof SplittableElement){
-      ((SplittableElement)this).validateSplittable();
+    if (this instanceof SplittableElement) {
+      ((SplittableElement) this).validateSplittable();
     }
   }
 
@@ -349,7 +456,7 @@ public abstract class Element {
   /**
    * Get a DOM attribute as a Boolean value.
    */
-  Boolean getBooleanAttribute(org.w3c.dom.Node attribute)  {
+  Boolean getBooleanAttribute(org.w3c.dom.Node attribute) {
     String s = getStringAttribute(attribute);
 
     if (s == null) {
@@ -385,7 +492,7 @@ public abstract class Element {
    * Checks if attribute has one of the allowed values
    * This is done in cases we want to enforce specific valid values for attributes.
    *
-   * @param attributeName name of attribute that will be checked.
+   * @param attributeName   name of attribute that will be checked.
    * @param permittedValues list of values that are allowed for the specified attribute
    * @throws InvalidInputException when invalid value is found
    */
@@ -393,13 +500,16 @@ public abstract class Element {
     String attributeValue = getAttribute(attributeName);
 
     if (!permittedValues.contains(attributeValue.toLowerCase())) {
-      throw new InvalidInputException(String.format("Attribute \"%s\" of element \"%s\" can only be one of the following values: [%s].", attributeName,
-          this.getMessageMLTag(), String.join(", ", permittedValues)));
+      throw new InvalidInputException(
+          String.format("Attribute \"%s\" of element \"%s\" can only be one of the following values: [%s].",
+              attributeName,
+              this.getMessageMLTag(), String.join(", ", permittedValues)));
     }
   }
 
   /**
    * Checks if the attribute value is a valid boolean
+   *
    * @param attributeName name of attribute that will be checked.
    * @throws InvalidInputException when invalid boolean is found
    */
@@ -412,7 +522,7 @@ public abstract class Element {
    * Checks if attribute contains a date, in the provided format
    *
    * @param attributeName name of attribute that will be checked.
-   * @param formatter date format
+   * @param formatter     date format
    * @throws InvalidInputException when invalid format found
    */
   void assertDateFormat(String attributeName, DateTimeFormatter formatter)
@@ -430,19 +540,20 @@ public abstract class Element {
    * Checks that attribute contains time, in the provided format
    *
    * @param attributeName name of attribute that will be checked.
-   * @param formatter time format
+   * @param formatter     time format
    * @throws InvalidInputException when invalid format found
    */
   void assertTimeFormat(String attributeName, DateTimeFormatter formatter)
-          throws InvalidInputException {
+      throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
-    if(attributeValue == null){
+    if (attributeValue == null) {
       return;
     }
     try {
       LocalTime.parse(attributeValue, formatter);
     } catch (DateTimeParseException e) {
-      throw new InvalidInputException(String.format("Attribute \"%s\" has invalid time format, only HH:mm:ss format is allowed", attributeName), e);
+      throw new InvalidInputException(
+          String.format("Attribute \"%s\" has invalid time format, only HH:mm:ss format is allowed", attributeName), e);
     }
   }
 
@@ -464,14 +575,15 @@ public abstract class Element {
    * Checks if an attribute length is bigger than allowed
    *
    * @param attributeName name of attribute that will be checked.
-   * @param maxLength maximum length allowed
+   * @param maxLength     maximum length allowed
    * @throws InvalidInputException when maxLength exceeded
    */
   void assertAttributeMaxLength(String attributeName, int maxLength) throws InvalidInputException {
     String attributeValue = getAttribute(attributeName);
 
     if (attributeValue != null && attributeValue.length() > maxLength) {
-      throw new InvalidInputException(String.format("The attribute \"%s\" length is bigger than maximum allowed [%d]", attributeName, maxLength));
+      throw new InvalidInputException(
+          String.format("The attribute \"%s\" length is bigger than maximum allowed [%d]", attributeName, maxLength));
     }
   }
 
@@ -498,10 +610,11 @@ public abstract class Element {
    * Check that the element has no text content.
    */
   void assertNoText() throws InvalidInputException {
-    for (Element child : this.getChildren())
+    for (Element child : this.getChildren()) {
       if (child instanceof TextNode && StringUtils.isNotBlank(((TextNode) child).getText())) {
         throw new InvalidInputException("Element \"" + this.getMessageMLTag() + "\" may not have text content");
       }
+    }
   }
 
   /**
@@ -539,8 +652,9 @@ public abstract class Element {
           .map(permittedParentClass -> permittedParentClass.getSimpleName().toLowerCase())
           .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
           .orElse("");
-      throw new InvalidInputException(String.format("Element \"%s\" can only be a child of the following elements: [%s]",
-          this.getMessageMLTag(), permittedParentsClassAsString));
+      throw new InvalidInputException(
+          String.format("Element \"%s\" can only be a child of the following elements: [%s]",
+              this.getMessageMLTag(), permittedParentsClassAsString));
     }
   }
 
@@ -555,8 +669,9 @@ public abstract class Element {
           .map(permittedParentClass -> permittedParentClass.getSimpleName().toLowerCase())
           .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
           .orElse("");
-      throw new InvalidInputException(String.format("Element \"%s\" can only be a inner child of the following elements: [%s]",
-          this.getMessageMLTag(), permittedParentsClassAsString));
+      throw new InvalidInputException(
+          String.format("Element \"%s\" can only be a inner child of the following elements: [%s]",
+              this.getMessageMLTag(), permittedParentsClassAsString));
     }
   }
 
@@ -571,8 +686,9 @@ public abstract class Element {
           .map(forbiddenParentClass -> forbiddenParentClass.getSimpleName().toLowerCase())
           .reduce((item, anotherItem) -> String.format("%s, %s", item, anotherItem))
           .orElse("");
-      throw new InvalidInputException(String.format("Element \"%s\" cannot be an inner child of the following elements: [%s]",
-          this.getMessageMLTag(), forbiddenParentsClassAsString));
+      throw new InvalidInputException(
+          String.format("Element \"%s\" cannot be an inner child of the following elements: [%s]",
+              this.getMessageMLTag(), forbiddenParentsClassAsString));
     }
   }
 
@@ -587,8 +703,9 @@ public abstract class Element {
         .anyMatch(element -> elementTypes.contains(element.getClass()));
 
     if (!hasPermittedElementAsChild) {
-      throw new InvalidInputException(String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
-          getMessageMLTag(), getElementsNameByClassName(elementTypes)));
+      throw new InvalidInputException(
+          String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
+              getMessageMLTag(), getElementsNameByClassName(elementTypes)));
     }
   }
 
@@ -600,10 +717,11 @@ public abstract class Element {
    */
   void assertContainsAlwaysChildOfType(Collection<Class<? extends Element>> elementTypes) throws InvalidInputException {
     boolean hasPermittedElementAsChild = this.getChildren().stream()
-            .anyMatch(element -> elementTypes.contains(element.getClass()));
+        .anyMatch(element -> elementTypes.contains(element.getClass()));
 
     if (this.getChildren().isEmpty() || !hasPermittedElementAsChild) {
-      throw new InvalidInputException(String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
+      throw new InvalidInputException(
+          String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
               getMessageMLTag(), getElementsNameByClassName(elementTypes)));
     }
   }
@@ -611,15 +729,18 @@ public abstract class Element {
   /**
    * Assert that children with any of the informed types do not exceed the maximum count allowed.
    *
-   * @param elementTypes The element types that will be verified in order to ensure that the maximum count was not exceed.
+   * @param elementTypes           The element types that will be verified in order to ensure that the maximum count was not exceed.
    * @param maxCountPerElementType the maximum quantity, per element type, that is allowed.
    * @throws InvalidInputException when more children than allowed are found
    */
-  void assertChildrenNotExceedingMaxCount(Collection<Class<? extends Element>> elementTypes, int maxCountPerElementType) throws InvalidInputException {
+  void assertChildrenNotExceedingMaxCount(Collection<Class<? extends Element>> elementTypes, int maxCountPerElementType)
+      throws InvalidInputException {
     boolean hasExceeded = elementTypes.stream().anyMatch(type -> findElements(type).size() > maxCountPerElementType);
     if (hasExceeded) {
-      throw new InvalidInputException(String.format("Element \"%s\" cannot have more than %s children of the following elements: [%s].",
-          getElementNameByClass(this.getClass()), maxCountPerElementType, getElementsNameByClassName(elementTypes)));
+      throw new InvalidInputException(
+          String.format("Element \"%s\" cannot have more than %s children of the following elements: [%s].",
+              getElementNameByClass(this.getClass()), maxCountPerElementType,
+              getElementsNameByClassName(elementTypes)));
     }
   }
 
@@ -642,7 +763,7 @@ public abstract class Element {
    * Return true if nested elements are allowed
    * By default true, override to false for elements that dont support nested elements
    */
-  public boolean areNestedElementsAllowed(){
+  public boolean areNestedElementsAllowed() {
     return true;
   }
 
@@ -711,6 +832,7 @@ public abstract class Element {
 
   /**
    * Search the MessageML tree (depth-first) for elements of a given type.
+   *
    * @param type the class of elements to find
    * @return found elements
    */
@@ -735,6 +857,7 @@ public abstract class Element {
 
   /**
    * Search the MessageML tree (depth-first) for elements with a given MessageML tag.
+   *
    * @param tag the MessageML tag of elements to find
    * @return found elements
    */
@@ -759,8 +882,9 @@ public abstract class Element {
 
   /**
    * Search the MessageML tree (depth-first) for elements with a given attribute-value pair.
+   *
    * @param attribute the attribute name match
-   * @param value the attribute value to match
+   * @param value     the attribute value to match
    * @return found elements
    */
   public List<Element> findElements(String attribute, String value) {
@@ -786,8 +910,8 @@ public abstract class Element {
   public Integer countNonTextNodesInNodeList(NodeList nodeList) {
     Integer numberOfNonTextNodes = 0;
 
-    for(int i = 0; i < nodeList.getLength(); i ++) {
-      if(!"#text".equals(nodeList.item(i).getNodeName())) {
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      if (!"#text".equals(nodeList.item(i).getNodeName())) {
         numberOfNonTextNodes++;
       }
     }

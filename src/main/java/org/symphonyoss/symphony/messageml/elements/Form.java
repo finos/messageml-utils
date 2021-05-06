@@ -5,12 +5,16 @@ import static org.symphonyoss.symphony.messageml.elements.Button.ACTION_TYPE;
 import static org.symphonyoss.symphony.messageml.elements.FormElement.TYPE_ATTR;
 
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Class representing a Symphony Elements form
@@ -72,4 +76,8 @@ public class Form extends Element {
     }
   }
 
+  @Override
+  void updateBiContext(BiContext context) {
+    context.addItem(new BiItem(BiFields.FORM.getValue(), new HashMap<>()));
+  }
 }

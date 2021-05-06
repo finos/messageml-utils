@@ -1,13 +1,19 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.symphonyoss.symphony.messageml.markdown.MarkdownRenderer.addEscapeCharacter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.rules.ExpectedException;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
@@ -15,9 +21,15 @@ import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.RegexElement;
 import org.symphonyoss.symphony.messageml.elements.TextField;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TextFieldTest extends ElementTest {
 
@@ -696,6 +708,80 @@ public class TextFieldTest extends ElementTest {
         + "</form></messageML>";
     context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
   }
+
+  private static Stream<Arguments> messageMlStream() {
+    return Stream.of(
+        Arguments.of(
+            "<text-field name=\"name01\" title=\"title01\" placeholder=\"placeholder01\" required=\"true\" "
+                + "label=\"label01\" pattern=\"^[a-zA-Z]{3,3}$\" pattern-error-message=\"errorMessage01\" "
+                + "minlength=\"3\" maxlength=\"10\" masked=\"true\">text</text-field>",
+            Stream.of(new Object[][] {
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.TYPE.getValue(), BiFields.TYPE_MASKED_TRUE.getValue()},
+                {BiFields.DEFAULT.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
+                {BiFields.VALIDATION_MIN.getValue(), 1},
+                {BiFields.VALIDATION_MAX.getValue(), 1},
+                {BiFields.VALIDATION_PATTERN.getValue(), 1},
+                {BiFields.VALIDATION.getValue(), 1},
+
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
+
+        Arguments.of(
+            "<text-field name=\"name01\" title=\"title01\" placeholder=\"placeholder01\" required=\"true\" "
+                + "label=\"label01\" pattern=\"^[a-zA-Z]{3,3}$\" pattern-error-message=\"errorMessage01\" "
+                + "minlength=\"3\" maxlength=\"10\" masked=\"false\"/>", Stream.of(new Object[][] {
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.TYPE.getValue(), BiFields.TYPE_MASKED_FALSE.getValue()},
+                {BiFields.REQUIRED.getValue(), 1},
+                {BiFields.VALIDATION_MIN.getValue(), 1},
+                {BiFields.VALIDATION_MAX.getValue(), 1},
+                {BiFields.VALIDATION_PATTERN.getValue(), 1},
+                {BiFields.VALIDATION.getValue(), 1},
+
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
+
+        Arguments.of(
+            "<text-field name=\"name01\" title=\"title01\" placeholder=\"placeholder01\" required=\"true\" "
+                + "label=\"label01\"/>", Stream.of(new Object[][] {
+                {BiFields.TITLE.getValue(), 1},
+                {BiFields.LABEL.getValue(), 1},
+                {BiFields.PLACEHOLDER.getValue(), 1},
+                {BiFields.REQUIRED.getValue(), 1},
+
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("messageMlStream")
+  void testBiContextTextField_masked_withValidation(String textFieldML, Map<String, Object> expectedAttributes)
+      throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+
+    String input = String.format(
+        "<messageML>\n "
+            + "<form id=\"form_id\">\n "
+            + "%s\n"
+            + "<button name=\"name\">Submit</button>\n "
+            + "</form>\n </messageML>",
+        textFieldML);
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    BiItem textAreaBiItemExpected = new BiItem(BiFields.TEXT_FIELD.getValue(), expectedAttributes);
+
+    assertEquals(4, items.size());
+    assertEquals(BiFields.TEXT_FIELD.getValue(), items.get(0).getName());
+    assertSameBiItem(textAreaBiItemExpected, items.get(0));
+    assertMessageLengthBiItem(items.get(3), input.length());
+  }
+
 
   private String getLabelId(String presentationML) {
     String textFieldRegex = ".*(\"textfield-(.*?)\").*";

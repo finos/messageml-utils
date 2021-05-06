@@ -2,14 +2,24 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class CashtagTest extends ElementTest {
+
+  private static final String CASHTAG_ENTITY_SUBTYPE = "org.symphonyoss.fin.security.id.ticker";
 
   @Test
   public void testCashTag() throws Exception {
@@ -69,15 +79,15 @@ public class CashtagTest extends ElementTest {
     String input = "<messageML>Hello <cash tag=\"_hello#w-o-r-l-d_\"/>!</messageML>";
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-            + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">$_hello#w-o-r-l-d_</span>!"
-            + "</div>";
+        + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">$_hello#w-o-r-l-d_</span>!"
+        + "</div>";
     String expectedJson = "{\"keyword1\":{"
-            + "\"type\":\"org.symphonyoss.fin.security\","
-            + "\"version\":\"1.0\","
-            + "\"id\":[{"
-            + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
-            + "\"value\":\"_hello#w-o-r-l-d_\""
-            + "}]}}";
+        + "\"type\":\"org.symphonyoss.fin.security\","
+        + "\"version\":\"1.0\","
+        + "\"id\":[{"
+        + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
+        + "\"value\":\"_hello#w-o-r-l-d_\""
+        + "}]}}";
     String expectedText = "_hello#w-o-r-l-d_";
     String expectedMarkdown = "Hello $_hello#w-o-r-l-d_!";
 
@@ -163,7 +173,9 @@ public class CashtagTest extends ElementTest {
     String input = "<messageML>Hello <cash tag=\"invalid chars!\"/></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s", CashTag.CASHTAG_PATTERN));
+    expectedException.expectMessage(
+        String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s",
+            CashTag.CASHTAG_PATTERN));
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -182,7 +194,9 @@ public class CashtagTest extends ElementTest {
         + "}]}}";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s", CashTag.CASHTAG_PATTERN));
+    expectedException.expectMessage(
+        String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s",
+            CashTag.CASHTAG_PATTERN));
     context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
@@ -200,6 +214,53 @@ public class CashtagTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Shorthand tag \"cash\" is not allowed in PresentationML");
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testCashtagBi() throws Exception {
+    String input = "<messageML><cash tag=\"Hello\"/><cash tag=\"world\"/><cash tag=\"HelloWorld\"/></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedCashtagsBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  @Test
+  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
+      ProcessingException {
+
+    String input = "<messageML>Hello <cash tag=\"world\"/>!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = context.getBiContext().getItems();
+
+    Map<String, Object> cashTagExpectedAttributes =
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1);
+    Map<String, Object> entityExpectedAttributes =
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), CASHTAG_ENTITY_SUBTYPE);
+
+    BiItem cashTagBiItemExpected = new BiItem(BiFields.CASHTAGS.getValue(), cashTagExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
+
+    assertEquals(4, items.size());
+    assertSameBiItem(entityBiItemExpected, items.get(0));
+    assertSameBiItem(cashTagBiItemExpected, items.get(1));
+    assertMessageLengthBiItem(items.get(2), input.length());
+    assertEntityJsonBiItem(items.get(3));
+  }
+
+  private List<BiItem> getExpectedCashtagsBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem(BiFields.CASHTAGS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 3)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), CASHTAG_ENTITY_SUBTYPE)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), CASHTAG_ENTITY_SUBTYPE)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), CASHTAG_ENTITY_SUBTYPE)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 426)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 85)));
+    return biItems;
   }
 
 

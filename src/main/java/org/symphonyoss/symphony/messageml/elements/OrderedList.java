@@ -17,6 +17,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.Collections;
@@ -48,5 +50,11 @@ public class OrderedList extends Element {
     assertNoText();
     assertContentModel(Collections.<Class<? extends Element>>singleton(ListItem.class));
     assertContainsChildOfType(Collections.<Class<? extends Element>>singleton(ListItem.class));
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItemCount(BiFields.BULLET_LIST.getValue());
   }
 }

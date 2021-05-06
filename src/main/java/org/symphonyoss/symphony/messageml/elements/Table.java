@@ -17,6 +17,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
 
@@ -51,4 +53,10 @@ public class Table extends Element {
     assertContentModel(Arrays.asList(TableHeader.class, TableBody.class, TableFooter.class, TableRow.class));
   }
 
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItemCount(BiFields.TABLE.getValue());
+    context.updateItemWithMaxValue(BiFields.TABLE_ROW_MAX.getValue(), countChildrenOfType(TableRow.class));
+  }
 }

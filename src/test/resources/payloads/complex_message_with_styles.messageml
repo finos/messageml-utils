@@ -1,0 +1,55 @@
+<messageML>
+  <br/>
+  <h2>Complex MessageML + EntityJSON</h2>
+  <div class="entity" data-entity-id="jiraIssue">
+    <card class="  myFirstClass anotherClass  some-abc" accent="tempo-bg-color--${entity['jiraIssue'].accent!'gray'}" iconSrc="${entity['jiraIssue'].icon.url}">
+      <header>
+        <div style="background-color:red">
+          <img src="${entity['jiraIssue'].issue.priority.iconUrl}" class="icon"/>
+          <a class="tempo-text-color--link" href="${entity['jiraIssue'].issue.url}"> ${entity['jiraIssue'].issue.key}</a>
+          <span class="tempo-text-color--normal">${entity['jiraIssue'].issue.subject} -</span>
+          <span>${entity['jiraIssue'].user.displayName}</span>
+          <span class="tempo-text-color--green">${entity['jiraIssue'].issue.action}</span>
+        </div>
+      </header>
+      <body>
+        <div>
+          <div>
+            <#if (entity['jiraIssue'].issue.description)??>
+              <span class="tempo-text-color--secondary">Description:</span>
+              <span class="tempo-text-color--normal">${entity['jiraIssue'].issue.description}</span>
+            </#if><br/>
+            <span class="tempo-text-color--secondary">Assignee:</span>
+            <#if (entity['jiraIssue'].issue.assignee.id)??>
+              <mention email="${entity['jiraIssue'].issue.assignee.emailAddress}"/>
+            <#else>
+              <span class="tempo-text-color--normal">${entity['jiraIssue'].issue.assignee.displayName}</span>
+            </#if>
+          </div><hr/>
+          <div>
+            <span class="tempo-text-color--secondary">Type:</span>
+            <img src="${entity['jiraIssue'].issue.issueType.iconUrl}" class="icon"/>
+            <span class="tempo-text-color--normal">${entity['jiraIssue'].issue.issueType.name}</span>
+            <span class="tempo-text-color--secondary">&#160;&#160;&#160;Priority:</span>
+            <img src="${entity['jiraIssue'].issue.priority.iconUrl}" class="icon"/>
+            <span class="tempo-text-color--normal">${entity['jiraIssue'].issue.priority.name}</span>
+            <#if (entity['jiraIssue'].issue.epic)??>
+              <span class="tempo-text-color--secondary">&#160;&#160;&#160;Epic:</span>
+              <a href="${entity['jiraIssue'].issue.epic.link}">${entity['jiraIssue'].issue.epic.name}</a>
+            </#if>
+            <span class="tempo-text-color--secondary">&#160;&#160;&#160;Status:</span>
+            <span class="tempo-bg-color--${entity['jiraIssue'].tokenColor} tempo-text-color--white tempo-token">
+              ${entity['jiraIssue'].issue.status?upper_case}
+            </span>
+            <#if (entity['jiraIssue'].issue.labels)??>
+              <span class="tempo-text-color--secondary">&#160;&#160;&#160;Labels:</span>
+              <#list entity['jiraIssue'].issue.labels as label>
+                <span class="hashTag">#${label.text}</span>
+              </#list>
+            </#if>
+          </div>
+        </div>
+      </body>
+    </card>
+  </div>
+</messageML>

@@ -47,4 +47,46 @@ public class BiItemTest {
     assertTrue(biItem.getAttributes().containsKey(attributeName));
     assertEquals("notInteger", biItem.getAttributes().get(attributeName));
   }
+
+  @Test
+  public void testSetMaxAttributeWhenAttributeNotFound() {
+    String attributeName = "attribute1";
+    BiItem biItem = new BiItem("element1", new HashMap<>());
+    biItem.setMaxAttribute(attributeName, 4);
+
+    assertEquals(1, biItem.getAttributes().size());
+    assertTrue(biItem.getAttributes().containsKey(attributeName));
+    assertEquals(4, biItem.getAttributes().get(attributeName));
+  }
+
+  @Test
+  public void testSetMaxAttributeWhenAttributeFound() {
+    String attributeName = "attribute1";
+    Map<String, Object> attributes = new HashMap<>();
+    attributes.put(attributeName, 3);
+
+    BiItem biItem = new BiItem("element1", attributes);
+    assertEquals(1, biItem.getAttributes().size());
+    assertTrue(biItem.getAttributes().containsKey(attributeName));
+    assertEquals(3, biItem.getAttributes().get(attributeName));
+
+    biItem.setMaxAttribute(attributeName, 8);
+
+    assertEquals(8, biItem.getAttributes().get(attributeName));
+  }
+
+  @Test
+  public void testSetMaxAttributetWhenInvalidFormat() {
+    String attributeName = "attribute1";
+    Map<String, Object> attributes = new HashMap<>();
+    attributes.put(attributeName, "notInteger");
+    BiItem biItem = new BiItem("element1", attributes);
+    biItem.setMaxAttribute(attributeName, 4);
+
+    //nothing should change
+    assertEquals(1, biItem.getAttributes().size());
+    assertTrue(biItem.getAttributes().containsKey(attributeName));
+    assertEquals("notInteger", biItem.getAttributes().get(attributeName));
+  }
+
 }

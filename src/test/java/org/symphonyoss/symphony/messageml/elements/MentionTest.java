@@ -5,13 +5,21 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class MentionTest extends ElementTest {
@@ -289,8 +297,9 @@ public class MentionTest extends ElementTest {
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "Hello <span class=\"entity\" data-entity-id=\"mention1\">@Bot User01</span>!</div>";
-    JsonNode expectedEntityJSON = MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
-        + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
+    JsonNode expectedEntityJSON =
+        MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
+            + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
 
     String presentationML = context.getPresentationML();
     JsonNode entityJson = context.getEntityJson();
@@ -321,8 +330,9 @@ public class MentionTest extends ElementTest {
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "Hello <span class=\"entity\" data-entity-id=\"mention1\">1</span>!</div>";
-    JsonNode expectedEntityJSON = MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
-        + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
+    JsonNode expectedEntityJSON =
+        MAPPER.readTree("{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\","
+            + "\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1\"}]}}");
     String expectedText = "Hello 1!";
 
     String presentationML = mockContext.getPresentationML();
@@ -358,7 +368,8 @@ public class MentionTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "Hello <span class=\"entity\" data-entity-id=\"mention1\"></span>!" +
         "</div>";
-    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
+    String expectedJson =
+        "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
     String expectedMarkdown = "Hello !";
     String expectedText = "Hello !";
 
@@ -385,7 +396,8 @@ public class MentionTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "Hello <span class=\"entity\" data-entity-id=\"mention1\"></span>!" +
         "</div>";
-    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
+    String expectedJson =
+        "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
     String expectedMarkdown = "Hello !";
     String expectedText = "Hello !";
 
@@ -412,7 +424,8 @@ public class MentionTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "Hello <span class=\"entity\" data-entity-id=\"mention1\">@bot.user1@localhost.com</span>!" +
         "</div>";
-    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
+    String expectedJson =
+        "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"0\"}]}}";
     String expectedMarkdown = "Hello @bot.user1@localhost.com!";
     String expectedText = "Hello @bot.user1@localhost.com!";
 
@@ -439,7 +452,8 @@ public class MentionTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "Hello <span class=\"entity\" data-entity-id=\"mention1\">@1000</span>!" +
         "</div>";
-    String expectedJson = "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
+    String expectedJson =
+        "{\"mention1\":{\"type\":\"com.symphony.user.mention\",\"version\":\"1.0\",\"id\":[{\"type\":\"com.symphony.user.userId\",\"value\":\"1000\"}]}}";
     String expectedMarkdown = "Hello @1000!";
     String expectedText = "Hello @1000!";
 
@@ -449,7 +463,59 @@ public class MentionTest extends ElementTest {
     assertEquals("Generated text", expectedText, text);
   }
 
-  private void verifyMention(Element messageML, UserPresentation user, String expectedPresentationML, String expectedJson)
+  @Test
+  public void testMentionBi() throws Exception {
+    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
+    String input = "<messageML>Hello <mention uid=\"1\"/>, <mention email=\"bot.user1@localhost.com\"/>!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedMentionBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  @Test
+  public void testBiContextMentionEntity() throws InvalidInputException, IOException,
+      ProcessingException {
+    UserPresentation user = new UserPresentation(1L, "bot.user1", "Bot User01", "bot.user1@localhost.com");
+    ((TestDataProvider) dataProvider).setUserPresentation(user);
+
+    String input = "<messageML>Hello <mention uid=\"1\"/>!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = context.getBiContext().getItems();
+
+    Map<String, Object> mentionExpectedAttributes =
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1);
+    Map<String, Object> entityExpectedAttributes =
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId");
+
+    BiItem mentionBiItemExpected = new BiItem(BiFields.MENTIONS.getValue(), mentionExpectedAttributes);
+    BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
+
+    assertEquals(4, items.size());
+    assertSameBiItem(entityBiItemExpected, items.get(0));
+    assertSameBiItem(mentionBiItemExpected, items.get(1));
+    assertMessageLengthBiItem(items.get(2), input.length());
+    assertEntityJsonBiItem(items.get(3));
+  }
+
+  private List<BiItem> getExpectedMentionBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem(BiFields.MENTIONS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 239)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 92)));
+    return biItems;
+  }
+
+
+  private void verifyMention(Element messageML, UserPresentation user, String expectedPresentationML,
+      String expectedJson)
       throws Exception {
     assertEquals("Element children", 3, messageML.getChildren().size());
 

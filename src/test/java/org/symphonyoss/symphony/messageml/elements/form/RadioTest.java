@@ -6,12 +6,26 @@ import static org.junit.Assert.assertTrue;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.ElementTest;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.elements.Radio;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RadioTest extends ElementTest {
   private String formId;
@@ -537,6 +551,57 @@ public class RadioTest extends ElementTest {
     expectedException.expectMessage("Element \"form\" cannot have more than 50 children of the following elements: [checkbox, radio].");
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  private static Stream<Arguments> messageMlStream() {
+    return Stream.of(
+        Arguments.of(
+            "<radio name=\"groupId\" value=\"value01\" checked=\"true\">red</radio>"
+                + "<radio name=\"groupId\" value=\"value02\" label=\"label02\">green</radio>"
+                + "<radio name=\"groupId\" value=\"value03\">blue</radio>"
+                + "<radio name=\"groupId\" value=\"value04\" label=\"label04\" checked=\"false\">yellow</radio>",
+            Stream.of(new Object[][] {
+                {BiFields.LABEL.getValue(), 2},
+                {BiFields.OPTIONS_COUNT.getValue(), 4},
+                {BiFields.DEFAULT.getValue(), 1},
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1]))),
+
+        Arguments.of(
+            "<radio name=\"groupId\" value=\"value01\">red</radio>"
+                + "<radio name=\"groupId\" value=\"value02\" label=\"label02\">green</radio>"
+                + "<radio name=\"groupId\" value=\"value03\">blue</radio>"
+                + "<radio name=\"groupId\" value=\"value04\" label=\"label04\">yellow</radio>",
+            Stream.of(new Object[][] {
+                {BiFields.LABEL.getValue(), 2},
+                {BiFields.OPTIONS_COUNT.getValue(), 4},
+            }).collect(Collectors.toMap(property -> property[0], property -> property[1])))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("messageMlStream")
+  void testBiContextRadio_checked(String radioML, Map<String, Object> expectedAttributes)
+      throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+
+    String input = String.format(
+        "<messageML>\n "
+            + "<form id=\"form_id\">\n "
+            + "%s\n"
+            + "<button type=\"reset\">Reset</button>"
+            + "<button name=\"radio\">Submit</button>"
+            + "</form>\n </messageML>",
+        radioML);
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    BiItem checkBoxBiItemExpected = new BiItem(BiFields.RADIO.getValue(), expectedAttributes);
+
+    assertEquals(5, items.size());
+    assertEquals(BiFields.RADIO.getValue(), items.get(0).getName());
+    assertSameBiItem(checkBoxBiItemExpected, items.get(0));
+    assertMessageLengthBiItem(items.get(4), input.length());
   }
 
   static String getInputId(String presentationML) {

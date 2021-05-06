@@ -1,6 +1,9 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
@@ -10,6 +13,7 @@ import org.w3c.dom.NodeList;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -188,6 +192,24 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
   }
 
   @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putTypeIfPresent(attributesMapBi);
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
+    this.computeAndPutValidationProperties(attributesMapBi);
+
+    if (this.hasElementInitialValue()) {
+      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
+    }
+
+    context.addItem(new BiItem(BiFields.TEXT_FIELD.getValue(), attributesMapBi));
+  }
+
+  @Override
   public String getPresentationMLTag() {
     return INPUT_TAG;
   }
@@ -202,33 +224,66 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
     return ELEMENT_ID;
   }
 
-    @Override
-    public String getElementType() {
+  @Override
+  public String getElementType() {
         return MESSAGEML_TAG;
     }
 
-    @Override
-    public boolean hasElementInitialValue() {
-        return getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode;
+  @Override
+  public boolean hasElementInitialValue() {
+    return getChildren() != null && getChildren().size() == 1 && getChild(0) instanceof TextNode;
+  }
+
+  @Override
+  public String getElementInitialValue() {
+    return ((TextNode) getChild(0)).getText();
+  }
+
+  @Override
+  public String getAttributeValue(String attributeName) {
+    return getAttribute(attributeName);
+  }
+
+  @Override
+  public Integer getMinValueAllowed() {
+    return MIN_ALLOWED_LENGTH;
+  }
+
+  @Override
+  public Integer getMaxValueAllowed() {
+    return MAX_ALLOWED_LENGTH;
+  }
+
+  private void putTypeIfPresent(Map<String, Object> attributesMap) {
+    String value = getAttributes().get(MASKED_ATTR);
+
+    if (value != null && Boolean.TRUE.equals(Boolean.valueOf(value))) {
+      attributesMap.put(BiFields.TYPE.getValue(), BiFields.TYPE_MASKED_TRUE.getValue());
+    } else if (value != null && Boolean.FALSE.equals(Boolean.valueOf(value))) {
+      attributesMap.put(BiFields.TYPE.getValue(), BiFields.TYPE_MASKED_FALSE.getValue());
+    }
+  }
+
+  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
+    boolean validationMin = getAttribute(MINLENGTH_ATTR) != null;
+    boolean validationMax = getAttribute(MAXLENGTH_ATTR) != null;
+    boolean validationPattern = getAttribute(PATTERN_ATTR) != null;
+    boolean hasValidation = validationMin || validationMax || validationPattern;
+
+    if (validationMin) {
+      attributesMapBi.put(BiFields.VALIDATION_MIN.getValue(), 1);
     }
 
-    @Override
-    public String getElementInitialValue() {
-        return ((TextNode) getChild(0)).getText();
+    if (validationMax) {
+      attributesMapBi.put(BiFields.VALIDATION_MAX.getValue(), 1);
     }
 
-    @Override
-    public String getAttributeValue(String attributeName) {
-        return getAttribute(attributeName);
+    if (validationPattern) {
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
     }
 
-    @Override
-    public Integer getMinValueAllowed() {
-        return MIN_ALLOWED_LENGTH;
+    if (hasValidation) {
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
-
-    @Override
-    public Integer getMaxValueAllowed() {
-        return MAX_ALLOWED_LENGTH;
-    }
+  }
 }

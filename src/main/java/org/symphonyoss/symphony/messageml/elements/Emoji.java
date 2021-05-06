@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.util.EmojiShortcodeToUnicode;
@@ -56,6 +58,7 @@ public class Emoji extends Entity {
 
   /**
    * It is deprecated, use getShortcode() instead
+   *
    * @return annotation
    */
   public String getAnnotation() {
@@ -150,7 +153,8 @@ public class Emoji extends Entity {
     if (this.shortcode == null) {
       throw new InvalidInputException("Either the attribute \"shortcode\" or \"annotation\" are required");
     } else if (!this.shortcode.matches(SHORTCODE_PATTERN)) {
-      throw new InvalidInputException("Shortcode or Annotation parameter may only contain alphanumeric characters, underscore, plus sign and dash");
+      throw new InvalidInputException(
+          "Shortcode or Annotation parameter may only contain alphanumeric characters, underscore, plus sign and dash");
     }
 
     assertPhrasingContent();
@@ -177,7 +181,8 @@ public class Emoji extends Entity {
         this.size = getStringAttribute(item);
         break;
       default:
-        throw new InvalidInputException("Attribute \"" + item.getNodeName() + "\" is not allowed in \"" + getMessageMLTag() + "\"");
+        throw new InvalidInputException(
+            "Attribute \"" + item.getNodeName() + "\" is not allowed in \"" + getMessageMLTag() + "\"");
     }
   }
 
@@ -204,6 +209,12 @@ public class Emoji extends Entity {
   @Override
   protected String getEntityIdPrefix() {
     return ENTITY_ID_PREFIX;
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItemCount(BiFields.EMOJIS.getValue());
   }
 
   private String asDefaultRepresentation() {

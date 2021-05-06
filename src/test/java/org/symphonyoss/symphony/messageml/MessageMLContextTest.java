@@ -19,7 +19,6 @@ package org.symphonyoss.symphony.messageml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
@@ -38,6 +37,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.CashTag;
@@ -58,6 +58,8 @@ import org.xml.sax.InputSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -99,7 +101,7 @@ public class MessageMLContextTest {
     final String data = getPayload("payloads/templated_message_all_tags.json");
 
     final String expectedPresentationML = getPayload("payloads/expanded_single_jira_ticket.presentationml");
-    final JsonNode expectedEntityJson =  MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entityjson"));
+    final JsonNode expectedEntityJson = MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entityjson"));
     final String expectedMarkdown = getPayload("payloads/expanded_single_jira_ticket.markdown");
     final JsonNode expectedEntities = MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entities"));
 
@@ -121,7 +123,7 @@ public class MessageMLContextTest {
 
   @Test
   public void testParseMessageMLUmlautsCharacters()
-          throws InvalidInputException, IOException, ProcessingException {
+      throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>Leseübungen</messageML>";
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
@@ -150,13 +152,13 @@ public class MessageMLContextTest {
 
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "   <form id=\"example\">"
-        + "     <div class=\"textfield-group\" data-generated=\"true\"><label for=\"%s\">Username</label>"
+            + "   <form id=\"example\">"
+            + "     <div class=\"textfield-group\" data-generated=\"true\"><label for=\"%s\">Username</label>"
             + "<span class=\"info-hint\" data-target-id=\"%s\" data-title=\"This only \\n accept regex characters\"></span>"
             + "<input type=\"text\" name=\"login\" pattern=\"^[a-zA-Z]{3,}$\" data-pattern-error-message=\"\" id=\"%s\"/></div>"
-        + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
-        + "   </form>"
-        + " </div>", id, id, id);
+            + "    <button type=\"action\" name=\"send-answers\">Submit</button>"
+            + "   </form>"
+            + " </div>", id, id, id);
 
     assertEquals(expectedResult, presentationML);
   }
@@ -223,6 +225,134 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testGetBiContextWithOneElementInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\"  title =\"This is a title\">Button Text</button>"
+            +
+            "    </form>" +
+            "</messageML>";
+
+    Map<String, Object> expectedMessageLengthAttrs = new HashMap<>();
+    expectedMessageLengthAttrs.put(BiFields.COUNT.getValue(), message.length());
+    Map<String, Object> expectedButtonAttrs = new HashMap<>();
+    expectedButtonAttrs.put(BiFields.STYLE_COLOR.getValue(), "primary");
+    expectedButtonAttrs.put(BiFields.TYPE.getValue(), "action");
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    assertEquals(3, biContext.getItems().size());
+
+    BiItem buttonItem = biContext.getItems().get(0);
+    assertEquals(BiFields.BUTTON.getValue(), buttonItem.getName());
+    assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
+
+    BiItem formItem = biContext.getItems().get(1);
+    assertEquals(BiFields.FORM.getValue(), formItem.getName());
+    assertEquals(Collections.emptyMap(), formItem.getAttributes());
+
+    BiItem messageLengthItem = biContext.getItems().get(2);
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), messageLengthItem.getName());
+    assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
+  }
+
+  @Test
+  public void testGetBiContextWithDifferentElementsInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <text-field name=\"text-field\" placeholder=\"placeholder-here\" title=\"title-here\" label=\"label-here\">test_underscore</text-field>" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
+            "    </form>" +
+            "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    Map<String, Object> expectedButtonAttrs = new HashMap<>();
+    expectedButtonAttrs.put(BiFields.STYLE_COLOR.getValue(), "primary");
+    expectedButtonAttrs.put(BiFields.TYPE.getValue(), "action");
+
+    assertEquals(4, biContext.getItems().size());
+    assertEquals(BiFields.TEXT_FIELD.getValue(), biContext.getItems().get(0).getName());
+
+    Map<String, Object> expectedMessageLengthAttrs = new HashMap<>();
+    expectedMessageLengthAttrs.put(BiFields.COUNT.getValue(), message.length());
+    BiItem messageLengthItem = new BiItem(BiFields.MESSAGE_LENGTH.getValue(), expectedMessageLengthAttrs);
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biContext.getItems().get(3).getName());
+    assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
+
+    BiItem buttonItem = biContext.getItems().get(1);
+    assertEquals("Button", buttonItem.getName());
+    assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
+  }
+
+  @Test
+  public void testGetBiContextWithSameElementsInForm() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>" +
+            "    <form id=\"all-elements\">" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\" title =\"This is a title\">Button Text</button>" +
+            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
+            "    </form>" +
+            "</messageML>";
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    assertEquals(4, biContext.getItems().size());
+    assertEquals(BiFields.BUTTON.getValue(), biContext.getItems().get(0).getName());
+    assertEquals(BiFields.BUTTON.getValue(), biContext.getItems().get(1).getName());
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biContext.getItems().get(3).getName());
+  }
+
+  @Test
+  public void testGetBiContextDuplicateSimpleTags() throws InvalidInputException, IOException, ProcessingException {
+    final String message =
+        "<messageML>" +
+            "<a href=\"https://hello.org\">Hello world!</a>" +
+            "<a href=\"http:google.com\">Google!</a>" +
+            "<emoji shortcode=\"smiley\"/>" +
+            "</messageML>";
+
+    Map<String, Object> expectedLinkAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), 2);
+    Map<String, Object> expectedEmojisAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), 1);
+    Map<String, Object> expectedEntityAttrs = Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), null);
+    Map<String, Object> expectedMessageLengthAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), message.length());
+
+    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext = context.getBiContext();
+
+    List<BiItem> biItems = biContext.getItems();
+    assertEquals(5, biItems.size());
+
+    BiItem linkItem = biItems.get(0);
+    assertEquals(BiFields.LINK.getValue(), linkItem.getName());
+    assertEquals(expectedLinkAttrs, linkItem.getAttributes());
+
+    BiItem entityItem = biItems.get(1);
+    assertEquals(BiFields.ENTITY.getValue(), entityItem.getName());
+    assertEquals(expectedEntityAttrs, entityItem.getAttributes());
+
+    BiItem emojiItem = biItems.get(2);
+    assertEquals(BiFields.EMOJIS.getValue(), emojiItem.getName());
+    assertEquals(expectedEmojisAttrs, emojiItem.getAttributes());
+
+    BiItem messageLengthItem = biItems.get(3);
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), messageLengthItem.getName());
+    assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
+
+    BiItem entityJsonItem = biItems.get(4);
+    assertNotNull(entityJsonItem);
+    assertEquals(BiFields.ENTITY_JSON_SIZE.getValue(), entityJsonItem.getName());
+    assertNotNull(entityJsonItem.getAttributes());
+    assertNotNull(entityJsonItem.getAttributes().get(BiFields.COUNT.getValue()));
+    assertTrue((Integer) entityJsonItem.getAttributes().get(BiFields.COUNT.getValue()) > 2);
+  }
+
+  @Test
   public void testParseMessageMLDropdownWithSplittables()
       throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>\n"
@@ -245,15 +375,15 @@ public class MessageMLContextTest {
 
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "   <form id=\"example\">"
-        + "     <div class=\"dropdown-group\" data-generated=\"true\"><label for=\"%s\">Cities</label><span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate your \\n favorite city\"></span><select name=\"cities\" id=\"%s\">"
-        + "       <option selected=\"true\" value=\"ny\">New York</option>"
-        + "       <option value=\"van\">Vancouver</option>"
-        + "       <option value=\"par\">Paris</option>     "
-        + "</select></div>"
-        + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
-        + "   </form>"
-        + " </div>", id, id, id);
+            + "   <form id=\"example\">"
+            + "     <div class=\"dropdown-group\" data-generated=\"true\"><label for=\"%s\">Cities</label><span class=\"info-hint\" data-target-id=\"%s\" data-title=\"Indicate your \\n favorite city\"></span><select name=\"cities\" id=\"%s\">"
+            + "       <option selected=\"true\" value=\"ny\">New York</option>"
+            + "       <option value=\"van\">Vancouver</option>"
+            + "       <option value=\"par\">Paris</option>     "
+            + "</select></div>"
+            + "     <button type=\"action\" name=\"send-answers\">Submit</button>"
+            + "   </form>"
+            + " </div>", id, id, id);
     assertEquals(expectedResult, presentationML);
   }
 
@@ -262,10 +392,10 @@ public class MessageMLContextTest {
       throws InvalidInputException, IOException, ProcessingException {
     final String message =
         "<messageML>"
-        + "  <form id=\"example\">"
-        + "    <button title=\"Tooltip text \\n should appear on hover\" name=\"send-answers\" type=\"action\">Submit</button>"
-        + "  </form>"
-        + "</messageML>";
+            + "  <form id=\"example\">"
+            + "    <button title=\"Tooltip text \\n should appear on hover\" name=\"send-answers\" type=\"action\">Submit</button>"
+            + "  </form>"
+            + "</messageML>";
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
@@ -282,13 +412,13 @@ public class MessageMLContextTest {
 
   @Test
   public void testParseMessageMLCheckboxWithLabels()
-          throws InvalidInputException, IOException, ProcessingException {
+      throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>\n"
-            + "   <form id=\"example\">\n"
-            + "      <checkbox name=\"fruits\" value=\"orange\">Orange</checkbox> \n"
-            + "       <button type=\"action\" name=\"actionName\">Send</button>\n"
-            + "   </form>\n"
-            + "</messageML>";
+        + "   <form id=\"example\">\n"
+        + "      <checkbox name=\"fruits\" value=\"orange\">Orange</checkbox> \n"
+        + "       <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "   </form>\n"
+        + "</messageML>";
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
     MessageML messageML = context.getMessageML();
@@ -298,23 +428,23 @@ public class MessageMLContextTest {
 
     String expectedResult = String.format(
         "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "    <form id=\"example\">"
-        + "       <div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"orange\" id=\"%s\"/><label for=\"%s\">Orange</label></div>"
-        + "         <button type=\"action\" name=\"actionName\">Send</button>"
-        + "    </form> </div>", id, id);
+            + "    <form id=\"example\">"
+            + "       <div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"orange\" id=\"%s\"/><label for=\"%s\">Orange</label></div>"
+            + "         <button type=\"action\" name=\"actionName\">Send</button>"
+            + "    </form> </div>", id, id);
 
     assertEquals(expectedResult, presentationML);
   }
 
   @Test
   public void testParseMessageMLRadioWithLabels()
-          throws InvalidInputException, IOException, ProcessingException {
+      throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML><form id=\"radio-form\">" +
-            "       <radio name=\"groupId\" value=\"value01\">First</radio>" +
-            "       <radio name=\"groupId\" value=\"value02\">Second</radio>" +
-            "       <button type=\"action\" name=\"actionName\">Send</button>" +
-            "   </form>" +
-            "</messageML>";
+        "       <radio name=\"groupId\" value=\"value01\">First</radio>" +
+        "       <radio name=\"groupId\" value=\"value02\">Second</radio>" +
+        "       <button type=\"action\" name=\"actionName\">Send</button>" +
+        "   </form>" +
+        "</messageML>";
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     String presentationML = context.getPresentationML();
     MessageML messageML = context.getMessageML();
@@ -327,15 +457,15 @@ public class MessageMLContextTest {
     String id2 = presentationML.substring(startId2 + "label for=\"".length(), endId2);
 
     String expectedResult = String.format(
-            "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
-                    "<form id=\"radio-form\">" +
-                    "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
-                    "<label for=\"%s\">First</label></div>" +
-                    "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
-                    "<label for=\"%s\">Second</label></div>" +
-                    "       <button type=\"action\" name=\"actionName\">Send</button>" +
-                    "   </form>" +
-                    "</div>", id1, id1, id2, id2);
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+            "<form id=\"radio-form\">" +
+            "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value01\" id=\"%s\"/>" +
+            "<label for=\"%s\">First</label></div>" +
+            "       <div class=\"radio-group\"><input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
+            "<label for=\"%s\">Second</label></div>" +
+            "       <button type=\"action\" name=\"actionName\">Send</button>" +
+            "   </form>" +
+            "</div>", id1, id1, id2, id2);
 
     assertEquals(expectedResult, presentationML);
   }
@@ -344,7 +474,7 @@ public class MessageMLContextTest {
   public void testGetBiContextBeforeParsing() {
     BiContext biContext = context.getBiContext();
 
-    assertFalse(biContext.getLibraryVersion().isEmpty());
+    assertFalse(BiContext.LIBRARY_VERSION.isEmpty());
     assertTrue(biContext.getItems().isEmpty());
   }
 
@@ -355,137 +485,58 @@ public class MessageMLContextTest {
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
 
-    assertFalse(biContext.getLibraryVersion().isEmpty());
-    assertTrue(biContext.getItems().isEmpty());
+    assertFalse(BiContext.LIBRARY_VERSION.isEmpty());
+    assertEquals(1, biContext.getItems().size());
+
+    BiItem biItem = biContext.getItems().get(0);
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biItem.getName());
+    assertEquals(35, biItem.getAttributes().get(BiFields.COUNT.getValue()));
+
   }
 
   @Test
-  public void testGetBiContextWithOneElementInForm() throws InvalidInputException, IOException, ProcessingException {
-    final String message =
-            "<messageML>" +
-            "    <form id=\"all-elements\">" +
-            "        <button name=\"example-button2\" class=\"primary\" type=\"action\"  title =\"This is a title\">Button Text</button>" +
-            "    </form>" +
-            "</messageML>";
+  public void testGetBiContextFromMessageMLWithStyles() throws Exception {
+    final String message = getPayload("payloads/complex_message_with_styles.messageml");
+    final String data = getPayload("payloads/complex_message_with_styles.json");
 
-    Map<String, Object> expectedFormAttrs = new HashMap<>();
-    expectedFormAttrs.put("form", 1);
-    Map<String, Object> expectedButtonAttrs = new HashMap<>();
-    expectedButtonAttrs.put("class", "primary");
-    expectedButtonAttrs.put("type", "action");
-    expectedButtonAttrs.put("title", 1);
+    context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+    List<BiItem> expectedBiItems = getExpectedBiItems();
 
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    BiContext biContext = context.getBiContext();
-
-    assertEquals(2, biContext.getItems().size());
-
-    BiItem formItem = biContext.getItems().get(0);
-    assertEquals("Form", formItem.getName());
-    assertEquals(expectedFormAttrs , formItem.getAttributes());
-
-    BiItem buttonItem = biContext.getItems().get(1);
-    assertEquals("Button", buttonItem.getName());
-    assertEquals(expectedButtonAttrs , buttonItem.getAttributes());
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
   }
 
-  @Test
-  public void testGetBiContextWithDifferentElementsInForm() throws InvalidInputException, IOException, ProcessingException {
-    final String message =
-            "<messageML>" +
-            "    <form id=\"all-elements\">" +
-            "        <text-field name=\"text-field\" placeholder=\"placeholder-here\" title=\"title-here\" label=\"label-here\">test_underscore</text-field>" +
-            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
-            "    </form>" +
-            "</messageML>";
-
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    BiContext biContext = context.getBiContext();
-
-    Map<String, Object> expectedButtonAttrs = new HashMap<>();
-    expectedButtonAttrs.put("class", "primary");
-    expectedButtonAttrs.put("type", "action");
-    expectedButtonAttrs.put("title", "");
-
-    assertEquals(3, biContext.getItems().size());
-    assertEquals("Form", biContext.getItems().get(0).getName());
-    assertEquals("TextField", biContext.getItems().get(1).getName());
-    BiItem buttonItem = biContext.getItems().get(2);
-    assertEquals("Button", buttonItem.getName());
-    assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
+  private List<BiItem> getExpectedBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem(BiFields.LINE_BREAK.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.HEADER.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.IMAGE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 3)));
+    biItems.add(new BiItem(BiFields.IMAGE_URL.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 3)));
+    biItems.add(new BiItem(BiFields.LINK.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.SPAN.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 15)));
+    biItems.add(new BiItem(BiFields.DIV.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 5)));
+    biItems.add(
+        new BiItem(BiFields.MENTIONS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.CARD.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem("Entities", Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(
+        new BiItem(BiFields.STYLES_CUSTOM.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.STYLES_CLASS_OTHER.getValue(),
+        Collections.singletonMap(BiFields.COUNT.getValue(), 8)));
+    biItems.add(new BiItem(BiFields.STYLES_CLASS_TEMPO.getValue(),
+        Collections.singletonMap(BiFields.COUNT.getValue(), 15)));
+    biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(),
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1548)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(),
+        Collections.singletonMap(BiFields.COUNT.getValue(), 2984)));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
+    return biItems;
   }
 
-  @Test
-  public void testGetBiContextWithSameElementsInForm() throws InvalidInputException, IOException, ProcessingException {
-    final String message =
-            "<messageML>" +
-            "    <form id=\"all-elements\">" +
-            "        <button name=\"example-button2\" class=\"primary\" type=\"action\" title =\"This is a title\">Button Text</button>" +
-            "        <button name=\"example-button2\" class=\"primary\" type=\"action\">Button Text</button>" +
-            "    </form>" +
-            "</messageML>";
-
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    BiContext biContext = context.getBiContext();
-
-    assertEquals(3, biContext.getItems().size());
-    assertEquals("Form", biContext.getItems().get(0).getName());
-    assertEquals("Button", biContext.getItems().get(1).getName());
-    assertEquals("Button", biContext.getItems().get(2).getName());
-  }
-
-  @Test
-  public void testGetBiContextDuplicateSimpleTags() throws InvalidInputException, IOException, ProcessingException {
-    final String message =
-            "<messageML>" +
-              "<a href=\"https://hello.org\">Hello world!</a>" +
-              "<a href=\"http:google.com\">Google!</a>" +
-              "<emoji shortcode=\"smiley\"/>" +
-            "</messageML>";
-
-    Map<String, Object> expectedLinkAttrs = new HashMap<>();
-    expectedLinkAttrs.put("href", 2);
-    Map<String, Object> expectedEmojisAttrs = new HashMap<>();
-    expectedEmojisAttrs.put("emoji", 1);
-
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    BiContext biContext = context.getBiContext();
-
-    List<BiItem> biItems = biContext.getItems();
-    assertEquals(2, biItems.size());
-
-    BiItem linkItem = biItems.get(0);
-    assertEquals("Link", linkItem.getName());
-    assertEquals(expectedLinkAttrs, linkItem.getAttributes());
-
-    BiItem emojiItem = biItems.get(1);
-    assertEquals("Emoji", biItems.get(1).getName());
-    assertEquals(expectedEmojisAttrs, emojiItem.getAttributes());
-  }
-
-  @Test
-  public void testGetBiContextWithMultipleHeaders() throws InvalidInputException, IOException, ProcessingException {
-    final String message =
-            "<messageML>" +
-              "<h1>Hello world!</h1>" +
-              "<h2>Hello world!</h2>" +
-              "<h2>Hello world!</h2>" +
-              "<h5>Hello world!</h5>" +
-            "</messageML>";
-
-    Map<String, Object> expectedHeadersAttributes = new HashMap<>();
-    expectedHeadersAttributes.put("h1", 1);
-    expectedHeadersAttributes.put("h2",2);
-    expectedHeadersAttributes.put("h5", 1);
-
-    context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
-    BiContext biContext = context.getBiContext();
-
-    List<BiItem> biItems = biContext.getItems();
-    assertEquals(1, biItems.size());
-    assertEquals("Header", biItems.get(0).getName());
-    assertEquals(expectedHeadersAttributes, biItems.get(0).getAttributes());
-  }
 
   @Test
   public void testParsePresentationML() throws Exception {
@@ -493,7 +544,7 @@ public class MessageMLContextTest {
     final String data = getPayload("payloads/expanded_single_jira_ticket.entityjson");
 
     final String expectedPresentationML = getPayload("payloads/expanded_single_jira_ticket.presentationml");
-    final JsonNode expectedEntityJson =  MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entityjson"));
+    final JsonNode expectedEntityJson = MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entityjson"));
     final String expectedMarkdown = getPayload("payloads/expanded_single_jira_ticket.markdown");
     final JsonNode expectedEntities = MAPPER.readTree(getPayload("payloads/expanded_single_jira_ticket.entities"));
 
@@ -552,9 +603,11 @@ public class MessageMLContextTest {
     Element form = messageML.getChild(1);
     checkNode(form, "form", Pair.of("id", "example"));
     Element select = form.getChild(4);
-    checkNode(select, "select", Pair.of("title", "Indicate your \\n favorite city"), Pair.of("label", "Cities"), Pair.of("name", "cities"));
+    checkNode(select, "select", Pair.of("title", "Indicate your \\n favorite city"), Pair.of("label", "Cities"),
+        Pair.of("name", "cities"));
     Element button = form.getChild(7);
-    checkNode(button, "button", Pair.of("type", "action"), Pair.of("name", "send-answers"), Pair.of("data-title", "Tooltip text"));
+    checkNode(button, "button", Pair.of("type", "action"), Pair.of("name", "send-answers"),
+        Pair.of("data-title", "Tooltip text"));
     Element textField = form.getChild(12);
     checkNode(textField, "text-field",
         Pair.of("data-pattern-error-message", "error message"),
@@ -576,19 +629,21 @@ public class MessageMLContextTest {
         Pair.of("label", "Awesome users"));
   }
 
-  private void checkNode(Element element, String elementName, Pair<String, String>... attributes){
+  private void checkNode(Element element, String elementName, Pair<String, String>... attributes) {
     assertEquals(elementName, element.getMessageMLTag());
-    Map<String,String> actualAttributes = new LinkedHashMap<>(element.getAttributes());
-    if(attributes != null){
-      for(Pair<String, String> attribute:attributes){
+    Map<String, String> actualAttributes = new LinkedHashMap<>(element.getAttributes());
+    if (attributes != null) {
+      for (Pair<String, String> attribute : attributes) {
         String key = attribute.getKey();
-        assertTrue(String.format("Attribute %s not found in tag %s", key, elementName), actualAttributes.containsKey(key));
-        assertEquals(String.format("Attribute %s in tag %s is expected to be %s but it is %s", key, elementName, attribute.getValue(), actualAttributes.get(key)),
+        assertTrue(String.format("Attribute %s not found in tag %s", key, elementName),
+            actualAttributes.containsKey(key));
+        assertEquals(String.format("Attribute %s in tag %s is expected to be %s but it is %s", key, elementName,
+            attribute.getValue(), actualAttributes.get(key)),
             attribute.getValue(), actualAttributes.get(key));
         actualAttributes.remove(key);
       }
     }
-    if(!MessageML.MESSAGEML_TAG.equals(elementName)) {
+    if (!MessageML.MESSAGEML_TAG.equals(elementName)) {
       assertTrue(String.format("Unexpected attributes found in tag %s: %s", elementName,
           StringUtils.join(actualAttributes.keySet(), ',')), actualAttributes.isEmpty());
     }
@@ -635,6 +690,31 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testParseFreemarkerBi() throws Exception {
+    String message = "<messageML>${data['obj123'].value}</messageML>";
+    String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
+
+    context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems = getExpectedFreemarkerBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedFreemarkerBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(),
+        Collections.singletonMap(BiFields.COUNT.getValue(), 46)));
+    biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(),
+        Collections.singletonMap(BiFields.COUNT.getValue(), 35)));
+    return biItems;
+  }
+
+  @Test
   public void testParseFreemarkerAltEntityObject() throws Exception {
     String message = "<messageML>${entity['obj123'].value}</messageML>";
     String data = "{\"obj123\":{\"value\":\"Hello world!\"}}";
@@ -672,11 +752,11 @@ public class MessageMLContextTest {
 
     try {
       context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
-    fail("Should have thrown an exception");
+      fail("Should have thrown an exception");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message",
-              "Error parsing EntityJSON: Syntax error in template \"messageML\" in line 1, column 14:\n"
+          "Error parsing EntityJSON: Syntax error in template \"messageML\" in line 1, column 14:\n"
               + "Encountered \"}\", but was expecting one of:\n"
               + "    <STRING_LITERAL>\n"
               + "    <RAW_STRING>\n"
@@ -1075,8 +1155,9 @@ public class MessageMLContextTest {
   public void testEscapeReservedCharsFromMessageML() throws Exception {
     String messageML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : \" &lt; &gt; ? "
         + "<i>italic</i> <b>bold</b> <hash tag=\"hashtag\"/>";
-    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
-        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String excpectedPresentationML =
+        "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+            + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
     String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
         + "_italic_ **bold** #hashtag";
     JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
@@ -1113,8 +1194,9 @@ public class MessageMLContextTest {
         + "    }\n"
         + "  ]\n"
         + "}");
-    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
-        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String excpectedPresentationML =
+        "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+            + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
     String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
         + "_italic_ **bold** #hashtag";
     JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
@@ -1152,8 +1234,9 @@ public class MessageMLContextTest {
         + "    }\n"
         + "  ]\n"
         + "}");
-    String excpectedPresentationML = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
-        + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
+    String excpectedPresentationML =
+        "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % - = ^ &amp; * ( ) _ + { } | : &quot; &lt; &gt; ? "
+            + "<i>italic</i> <b>bold</b> <span class=\"entity\" data-entity-id=\"keyword1\">#hashtag</span>";
     String expectedMarkdown = "½ ¼ ¾ [ ] \\ ; ' , . / ~ ! @ # $ % \\- = ^ & \\* ( ) \\_ \\+ { } | : \" < > ? "
         + "_italic_ **bold** #hashtag";
     JsonNode expectedEntities = MAPPER.readTree("{\"hashtags\": [\n"
@@ -1197,8 +1280,7 @@ public class MessageMLContextTest {
 
   private String getPayload(String filename) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
-    try(Scanner scanner = new Scanner(classLoader.getResourceAsStream(filename)))
-    {
+    try (Scanner scanner = new Scanner(classLoader.getResourceAsStream(filename))) {
       return scanner.useDelimiter("\\A").next();
     }
   }

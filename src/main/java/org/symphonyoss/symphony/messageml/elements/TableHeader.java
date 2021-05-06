@@ -16,6 +16,8 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.Collections;
@@ -42,5 +44,11 @@ public class TableHeader extends Element {
   public void validate() throws InvalidInputException {
     assertNoText();
     assertContentModel(Collections.<Class<? extends Element>>singleton(TableRow.class));
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItemCount(BiFields.TABLE_HEADER.getValue());
   }
 }

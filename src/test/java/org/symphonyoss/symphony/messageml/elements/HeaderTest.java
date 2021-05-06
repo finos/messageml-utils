@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 import org.symphonyoss.symphony.messageml.util.UserPresentation;
@@ -30,7 +33,8 @@ public class HeaderTest extends ElementTest {
       assertEquals("Element children", 1, header.getChildren().size());
       assertEquals("Child element", "Hello world!", header.getChildren().get(0).asText());
       assertEquals("PresentationML",
-          "<div data-format=\"PresentationML\" data-version=\"2.0\"><h" + level + ">Hello world!</h" + level + "></div>",
+          "<div data-format=\"PresentationML\" data-version=\"2.0\"><h" + level + ">Hello world!</h" + level
+              + "></div>",
           context.getPresentationML());
       assertEquals("Markdown", "**Hello world!**", context.getMarkdown());
       assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
@@ -89,5 +93,23 @@ public class HeaderTest extends ElementTest {
         context.getPresentationML());
     assertEquals("Markdown", "**Hello @Bot User01!**", context.getMarkdown());
     assertEquals("Plaintext", "Hello @Bot User01!", context.getText());
+  }
+
+  @Test
+  public void testHeaderBi() throws Exception {
+    String input = "<messageML>" +
+        "<h1>Big title</h1>" +
+        "<h4>Subtitle</h4>" +
+        "<h4>Another subtitle</h4>" +
+        "<h6>text</h6>" +
+        "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals(BiFields.HEADER.getValue(), item.getName());
+    assertEquals(4, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

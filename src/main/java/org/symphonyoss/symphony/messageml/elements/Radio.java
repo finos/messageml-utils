@@ -17,12 +17,15 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.RadioNode;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing Radio Buttons - Symphony Elements.
@@ -104,4 +107,36 @@ public class Radio extends GroupedElement implements LabelableElement{
   public String getElementId() {
     return MESSAGEML_TAG;
   }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    attributesMapBi.put(BiFields.OPTIONS_COUNT.getValue(), 1);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.computeAndPutDefault(context, attributesMapBi);
+
+    context.updateItemCount(BiFields.RADIO.getValue(), attributesMapBi);
+  }
+
+  /**
+   * This method will compute default property for this element : if {@link
+   * GroupedElement#CHECKED_ATTR attribute is set to true}
+   * It will update the context if and only if this current option is the first option
+   * of the radio group to have default value set to true
+   *
+   * If {@link GroupedElement#CHECKED_ATTR} attribute is not explicitly set to true,
+   * this default property will be considered as not set like in following :
+   * <pre><radio checked=\"false\">Check Me if you can!</radio></pre>
+   * <pre><radio checked=\"somethingElse\">Check Me if you can!</radio></pre>
+   */
+  private void computeAndPutDefault(BiContext context, Map<String, Object> attributesMapBi) {
+    String isChecked = getAttribute(CHECKED_ATTR);
+    boolean isDefaultAlreadySet =
+        context.isAttributeSet(BiFields.RADIO.getValue(), BiFields.DEFAULT.getValue());
+    if (isChecked != null && Boolean.TRUE.equals(Boolean.valueOf(isChecked)) && !isDefaultAlreadySet) {
+      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
+    }
+  }
+
 }

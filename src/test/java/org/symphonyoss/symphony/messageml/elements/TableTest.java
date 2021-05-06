@@ -1,15 +1,20 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class TableTest extends ElementTest {
 
@@ -154,7 +159,8 @@ public class TableTest extends ElementTest {
     context.parseMarkdown(markdown, entities, media);
 
     assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table></div>", context.getPresentationML());
+            + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table></div>",
+        context.getPresentationML());
     assertEquals("Generated Markdown", "Table:\n"
             + "---\n"
             + "A1 | B1\n"
@@ -346,4 +352,55 @@ public class TableTest extends ElementTest {
     expectedException.expectMessage("Attribute \"title\" is not allowed in \"td\"");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
   }
+
+  @Test
+  public void testCompleteTableBi() throws Exception {
+    String input = "<messageML>" +
+        "  <table>" +
+        "    <tbody>" +
+        "      <tr><td colspan=\"3\">Content 1.1 with colspan</td><td>Content 3.1</td></tr>" +
+        "      <tr><td>element 1</td><td>element 2</td><td>element 3</td><td>element 4</td><td>element 5</td><td>element 6</td></tr>"
+        +
+        "    </tbody>" +
+        "    <tfoot>" +
+        "      <tr><td>Footer 1</td><td>Footer 2</td><td>Footer 3</td></tr>" +
+        "    </tfoot>" +
+        "  </table>" +
+        "  <table>" +
+        "    <thead>" +
+        "      <tr><td>Header 1</td><td>Header 2</td><td>Header 3</td><td>Header 4</td></tr>" +
+        "    </thead>" +
+        "    <tbody>" +
+        "      <tr><td colspan=\"2\">Content 1.1 with colspan</td><td>Content 3.1</td><td>Content 4.1</td></tr>" +
+        "      <tr><td rowspan=\"2\">Content 1.2 with rowspan</td><td>Content 2.2</td><td>Content 3.2</td><td>Content 4.2</td></tr>"
+        +
+        "      <tr><td>Content 2.3</td><td>Content 3.3</td><td>Content 4.3</td></tr>" +
+        "    </tbody>" +
+        "    <tfoot>" +
+        "      <tr><td>Footer 1</td><td>Footer 2</td><td>Footer 3</td><td>Footer 4</td></tr>" +
+        "    </tfoot>" +
+        "  </table>" +
+        "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> expectedBiItems = getExpectedTableBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedTableBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem(BiFields.TABLE.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.TABLE_COLUMN_MAX.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 6)));
+    biItems.add(new BiItem(BiFields.TABLE_ROW_MAX.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 5)));
+    biItems.add(new BiItem(BiFields.TABLE_CELL_COL_SPAN.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.TABLE_CELL_ROW_SPAN.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.TABLE_HEADER.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.TABLE_FOOTER.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 906)));
+    return biItems;
+  }
+
 }

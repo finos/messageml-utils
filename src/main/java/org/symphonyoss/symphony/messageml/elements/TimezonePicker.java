@@ -3,6 +3,9 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TimezonePickerNode;
 import org.symphonyoss.symphony.messageml.util.XMLAttribute;
@@ -12,6 +15,7 @@ import org.w3c.dom.Node;
 import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,6 +148,29 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
       out.closeElement();
     } else {
       innerAsPresentationML(out, presentationAttrs);
+    }
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getValue(), VALUE_ATTR);
+    this.computeAndPutValidationProperties(attributesMapBi);
+
+    context.addItem(new BiItem(BiFields.TIMEZONE_PICKER.getValue(), attributesMapBi));
+  }
+
+  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
+    boolean validationOptions = getAttribute(DISABLED_TIMEZONE_ATTR) != null;
+
+    if (validationOptions) {
+      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getValue(), 1);
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 

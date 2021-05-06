@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import java.util.Collections;
@@ -27,7 +30,8 @@ public class DivTest extends ElementTest {
     assertEquals("Element children", 1, div.getChildren().size());
     assertEquals("Child element", TextNode.class, div.getChildren().get(0).getClass());
     assertEquals("Child element text", "world", div.getChildren().get(0).asText());
-    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello <div>world</div>!</div>",
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello <div>world</div>!</div>",
         context.getPresentationML());
     assertEquals("Markdown", "Hello \n\nworld\n\n!", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
@@ -65,7 +69,8 @@ public class DivTest extends ElementTest {
     String div = "<messageML><div data-icon-src=\"attr\">txt</div></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The attribute \"data-icon-src\" is only allowed if the element class is \"card\".");
+    expectedException.expectMessage(
+        "The attribute \"data-icon-src\" is only allowed if the element class is \"card\".");
     context.parseMessageML(div, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -74,7 +79,23 @@ public class DivTest extends ElementTest {
     String div = "<messageML><div data-accent-color=\"attr\">txt</div></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The attribute \"data-accent-color\" is only allowed if the element class is \"card\".");
+    expectedException.expectMessage(
+        "The attribute \"data-accent-color\" is only allowed if the element class is \"card\".");
     context.parseMessageML(div, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testDivBi() throws Exception {
+    String input = "<messageML>" +
+        "<div>Big title<div>Subtitle</div></div>" +
+        "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    BiContext biContext = context.getBiContext();
+    assertEquals(2, biContext.getItems().size());
+
+    BiItem item = biContext.getItems().get(0);
+    assertEquals(BiFields.DIV.getValue(), item.getName());
+    assertEquals(2, item.getAttributes().get(BiFields.COUNT.getValue()));
   }
 }

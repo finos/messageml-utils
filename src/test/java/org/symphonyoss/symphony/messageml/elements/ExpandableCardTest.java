@@ -1,13 +1,18 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ExpandableCardTest extends ElementTest {
 
@@ -33,7 +38,8 @@ public class ExpandableCardTest extends ElementTest {
 
     verifyExpandableCard(card);
 
-    String withAttr = "<messageML><expandable-card state=\"collapsed\"><header>Hello</header><body variant=\"default\">world!</body></expandable-card></messageML>";
+    String withAttr =
+        "<messageML><expandable-card state=\"collapsed\"><header>Hello</header><body variant=\"default\">world!</body></expandable-card></messageML>";
 
     context.parseMessageML(withAttr, null, MessageML.MESSAGEML_VERSION);
     messageML = context.getMessageML();
@@ -43,10 +49,11 @@ public class ExpandableCardTest extends ElementTest {
     assertEquals("Element attributes", 1, card.getAttributes().size());
     assertEquals("Element attributes", 1, body.getAttributes().size());
     assertEquals("Attribute", "default", body.getAttribute("variant"));
-    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><div class=\"expandable-card\" data-state=\"collapsed\">"
-        + "<div class=\"expandableCardHeader\">Hello</div>"
-        + "<div class=\"expandableCardBody\" data-variant=\"default\">world!</div>"
-        + "</div></div>", context.getPresentationML());
+    assertEquals("PresentationML",
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><div class=\"expandable-card\" data-state=\"collapsed\">"
+            + "<div class=\"expandableCardHeader\">Hello</div>"
+            + "<div class=\"expandableCardBody\" data-variant=\"default\">world!</div>"
+            + "</div></div>", context.getPresentationML());
 
     verifyExpandableCard(card);
   }
@@ -145,6 +152,34 @@ public class ExpandableCardTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Shorthand tag \"body\" is not allowed in PresentationML");
     context.parseMessageML(invalidElement, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testCardsBi() throws Exception {
+    String input = "<messageML>" +
+        "<expandable-card state=\"collapsed\"><header>Hello</header><body>world!</body></expandable-card>" +
+        "<expandable-card state=\"cropped\"><header>Hello</header><body>world!</body></expandable-card>" +
+        "<expandable-card state=\"cropped\"><header>Hello</header><body>world!</body></expandable-card>" +
+        "<expandable-card state=\"expanded\"><header>Hello</header><body>world!</body></expandable-card>" +
+        "</messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> expectedBiItems = getExpectedCardBiItems();
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertEquals(biItems.size(), expectedBiItems.size());
+    assertTrue(biItems.containsAll(expectedBiItems));
+    assertTrue(expectedBiItems.containsAll(biItems));
+  }
+
+  private List<BiItem> getExpectedCardBiItems() {
+    List<BiItem> biItems = new ArrayList<>();
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 4)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_COLLAPSED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_CROPPED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
+    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_EXPANDED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 394)));
+    return biItems;
   }
 
   private void verifyExpandableCard(Element card) throws Exception {
