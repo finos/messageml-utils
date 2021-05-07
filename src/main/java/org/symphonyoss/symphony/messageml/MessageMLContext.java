@@ -91,6 +91,7 @@ public class MessageMLContext {
   public void parseMarkdown(String message, JsonNode entities, JsonNode media) throws InvalidInputException {
     this.messageML = markdownParser.parse(message, entities, media);
     this.entityJson = messageML.asEntityJson(this.entityJson);
+    this.biContext = new BiContext();
     this.markdownRenderer = new MarkdownRenderer(messageML.asMarkdown());
   }
 

@@ -246,8 +246,8 @@ public class CashtagTest extends ElementTest {
     BiItem entityBiItemExpected = new BiItem(BiFields.ENTITY.getValue(), entityExpectedAttributes);
 
     assertEquals(3, items.size());
-    assertSameBiItem(entityBiItemExpected, items.get(0));
-    assertSameBiItem(cashTagBiItemExpected, items.get(1));
+    assertSameBiItem(cashTagBiItemExpected, items.get(0));
+    assertSameBiItem(entityBiItemExpected, items.get(1));
     assertMessageLengthBiItem(items.get(2), input.length());
   }
 

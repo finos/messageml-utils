@@ -319,7 +319,7 @@ public class MessageMLContextTest {
 
     Map<String, Object> expectedLinkAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), 2);
     Map<String, Object> expectedEmojisAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), 1);
-    Map<String, Object> expectedEntityAttrs = Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), null);
+    Map<String, Object> expectedEntityAttrs = Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.emoji");
     Map<String, Object> expectedMessageLengthAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), message.length());
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
@@ -332,11 +332,11 @@ public class MessageMLContextTest {
     assertEquals(BiFields.LINK.getValue(), linkItem.getName());
     assertEquals(expectedLinkAttrs, linkItem.getAttributes());
 
-    BiItem entityItem = biItems.get(1);
+    BiItem entityItem = biItems.get(2);
     assertEquals(BiFields.ENTITY.getValue(), entityItem.getName());
     assertEquals(expectedEntityAttrs, entityItem.getAttributes());
 
-    BiItem emojiItem = biItems.get(2);
+    BiItem emojiItem = biItems.get(1);
     assertEquals(BiFields.EMOJIS.getValue(), emojiItem.getName());
     assertEquals(expectedEmojisAttrs, emojiItem.getAttributes());
 
@@ -548,7 +548,7 @@ public class MessageMLContextTest {
     biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(),
         Collections.singletonMap(BiFields.COUNT.getValue(), 2984)));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(),
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.mention")));
     return biItems;
   }
 

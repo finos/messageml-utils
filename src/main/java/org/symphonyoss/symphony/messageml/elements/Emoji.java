@@ -7,11 +7,14 @@ import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.util.EmojiShortcodeToUnicode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
+
+import java.util.Collections;
 
 
 /**
@@ -215,6 +218,7 @@ public class Emoji extends Entity {
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
     context.updateItemCount(BiFields.EMOJIS.getValue());
+    context.addItem(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), this.getEntityType())));
   }
 
   private String asDefaultRepresentation() {
