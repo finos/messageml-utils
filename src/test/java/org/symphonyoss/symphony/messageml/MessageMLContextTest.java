@@ -319,37 +319,30 @@ public class MessageMLContextTest {
 
     Map<String, Object> expectedLinkAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), 2);
     Map<String, Object> expectedEmojisAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), 1);
-    Map<String, Object> expectedEntityAttrs = Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), null);
+    Map<String, Object> expectedEntityAttrs = Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.emoji");
     Map<String, Object> expectedMessageLengthAttrs = Collections.singletonMap(BiFields.COUNT.getValue(), message.length());
 
     context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION);
     BiContext biContext = context.getBiContext();
 
     List<BiItem> biItems = biContext.getItems();
-    assertEquals(5, biItems.size());
+    assertEquals(4, biItems.size());
 
     BiItem linkItem = biItems.get(0);
     assertEquals(BiFields.LINK.getValue(), linkItem.getName());
     assertEquals(expectedLinkAttrs, linkItem.getAttributes());
 
-    BiItem entityItem = biItems.get(1);
+    BiItem entityItem = biItems.get(2);
     assertEquals(BiFields.ENTITY.getValue(), entityItem.getName());
     assertEquals(expectedEntityAttrs, entityItem.getAttributes());
 
-    BiItem emojiItem = biItems.get(2);
+    BiItem emojiItem = biItems.get(1);
     assertEquals(BiFields.EMOJIS.getValue(), emojiItem.getName());
     assertEquals(expectedEmojisAttrs, emojiItem.getAttributes());
 
     BiItem messageLengthItem = biItems.get(3);
     assertEquals(BiFields.MESSAGE_LENGTH.getValue(), messageLengthItem.getName());
     assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
-
-    BiItem entityJsonItem = biItems.get(4);
-    assertNotNull(entityJsonItem);
-    assertEquals(BiFields.ENTITY_JSON_SIZE.getValue(), entityJsonItem.getName());
-    assertNotNull(entityJsonItem.getAttributes());
-    assertNotNull(entityJsonItem.getAttributes().get(BiFields.COUNT.getValue()));
-    assertTrue((Integer) entityJsonItem.getAttributes().get(BiFields.COUNT.getValue()) > 2);
   }
 
   @Test
@@ -479,6 +472,28 @@ public class MessageMLContextTest {
   }
 
   @Test
+  public void testBiContextWhenParsingMultipleMessages() throws InvalidInputException, IOException, ProcessingException {
+    final String message1 = "<messageML>Hello World!</messageML>";
+
+    context.parseMessageML(message1, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext1 = context.getBiContext();
+
+    assertEquals(1, biContext1.getItems().size());
+    BiItem biItem1 = biContext1.getItems().get(0);
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biItem1.getName());
+    assertEquals(35, biItem1.getAttributes().get(BiFields.COUNT.getValue()));
+
+    final String message2 = "<messageML>Hola</messageML>";
+    context.parseMessageML(message2, "", MessageML.MESSAGEML_VERSION);
+    BiContext biContext2 = context.getBiContext();
+
+    assertEquals(1, biContext2.getItems().size());
+    BiItem biItem2 = biContext2.getItems().get(0);
+    assertEquals(BiFields.MESSAGE_LENGTH.getValue(), biItem2.getName());
+    assertEquals(27, biItem2.getAttributes().get(BiFields.COUNT.getValue()));
+  }
+
+  @Test
   public void testGetBiContextWhenOnlyPlainText() throws InvalidInputException, IOException, ProcessingException {
     final String message = "<messageML>Hello World!</messageML>";
 
@@ -529,11 +544,11 @@ public class MessageMLContextTest {
         Collections.singletonMap(BiFields.COUNT.getValue(), 15)));
     biItems.add(new BiItem("UseFreeMarker", Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
     biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(),
-        Collections.singletonMap(BiFields.COUNT.getValue(), 1548)));
+        Collections.singletonMap(BiFields.COUNT.getValue(), 1948)));
     biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(),
         Collections.singletonMap(BiFields.COUNT.getValue(), 2984)));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(),
-        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.userId")));
+        Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.mention")));
     return biItems;
   }
 

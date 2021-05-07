@@ -459,33 +459,8 @@ public class TimePickerTest extends ElementTest {
 
     List<BiItem> items = messageMLContext.getBiContext().getItems();
 
-    Map<Object, Object> expectedAttributes = Stream.of(new Object[][] {
-        {BiFields.TITLE.getValue(), 1},
-        {BiFields.LABEL.getValue(), 1},
-        {BiFields.PLACEHOLDER.getValue(), 1},
-        {BiFields.DEFAULT.getValue(), 1},
-        {BiFields.REQUIRED.getValue(), 1},
-        {BiFields.VALIDATION_MIN.getValue(), 1},
-        {BiFields.VALIDATION_MAX.getValue(), 1},
-        {BiFields.VALIDATION_PATTERN.getValue(), 1},
-        {BiFields.VALIDATION_OPTIONS.getValue(), 1},
-        {BiFields.VALIDATION_STRICT.getValue(), 1},
-        {BiFields.VALIDATION.getValue(), 1},
-    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
-
-    BiItem timePickerBiItemExpected = new BiItem(BiFields.TIME_PICKER.getValue(),
-        expectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
-
-    assertEquals("As time-picker is firstly parsed and failed, context is not filled with form and button",
-        1, items.size());
-    assertNull(
-        items.get(0).getAttributes().get(BiFields.INPUT_STEP.getValue()),
-        "Input_Step BI property is not set in context as the attribute value is not correct");
-    assertEquals(BiFields.TIME_PICKER.getValue(), items.get(0).getName());
-    assertSameBiItem(timePickerBiItemExpected, items.get(0));
+    assertEquals("As the validation of the time-picker failed there's no BiContext",
+        0, items.size());
   }
 
 }

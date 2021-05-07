@@ -24,11 +24,14 @@ import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.IUserPresentation;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+
+import java.util.Collections;
 
 /**
  * Class representing a convenience element for a user mention. Translated to an anchor element.
@@ -245,5 +248,6 @@ public class Mention extends Entity {
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
     context.updateItemCount(BiFields.MENTIONS.getValue());
+    context.addItem(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), this.getEntityType())));
   }
 }

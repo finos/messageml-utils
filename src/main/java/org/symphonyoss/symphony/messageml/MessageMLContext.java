@@ -53,11 +53,13 @@ public class MessageMLContext {
   private MarkdownRenderer markdownRenderer;
   private MessageML messageML;
   private ObjectNode entityJson;
+  private BiContext biContext;
 
   public MessageMLContext(IDataProvider dataProvider) {
     this.markdownParser = new MarkdownParser(dataProvider);
     this.messageMLParser = new MessageMLParser(dataProvider);
     this.shortID = new ShortID();
+    this.biContext = new BiContext();
   }
 
   /**
@@ -76,6 +78,7 @@ public class MessageMLContext {
 
     this.messageML = messageMLParser.parse(message, entityJson, version);
     this.entityJson = messageMLParser.getEntityJson();
+    this.biContext = messageMLParser.getBiContext();
     this.markdownRenderer = new MarkdownRenderer(messageML.asMarkdown());
   }
 
@@ -88,6 +91,7 @@ public class MessageMLContext {
   public void parseMarkdown(String message, JsonNode entities, JsonNode media) throws InvalidInputException {
     this.messageML = markdownParser.parse(message, entities, media);
     this.entityJson = messageML.asEntityJson(this.entityJson);
+    this.biContext = new BiContext();
     this.markdownRenderer = new MarkdownRenderer(messageML.asMarkdown());
   }
 
@@ -228,7 +232,7 @@ public class MessageMLContext {
    *
    */
   public BiContext getBiContext() {
-    return messageMLParser.getBiContext();
+    return this.biContext;
   }
 
 }

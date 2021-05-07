@@ -19,7 +19,10 @@ package org.symphonyoss.symphony.messageml.elements;
 import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
+
+import java.util.Collections;
 
 /**
  * Class representing a convenience element for a cash tag. Translated to an anchor element.
@@ -91,5 +94,6 @@ public class CashTag extends Keyword {
   public void updateBiContext(BiContext context) {
     super.updateBiContext(context);
     context.updateItemCount(BiFields.CASHTAGS.getValue());
+    context.addItem(new BiItem(BiFields.ENTITY.getValue(), Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), this.getEntitySubType())));
   }
 }
