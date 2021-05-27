@@ -112,7 +112,7 @@ import javax.xml.xpath.XPathFactory;
  */
 public class MessageMLParser {
   private static final ObjectMapper MAPPER = new ObjectMapper();
-  private static final Configuration FREEMARKER = new Configuration(Configuration.getVersion());
+  private static final Configuration FREEMARKER = new Configuration(Configuration.VERSION_2_3_30);
   private final IDataProvider dataProvider;
 
   private BiContext biContext;
