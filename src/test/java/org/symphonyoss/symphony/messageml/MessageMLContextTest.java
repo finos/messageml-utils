@@ -285,7 +285,7 @@ public class MessageMLContextTest {
     assertEquals(expectedMessageLengthAttrs, messageLengthItem.getAttributes());
 
     BiItem buttonItem = biContext.getItems().get(1);
-    assertEquals("Button", buttonItem.getName());
+    assertEquals(BiFields.BUTTON.getValue(), buttonItem.getName());
     assertEquals(expectedButtonAttrs, buttonItem.getAttributes());
   }
 

@@ -19,80 +19,80 @@ public class BiContextTest {
 
   @Test
   public void testUpdateItemWithAttrNameInContextWhenItemNotFound() {
-    biContext.updateItemCount("RadioButton", "button");
+    biContext.updateItemCount(BiFields.RADIO.getValue(), BiFields.BUTTON.getValue());
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
-    assertEquals("RadioButton", biItem.getName());
+    assertEquals(BiFields.RADIO.getValue(), biItem.getName());
     assertEquals("{button=1}", biItem.getAttributes().toString());
   }
 
   @Test
   public void testUpdateItemWithAttrNameWhenItemAndAttributeFound() {
     Map<String, Object> linkAttrs = new HashMap<>();
-    linkAttrs.put("button", 1);
-    BiItem headerItem = new BiItem("RadioButton", linkAttrs);
+    linkAttrs.put(BiFields.BUTTON.getValue(), 1);
+    BiItem headerItem = new BiItem(BiFields.RADIO.getValue(), linkAttrs);
     biContext.addItem(headerItem);
 
-    biContext.updateItemCount("RadioButton", "button");
+    biContext.updateItemCount(BiFields.RADIO.getValue(), BiFields.BUTTON.getValue());
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
-    assertEquals("RadioButton", biItem.getName());
+    assertEquals(BiFields.RADIO.getValue(), biItem.getName());
     assertEquals("{button=2}", biItem.getAttributes().toString());
   }
 
   @Test
   public void testUpdateItemInContextWhenItemNotFound() {
-    biContext.updateItemCount("Link");
+    biContext.updateItemCount(BiFields.LINK.getValue());
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
-    assertEquals("Link", biItem.getName());
-    assertEquals("{Count=1}", biItem.getAttributes().toString());
+    assertEquals(BiFields.LINK.getValue(), biItem.getName());
+    assertEquals("{count=1}", biItem.getAttributes().toString());
   }
 
   @Test
   public void testUpdateItemInContextWhenItemAndAttributeFound() {
     Map<String, Object> linkAttrs = new HashMap<>();
     linkAttrs.put(BiFields.COUNT.getValue(), 1);
-    BiItem headerItem = new BiItem("Link", linkAttrs);
+    BiItem headerItem = new BiItem(BiFields.LINK.getValue(), linkAttrs);
     biContext.addItem(headerItem);
 
-    biContext.updateItemCount("Link");
+    biContext.updateItemCount(BiFields.LINK.getValue());
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
-    assertEquals("Link", biItem.getName());
-    assertEquals("{Count=2}", biItem.getAttributes().toString());
+    assertEquals(BiFields.LINK.getValue(), biItem.getName());
+    assertEquals("{count=2}", biItem.getAttributes().toString());
   }
 
   @Test
   public void testAddItemWithValue() {
-    biContext.addItemWithValue("EntityJSONSize", 1000);
+    biContext.addItemWithValue(BiFields.ENTITY_JSON_SIZE.getValue(), 1000);
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
-    assertEquals("EntityJSONSize", biItem.getName());
-    assertEquals("{Count=1000}", biItem.getAttributes().toString());
+    assertEquals(BiFields.ENTITY_JSON_SIZE.getValue(), biItem.getName());
+    assertEquals("{count=1000}", biItem.getAttributes().toString());
   }
 
   @Test
   public void testUpdateItemWithMaxValue() {
-    biContext.updateItemWithMaxValue("TableMaxColumns", 4);
-    biContext.updateItemWithMaxValue("TableMaxColumns", 6);
-    biContext.updateItemWithMaxValue("TableMaxColumns", 1);
+    biContext.updateItemWithMaxValue(BiFields.TABLE_COLUMN_MAX.getValue(), 4);
+    biContext.updateItemWithMaxValue(BiFields.TABLE_COLUMN_MAX.getValue(), 6);
+    biContext.updateItemWithMaxValue(BiFields.TABLE_COLUMN_MAX.getValue(), 1);
 
     assertEquals(1, biContext.getItems().size());
 
     BiItem biItem = biContext.getItems().get(0);
-    assertEquals("TableMaxColumns", biItem.getName());
-    assertEquals("{Count=6}", biItem.getAttributes().toString());
+    assertEquals(BiFields.TABLE_COLUMN_MAX.getValue(), biItem.getName());
+    assertEquals("{count=6}", biItem.getAttributes().toString());
   }
 
 }
