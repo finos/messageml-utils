@@ -29,6 +29,7 @@ import org.symphonyoss.symphony.messageml.elements.Chime;
 import org.symphonyoss.symphony.messageml.elements.Code;
 import org.symphonyoss.symphony.messageml.elements.DatePicker;
 import org.symphonyoss.symphony.messageml.elements.DateSelector;
+import org.symphonyoss.symphony.messageml.elements.Dialog;
 import org.symphonyoss.symphony.messageml.elements.Div;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.Emoji;
@@ -107,6 +108,7 @@ import javax.xml.xpath.XPathFactory;
 
 /**
  * Converts a string representation of the message and optional entity data into a MessageMLV2 document tree.
+ *
  * @author lukasz
  * @since 4/20/17
  */
@@ -533,6 +535,9 @@ public class MessageMLParser {
 
       case UIAction.MESSAGEML_TAG:
         return new UIAction(parent, messageFormat);
+
+      case Dialog.MESSAGEML_TAG:
+        return new Dialog(parent, messageFormat);
 
       case LabelableElement.LABEL:
         String id = getAttribute(element, LabelableElement.LABEL_FOR);
