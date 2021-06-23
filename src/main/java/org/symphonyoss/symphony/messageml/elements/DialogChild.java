@@ -6,11 +6,19 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
 import java.util.Collections;
 
+/**
+ * This class is a base abstract representing all children of the Symphony Element Dialog whose tag is "dialog"
+ * of type {@link Dialog}.
+ * They must not have any attribute and can contain any non-interactive element except form and dialog.
+ */
 public abstract class DialogChild extends Element {
 
   public static final String DIALOG_CLASS_PREFIX = "dialog-";
 
 
+  /**
+   * This class represent the "title" element under the Symphony Element Dialog of tag "dialog".
+   */
   public static class Title extends DialogChild {
     public static final String MESSAGEML_TAG = "title";
 
@@ -20,6 +28,9 @@ public abstract class DialogChild extends Element {
   }
 
 
+  /**
+   * This class represent the "body" element under the Symphony Element Dialog of tag "dialog".
+   */
   public static class Body extends DialogChild {
     public static final String MESSAGEML_TAG = "body";
 
@@ -29,6 +40,9 @@ public abstract class DialogChild extends Element {
   }
 
 
+  /**
+   * This class represent the "footer" element under the Symphony Element Dialog of tag "dialog".
+   */
   public static class Footer extends DialogChild {
     public static final String MESSAGEML_TAG = "footer";
 

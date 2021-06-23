@@ -15,6 +15,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents the Symphony Element Dialog which is represented with tag name "dialog".
+ * The messageML representation of the dialog element can contain the following attributes:
+ * <ul>
+ *   <li> id (required) -> used to identify the dialog </li>
+ *   <li> width -> used to specify dialog width, must be among values "small", "medium", "large", "full-width". Default value is medium</li>
+ *   <li> state -> used to specify dialog state, must be among values "open", "close". Default value is "false"</li>
+ * </ul>
+ * It can contain the following child tags:
+ * <ul>
+ *   <li> title (required) -> used to specify dialog title, of type {@link DialogChild.Title}</li>
+ *   <li> body (required) -> used to specify dialog body, of type {@link DialogChild.Body}</li>
+ *   <li> footer -> used to specify dialog footer, of type {@link DialogChild.Footer}</li>
+ * </ul>
+ */
 public class Dialog extends Element {
 
   public static final String MESSAGEML_TAG = "dialog";
