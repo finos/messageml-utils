@@ -3,13 +3,17 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Dialog extends Element {
 
@@ -22,6 +26,8 @@ public class Dialog extends Element {
   public static final String WIDTH_ATTR = "width";
   public static final String MEDIUM_WIDTH = "medium";
   public static final List<String> ALLOWED_WIDTH_VALUES = Arrays.asList("small", MEDIUM_WIDTH, "large", "full-width");
+
+  private static final String DATA_ATTRIBUTE_PREFIX = "data-";
 
   public Dialog(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -51,6 +57,28 @@ public class Dialog extends Element {
 
     checkAttributes();
     validateChildrenTypes();
+  }
+
+  @Override
+  public void asPresentationML(XmlPrintStream out, MessageMLContext context) {
+    out.openElement(getPresentationMLTag(), getPresentationMLAttributes());
+    for (Element child : getChildren()) {
+      child.asPresentationML(out, context);
+    }
+    out.closeElement();
+  }
+
+  private Map<String, String> getPresentationMLAttributes() {
+    Map<String, String> pmlAttributes = new HashMap<>();
+
+    for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
+      if (mmlAttribute.getKey().equals(ID_ATTR)) {
+        pmlAttributes.put(mmlAttribute.getKey(), mmlAttribute.getValue());
+      } else {
+        pmlAttributes.put(DATA_ATTRIBUTE_PREFIX + mmlAttribute.getKey(), mmlAttribute.getValue());
+      }
+    }
+    return pmlAttributes;
   }
 
   private void checkAttributes() throws InvalidInputException {

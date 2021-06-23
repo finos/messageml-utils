@@ -340,8 +340,7 @@ public abstract class Element {
   /**
    * Print a PresentationML representation of the element and its children to the provided PrintStream.
    */
-  void asPresentationML(XmlPrintStream out,
-      MessageMLContext context) {
+  void asPresentationML(XmlPrintStream out, MessageMLContext context) {
     Map<String, String> attributes = new LinkedHashMap<>();
 
     if (this instanceof RegexElement) {

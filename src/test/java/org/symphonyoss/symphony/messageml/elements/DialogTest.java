@@ -12,6 +12,10 @@ import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 
 public class DialogTest {
 
+  private static final String TEXT_FIELD_FORM =
+      "<form><text-field name=\"name1\" id=\"id1\" placeholder=\"placeholder1\" required=\"true\" /></form>";
+  private static final String SIMPLE_DIALOG = "<dialog id=\"toto\"><title>e</title><body>f</body></dialog>";
+
   private final IDataProvider dataProvider = new TestDataProvider();
   private MessageMLContext context;
 
@@ -181,6 +185,48 @@ public class DialogTest {
   }
 
   @Test(expected = InvalidInputException.class)
+  public void testDialogWithDialogInTitle() throws Exception {
+    String messageML = buildDialogMML("dialog-id", SIMPLE_DIALOG, "body", "footer");
+
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test(expected = InvalidInputException.class)
+  public void testDialogWithDialogInBody() throws Exception {
+    String messageML = buildDialogMML("dialog-id", "title", SIMPLE_DIALOG, "footer");
+
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test(expected = InvalidInputException.class)
+  public void testDialogWithDialogInFooter() throws Exception {
+    String messageML = buildDialogMML("dialog-id", "title", "body", SIMPLE_DIALOG);
+
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test(expected = InvalidInputException.class)
+  public void testDialogWithFormInTitle() throws Exception {
+    String messageML = buildDialogMML("dialog-id", TEXT_FIELD_FORM, "body", "footer");
+
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test(expected = InvalidInputException.class)
+  public void testDialogWithFormInBody() throws Exception {
+    String messageML = buildDialogMML("dialog-id", "title", TEXT_FIELD_FORM, "footer");
+
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test(expected = InvalidInputException.class)
+  public void testDialogWithFormInFooter() throws Exception {
+    String messageML = buildDialogMML("dialog-id", "title", "body", TEXT_FIELD_FORM);
+
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test(expected = InvalidInputException.class)
   public void testDialogWithInteractiveElementInBody() throws Exception {
     String messageML = buildDialogMML("dialog-id", "title", "<button>A button</button>", "footer");
 
@@ -228,6 +274,21 @@ public class DialogTest {
     final Element footer = messageML.getChild(0).getChild(2);
     final Element card = footer.getChild(0);
     assertEquals(Card.class, card.getClass());
+  }
+
+  @Test
+  public void testPresentationMlConversion() throws Exception {
+    String messageMlInput =
+        buildDialogMML("dialog-id", Dialog.MEDIUM_WIDTH, Dialog.FALSE_STATE, "title", "body", "footer");
+    context.parseMessageML(messageMlInput, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<dialog data-width=\"medium\" data-state=\"false\" id=\"dialog-id\">"
+            + "<div class=\"dialog-title\">title</div>"
+            + "<div class=\"dialog-body\">body</div>"
+            + "<div class=\"dialog-footer\">footer</div>"
+            + "</dialog></div>",
+        context.getPresentationML());
   }
 
   private void assertDialogBuilt(MessageML messageML, String dialogId, String width, String state, String title,
