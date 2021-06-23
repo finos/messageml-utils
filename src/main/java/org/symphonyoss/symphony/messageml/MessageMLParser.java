@@ -30,6 +30,7 @@ import org.symphonyoss.symphony.messageml.elements.Code;
 import org.symphonyoss.symphony.messageml.elements.DatePicker;
 import org.symphonyoss.symphony.messageml.elements.DateSelector;
 import org.symphonyoss.symphony.messageml.elements.Dialog;
+import org.symphonyoss.symphony.messageml.elements.DialogChild;
 import org.symphonyoss.symphony.messageml.elements.Div;
 import org.symphonyoss.symphony.messageml.elements.Element;
 import org.symphonyoss.symphony.messageml.elements.Emoji;
@@ -485,7 +486,9 @@ public class MessageMLParser {
 
       case CardBody.MESSAGEML_TAG:
         validateFormat(tag);
-        if (parent instanceof ExpandableCard) {
+        if (parent instanceof Dialog) {
+          return new DialogChild.Body(parent, messageFormat);
+        } else if (parent instanceof ExpandableCard) {
           return new ExpandableCardBody(parent, messageFormat);
         } else {
           return new CardBody(parent, messageFormat);
@@ -538,6 +541,12 @@ public class MessageMLParser {
 
       case Dialog.MESSAGEML_TAG:
         return new Dialog(parent, messageFormat);
+
+      case DialogChild.Title.MESSAGEML_TAG:
+        return new DialogChild.Title(parent, messageFormat);
+
+      case DialogChild.Footer.MESSAGEML_TAG:
+        return new DialogChild.Footer(parent, messageFormat);
 
       case LabelableElement.LABEL:
         String id = getAttribute(element, LabelableElement.LABEL_FOR);
