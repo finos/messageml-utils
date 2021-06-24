@@ -76,7 +76,7 @@ public class DialogTest {
       final String messageML = buildDialogMML(dialogId, width, title, body, footer);
       context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
 
-      assertDialogBuilt(context.getMessageML(), dialogId, width, Dialog.FALSE_STATE, title, body, footer);
+      assertDialogBuilt(context.getMessageML(), dialogId, width, Dialog.CLOSE_STATE, title, body, footer);
     }
   }
 
@@ -113,7 +113,7 @@ public class DialogTest {
     final String messageML = buildDialogMML(dialogId, title, body, footer);
     context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
 
-    assertDialogBuilt(context.getMessageML(), dialogId, Dialog.MEDIUM_WIDTH, Dialog.FALSE_STATE, title, body, footer);
+    assertDialogBuilt(context.getMessageML(), dialogId, Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, title, body, footer);
   }
 
   @Test(expected = InvalidInputException.class)
@@ -287,11 +287,11 @@ public class DialogTest {
   @Test
   public void testPresentationMlConversion() throws Exception {
     String messageMlInput =
-        buildDialogMML("dialog-id", Dialog.MEDIUM_WIDTH, Dialog.FALSE_STATE, "title", "body", "footer");
+        buildDialogMML("dialog-id", Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, "title", "body", "footer");
     context.parseMessageML(messageMlInput, null, MessageML.MESSAGEML_VERSION);
 
     final String expectedPattern = "^<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<dialog data-width=\"medium\" data-state=\"false\" id=\"\\S+-dialog-id\" open>"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-dialog-id\" open>"
         + "<div class=\"dialog-title\">title</div>"
         + "<div class=\"dialog-body\">body</div>"
         + "<div class=\"dialog-footer\">footer</div>"
@@ -304,7 +304,7 @@ public class DialogTest {
   @Test
   public void testMarkdownConversion() throws Exception {
     String messageMlInput =
-        buildDialogMML("dialog-id", Dialog.MEDIUM_WIDTH, Dialog.FALSE_STATE, "title", "body", "footer");
+        buildDialogMML("dialog-id", Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, "title", "body", "footer");
     context.parseMessageML(messageMlInput, null, MessageML.MESSAGEML_VERSION);
 
     assertEquals("---\n"

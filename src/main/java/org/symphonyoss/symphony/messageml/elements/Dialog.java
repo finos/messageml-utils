@@ -23,7 +23,7 @@ import java.util.Map;
  * <ul>
  *   <li> id (required) -> used to identify the dialog </li>
  *   <li> width -> used to specify dialog width, must be among values "small", "medium", "large", "full-width". Default value is medium</li>
- *   <li> state -> used to specify dialog state, must be among values "open", "close". Default value is "false"</li>
+ *   <li> state -> used to specify dialog state, must be among values "open", "close". Default value is "close"</li>
  * </ul>
  * It can contain the following child tags:
  * <ul>
@@ -38,8 +38,8 @@ public class Dialog extends Element {
   public static final int ID_MAX_LENGTH = 64;
 
   public static final String STATE_ATTR = "state";
-  public static final String FALSE_STATE = "false";
-  public static final List<String> ALLOWED_STATE_VALUES = Arrays.asList(FALSE_STATE, "open", "close");
+  public static final String CLOSE_STATE = "close";
+  public static final List<String> ALLOWED_STATE_VALUES = Arrays.asList("open", CLOSE_STATE);
 
   public static final String WIDTH_ATTR = "width";
   public static final String MEDIUM_WIDTH = "medium";
@@ -97,7 +97,7 @@ public class Dialog extends Element {
   private void checkAttributes() throws InvalidInputException {
     validateIdAttribute();
     checkAttributeOrPutDefaultValue(WIDTH_ATTR, MEDIUM_WIDTH, ALLOWED_WIDTH_VALUES);
-    checkAttributeOrPutDefaultValue(STATE_ATTR, FALSE_STATE, ALLOWED_STATE_VALUES);
+    checkAttributeOrPutDefaultValue(STATE_ATTR, CLOSE_STATE, ALLOWED_STATE_VALUES);
   }
 
   private void validateIdAttribute() throws InvalidInputException {
