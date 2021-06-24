@@ -12,7 +12,6 @@ import java.util.Collections;
  * They must not have any attribute and can contain any non-interactive element except form and dialog.
  */
 public abstract class DialogChild extends Element {
-
   public static final String DIALOG_CLASS_PREFIX = "dialog-";
 
 

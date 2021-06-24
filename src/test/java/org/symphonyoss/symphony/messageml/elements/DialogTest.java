@@ -292,6 +292,39 @@ public class DialogTest {
     assertTrue(context.getPresentationML().matches(expectedPattern));
   }
 
+  @Test
+  public void testMarkdownConversion() throws Exception {
+    String messageMlInput =
+        buildDialogMML("dialog-id", Dialog.MEDIUM_WIDTH, Dialog.FALSE_STATE, "title", "body", "footer");
+    context.parseMessageML(messageMlInput, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("---\n"
+            + "**Dialog**\n"
+            + "title\n"
+            + "body\n"
+            + "footer\n"
+            + "---\n",
+        context.getMarkdown());
+  }
+
+  @Test
+  public void testMarkdownConversionWithoutFooter() throws Exception {
+    String messageMlInput = "<messageML>"
+        + "<dialog id=\"dialog-id\">"
+        + "<title><h2>A title</h2></title>"
+        + "<body>body</body>"
+        + "</dialog>"
+        + "</messageML>";
+    context.parseMessageML(messageMlInput, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("---\n"
+            + "**Dialog**\n"
+            + "**A title**\n"
+            + "body\n"
+            + "---\n",
+        context.getMarkdown());
+  }
+
   private void assertDialogBuilt(MessageML messageML, String dialogId, String width, String state, String title,
       String body, String footer) {
     assertEquals(1, messageML.getChildren().size());

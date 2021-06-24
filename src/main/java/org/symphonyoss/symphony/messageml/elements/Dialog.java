@@ -3,10 +3,10 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-import org.commonmark.node.Visitor;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.markdown.nodes.form.DialogNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
@@ -89,29 +89,9 @@ public class Dialog extends Element {
     out.closeElement();
   }
 
-  private Map<String, String> getPresentationMLAttributes() {
-    Map<String, String> pmlAttributes = new HashMap<>();
-
-    pmlAttributes.put(OPEN_ATTRIBUTE, null);
-    for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
-      if (mmlAttribute.getKey().equals(ID_ATTR)) {
-        pmlAttributes.put(mmlAttribute.getKey(), getRandomIdPrefix() + "-" + mmlAttribute.getValue());
-      } else {
-        pmlAttributes.put(DATA_ATTRIBUTE_PREFIX + mmlAttribute.getKey(), mmlAttribute.getValue());
-      }
-    }
-    return pmlAttributes;
-  }
-
-  private static String getRandomIdPrefix() {
-    final int leftLimit = 48; // ascii code for numeral '0'
-    final int rightLimit = 122; // ascii code for letter 'z'
-
-    return RANDOM.ints(leftLimit, rightLimit + 1)
-        .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-        .limit(RANDOM_ID_PREFIX_SIZE)
-        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-        .toString();
+  @Override
+  org.commonmark.node.Node asMarkdown() throws InvalidInputException {
+    return new DialogNode();
   }
 
   private void checkAttributes() throws InvalidInputException {
@@ -147,5 +127,30 @@ public class Dialog extends Element {
     if (!areAllChildrenOfAllowedTypes) {
       throw new InvalidInputException("A dialog can only contain tags \"title\", \"body\", \"footer\"");
     }
+  }
+
+  private Map<String, String> getPresentationMLAttributes() {
+    Map<String, String> pmlAttributes = new HashMap<>();
+
+    pmlAttributes.put(OPEN_ATTRIBUTE, null);
+    for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
+      if (mmlAttribute.getKey().equals(ID_ATTR)) {
+        pmlAttributes.put(mmlAttribute.getKey(), getRandomIdPrefix() + "-" + mmlAttribute.getValue());
+      } else {
+        pmlAttributes.put(DATA_ATTRIBUTE_PREFIX + mmlAttribute.getKey(), mmlAttribute.getValue());
+      }
+    }
+    return pmlAttributes;
+  }
+
+  private static String getRandomIdPrefix() {
+    final int leftLimit = 48; // ascii code for numeral '0'
+    final int rightLimit = 122; // ascii code for letter 'z'
+
+    return RANDOM.ints(leftLimit, rightLimit + 1)
+        .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+        .limit(RANDOM_ID_PREFIX_SIZE)
+        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+        .toString();
   }
 }
