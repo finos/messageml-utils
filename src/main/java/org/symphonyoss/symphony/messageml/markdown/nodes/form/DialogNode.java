@@ -4,7 +4,7 @@ import org.commonmark.node.HardLineBreak;
 
 public class DialogNode extends FormNode {
   private final static String MARKDOWN = "**Dialog**";
-  private final static String FORM_DELIMITER = "---";
+  private final static String DIALOG_DELIMITER = "---";
 
   public DialogNode() {
     super();
@@ -12,12 +12,12 @@ public class DialogNode extends FormNode {
 
   @Override
   public String getOpeningDelimiter() {
-    return FORM_DELIMITER + "\n" + MARKDOWN + "\n";
+    return DIALOG_DELIMITER + "\n" + MARKDOWN + "\n";
   }
 
   @Override
   public String getClosingDelimiter() {
-    return FORM_DELIMITER + "\n";
+    return DIALOG_DELIMITER + "\n";
   }
 
   @Override
