@@ -35,6 +35,7 @@ import java.util.Map;
 public class Dialog extends Element {
 
   public static final String MESSAGEML_TAG = "dialog";
+  public static final int ID_MAX_LENGTH = 64;
 
   public static final String STATE_ATTR = "state";
   public static final String FALSE_STATE = "false";
@@ -104,6 +105,7 @@ public class Dialog extends Element {
     if (isEmpty(id) || containsWhitespace(id)) {
       throw new InvalidInputException("The attribute \"id\" is required and must not contain any whitespace");
     }
+    assertAttributeMaxLength(ID_ATTR, ID_MAX_LENGTH);
   }
 
   private void checkAttributeOrPutDefaultValue(String attributeName, String defaultValue, List<String> allowedValues)

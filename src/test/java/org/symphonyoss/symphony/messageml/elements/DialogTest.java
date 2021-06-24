@@ -3,6 +3,7 @@ package org.symphonyoss.symphony.messageml.elements;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
@@ -44,7 +45,14 @@ public class DialogTest {
   }
 
   @Test(expected = InvalidInputException.class)
-  public void testDialogIdWithExtraAttribute() throws Exception {
+  public void testTooLongDialogId() throws Exception {
+    String dialogId = StringUtils.repeat('a', Dialog.ID_MAX_LENGTH + 1);
+    final String messageML = buildDialogMML(dialogId);
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test(expected = InvalidInputException.class)
+  public void testDialogWithExtraAttribute() throws Exception {
     final String messageML = "<messageML><dialog id=\"dialog-id\" attribute=\"value\"><title>my title</title>"
         + "<body>my body</body></dialog></messageML>";
     context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
@@ -283,13 +291,14 @@ public class DialogTest {
     context.parseMessageML(messageMlInput, null, MessageML.MESSAGEML_VERSION);
 
     final String expectedPattern = "^<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<dialog data-width=\"medium\" data-state=\"false\" id=\"[a-zA-Z0-9]+-dialog-id\" open>"
+        + "<dialog data-width=\"medium\" data-state=\"false\" id=\"\\S+-dialog-id\" open>"
         + "<div class=\"dialog-title\">title</div>"
         + "<div class=\"dialog-body\">body</div>"
         + "<div class=\"dialog-footer\">footer</div>"
         + "</dialog></div>$";
 
-    assertTrue(context.getPresentationML().matches(expectedPattern));
+    final String presentationML = context.getPresentationML();
+    assertTrue(presentationML.matches(expectedPattern));
   }
 
   @Test
