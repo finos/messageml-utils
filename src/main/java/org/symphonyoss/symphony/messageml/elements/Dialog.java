@@ -7,10 +7,10 @@ import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.DialogNode;
+import org.symphonyoss.symphony.messageml.util.ShortID;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,8 +47,7 @@ public class Dialog extends Element {
   private static final String DATA_ATTRIBUTE_PREFIX = "data-";
   private static final String OPEN_ATTRIBUTE = "open";
 
-  private static final SecureRandom RANDOM = new SecureRandom();
-  private static final int RANDOM_ID_PREFIX_SIZE = 7;
+  private static final ShortID SHORT_ID = new ShortID();
 
   public Dialog(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -135,22 +134,11 @@ public class Dialog extends Element {
     pmlAttributes.put(OPEN_ATTRIBUTE, null);
     for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
       if (mmlAttribute.getKey().equals(ID_ATTR)) {
-        pmlAttributes.put(mmlAttribute.getKey(), getRandomIdPrefix() + "-" + mmlAttribute.getValue());
+        pmlAttributes.put(mmlAttribute.getKey(), SHORT_ID.generate() + "-" + mmlAttribute.getValue());
       } else {
         pmlAttributes.put(DATA_ATTRIBUTE_PREFIX + mmlAttribute.getKey(), mmlAttribute.getValue());
       }
     }
     return pmlAttributes;
-  }
-
-  private static String getRandomIdPrefix() {
-    final int leftLimit = 48; // ascii code for numeral '0'
-    final int rightLimit = 122; // ascii code for letter 'z'
-
-    return RANDOM.ints(leftLimit, rightLimit + 1)
-        .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-        .limit(RANDOM_ID_PREFIX_SIZE)
-        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-        .toString();
   }
 }
