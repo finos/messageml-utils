@@ -2,14 +2,22 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class DialogTest {
 
@@ -334,6 +342,32 @@ public class DialogTest {
         context.getMarkdown());
   }
 
+  @Test
+  public void testBiContext() throws Exception {
+    String input = buildDialogMML("dialog-id", Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, "title", "body", "footer");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems =
+        Arrays.asList(new BiItem(BiFields.POPUPS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)),
+            new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 144)));
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertIterableEquals(expectedBiItems, biItems);
+  }
+
+  @Test
+  public void testBiContextTwoDialogs() throws Exception {
+    String input = "<messageML>" + buildEnclosedDialog("id-1") + buildEnclosedDialog("id-2") + "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems =
+        Arrays.asList(new BiItem(BiFields.POPUPS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)),
+            new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 197)));
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertIterableEquals(expectedBiItems, biItems);
+  }
+
   private void assertDialogBuilt(MessageML messageML, String dialogId, String width, String state, String title,
       String body, String footer) {
     assertEquals(1, messageML.getChildren().size());
@@ -357,12 +391,16 @@ public class DialogTest {
 
   private String buildDialogMML(String dialogId) {
     return "<messageML>"
-        + "<dialog id=\"" + dialogId + "\">"
+        + buildEnclosedDialog(dialogId)
+        + "</messageML>";
+  }
+
+  private String buildEnclosedDialog(String dialogId) {
+    return "<dialog id=\"" + dialogId + "\">"
         + "<title>title</title>"
         + "<body>body</body>"
         + "<footer>footer</footer>"
-        + "</dialog>"
-        + "</messageML>";
+        + "</dialog>";
   }
 
   private String buildDialogMML(String dialogId, String title, String body, String footer) {

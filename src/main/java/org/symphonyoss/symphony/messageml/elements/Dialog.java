@@ -5,6 +5,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.DialogNode;
 import org.symphonyoss.symphony.messageml.util.ShortID;
@@ -92,6 +94,12 @@ public class Dialog extends Element {
   @Override
   org.commonmark.node.Node asMarkdown() throws InvalidInputException {
     return new DialogNode();
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+    context.updateItemCount(BiFields.POPUPS.getValue());
   }
 
   private void checkAttributes() throws InvalidInputException {
