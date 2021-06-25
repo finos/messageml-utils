@@ -70,6 +70,7 @@ public enum BiFields {
   MESSAGE_LENGTH("message_length", BiEventType.MESSAGEML_MESSAGE_SENT),
   ENTITY_JSON_SIZE("entities_json_size", BiEventType.MESSAGEML_MESSAGE_SENT),
   FREEMARKER("use_freemarker", BiEventType.MESSAGEML_MESSAGE_SENT),
+  POPUPS("popups", BiEventType.MESSAGEML_MESSAGE_SENT),
   COUNT("count", BiEventType.NONE);
 
   private final String value;
