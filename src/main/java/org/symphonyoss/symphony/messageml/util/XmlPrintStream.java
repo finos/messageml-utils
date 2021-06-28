@@ -7,20 +7,17 @@
 package org.symphonyoss.symphony.messageml.util;
 
 import java.io.OutputStream;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Stack;
 
 
 /**
  * A PrintStream based on IndentedPrintStream which adds functions to format XML.
- * @author Bruce Skingle
  */
 public class XmlPrintStream extends IndentedPrintStream {
-  private final Stack<String> elementStack = new Stack<>();
-
-  private static final String STANDARD_ATTRIBUTE_PATTERN = " %s=\"%s\"";
-  private static final String JSON_ATTRIBUTE_PATTERN = " %s='%s'";
+  private final Deque<String> elementStack = new LinkedList<>();
 
   /**
    * Constructor.
@@ -111,15 +108,6 @@ public class XmlPrintStream extends IndentedPrintStream {
   }
 
   /**
-   * Output a complete element with the given content.
-   * @param elementName Name of element.
-   * @param value Content of element.
-   */
-  public void printElement(String elementName, Object value) {
-    println("<" + elementName + ">" + (value == null ? "" : escape(value.toString())) + "</" + elementName + ">");
-  }
-
-  /**
    * Output an element with the given content (value). The opening and closing tags are
    * output in a single operation.
    * @param name Name of the element.
@@ -171,22 +159,6 @@ public class XmlPrintStream extends IndentedPrintStream {
   }
 
   /**
-   * Output a complete empty element.
-   * @param name Name of element.
-   */
-  public void printElement(String name) {
-    println("<" + name + "/>");
-  }
-
-  /**
-   * Output a comment.
-   * @param comment Comment text.
-   */
-  public void printComment(String comment) {
-    println("<!-- " + comment + " -->");
-  }
-
-  /**
    * Translate reserved XML characters to XML entities.
    * @param in Input string.
    */
@@ -200,7 +172,7 @@ public class XmlPrintStream extends IndentedPrintStream {
    * @param format Input format. The Json format does not escape ", but it escapes ' !
    */
   public String escape(String in, XMLAttribute.Format format) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
 
     for (char c : in.toCharArray()) {
       switch (c) {
@@ -272,10 +244,19 @@ public class XmlPrintStream extends IndentedPrintStream {
         format = XMLAttribute.Format.STANDARD;
       }
       if(XMLAttribute.Format.JSON.equals(format)){
-        print(String.format(JSON_ATTRIBUTE_PATTERN, attrName, escape(attrValue.toString(), format)));
+        // we could simply append strings here instead of formatting
+        append(' ');
+        append(attrName.toString());
+        append("='");
+        append(escape(attrValue.toString(), format));
+        append('\'');
       } else {
         // Standard attribute, wrapped by a double quote
-        print(String.format(STANDARD_ATTRIBUTE_PATTERN, attrName, escape(attrValue.toString(), format)));
+        append(' ');
+        append(attrName.toString());
+        append("=\"");
+        append(escape(attrValue.toString(), format));
+        append('"');
       }
     }
   }
