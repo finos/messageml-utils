@@ -109,13 +109,28 @@ import javax.xml.xpath.XPathFactory;
 
 /**
  * Converts a string representation of the message and optional entity data into a MessageMLV2 document tree.
- *
- * @author lukasz
- * @since 4/20/17
  */
 public class MessageMLParser {
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final Configuration FREEMARKER = new Configuration(Configuration.VERSION_2_3_30);
+
+  // Store XML factories as thread locals as they are costly to create.
+  private static final ThreadLocal<XPathFactory> X_PATH_FACTORY = ThreadLocal.withInitial(XPathFactory::newInstance);
+  private static final ThreadLocal<DocumentBuilderFactory> DB_FACTORY = ThreadLocal.withInitial(() -> {
+    try {
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      // XXE prevention as per https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet
+      dbFactory.setXIncludeAware(false);
+      dbFactory.setExpandEntityReferences(false);
+      dbFactory.setIgnoringElementContentWhitespace(true);
+      dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      return dbFactory;
+    } catch (ParserConfigurationException e) {
+      throw new RuntimeException(e); //NOSONAR
+    }
+  });
+
   private final IDataProvider dataProvider;
 
   private BiContext biContext;
@@ -212,8 +227,7 @@ public class MessageMLParser {
    */
   private static void validateEntities(org.w3c.dom.Element document, JsonNode entityJson) throws InvalidInputException,
       ProcessingException {
-    XPathFactory xPathfactory = XPathFactory.newInstance();
-    XPath xpath = xPathfactory.newXPath();
+    XPath xpath = X_PATH_FACTORY.get().newXPath();
 
     NodeList nodes;
     try {
@@ -308,15 +322,7 @@ public class MessageMLParser {
    */
   org.w3c.dom.Element parseDocument(String messageML) throws InvalidInputException, ProcessingException {
     try {
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      //XXE prevention as per https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet
-      dbFactory.setXIncludeAware(false);
-      dbFactory.setExpandEntityReferences(false);
-      dbFactory.setIgnoringElementContentWhitespace(true);
-      dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-      dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      DocumentBuilder dBuilder = DB_FACTORY.get().newDocumentBuilder();
       dBuilder.setErrorHandler(new NullErrorHandler()); // default handler prints to stderr
       dBuilder.setEntityResolver(new NoOpEntityResolver());
 
