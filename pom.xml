@@ -121,6 +121,7 @@
         <junit.jupiter.params.version>5.7.1</junit.jupiter.params.version>
         <mockito.version>3.11.2</mockito.version>
         <slf4j.version>1.7.31</slf4j.version>
+        <jmh.version>1.32</jmh.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.jar.version>3.1.2</maven.jar.version>
@@ -297,6 +298,18 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
