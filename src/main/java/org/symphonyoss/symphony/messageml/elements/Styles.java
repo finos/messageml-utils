@@ -1,6 +1,5 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
@@ -135,7 +134,7 @@ public class Styles {
    */
   public static void validate(String styleAttribute) throws InvalidInputException {
     try {
-      /**
+      /*
        * The split of style properties does not use simply ';' as separator but a regular expression
        * to avoid splitting when there is a data URI scheme (data:[<media type>][;base64],<data>),
        * because it contains inside ';' and it must be not split
@@ -156,7 +155,7 @@ public class Styles {
           .collect(Collectors.toSet());
       inputStyleProperties.removeAll(ALLOWED_PROPERTIES);
       if (!inputStyleProperties.isEmpty()) {
-        throw new InvalidInputException("Invalid property(s): [" + Joiner.on(",").join(inputStyleProperties) + "] in the \"style\" attribute");
+        throw new InvalidInputException("Invalid property(s): [" + StringUtils.join(inputStyleProperties, ',') + "] in the \"style\" attribute");
       }
     } catch (IllegalArgumentException ex) {
       throw new InvalidInputException("Unparseable \"style\" attribute: " + styleAttribute, ex);
