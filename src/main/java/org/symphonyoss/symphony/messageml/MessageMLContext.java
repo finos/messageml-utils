@@ -54,6 +54,7 @@ public class MessageMLContext {
   private MessageML messageML;
   private ObjectNode entityJson;
   private BiContext biContext;
+  private String presentationML;
 
   public MessageMLContext(IDataProvider dataProvider) {
     this.markdownParser = new MarkdownParser(dataProvider);
@@ -75,7 +76,7 @@ public class MessageMLContext {
    */
   public void parseMessageML(String message, String entityJson, String version) throws InvalidInputException, IOException,
       ProcessingException {
-
+    this.presentationML = null;
     this.messageML = messageMLParser.parse(message, entityJson, version);
     this.entityJson = messageMLParser.getEntityJson();
     this.biContext = messageMLParser.getBiContext();
@@ -89,6 +90,7 @@ public class MessageMLContext {
    * @param entities additional entity data in JSON
    */
   public void parseMarkdown(String message, JsonNode entities, JsonNode media) throws InvalidInputException {
+    this.presentationML = null;
     this.messageML = markdownParser.parse(message, entities, media);
     this.entityJson = messageML.asEntityJson(this.entityJson);
     this.biContext = new BiContext();
@@ -101,8 +103,7 @@ public class MessageMLContext {
    */
   public MessageML getMessageML() throws IllegalStateException {
     if (messageML == null) {
-      throw new IllegalStateException("The message hasn't been parsed yet. "
-          + "Please call MessageMLContext.parse() first.");
+      return throwCallParseFirstException();
     }
 
     return messageML;
@@ -113,9 +114,11 @@ public class MessageMLContext {
    * @throws IllegalStateException thrown if the message hasn't been parsed yet
    */
   public String getPresentationML() throws IllegalStateException {
+    if (presentationML != null) {
+      return presentationML;
+    }
     if (messageML == null) {
-      throw new IllegalStateException("The message hasn't been parsed yet. "
-          + "Please call MessageMLContext.parse() first.");
+      throwCallParseFirstException();
     }
 
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -128,7 +131,8 @@ public class MessageMLContext {
 
     out.close();
 
-    return bout.toString();
+    presentationML = bout.toString();
+    return presentationML;
   }
 
   /**
@@ -136,8 +140,7 @@ public class MessageMLContext {
    */
   public ObjectNode getEntityJson() {
     if (messageML == null) {
-      throw new IllegalStateException("The message hasn't been parsed yet. "
-          + "Please call MessageMLContext.parse() first.");
+      throwCallParseFirstException();
     }
 
     return entityJson;
@@ -149,8 +152,7 @@ public class MessageMLContext {
    */
   public String getMarkdown() throws IllegalStateException {
     if (messageML == null) {
-      throw new IllegalStateException("The message hasn't been parsed yet. "
-          + "Please call MessageMLContext.parse() first.");
+      throwCallParseFirstException();
     }
 
     return markdownRenderer.getText();
@@ -162,8 +164,7 @@ public class MessageMLContext {
    */
   public JsonNode getEntities() throws IllegalStateException {
     if (messageML == null) {
-      throw new IllegalStateException("The message hasn't been parsed yet. "
-          + "Please call MessageMLContext.parse() first.");
+      throwCallParseFirstException();
     }
 
     return markdownRenderer.getJson();
@@ -177,12 +178,10 @@ public class MessageMLContext {
    */
   public String getText() throws InvalidInputException, ProcessingException, IllegalStateException {
     if (messageML == null) {
-      throw new IllegalStateException("The message hasn't been parsed yet. "
-          + "Please call MessageMLContext.parse() first.");
+      throwCallParseFirstException();
     }
 
-    String presentationML = getPresentationML();
-    Element doc = messageMLParser.parseDocument(presentationML);
+    Element doc = messageMLParser.parseDocument(getPresentationML());
     return doc.getTextContent();
   }
 
@@ -196,14 +195,12 @@ public class MessageMLContext {
    */
   public String getText(boolean preserveWhitespace) throws InvalidInputException, ProcessingException, IllegalStateException {
     if (messageML == null) {
-      throw new IllegalStateException("The message hasn't been parsed yet. "
-          + "Please call MessageMLContext.parse() first.");
+      throwCallParseFirstException();
     }
 
     StringBuilder sb = new StringBuilder();
 
-    String presentationML = getPresentationML();
-    Element doc = messageMLParser.parseDocument(presentationML);
+    Element doc = messageMLParser.parseDocument(getPresentationML());
 
     NodeList nodes = doc.getChildNodes();
 
@@ -233,6 +230,11 @@ public class MessageMLContext {
    */
   public BiContext getBiContext() {
     return this.biContext;
+  }
+
+  private MessageML throwCallParseFirstException() {
+    throw new IllegalStateException("The message hasn't been parsed yet. "
+        + "Please call MessageMLContext.parse() first.");
   }
 
 }
