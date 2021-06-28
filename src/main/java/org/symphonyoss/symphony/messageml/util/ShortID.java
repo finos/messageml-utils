@@ -18,6 +18,7 @@ public class ShortID {
   private static final long DEFAULT_REDUCE_TIME = 1403265799803L;
 
   private static final int DEFAULT_VERSION = 6;
+  private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
   private final Random random;
 
@@ -36,16 +37,15 @@ public class ShortID {
   // Note: I don't know if this is automatically set when using third
   // party cluster solutions such as pm2.
   private final int clusterWorkerId;
-  private final char[] shuffled;
+  private char[] shuffled;
   // Counter is used when shortid is called multiple times in one second.
   private final AtomicInteger counter;
   // Remember the last time shortid was called in case counter is needed.
   private volatile long previousSeconds;
 
-  public ShortID(Random random, String alphabet, long reduceTime, int version,
+  private ShortID(Random random, long reduceTime, int version,
       int clusterWorkerId) {
     this.random = random;
-    this.shuffled = shuffle(alphabet);
     this.counter = new AtomicInteger();
     this.reduceTime = reduceTime;
     this.version = version;
@@ -53,13 +53,19 @@ public class ShortID {
   }
 
   public ShortID() {
-    this(new SecureRandom(), DEFAULT_ALPHABET, DEFAULT_REDUCE_TIME, DEFAULT_VERSION, 0);
+    this(SECURE_RANDOM, DEFAULT_REDUCE_TIME, DEFAULT_VERSION, 0);
   }
 
   /**
    * Generate unique id and returns it.
    */
   public String generate() {
+    // this is costly to initialize so we do it only on first call
+    // this is not thread safe but it should not have any impact, we just want random letters
+    if (shuffled == null) {
+      shuffled = shuffle(DEFAULT_ALPHABET);
+    }
+
     String str = "";
 
     long seconds = (long) Math.floor((System.currentTimeMillis() - reduceTime) * 0.001);
@@ -89,16 +95,16 @@ public class ShortID {
     int loopCounter = 0;
     boolean done = false;
 
-    String str = "";
+    StringBuilder str = new StringBuilder();
 
     int index;
     while (!done) {
       index = ((number >> (4 * loopCounter)) & 0x0f) | randomByte();
-      str = str + shuffled[index];
+      str.append(shuffled[index]);
       done = number < (Math.pow(16, loopCounter + 1.0));
       loopCounter++;
     }
-    return str;
+    return str.toString();
   }
 
   private int randomByte() {
