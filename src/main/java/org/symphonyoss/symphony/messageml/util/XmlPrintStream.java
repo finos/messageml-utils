@@ -108,6 +108,15 @@ public class XmlPrintStream extends IndentedPrintStream {
   }
 
   /**
+   * Output a complete element with the given content.
+   * @param elementName Name of element.
+   * @param value Content of element.
+   */
+  public void printElement(String elementName, Object value) {
+    println("<" + elementName + ">" + (value == null ? "" : escape(value.toString())) + "</" + elementName + ">");
+  }
+
+  /**
    * Output an element with the given content (value). The opening and closing tags are
    * output in a single operation.
    * @param name Name of the element.
@@ -156,6 +165,22 @@ public class XmlPrintStream extends IndentedPrintStream {
     } else {
       println("/>");
     }
+  }
+
+  /**
+   * Output a complete empty element.
+   * @param name Name of element.
+   */
+  public void printElement(String name) {
+    println("<" + name + "/>");
+  }
+
+  /**
+   * Output a comment.
+   * @param comment Comment text.
+   */
+  public void printComment(String comment) {
+    println("<!-- " + comment + " -->");
   }
 
   /**
