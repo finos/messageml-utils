@@ -118,6 +118,7 @@ public class MessageMLParser {
   // Sonar warnings are ignored, we favor speed over memory usage, factories will stay in active threads
   @SuppressWarnings("java:S5164")
   private static final ThreadLocal<XPathFactory> X_PATH_FACTORY = ThreadLocal.withInitial(XPathFactory::newInstance);
+
   @SuppressWarnings("java:S5164")
   private static final ThreadLocal<DocumentBuilderFactory> DB_FACTORY = ThreadLocal.withInitial(() -> {
     try {
