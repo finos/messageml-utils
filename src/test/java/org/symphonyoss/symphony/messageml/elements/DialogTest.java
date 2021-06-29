@@ -299,7 +299,7 @@ public class DialogTest {
     context.parseMessageML(messageMlInput, null, MessageML.MESSAGEML_VERSION);
 
     final String expectedPattern = "^<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-dialog-id\" open>"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-dialog-id\" open=\"\">"
         + "<div class=\"dialog-title\">title</div>"
         + "<div class=\"dialog-body\">body</div>"
         + "<div class=\"dialog-footer\">footer</div>"
