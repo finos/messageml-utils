@@ -141,7 +141,7 @@ public class Dialog extends Element {
   private Map<String, String> getPresentationMLAttributes() {
     Map<String, String> pmlAttributes = new HashMap<>();
 
-    pmlAttributes.put(OPEN_ATTRIBUTE, null);
+    pmlAttributes.put(OPEN_ATTRIBUTE, "");
     for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
       if (mmlAttribute.getKey().equals(ID_ATTR)) {
         pmlAttributes.put(mmlAttribute.getKey(), SHORT_ID.generate() + "-" + mmlAttribute.getValue());
