@@ -110,22 +110,21 @@
     </contributors>
 
     <properties>
-        <json.schema.validator.version>2.2.10</json.schema.validator.version>
-        <guava.version>28.0-jre</guava.version>
+        <json.schema.validator.version>2.2.14</json.schema.validator.version>
         <jackson.version>2.10.1</jackson.version>
         <jackson.databind.version>2.10.5.1</jackson.databind.version>
-        <commons.io.version>2.7</commons.io.version>
-        <commons.lang3.version>3.4</commons.lang3.version>
-        <freemarker.version>2.3.30</freemarker.version>
+        <commons.io.version>2.10.0</commons.io.version>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
+        <freemarker.version>2.3.31</freemarker.version>
         <commonmark.version>0.15.1</commonmark.version>
-        <junit.version>4.13.1</junit.version>
+        <junit.version>4.13.2</junit.version>
         <junit.jupiter.params.version>5.7.1</junit.jupiter.params.version>
-        <mockito.version>1.9.5</mockito.version>
+        <mockito.version>3.11.2</mockito.version>
+        <slf4j.version>1.7.31</slf4j.version>
+        <jmh.version>1.32</jmh.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.jar.version>3.1.2</maven.jar.version>
-        <jsonassert.version>1.5.0</jsonassert.version>
-        <slf4j.version>1.7.30</slf4j.version>
     </properties>
 
     <profiles>
@@ -244,20 +243,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.java-json-tools</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>${json.schema.validator.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -308,14 +296,20 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <version>${jsonassert.version}</version>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

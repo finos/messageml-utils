@@ -772,7 +772,7 @@ public class MessageMLContextTest {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
       assertEquals("Exception message",
           "Error parsing EntityJSON: Syntax error in template \"messageML\" in line 1, column 14:\n"
-              + "Encountered \"}\", but was expecting one of:\n"
+              + "Encountered \"}\", but was expecting one of these patterns:\n"
               + "    <STRING_LITERAL>\n"
               + "    <RAW_STRING>\n"
               + "    \"false\"\n"

@@ -88,4 +88,4 @@ _NOTE:_ Commits and pull requests to FINOS repositories will only be accepted fr
 
 The code in this repository is distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
-Copyright 2016-2019 Symphony LLC
+Copyright 2016-2021 Symphony LLC

@@ -9,11 +9,11 @@ Apache License, Version 2.0
 
 The following components are provided under the Apache License 2.0. See project link for details.
 
-     Jackson Core (com.fasterxml.jackson.core.jackson-core:2.7.3) - https://github.com/FasterXML/jackson-core
-     Jackson Databind (com.fasterxml.jackson.core<.jackson-databind:2.7.3) - https://github.com/FasterXML/jackson-databind
-     Commons IO (org.apache.commons.commons-io:3.4) - https://commons.apache.org/proper/commons-io/
-     Commons Lang (org.apache.commons.commons-lang3:2.4) - https://commons.apache.org/proper/commons-lang/
-     FreeMarker (org.freemarker.freemarker:2.3.28) - http://freemarker.org/
+     Jackson Core - https://github.com/FasterXML/jackson-core
+     Jackson Databind - https://github.com/FasterXML/jackson-databind
+     Commons IO - https://commons.apache.org/proper/commons-io/
+     Commons Lang - https://commons.apache.org/proper/commons-lang/
+     FreeMarker - http://freemarker.org/
 
 ========================================================================
 The MIT License
@@ -21,7 +21,7 @@ The MIT License
 
 The following components are provided under the MIT license. See project link for details.
 
-    Mockito (org.mockito.mockito-all:1.9.5)
+    Mockito - https://site.mockito.org/
 
 ========================================================================
 BSD 2-clause "Simplified" License
@@ -29,7 +29,7 @@ BSD 2-clause "Simplified" License
 
 The following components are provided under the Apache License 2.0. See project link for details.
 
-    CommonMark (com.atlassian.commonmark.commonmark:0.9.0) - https://github.com/atlassian/commonmark-java
+    CommonMark - https://github.com/commonmark/commonmark-java
 
 ========================================================================
 Eclipse Public License 1.0
@@ -37,4 +37,4 @@ Eclipse Public License 1.0
 
 The following components are provided under the Eclipse Public License 1.0. See project link for details.
 
-     Junit (junit.junit:4.12) - http://junit.org/junit4
+     Junit - https://junit.org

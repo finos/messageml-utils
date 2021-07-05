@@ -109,18 +109,36 @@ import javax.xml.xpath.XPathFactory;
 
 /**
  * Converts a string representation of the message and optional entity data into a MessageMLV2 document tree.
- *
- * @author lukasz
- * @since 4/20/17
  */
 public class MessageMLParser {
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final Configuration FREEMARKER = new Configuration(Configuration.VERSION_2_3_30);
+
+  // Store XML factories as thread locals as they are costly to create.
+  // Sonar warnings are ignored, we favor speed over memory usage, factories will stay in active threads
+  @SuppressWarnings("java:S5164")
+  private static final ThreadLocal<XPathFactory> X_PATH_FACTORY = ThreadLocal.withInitial(XPathFactory::newInstance);
+
+  @SuppressWarnings("java:S5164")
+  private static final ThreadLocal<DocumentBuilderFactory> DB_FACTORY = ThreadLocal.withInitial(() -> {
+    try {
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      // XXE prevention as per https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet
+      dbFactory.setXIncludeAware(false);
+      dbFactory.setExpandEntityReferences(false);
+      dbFactory.setIgnoringElementContentWhitespace(true);
+      dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      return dbFactory;
+    } catch (ParserConfigurationException e) {
+      throw new RuntimeException(e); //NOSONAR
+    }
+  });
+
   private final IDataProvider dataProvider;
 
   private BiContext biContext;
   private FormatEnum messageFormat;
-  private MessageML messageML;
   private ObjectNode entityJson;
 
   private int index;
@@ -181,10 +199,10 @@ public class MessageMLParser {
           + "column %s", e.getLineNumber(), e.getColumnNumber()));
     }
 
-    this.messageML = parseMessageML(expandedMessage, version);
-    this.entityJson = this.messageML.asEntityJson(this.entityJson);
+    MessageML messageML = parseMessageML(expandedMessage, version);
+    this.entityJson = messageML.asEntityJson(this.entityJson);
     this.biContext.addItemWithValue(BiFields.MESSAGE_LENGTH.getValue(), message.length());
-    return this.messageML;
+    return messageML;
   }
 
   /**
@@ -210,11 +228,14 @@ public class MessageMLParser {
   /**
    * Check whether <i>data-entity-id</i> attributes in the message match EntityJSON entities.
    */
-  private static void validateEntities(org.w3c.dom.Element document, JsonNode entityJson) throws InvalidInputException,
-      ProcessingException {
-    XPathFactory xPathfactory = XPathFactory.newInstance();
-    XPath xpath = xPathfactory.newXPath();
+  private static void validateEntities(String messageML, org.w3c.dom.Element document, JsonNode entityJson)
+      throws InvalidInputException, ProcessingException {
+    // quick bypass to avoid xpath evaluation if possible
+    if (!messageML.contains("data-entity-id")) {
+      return;
+    }
 
+    XPath xpath = X_PATH_FACTORY.get().newXPath();
     NodeList nodes;
     try {
       XPathExpression expr = xpath.compile("//@data-entity-id");
@@ -251,6 +272,11 @@ public class MessageMLParser {
    * Expand Freemarker templates.
    */
   private String expandTemplates(String message, JsonNode entityJson) throws IOException, TemplateException {
+    // quick bypass to avoid creating the templating engine if possible
+    if (!containsFreemarkerTags(message)) {
+      return message;
+    }
+
     // Read entityJSON data
     Map<String, Object> data = new HashMap<>();
     data.put("data", MAPPER.convertValue(entityJson, Map.class));
@@ -269,6 +295,12 @@ public class MessageMLParser {
     return sw.toString();
   }
 
+  private boolean containsFreemarkerTags(String message) {
+    // Based https://freemarker.apache.org/docs/dgui_template_directives.html
+    // We consider that directives cannot be customized (to use [ or without #)
+    return message.contains("<#") || message.contains("<@") || message.contains("${") || message.contains("#{");
+  }
+
   /**
    * Parse the message string into its MessageML representation.
    */
@@ -277,7 +309,7 @@ public class MessageMLParser {
 
     org.w3c.dom.Element docElement = parseDocument(messageML);
 
-    validateEntities(docElement, entityJson);
+    validateEntities(messageML, docElement, entityJson);
 
     switch (docElement.getTagName()) {
       case MessageML.MESSAGEML_TAG:
@@ -308,15 +340,7 @@ public class MessageMLParser {
    */
   org.w3c.dom.Element parseDocument(String messageML) throws InvalidInputException, ProcessingException {
     try {
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      //XXE prevention as per https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet
-      dbFactory.setXIncludeAware(false);
-      dbFactory.setExpandEntityReferences(false);
-      dbFactory.setIgnoringElementContentWhitespace(true);
-      dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-      dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      DocumentBuilder dBuilder = DB_FACTORY.get().newDocumentBuilder();
       dBuilder.setErrorHandler(new NullErrorHandler()); // default handler prints to stderr
       dBuilder.setEntityResolver(new NoOpEntityResolver());
 
