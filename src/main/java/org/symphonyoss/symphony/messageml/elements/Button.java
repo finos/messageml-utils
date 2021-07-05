@@ -31,7 +31,7 @@ import static org.symphonyoss.symphony.messageml.elements.FormElement.TYPE_ATTR;
  * following attributes:
  * <ul>
  *    <li>name (required) -> used to identify the button</li>
- *    <li>type -> default "action", specify the type of the button. Allowed values are "action" and "reset"</li>
+ *    <li>type -> default "action", specify the type of the button. Allowed values are "action", "reset" and "cancel"</li>
  *    <li>class -> can be "primary", "secondary", "tertiary" (deprecated: "primary-destructive","secondary-destructive")</li>
  *    <li>title -> description displayed as a hint<l/i>
  * <ul/>
@@ -43,11 +43,12 @@ public class Button extends Element {
 
   public static final String MESSAGEML_TAG = "button";
   public static final String ACTION_TYPE = "action";
+  public static final String CANCEL_TYPE = "cancel";
   public static final String RESET_TYPE = "reset";
 
   private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary", "tertiary", "destructive",
       "primary-destructive", "secondary-destructive")); // primary-destructive, secondary-destructive are deprecated
-  private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList(ACTION_TYPE, RESET_TYPE));
+  private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList(ACTION_TYPE, RESET_TYPE, CANCEL_TYPE));
 
   public Button(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -142,11 +143,17 @@ public class Button extends Element {
     String name = getAttribute(NAME_ATTR);
 
     if (!VALID_TYPES.contains(type)) {
-      throw new InvalidInputException("Attribute \"type\" must be \"action\" or \"reset\"");
+      throw new InvalidInputException("Attribute \"type\" must be \"action\", \"reset\" or \"cancel\"");
     }
+
     if (type.equals(ACTION_TYPE) && StringUtils.isBlank(name)) {
       throw new InvalidInputException("Attribute \"name\" is required for action buttons");
     }
+
+    if (type.equals(CANCEL_TYPE) && StringUtils.isBlank(name)) {
+      throw new InvalidInputException("Attribute \"name\" is required for cancel buttons");
+    }
+
     if (type.equals(RESET_TYPE) && getAttributes().containsKey(NAME_ATTR)) {
       throw new InvalidInputException("Attribute \"name\" is allowed for action buttons only");
     }

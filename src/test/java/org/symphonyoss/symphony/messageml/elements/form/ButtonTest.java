@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.symphonyoss.symphony.messageml.elements.Button.ACTION_TYPE;
+import static org.symphonyoss.symphony.messageml.elements.Button.CANCEL_TYPE;
 import static org.symphonyoss.symphony.messageml.elements.Button.RESET_TYPE;
 
 import org.junit.Test;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 public class ButtonTest extends ElementTest {
 
   private static final String NAME_ATTR = "name";
+  private static final String NO_NAME_EXCEPTION = "Attribute \"name\" is required for %s buttons";
   private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary",
       "primary-destructive", "secondary-destructive", "tertiary", "destructive")); // primary-destructive, secondary-destructive are deprecated
   private static final String TYPE_ATTR = "type";
@@ -72,6 +74,42 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
+  public void testCancelButtonWithName() throws Exception {
+    String type = CANCEL_TYPE;
+    String name = "btnName";
+    String innerText = "Cancel Button With Name";
+    String input =
+        "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\">" + innerText
+            + "</button>" + ACTION_BTN_ELEMENT + "</form></messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element button = form.getChildren().get(0);
+
+    assertEquals("Button class", Button.class, button.getClass());
+    verifyButtonPresentation((Button) button, name, type, null, innerText);
+  }
+
+  @Test
+  public void testCancelButtonWithoutName() throws Exception {
+    String type = CANCEL_TYPE;
+    String innerText = "Cancel Button With Name";
+    String input =
+        "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\">" + innerText
+            + "</button>" + ACTION_BTN_ELEMENT + "</form></messageML>";
+
+    try {
+      context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+      fail("Should have thrown an exception on cancel button without name");
+    } catch (Exception e) {
+      assertEquals("Exception class", InvalidInputException.class, e.getClass());
+      assertEquals("Exception message", String.format(NO_NAME_EXCEPTION, type), e.getMessage());
+    }
+  }
+
+  @Test
   public void testSendingResetButtonWithoutActionButton() {
     String innerText = "Reset";
     String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + RESET_TYPE + "\">" + innerText +
@@ -106,7 +144,8 @@ public class ButtonTest extends ElementTest {
     String type = ACTION_TYPE;
     String name = "btnName";
     String innerText = "Action Button With Name";
-    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\">" + innerText
+    String input =
+        "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\">" + innerText
             + "</button></form></messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -167,7 +206,7 @@ public class ButtonTest extends ElementTest {
       fail("Should have thrown an exception on typeless button without name");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"name\" is required for action buttons", e.getMessage());
+      assertEquals("Exception message", String.format(NO_NAME_EXCEPTION, "action"), e.getMessage());
     }
   }
 
@@ -181,7 +220,7 @@ public class ButtonTest extends ElementTest {
       fail("Should have thrown an exception on action button without name");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"name\" is required for action buttons", e.getMessage());
+      assertEquals("Exception message", String.format(NO_NAME_EXCEPTION, "action"), e.getMessage());
     }
   }
 
@@ -195,7 +234,7 @@ public class ButtonTest extends ElementTest {
       fail("Should have thrown an exception on action button without name");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"name\" is required for action buttons", e.getMessage());
+      assertEquals("Exception message", String.format(NO_NAME_EXCEPTION, "action"), e.getMessage());
     }
   }
 
@@ -249,7 +288,7 @@ public class ButtonTest extends ElementTest {
       fail("Should have thrown an exception on invalid type button");
     } catch (Exception e) {
       assertEquals("Exception class", InvalidInputException.class, e.getClass());
-      assertEquals("Exception message", "Attribute \"type\" must be \"action\" or \"reset\"", e.getMessage());
+      assertEquals("Exception message", "Attribute \"type\" must be \"action\", \"reset\" or \"cancel\"", e.getMessage());
     }
   }
 
@@ -397,19 +436,19 @@ public class ButtonTest extends ElementTest {
     if (shouldHaveAdditionalStandardActionBtn) {
       return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
           + "\"><button type=\"" + type + "\"" + getClassPresentationML(clazz) + getNamePresentationML(name) + ">"
-          + innerText + "</button>" + ACTION_BTN_ELEMENT + "</form></div>";
+          + innerText + "</button></form></div>";
     } else {
       return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
           + "\"><button type=\"" + type + "\"" + getClassPresentationML(clazz) + getNamePresentationML(name) + ">"
-          + innerText + "</button></form></div>";
+          + innerText + "</button>" + ACTION_BTN_ELEMENT + "</form></div>";
     }
   }
 
   private String getExpectedButtonMarkdown(String innerText, Boolean shouldHaveAdditionalStandardActionBtn) {
     if (shouldHaveAdditionalStandardActionBtn) {
-      return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")" + ACTION_BTN_MARKDOWN + "\n---\n";
-    } else {
       return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")\n---\n";
+    } else {
+      return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")" + ACTION_BTN_MARKDOWN + "\n---\n";
     }
   }
 
@@ -419,9 +458,9 @@ public class ButtonTest extends ElementTest {
     assertEquals("Button clazz attribute", clazz, button.getAttribute(CLASS_ATTR));
     assertEquals("Button inner text", innerText, button.getChild(0).asText());
 
-    Boolean isResetType = type.equals(RESET_TYPE);
-    assertEquals("Button markdown", getExpectedButtonMarkdown(innerText, isResetType), context.getMarkdown());
+    Boolean isActionType = type.equals(ACTION_TYPE);
+    assertEquals("Button markdown", getExpectedButtonMarkdown(innerText, isActionType), context.getMarkdown());
     assertEquals("Button presentationML",
-        getExpectedButtonPresentation(name, type, clazz, innerText, isResetType), context.getPresentationML());
+        getExpectedButtonPresentation(name, type, clazz, innerText, isActionType), context.getPresentationML());
   }
 }
