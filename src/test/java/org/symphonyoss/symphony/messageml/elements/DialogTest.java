@@ -23,6 +23,11 @@ public class DialogTest {
 
   private static final String TEXT_FIELD_FORM =
       "<form><text-field name=\"name1\" id=\"id1\" placeholder=\"placeholder1\" required=\"true\" /></form>";
+  private static final String BUTTON_CANCEL_FORM =
+      "<form id=\"form-id\">"
+          + "<button name=\"send-answers\" type=\"action\">Send Answers</button>"
+          + "<button type=\"cancel\" name=\"name\">Cancel</button>"
+          + "</form>";
   private static final String SIMPLE_DIALOG = "<dialog id=\"toto\"><title>e</title><body>f</body></dialog>";
 
   private final IDataProvider dataProvider = new TestDataProvider();
@@ -122,6 +127,14 @@ public class DialogTest {
     context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
 
     assertDialogBuilt(context.getMessageML(), dialogId, Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, title, body, footer);
+  }
+
+  @Test
+  public void testDialogWithCancelButton() throws Exception {
+    String messageML = buildDialogMML("dialog-id", "title", "body", BUTTON_CANCEL_FORM);
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+    assertDialogWithFormBuilt(context.getMessageML(), "dialog-id", Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, "title",
+        "body");
   }
 
   @Test(expected = InvalidInputException.class)
@@ -366,6 +379,21 @@ public class DialogTest {
 
     List<BiItem> biItems = context.getBiContext().getItems();
     assertIterableEquals(expectedBiItems, biItems);
+  }
+
+  private void assertDialogWithFormBuilt(MessageML messageML, String dialogId, String width, String state, String title,
+      String body) {
+    final Element dialog = messageML.getChild(0);
+    final Element dialogTitle = dialog.getChild(0);
+    final Element dialogBody = dialog.getChild(1);
+    final Element dialogFooter = dialog.getChild(2);
+
+    assertTrue(dialog instanceof Dialog);
+    assertTrue(dialogTitle instanceof DialogChild.Title);
+    assertTrue(dialogBody instanceof DialogChild.Body);
+    assertTrue(dialogFooter instanceof DialogChild.Footer);
+
+    assertDialogBuilt(messageML, dialogId, width, state, title, body, dialogFooter.asText());
   }
 
   private void assertDialogBuilt(MessageML messageML, String dialogId, String width, String state, String title,
