@@ -93,7 +93,7 @@ public class ButtonTest extends ElementTest {
   }
 
   @Test
-  public void testCancelButtonWithoutName() throws Exception {
+  public void testCancelButtonWithoutName() {
     String type = CANCEL_TYPE;
     String innerText = "Cancel Button With Name";
     String input =
