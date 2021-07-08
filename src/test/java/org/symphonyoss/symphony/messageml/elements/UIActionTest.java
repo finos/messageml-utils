@@ -1,6 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
@@ -8,6 +9,8 @@ import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UIActionTest extends ElementTest {
 
@@ -343,6 +346,7 @@ public class UIActionTest extends ElementTest {
 
     context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
 
+    // Check messageML parsing
     Element messageML = context.getMessageML();
     final List<Element> children = messageML.getChildren();
 
@@ -352,6 +356,23 @@ public class UIActionTest extends ElementTest {
     final Element uiAction = children.get(1);
     assertEquals(UIAction.class, uiAction.getClass());
     assertEquals(Button.class, uiAction.getChildren().get(0).getClass());
+
+    // Check conversion to presentationML
+    final String presentationML = context.getPresentationML();
+
+    final String expectedRegex =
+        "^<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<dialog data-width=\"medium\" data-state=\"close\" id=\"(\\S+)-dialog-id\" open=\"\">"
+            + "<div class=\"dialog-title\">title</div>"
+            + "<div class=\"dialog-body\">body</div></dialog>"
+            + "<div class=\"ui-action\" data-action=\"open-dialog\" data-trigger=\"click\" data-target-id=\"(\\S+)-dialog-id\">"
+            + "<button>Open the dialog</button></div>"
+            + "</div>$";
+    Pattern expectedPattern = Pattern.compile(expectedRegex);
+    Matcher m = expectedPattern.matcher(presentationML);
+
+    assertTrue(m.find()); // assert presentationML matches the expected pattern
+    assertEquals(m.group(1), m.group(2)); // assert the generated IDs are the same
   }
 
   private void validateMessageMLSimpleStructure() {

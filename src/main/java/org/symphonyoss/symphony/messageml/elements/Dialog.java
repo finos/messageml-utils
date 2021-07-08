@@ -48,6 +48,8 @@ public class Dialog extends Element {
 
   private static final ShortID SHORT_ID = new ShortID();
 
+  private String presentationMlIdAttribute = null;
+
   public Dialog(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
   }
@@ -98,6 +100,13 @@ public class Dialog extends Element {
     context.updateItemCount(BiFields.POPUPS.getValue());
   }
 
+  public String getPresentationMlIdAttribute() {
+    if (presentationMlIdAttribute == null) {
+      presentationMlIdAttribute = SHORT_ID.generate() + "-" + getAttribute(ID_ATTR);
+    }
+    return presentationMlIdAttribute;
+  }
+
   private void checkAttributes() throws InvalidInputException {
     validateIdAttribute(ID_ATTR);
     checkAttributeOrPutDefaultValue(WIDTH_ATTR, MEDIUM_WIDTH, ALLOWED_WIDTH_VALUES);
@@ -132,7 +141,7 @@ public class Dialog extends Element {
     pmlAttributes.put(OPEN_ATTRIBUTE, "");
     for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
       if (mmlAttribute.getKey().equals(ID_ATTR)) {
-        pmlAttributes.put(mmlAttribute.getKey(), SHORT_ID.generate() + "-" + mmlAttribute.getValue());
+        pmlAttributes.put(mmlAttribute.getKey(), getPresentationMlIdAttribute());
       } else {
         pmlAttributes.put(DATA_ATTRIBUTE_PREFIX + mmlAttribute.getKey(), mmlAttribute.getValue());
       }

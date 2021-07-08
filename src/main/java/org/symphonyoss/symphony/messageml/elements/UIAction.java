@@ -54,6 +54,7 @@ public class UIAction extends Element {
   private static final String PRESENTATIONML_STREAM_ID_ATTR = "data-stream-id";
   private static final String PRESENTATIONML_SIDE_BY_SIDE_ATTR = "data-side-by-side";
 
+  private Dialog matchingDialog;
 
   public UIAction(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -113,6 +114,7 @@ public class UIAction extends Element {
       throw new InvalidInputException(
           "ui-action with a target-id must have only one dialog sibling with a matching id");
     }
+    matchingDialog = (Dialog) matchingDialogs.get(0);
   }
 
   private void validateOpenChatActionAttributes() throws InvalidInputException {
@@ -184,9 +186,11 @@ public class UIAction extends Element {
     if (getAttribute(SIDE_BY_SIDE_ATTR) != null) {
       presentationAttrs.put(PRESENTATIONML_SIDE_BY_SIDE_ATTR, getAttribute(SIDE_BY_SIDE_ATTR));
     }
+    if (getAttribute(TARGET_ID) != null) {
+      presentationAttrs.put("data-target-id", matchingDialog.getPresentationMlIdAttribute());
+    }
 
     return presentationAttrs;
   }
-
 
 }
