@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class specify the Symphony Component UIAction which is represented by the tag name "ui-action".
@@ -38,9 +39,12 @@ public class UIAction extends Element {
   private static final String USER_IDS_ATTR = "user-ids";
   private static final String STREAM_ID_ATTR = "stream-id";
   private static final String SIDE_BY_SIDE_ATTR = "side-by-side";
+  private static final String TARGET_ID = "target-id";
 
   private static final String DEFAULT_TRIGGER = "click";
-  private static final String ALLOWED_ACTION = "open-im";
+  private static final String OPEN_IM = "open-im";
+  private static final String OPEN_DIALOG = "open-dialog";
+  private static final List<String> ALLOWED_ACTIONS = Arrays.asList(OPEN_IM, OPEN_DIALOG);
   private static final int MAX_USER_IDS = 15;
 
   private static final String PRESENTATIONML_TAG = "div";
@@ -50,6 +54,7 @@ public class UIAction extends Element {
   private static final String PRESENTATIONML_STREAM_ID_ATTR = "data-stream-id";
   private static final String PRESENTATIONML_SIDE_BY_SIDE_ATTR = "data-side-by-side";
 
+  private Dialog matchingDialog;
 
   public UIAction(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -64,6 +69,7 @@ public class UIAction extends Element {
       case USER_IDS_ATTR:
       case STREAM_ID_ATTR:
       case SIDE_BY_SIDE_ATTR:
+      case TARGET_ID:
         if (this.format != FormatEnum.MESSAGEML) {
           throwInvalidInputException(item);
         }
@@ -79,17 +85,40 @@ public class UIAction extends Element {
     assertUIActionAllowedChildren();
 
     assertAttributeNotBlank(ACTION_ATTR);
-    assertAttributeValue(ACTION_ATTR, Collections.singleton(ALLOWED_ACTION));
-    // validate attributes specific to the 'open-im' action
-    validateOpenChatActionAttributes();
+    assertAttributeValue(ACTION_ATTR, ALLOWED_ACTIONS);
 
-    if(getAttribute(TRIGGER_ATTR) != null) {
+    final String actionAttribute = getAttribute(ACTION_ATTR);
+    if (actionAttribute.equals(OPEN_IM)) {
+      validateOpenChatActionAttributes();
+    } else if (actionAttribute.equals(OPEN_DIALOG)) {
+      validateTargetId(getAttribute(TARGET_ID));
+    }
+
+    if (getAttribute(TRIGGER_ATTR) != null) {
       assertAttributeValue(TRIGGER_ATTR, Collections.singleton(DEFAULT_TRIGGER));
     }
   }
 
+  private void validateTargetId(String targetId) throws InvalidInputException {
+    validateIdAttribute(TARGET_ID);
+    checkMatchingDialog(targetId);
+  }
+
+  private void checkMatchingDialog(String targetId) throws InvalidInputException {
+    final List<Element> matchingDialogs = getParent().getChildren()
+        .stream()
+        .filter(e -> e instanceof Dialog && targetId.equals(e.getAttribute(ID_ATTR)))
+        .collect(Collectors.toList());
+
+    if (matchingDialogs.size() != 1) {
+      throw new InvalidInputException(
+          "ui-action with a target-id must have only one dialog sibling with a matching id");
+    }
+    matchingDialog = (Dialog) matchingDialogs.get(0);
+  }
+
   private void validateOpenChatActionAttributes() throws InvalidInputException {
-    if(getAttribute(SIDE_BY_SIDE_ATTR) != null) {
+    if (getAttribute(SIDE_BY_SIDE_ATTR) != null) {
       assertAttributeIsBoolean(SIDE_BY_SIDE_ATTR);
     }
     if (getAttribute(USER_IDS_ATTR) != null && getAttribute(STREAM_ID_ATTR) != null) {
@@ -127,12 +156,15 @@ public class UIAction extends Element {
   private void validateUserIdsAttribute() throws InvalidInputException {
     String userIds = getAttribute(USER_IDS_ATTR);
     try {
-      List<Long> userIdsList = MAPPER.readValue(userIds, MAPPER.getTypeFactory().constructCollectionType(List.class, Long.class));
-      if(userIdsList.size() > MAX_USER_IDS){
-        throw new InvalidInputException("Attribute \"user-ids\" contains more values than allowed. Max value is " + MAX_USER_IDS);
+      List<Long> userIdsList =
+          MAPPER.readValue(userIds, MAPPER.getTypeFactory().constructCollectionType(List.class, Long.class));
+      if (userIdsList.size() > MAX_USER_IDS) {
+        throw new InvalidInputException(
+            "Attribute \"user-ids\" contains more values than allowed. Max value is " + MAX_USER_IDS);
       }
     } catch (JsonProcessingException e) {
-      throw new InvalidInputException("Attribute \"user-ids\" contains an unsupported format, should be an array of user ids");
+      throw new InvalidInputException(
+          "Attribute \"user-ids\" contains an unsupported format, should be an array of user ids");
     }
   }
 
@@ -154,9 +186,11 @@ public class UIAction extends Element {
     if (getAttribute(SIDE_BY_SIDE_ATTR) != null) {
       presentationAttrs.put(PRESENTATIONML_SIDE_BY_SIDE_ATTR, getAttribute(SIDE_BY_SIDE_ATTR));
     }
+    if (getAttribute(TARGET_ID) != null) {
+      presentationAttrs.put("data-target-id", matchingDialog.getPresentationMlIdAttribute());
+    }
 
     return presentationAttrs;
   }
-
 
 }

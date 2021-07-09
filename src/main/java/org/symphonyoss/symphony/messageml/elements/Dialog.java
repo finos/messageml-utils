@@ -1,8 +1,5 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import static org.apache.commons.lang3.StringUtils.containsWhitespace;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
@@ -37,7 +34,6 @@ import java.util.Map;
 public class Dialog extends Element {
 
   public static final String MESSAGEML_TAG = "dialog";
-  public static final int ID_MAX_LENGTH = 64;
 
   public static final String STATE_ATTR = "state";
   public static final String CLOSE_STATE = "close";
@@ -51,6 +47,8 @@ public class Dialog extends Element {
   private static final String OPEN_ATTRIBUTE = "open";
 
   private static final ShortID SHORT_ID = new ShortID();
+
+  private String presentationMlIdAttribute = null;
 
   public Dialog(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -102,18 +100,17 @@ public class Dialog extends Element {
     context.updateItemCount(BiFields.POPUPS.getValue());
   }
 
-  private void checkAttributes() throws InvalidInputException {
-    validateIdAttribute();
-    checkAttributeOrPutDefaultValue(WIDTH_ATTR, MEDIUM_WIDTH, ALLOWED_WIDTH_VALUES);
-    checkAttributeOrPutDefaultValue(STATE_ATTR, CLOSE_STATE, ALLOWED_STATE_VALUES);
+  public String getPresentationMlIdAttribute() {
+    if (presentationMlIdAttribute == null) {
+      presentationMlIdAttribute = SHORT_ID.generate() + "-" + getAttribute(ID_ATTR);
+    }
+    return presentationMlIdAttribute;
   }
 
-  private void validateIdAttribute() throws InvalidInputException {
-    String id = getAttribute(ID_ATTR);
-    if (isEmpty(id) || containsWhitespace(id)) {
-      throw new InvalidInputException("The attribute \"id\" is required and must not contain any whitespace");
-    }
-    assertAttributeMaxLength(ID_ATTR, ID_MAX_LENGTH);
+  private void checkAttributes() throws InvalidInputException {
+    validateIdAttribute(ID_ATTR);
+    checkAttributeOrPutDefaultValue(WIDTH_ATTR, MEDIUM_WIDTH, ALLOWED_WIDTH_VALUES);
+    checkAttributeOrPutDefaultValue(STATE_ATTR, CLOSE_STATE, ALLOWED_STATE_VALUES);
   }
 
   private void checkAttributeOrPutDefaultValue(String attributeName, String defaultValue, List<String> allowedValues)
@@ -144,7 +141,7 @@ public class Dialog extends Element {
     pmlAttributes.put(OPEN_ATTRIBUTE, "");
     for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
       if (mmlAttribute.getKey().equals(ID_ATTR)) {
-        pmlAttributes.put(mmlAttribute.getKey(), SHORT_ID.generate() + "-" + mmlAttribute.getValue());
+        pmlAttributes.put(mmlAttribute.getKey(), getPresentationMlIdAttribute());
       } else {
         pmlAttributes.put(DATA_ATTRIBUTE_PREFIX + mmlAttribute.getKey(), mmlAttribute.getValue());
       }

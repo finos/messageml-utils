@@ -16,15 +16,18 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import static org.apache.commons.lang3.StringUtils.containsWhitespace;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
@@ -70,6 +73,8 @@ public abstract class Element {
   public static final String CLASS_ATTR = "class";
   public static final String STYLE_ATTR = "style";
   protected static final String ID_ATTR = "id";
+
+  public static final int ID_MAX_LENGTH = 64;
 
   protected FormatEnum format;
   private final Map<String, String> attributes = new LinkedHashMap<>();
@@ -162,7 +167,7 @@ public abstract class Element {
    *
    * @param attributesMap map of BI properties to update BI context
    * @param propertyKey   BI's property key to put in the given map
-   * {@link org.symphonyoss.symphony.messageml.bi.BiFields}
+   *                      {@link org.symphonyoss.symphony.messageml.bi.BiFields}
    * @param attributeKey  the attribute key of the element
    */
   protected void putOneIfPresent(Map<String, Object> attributesMap, String propertyKey,
@@ -177,7 +182,7 @@ public abstract class Element {
    *
    * @param attributesMap map of BI properties to update BI context
    * @param propertyKey   BI's property key to put in the given map
-   * {@link org.symphonyoss.symphony.messageml.bi.BiFields}
+   *                      {@link org.symphonyoss.symphony.messageml.bi.BiFields}
    * @param attributeKey  the attribute key of the element
    */
   protected void putStringIfPresent(Map<String, Object> attributesMap, String propertyKey,
@@ -193,7 +198,7 @@ public abstract class Element {
    *
    * @param attributesMap map of BI properties to update BI context
    * @param propertyKey   BI's property key to put in the given map
-   * {@link org.symphonyoss.symphony.messageml.bi.BiFields}
+   *                      {@link org.symphonyoss.symphony.messageml.bi.BiFields}
    * @param attributeKey  the attribute key of the element
    */
   protected void putIntegerIfPresent(Map<String, Object> attributesMap, String propertyKey,
@@ -203,7 +208,8 @@ public abstract class Element {
       try {
         attributesMap.put(propertyKey, Integer.parseInt(value));
       } catch (NumberFormatException e) {
-        logger.warn("Attribute {} for element {} should be an integer value. The property will not be put in BI context.",
+        logger.warn(
+            "Attribute {} for element {} should be an integer value. The property will not be put in BI context.",
             attributeKey, this.getClass().getSimpleName());
       }
     }
@@ -727,6 +733,23 @@ public abstract class Element {
           String.format("The \"%s\" element must have at least one child that is any of the following elements: [%s].",
               getMessageMLTag(), getElementsNameByClassName(elementTypes)));
     }
+  }
+
+  /**
+   * Check the format of an ID attribute following the specs:
+   * https://www.w3.org/TR/2011/WD-html5-20110525/elements.html#the-id-attribute
+   * More precisely: attribute is not empty, does not contain any whitespace, maximum 64 characters
+   *
+   * @param attributeName the attribute name
+   * @throws InvalidInputException when attribute has not a valid format
+   */
+  void validateIdAttribute(String attributeName) throws InvalidInputException {
+    String attributeId = getAttribute(attributeName);
+    if (isEmpty(attributeId) || containsWhitespace(attributeId)) {
+      throw new InvalidInputException(
+          "The attribute \"" + attributeName + "\" is required and must not contain any whitespace");
+    }
+    assertAttributeMaxLength(attributeName, ID_MAX_LENGTH);
   }
 
   /**
