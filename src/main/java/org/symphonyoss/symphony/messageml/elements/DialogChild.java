@@ -4,6 +4,9 @@ import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -56,13 +59,26 @@ public abstract class DialogChild extends Element {
 
   @Override
   public void validate() throws InvalidInputException {
+    Collection<Class<? extends Element>> list = getValidParentClasses();
     assertNoAttributes();
-    assertParent(Collections.singleton(Dialog.class));
+    assertParent(list);
+
+
 
     boolean containsDialog = getChildren().stream().anyMatch(e -> e instanceof Dialog);
     if (containsDialog) {
       throw new InvalidInputException(getMessageMLTag() + " should not contain a dialog");
     }
+  }
+
+  private Collection<Class<? extends Element>> getValidParentClasses() {
+    Collection<Class<? extends Element>> list;
+    if (getParent().getClass().equals(Form.class) && getParent().getParent().getClass().equals(Dialog.class)) {
+      list = new ArrayList<>(Arrays.asList(Form.class));
+    } else {
+      list = new ArrayList<>(Collections.singletonList(Dialog.class));
+    }
+    return list;
   }
 
   @Override

@@ -5,6 +5,7 @@ import org.symphonyoss.symphony.messageml.elements.*;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class FormTest extends ElementTest {
   private static final String ID_ATTR = "id";
@@ -109,4 +110,51 @@ public class FormTest extends ElementTest {
     String expectedMarkdown  = getExpectedFormMarkdown();
     assertEquals(expectedMarkdown, markdown);
   }
+
+  @Test
+  public void testWithMultipleDialogs() throws Exception {
+    String input = "<messageML>"
+        + "<form id=\"id-form\">"
+        + "<button name=\"submit\" type=\"action\">submit</button>"
+        + "<dialog id=\"id-dialog-one\">"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "<footer>footer</footer>"
+        + "</dialog>"
+        + "<dialog id=\"id-dialog-two\">"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "<footer>footer</footer>"
+        + "</dialog>"
+        + "</form>"
+        + "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    MessageML messageMlInput = context.getMessageML();
+    final Element form = messageMlInput.getChild(0);
+    assertTrue(form instanceof Form);
+    assertEquals(3, form.getChildren().size());
+    final Element dialog1 = form.getChild(1);
+    final Element dialog2 = form.getChild(2);
+    assertTrue(dialog1 instanceof Dialog);
+    assertTrue(dialog2 instanceof Dialog);
+
+    final String expectedPattern = "^<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"id-form\">"
+        + "<button type=\"action\" name=\"submit\">submit</button>"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-id-dialog-one\" open=\"\">"
+        + "<div class=\"dialog-title\">title</div>"
+        + "<div class=\"dialog-body\">body</div>"
+        + "<div class=\"dialog-footer\">footer</div>"
+        + "</dialog>"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-id-dialog-two\" open=\"\">"
+        + "<div class=\"dialog-title\">title</div>"
+        + "<div class=\"dialog-body\">body</div>"
+        + "<div class=\"dialog-footer\">footer</div>"
+        + "</dialog>"
+        + "</form>"
+        + "</div>$";
+    final String presentationML = context.getPresentationML();
+    assertTrue(presentationML.matches(expectedPattern));
+  }
+
+
 }

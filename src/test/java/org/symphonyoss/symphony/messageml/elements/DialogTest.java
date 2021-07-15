@@ -1,7 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,9 +10,11 @@ import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -317,7 +318,6 @@ public class DialogTest {
         + "<div class=\"dialog-body\">body</div>"
         + "<div class=\"dialog-footer\">footer</div>"
         + "</dialog></div>$";
-
     final String presentationML = context.getPresentationML();
     assertTrue(presentationML.matches(expectedPattern));
   }
@@ -354,6 +354,151 @@ public class DialogTest {
             + "---\n",
         context.getMarkdown());
   }
+
+  @Test
+  public void testWithForm() throws Exception {
+    String dialogId = "id-dialog";
+    String formId = "id-form";
+    String title = "title";
+    String body = "body";
+    String footer = "footer";
+    String input = "<messageML>"
+        + "<dialog id=\"" + dialogId + "\">"
+        + "<form id=\"" + formId + "\">"
+        + "<title>" + title + "</title>"
+        + "<body>" + body + "</body>"
+        + "<footer>" + footer + "</footer>"
+        + "</form>"
+        + "</dialog>"
+        + "</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    assertFormInDialogBuilt(context.getMessageML(), dialogId, Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, title, body, footer);
+  }
+
+  @Test
+  public void testWithValidElementInForm() throws InvalidInputException, IOException, ProcessingException {
+    String dialogId = "id-dialog";
+    String formId = "id-form";
+    String title = "title";
+    String body = "body";
+    String footer = "footer";
+    String input = "<messageML>"
+        + "<dialog id=\"" + dialogId + "\">"
+        + "<form id=\"" + formId + "\">"
+        + "<title>" + title + "</title>"
+        + "<body>"
+        + "<checkbox name=\"fruits\" value=\"body\">" + body + "</checkbox>"
+        + "</body>"
+        + "<footer>" + footer + "</footer>"
+        + "</form>"
+        + "</dialog>"
+        + "</messageML>";
+    final String expectedPattern = "^<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-id-dialog\" open=\"\">"
+        + "<form id=\"id-form\"><div class=\"dialog-title\">title</div>"
+        + "<div class=\"dialog-body\">"
+        + "<div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"body\" id=\"checkbox-group-+\\S\"/>"
+        + "<label for=\"checkbox-group-+\\S\">body</label></div></div>"
+        + "<div class=\"dialog-footer\">footer</div>"
+        + "</form>"
+        + "</dialog>"
+        + "</div>$";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    assertFormInDialogBuilt(context.getMessageML(), dialogId, Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, title, body, footer);
+
+    final String presentationML = context.getPresentationML();
+    assertTrue(presentationML.matches(expectedPattern)); //TODO: Fix regex not working
+  }
+
+  @Test
+  public void testWithInvalidElementInForm() {
+    String dialogId = "id-dialog";
+    String formId = "id-form";
+    String title = "title";
+    String body = "body";
+    String footer = "footer";
+    String input = "<messageML>"
+        + "<dialog id=\"" + dialogId + "\">"
+        + "<form id=\"" + formId + "\">"
+        + "<button name=\"submit\" type=\"action\">submit</button>"
+        + "<title>" + title + "</title>"
+        + "<body>" + body + "</body>"
+        + "<footer>" + footer + "</footer>"
+        + "</form>"
+        + "</dialog>"
+        + "</messageML>";
+    Throwable exception = assertThrows(
+        InvalidInputException.class,
+        () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
+    assertEquals("A form element in a dialog element can only contain tags \"title\", \"body\", \"footer\"", exception.getMessage());
+  }
+
+  @Test
+  public void testWithInvalidElementInDialog() {
+    String input = "<messageML>"
+        + "<dialog id=\"id-dialog\">"
+        + "<title>title</title>"
+        + "<form id=\"id-form\">"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "<footer>footer</footer>"
+        + "</form>"
+        + "</dialog>"
+        + "</messageML>";
+    Throwable exception = assertThrows(
+        InvalidInputException.class,
+        () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
+    assertEquals("A [dialog] element can't contain a [form] element and any other element.", exception.getMessage());
+  }
+
+  @Test
+  public void testWithTwoForms() {
+    String input = "<messageML>"
+        + "<dialog id=\"id-dialog\">"
+        + "<form id=\"id-form\">"
+        + "<button name=\"submit\" type=\"action\">submit</button>"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "</form>"
+        + "<form id=\"empty-form\">"
+        + "<button name=\"submit\" type=\"action\">submit</button>"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "</form>"
+        + "</dialog>"
+        + "</messageML>";
+
+    Throwable exception = assertThrows(
+        InvalidInputException.class,
+        () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
+    assertEquals("A [dialog] element can't contain a [form] element and any other element.", exception.getMessage());
+  }
+
+  @Test
+  public void testWithWrappingAndInnerForm() {
+    String input = "<messageML>"
+        + "<form id=\"dummy-form\">"
+        + "<dialog id=\"id-dialog\">"
+        + "<form id=\"id-form\">"
+        + "<button name=\"submit\" type=\"action\">submit</button>"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "</form>"
+        + "<form id=\"id-form-two\">"
+        + "<button name=\"submit\" type=\"action\">submit</button>"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "</form>"
+        + "</dialog>"
+        + "</form>"
+        + "</messageML>";
+    Throwable exception = assertThrows(
+        InvalidInputException.class,
+        () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
+    assertEquals("Element \"form\" cannot be an inner child of the following elements: [form]", exception.getMessage());
+  }
+
 
   @Test
   public void testBiContext() throws Exception {
@@ -411,6 +556,23 @@ public class DialogTest {
     assertTextNodeChild(dialog.getChild(2), DialogChild.Footer.class, footer);
   }
 
+  private void assertFormInDialogBuilt(MessageML messageML, String dialogId, String width, String state, String title,
+      String body, String footer) {
+    assertEquals(1, messageML.getChildren().size());
+    final Element dialog = messageML.getChild(0);
+    assertTrue(dialog instanceof Dialog);
+    assertEquals(dialogId, dialog.getAttribute(Element.ID_ATTR));
+    assertEquals(width, dialog.getAttribute(Dialog.WIDTH_ATTR));
+    assertEquals(state, dialog.getAttribute(Dialog.STATE_ATTR));
+
+    final Element form = dialog.getChild(0);
+    assertTrue(form instanceof Form);
+    assertEquals(3, form.getChildren().size());
+    assertTextNodeChild(form.getChild(0), DialogChild.Title.class, title);
+    assertTextNodeChild(form.getChild(1), DialogChild.Body.class, body);
+    assertTextNodeChild(form.getChild(2), DialogChild.Footer.class, footer);
+  }
+
   private void assertTextNodeChild(Element actualChild, Class<? extends Element> expectedType, String expectedText) {
     assertEquals(expectedType, actualChild.getClass());
     assertEquals(1, actualChild.getChildren().size());
@@ -457,6 +619,18 @@ public class DialogTest {
         + "<title>" + title + "</title>"
         + "<body>" + body + "</body>"
         + "<footer>" + footer + "</footer>"
+        + "</dialog>"
+        + "</messageML>";
+  }
+
+  private String buildDialogFormMML() {
+    return "<messageML>"
+        + "<dialog id=\"dialog-id\">"
+        + "<form id=\"form-id\">"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "<footer>footer</footer>"
+        + "</form>"
         + "</dialog>"
         + "</messageML>";
   }

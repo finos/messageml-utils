@@ -510,7 +510,7 @@ public class MessageMLParser {
 
       case CardBody.MESSAGEML_TAG:
         validateFormat(tag);
-        if (parent instanceof Dialog) {
+        if (parent instanceof Dialog || parent.getParent() instanceof Dialog) {
           return new DialogChild.Body(parent, messageFormat);
         } else if (parent instanceof ExpandableCard) {
           return new ExpandableCardBody(parent, messageFormat);
