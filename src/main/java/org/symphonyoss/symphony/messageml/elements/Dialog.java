@@ -127,10 +127,10 @@ public class Dialog extends Element {
     } else if (getChildren().size() == 1 && getChild(0).getClass().equals(Form.class)) {
       Element formElement = getChild(0);
       validateChildren(formElement);
-      validateNoOtherChildrenTypes(formElement, "A [form] element in a [dialog] element can only contain tags \"title\", \"body\", \"footer\"");
+      validateNoOtherChildrenTypes(formElement, "A \"form\" element in a \"dialog\" element can only contain \"title\", \"body\", \"footer\" elements");
     } else{
       validateChildren(this);
-      validateNoOtherChildrenTypes(this, "A dialog can only contain tags \"title\", \"body\", \"footer\"");
+      validateNoOtherChildrenTypes(this, "A \"dialog\" can only contain tags \"title\", \"body\", \"footer\"");
     }
   }
 

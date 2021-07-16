@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class DialogTest {
@@ -413,18 +414,13 @@ public class DialogTest {
 
   @Test
   public void testWithInvalidElementInForm() {
-    String dialogId = "id-dialog";
-    String formId = "id-form";
-    String title = "title";
-    String body = "body";
-    String footer = "footer";
     String input = "<messageML>"
-        + "<dialog id=\"" + dialogId + "\">"
-        + "<form id=\"" + formId + "\">"
+        + "<dialog id=\"id-dialog\">"
+        + "<form id=\"id-form\">"
         + "<button name=\"submit\" type=\"action\">submit</button>"
-        + "<title>" + title + "</title>"
-        + "<body>" + body + "</body>"
-        + "<footer>" + footer + "</footer>"
+        + "<title>title</title>"
+        + "<body>body</body>"
+        + "<footer>footer</footer>"
         + "</form>"
         + "</dialog>"
         + "</messageML>";
@@ -526,6 +522,23 @@ public class DialogTest {
     assertIterableEquals(expectedBiItems, biItems);
   }
 
+  @Test
+  public void testBiContextDialogWithInnerForm() throws Exception {
+    String input = "<messageML><dialog id=\"dialog-id\">" + buildEnclosedDialogFormMML("form-id") + "</dialog></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+
+    List<BiItem> expectedBiItems =
+        Arrays.asList(new BiItem(BiFields.CHECKBOX.getValue(), Collections.singletonMap(BiFields.OPTIONS_COUNT.getValue(), 1)),
+            new BiItem(BiFields.FORM.getValue(), new HashMap<>()),
+            new BiItem(BiFields.POPUPS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)),
+            new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 189)));
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertIterableEquals(expectedBiItems, biItems);
+  }
+
+
   private void assertDialogWithFormBuilt(MessageML messageML, String dialogId, String width, String state, String title,
       String body) {
     final Element dialog = messageML.getChild(0);
@@ -623,15 +636,13 @@ public class DialogTest {
         + "</messageML>";
   }
 
-  private String buildDialogFormMML() {
-    return "<messageML>"
-        + "<dialog id=\"dialog-id\">"
-        + "<form id=\"form-id\">"
+  private String buildEnclosedDialogFormMML(String formId) {
+    return "<form id=\"" + formId+ "\">"
         + "<title>title</title>"
-        + "<body>body</body>"
+        + "<body>"
+        + "<checkbox name=\"fruits\" value=\"body\">body</checkbox>"
+        + "</body>"
         + "<footer>footer</footer>"
-        + "</form>"
-        + "</dialog>"
-        + "</messageML>";
+        + "</form>";
   }
 }
