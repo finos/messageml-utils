@@ -15,7 +15,6 @@ import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -427,7 +426,7 @@ public class DialogTest {
     Throwable exception = assertThrows(
         InvalidInputException.class,
         () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
-    assertEquals("A [form] element in a [dialog] element can only contain tags \"title\", \"body\", \"footer\"", exception.getMessage());
+    assertEquals("A \"form\" element in a \"dialog\" element can only contain \"title\", \"body\", \"footer\" elements", exception.getMessage());
   }
 
   @Test
@@ -445,7 +444,7 @@ public class DialogTest {
     Throwable exception = assertThrows(
         InvalidInputException.class,
         () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
-    assertEquals("A [dialog] element can't contain a [form] element and any other element.", exception.getMessage());
+    assertEquals("A \"dialog\" element can't contain a \"form\" element and any other element.", exception.getMessage());
   }
 
   @Test
@@ -468,7 +467,7 @@ public class DialogTest {
     Throwable exception = assertThrows(
         InvalidInputException.class,
         () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
-    assertEquals("A [dialog] element can't contain a [form] element and any other element.", exception.getMessage());
+    assertEquals("A \"dialog\" element can't contain a \"form\" element and any other element.", exception.getMessage());
   }
 
   @Test

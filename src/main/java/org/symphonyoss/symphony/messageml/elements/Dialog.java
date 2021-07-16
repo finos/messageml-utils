@@ -123,7 +123,7 @@ public class Dialog extends Element {
 
   private void validateChildrenTypes() throws InvalidInputException {
     if (getChildren().size() > 1 && getChildren().stream().anyMatch(element -> element instanceof Form)){
-      throw new InvalidInputException("A [dialog] element can't contain a [form] element and any other element.");
+      throw new InvalidInputException("A \"dialog\" element can't contain a \"form\" element and any other element.");
     } else if (getChildren().size() == 1 && getChild(0).getClass().equals(Form.class)) {
       Element formElement = getChild(0);
       validateChildren(formElement);
