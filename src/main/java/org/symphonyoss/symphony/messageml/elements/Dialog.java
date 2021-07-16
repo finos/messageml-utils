@@ -122,15 +122,12 @@ public class Dialog extends Element {
   }
 
   private void validateChildrenTypes() throws InvalidInputException {
-    if (getParent().getClass().equals(Form.class) && getChildren().stream().anyMatch(element -> element instanceof Form)) { // A dialog in a form can’t contain a form
-      throw new InvalidInputException("A [dialog] element in a [form] element can't contain a [form] element.");
-    }
     if (getChildren().size() > 1 && getChildren().stream().anyMatch(element -> element instanceof Form)){
       throw new InvalidInputException("A [dialog] element can't contain a [form] element and any other element.");
     } else if (getChildren().size() == 1 && getChild(0).getClass().equals(Form.class)) {
       Element formElement = getChild(0);
       validateChildren(formElement);
-      validateNoOtherChildrenTypes(formElement, "A form element in a dialog element can only contain tags \"title\", \"body\", \"footer\"");
+      validateNoOtherChildrenTypes(formElement, "A [form] element in a [dialog] element can only contain tags \"title\", \"body\", \"footer\"");
     } else{
       validateChildren(this);
       validateNoOtherChildrenTypes(this, "A dialog can only contain tags \"title\", \"body\", \"footer\"");

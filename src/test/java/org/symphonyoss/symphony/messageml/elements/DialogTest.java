@@ -397,8 +397,8 @@ public class DialogTest {
         + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-id-dialog\" open=\"\">"
         + "<form id=\"id-form\"><div class=\"dialog-title\">title</div>"
         + "<div class=\"dialog-body\">"
-        + "<div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"body\" id=\"checkbox-group-+\\S\"/>"
-        + "<label for=\"checkbox-group-+\\S\">body</label></div></div>"
+        + "<div class=\"checkbox-group\"><input type=\"checkbox\" name=\"fruits\" value=\"body\" id=\"checkbox-group-\\S+\"/>"
+        + "<label for=\"checkbox-group-\\S+\">body</label></div></div>"
         + "<div class=\"dialog-footer\">footer</div>"
         + "</form>"
         + "</dialog>"
@@ -408,7 +408,7 @@ public class DialogTest {
     assertFormInDialogBuilt(context.getMessageML(), dialogId, Dialog.MEDIUM_WIDTH, Dialog.CLOSE_STATE, title, body, footer);
 
     final String presentationML = context.getPresentationML();
-    assertTrue(presentationML.matches(expectedPattern)); //TODO: Fix regex not working
+    assertTrue(presentationML.matches(expectedPattern));
   }
 
   @Test
@@ -431,7 +431,7 @@ public class DialogTest {
     Throwable exception = assertThrows(
         InvalidInputException.class,
         () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
-    assertEquals("A form element in a dialog element can only contain tags \"title\", \"body\", \"footer\"", exception.getMessage());
+    assertEquals("A [form] element in a [dialog] element can only contain tags \"title\", \"body\", \"footer\"", exception.getMessage());
   }
 
   @Test
