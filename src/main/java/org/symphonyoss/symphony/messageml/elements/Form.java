@@ -45,11 +45,10 @@ public class Form extends Element {
     assertNotParentAtAnyLevel(Collections.singletonList(this.getClass()));
     assertChildrenNotExceedingMaxCount(Arrays.asList(Checkbox.class, Radio.class), MAX_COUNT_PER_CHILD_TYPE);
 
-    if (getAttribute(ID_ATTR) == null) {
-      throw new InvalidInputException("The attribute \"id\" is required");
-    }
     assertAttributeNotBlank(ID_ATTR);
-    assertAtLeastOneActionButton();
+    if (!getParent().getClass().equals(Dialog.class)) {
+      assertAtLeastOneActionButton();
+    }
   }
 
   @Override

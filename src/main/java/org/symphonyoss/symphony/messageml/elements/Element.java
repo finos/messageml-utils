@@ -72,7 +72,7 @@ public abstract class Element {
   private static final Logger logger = LoggerFactory.getLogger(Element.class);
   public static final String CLASS_ATTR = "class";
   public static final String STYLE_ATTR = "style";
-  protected static final String ID_ATTR = "id";
+  public static final String ID_ATTR = "id";
 
   public static final int ID_MAX_LENGTH = 64;
 

@@ -332,6 +332,73 @@ public class UIActionTest extends ElementTest {
   }
 
   @Test
+  public void testUIActionOpenDialogInDifferentScopeFromDialog() throws Exception {
+    String inputMessageML =
+        "<messageML>"
+            + "<dialog id=\"target-dialog-id\">"
+            + "<title>title</title>"
+            + "<body>body</body>"
+            + "</dialog>"
+            + "<form>"
+            + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">"
+            + "<button>Open the dialog</button>"
+            + "</ui-action>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("ui-action with a target-id must have only one dialog sibling with a matching id");
+
+    context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testUIActionOpenDialogInSameScopeWithDialogWithForm() throws Exception {
+    String inputMessageML =
+        "<messageML>"
+            + "<dialog id=\"target-dialog-id\">"
+            + "<form id=\"form-id\">"
+            + "<title>title</title>"
+            + "<body>body</body>"
+            + "</form>"
+            + "</dialog>"
+            + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">"
+            + "<button>Open the dialog</button>"
+            + "</ui-action>"
+            + "</messageML>";
+
+    context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+
+    // Check messageML parsing
+    final List<Element> children = context.getMessageML().getChildren();
+
+    assertEquals(2, children.size());
+    assertEquals(Dialog.class, children.get(0).getClass());
+
+    final Element uiAction = children.get(1);
+    assertEquals(UIAction.class, uiAction.getClass());
+    assertEquals(Button.class, uiAction.getChildren().get(0).getClass());
+
+    // Check conversion to presentationML
+    final String presentationML = context.getPresentationML();
+
+    final String expectedRegex =
+        "^<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "<dialog data-width=\"medium\" data-state=\"close\" id=\"(\\S+)-target-dialog-id\" open=\"\">"
+            + "<form id=\"form-id\">"
+            + "<div class=\"dialog-title\">title</div>"
+            + "<div class=\"dialog-body\">body</div></form></dialog>"
+            + "<div class=\"ui-action\" data-action=\"open-dialog\" data-trigger=\"click\" data-target-id=\"(\\S+)-target-dialog-id\">"
+            + "<button>Open the dialog</button></div></div>$";
+
+    Pattern expectedPattern = Pattern.compile(expectedRegex);
+    Matcher m = expectedPattern.matcher(presentationML);
+
+    assertTrue(m.find()); // assert presentationML matches the expected pattern
+    assertEquals(m.group(1), m.group(2)); // assert the generated IDs are the same
+  }
+
+  @Test
   public void testUIActionOpenDialogWithMatchingDialogId() throws Exception {
     String dialogId = "dialog-id";
     String inputMessageML =
