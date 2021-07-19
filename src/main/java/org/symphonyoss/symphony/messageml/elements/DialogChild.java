@@ -72,13 +72,10 @@ public abstract class DialogChild extends Element {
   }
 
   private Collection<Class<? extends Element>> getValidParentClasses() {
-    Collection<Class<? extends Element>> list;
-    if (getParent().getClass().equals(Form.class) && getParent().getParent().getClass().equals(Dialog.class)) {
-      list = new ArrayList<>(Arrays.asList(Form.class));
-    } else {
-      list = new ArrayList<>(Collections.singletonList(Dialog.class));
+    if (getParent() instanceof Form && getParent().getParent() instanceof Dialog) {
+      return Collections.singletonList(Form.class);
     }
-    return list;
+    return Collections.singletonList(Dialog.class);
   }
 
   @Override

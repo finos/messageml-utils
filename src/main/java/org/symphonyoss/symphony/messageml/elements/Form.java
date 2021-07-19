@@ -46,7 +46,7 @@ public class Form extends Element {
     assertChildrenNotExceedingMaxCount(Arrays.asList(Checkbox.class, Radio.class), MAX_COUNT_PER_CHILD_TYPE);
 
     assertAttributeNotBlank(ID_ATTR);
-    if(!getParent().getClass().equals(Dialog.class)) {
+    if (!getParent().getClass().equals(Dialog.class)) {
       assertAtLeastOneActionButton();
     }
   }

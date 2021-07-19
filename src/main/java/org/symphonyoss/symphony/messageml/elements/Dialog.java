@@ -128,7 +128,7 @@ public class Dialog extends Element {
       Element formElement = getChild(0);
       validateChildren(formElement);
       validateNoOtherChildrenTypes(formElement, "A \"form\" element in a \"dialog\" element can only contain \"title\", \"body\", \"footer\" elements");
-    } else{
+    } else {
       validateChildren(this);
       validateNoOtherChildrenTypes(this, "A \"dialog\" can only contain tags \"title\", \"body\", \"footer\"");
     }
