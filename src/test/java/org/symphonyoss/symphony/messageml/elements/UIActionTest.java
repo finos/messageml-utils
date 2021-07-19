@@ -332,6 +332,27 @@ public class UIActionTest extends ElementTest {
   }
 
   @Test
+  public void testUIActionOpenDialogInDifferentScope() throws Exception {
+    String inputMessageML =
+        "<messageML>"
+            + "<dialog id=\"target-dialog-id\">"
+            + "<title>title</title>"
+            + "<body>body</body>"
+            + "</dialog>"
+            + "<form>"
+            + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">"
+            + "<button>Open the dialog</button>"
+            + "</ui-action>"
+            + "</form>"
+            + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("ui-action with a target-id must have only one dialog sibling with a matching id");
+
+    context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testUIActionOpenDialogWithMatchingDialogId() throws Exception {
     String dialogId = "dialog-id";
     String inputMessageML =
