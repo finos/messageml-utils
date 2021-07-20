@@ -174,7 +174,6 @@ public class ExpandableCardTest extends ElementTest {
 
   private List<BiItem> getExpectedCardBiItems() {
     List<BiItem> biItems = new ArrayList<>();
-    biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 4)));
     biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_COLLAPSED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
     biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_CROPPED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 2)));
     biItems.add(new BiItem(BiFields.EXPANDABLE_CARDS_EXPANDED.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
