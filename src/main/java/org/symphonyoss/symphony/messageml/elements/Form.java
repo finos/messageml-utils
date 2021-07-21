@@ -4,17 +4,22 @@ import static java.lang.String.format;
 import static org.symphonyoss.symphony.messageml.elements.Button.ACTION_TYPE;
 import static org.symphonyoss.symphony.messageml.elements.FormElement.TYPE_ATTR;
 
+import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
+import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class representing a Symphony Elements form
@@ -26,9 +31,12 @@ public class Form extends Element {
   public static final String MESSAGEML_TAG = "form";
 
   private static final String ID_ATTR = "id";
+  private static final String MULTI_SUBMIT = "multi-submit";
+  private static final String PRESENTATIONML_MULTI_SUBMIT = "data-multi-submit";
   private static final int MAX_COUNT_PER_CHILD_TYPE = 50;
-
+  private static final int MAX_LENGTH = 64;
   private static final String ERR_MSG_MISSING_ACTION_BTN = "The form with id '%s' should have at least one action button";
+  private static final List<String> ALLOWED_MULTI_SUBMIT = Arrays.asList("reset", "no-reset");
 
   public Form(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -49,15 +57,21 @@ public class Form extends Element {
     if (!getParent().getClass().equals(Dialog.class)) {
       assertAtLeastOneActionButton();
     }
+    if(getAttribute(MULTI_SUBMIT) != null) {
+      assertAttributeMaxLength(MULTI_SUBMIT, MAX_LENGTH);
+      assertAttributeValue(MULTI_SUBMIT, ALLOWED_MULTI_SUBMIT);
+    }
   }
 
   @Override
-  protected void buildAttribute(MessageMLParser parser,
-      Node item) throws InvalidInputException {
-    if (ID_ATTR.equals(item.getNodeName())) {
-      setAttribute(ID_ATTR, getStringAttribute(item));
-    } else {
-      throwInvalidInputException(item);
+  protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
+    switch (item.getNodeName()) {
+      case ID_ATTR:
+      case MULTI_SUBMIT:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
+        break;
+      default:
+        throwInvalidInputException(item);
     }
   }
 
@@ -77,6 +91,26 @@ public class Form extends Element {
 
   @Override
   void updateBiContext(BiContext context) {
-    context.addItem(new BiItem(BiFields.FORM.getValue(), new HashMap<>()));
+    Map<String, Object> formMap = new HashMap<>();
+    if(getAttribute(MULTI_SUBMIT) != null){
+      formMap.put(BiFields.MULTI_SUBMIT.getValue(), 1);
+    }
+    context.addItem(new BiItem(BiFields.FORM.getValue(), formMap));
+  }
+
+  @Override
+  void asPresentationML(XmlPrintStream out, MessageMLContext context) {
+    Map<String, String> presentationAttrs = new LinkedHashMap<>();
+    if (getAttribute(ID_ATTR) != null) {
+      presentationAttrs.put(ID_ATTR, getAttribute(ID_ATTR));
+    }
+    if (getAttribute(MULTI_SUBMIT) != null) {
+      presentationAttrs.put(PRESENTATIONML_MULTI_SUBMIT, getAttribute(MULTI_SUBMIT));
+    }
+    out.openElement(getPresentationMLTag(), presentationAttrs);
+    for (Element child : getChildren()) {
+      child.asPresentationML(out, context);
+    }
+    out.closeElement();
   }
 }

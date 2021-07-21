@@ -1,15 +1,31 @@
 package org.symphonyoss.symphony.messageml.elements.form;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.*;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class FormTest extends ElementTest {
-  private static final String ID_ATTR = "id";
-  
+  private static final String MESSAGE_ML_WITH_MULTI_SUBMIT = "<messageML>"
+      + "<form id=\"formID\" multi-submit=\"reset\">"
+      + "<text-field name=\"name_01\" required=\"true\" placeholder=\"Name\"/>"
+      + "<button name=\"submit_button\" type=\"action\">Submit</button>"
+      + "</form>"
+      + "</messageML>";
+
   @Test
   public void testEmptyForm() {
     String id = "empty-form";
@@ -22,14 +38,14 @@ public class FormTest extends ElementTest {
           "The form with id 'empty-form' should have at least one action button", e.getMessage());
     }
   }
-  
+
   @Test
   public void testFormWithoutId() throws Exception {
     String input = "<messageML><form></form></messageML>";
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"id\" is required");
-    
+
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
@@ -86,29 +102,9 @@ public class FormTest extends ElementTest {
         + "</div></messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Elements must have unique ids. The following value is not unique: [" + notUniqueId + "].");
+    expectedException.expectMessage(
+        "Elements must have unique ids. The following value is not unique: [" + notUniqueId + "].");
     context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
-  }
-
-  private String getExpectedFormPresentationML(Form form) {
-    return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + 
-        form.getAttribute(ID_ATTR) + "\"></form></div>";
-  }
-
-  private void verifyFormPresentation(Form form, String id) {
-    assertEquals(id, form.getAttribute(ID_ATTR));
-    assertEquals(getExpectedFormPresentationML(form), context.getPresentationML());
-  }
-
-
-  private String getExpectedFormMarkdown() {
-    return String.format("Form (log into desktop client to answer):\n---\n\n---\n");
-  }
-  
-  private void verifyFormMarkdown() {
-    String markdown = context.getMarkdown();
-    String expectedMarkdown  = getExpectedFormMarkdown();
-    assertEquals(expectedMarkdown, markdown);
   }
 
   @Test
@@ -156,5 +152,46 @@ public class FormTest extends ElementTest {
     assertTrue(presentationML.matches(expectedPattern));
   }
 
+  @Test
+  public void testMultiSubmitReset() throws InvalidInputException, IOException, ProcessingException {
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"formID\" data-multi-submit=\"reset\">"
+        + "<input type=\"text\" name=\"name_01\" placeholder=\"Name\" required=\"true\"/>"
+        + "<button type=\"action\" name=\"submit_button\">Submit</button>"
+        + "</form>"
+        + "</div>";
+    context.parseMessageML(MESSAGE_ML_WITH_MULTI_SUBMIT, null, MessageML.MESSAGEML_VERSION);
+    assertEquals(context.getPresentationML(), expectedPresentationML);
+  }
 
+  @Test
+  public void testMultiSubmitNotAllowedValue() throws InvalidInputException, IOException, ProcessingException {
+    String messageML = "<messageML>"
+        + "<form id=\"formID\" multi-submit=\"invalid_value\">"
+        + "<text-field name=\"name_01\" required=\"true\" placeholder=\"Name\"/>"
+        + "<button name=\"submit_button\" type=\"action\">Submit</button>"
+        + "</form>"
+        + "</messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"multi-submit\" of element \"form\" can only be one "
+        + "of the following values: [reset, no-reset].");
+    context.parseMessageML(messageML, null, MessageML.MESSAGEML_VERSION);
+
+  }
+
+  @Test
+  public void testBiContextWithMultiForm() throws InvalidInputException, IOException, ProcessingException {
+    context.parseMessageML(MESSAGE_ML_WITH_MULTI_SUBMIT, null, MessageML.MESSAGEML_VERSION);
+    Map<String, Object> textFieldMap = new HashMap<>();
+    textFieldMap.put(BiFields.PLACEHOLDER.getValue(), 1);
+    textFieldMap.put(BiFields.REQUIRED.getValue(), 1);
+    List<BiItem> expectedBiItems =
+        Arrays.asList(
+            new BiItem(BiFields.TEXT_FIELD.getValue(), textFieldMap),
+            new BiItem(BiFields.BUTTON.getValue(), Collections.singletonMap(BiFields.TYPE.getValue(), "action")),
+            new BiItem(BiFields.FORM.getValue(), Collections.singletonMap(BiFields.MULTI_SUBMIT.getValue(), 1)),
+            new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 190)));
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertIterableEquals(expectedBiItems, biItems);
+  }
 }
