@@ -36,7 +36,6 @@ public enum BiFields {
   CASHTAGS("cashtags", BiEventType.MESSAGEML_MESSAGE_SENT),
   BULLET_LIST("lists", BiEventType.MESSAGEML_MESSAGE_SENT),
   CARD("cards", BiEventType.MESSAGEML_MESSAGE_SENT),
-  EXPANDABLE_CARDS("expandablecards", BiEventType.MESSAGEML_MESSAGE_SENT),
   EXPANDABLE_CARDS_COLLAPSED("expandablecards_collapsed", BiEventType.MESSAGEML_MESSAGE_SENT),
   EXPANDABLE_CARDS_CROPPED("expandablecards_cropped", BiEventType.MESSAGEML_MESSAGE_SENT),
   EXPANDABLE_CARDS_EXPANDED("expandablecards_expanded", BiEventType.MESSAGEML_MESSAGE_SENT),
@@ -72,6 +71,8 @@ public enum BiFields {
   ENTITY_JSON_SIZE("entities_json_size", BiEventType.MESSAGEML_MESSAGE_SENT),
   FREEMARKER("use_freemarker", BiEventType.MESSAGEML_MESSAGE_SENT),
   POPUPS("popups", BiEventType.MESSAGEML_MESSAGE_SENT),
+  OPENIM("uiactions_openim", BiEventType.MESSAGEML_MESSAGE_SENT),
+  OPENDIALOG("uiactions_opendialog", BiEventType.MESSAGEML_MESSAGE_SENT),
   COUNT("count", BiEventType.NONE);
 
   private final String value;

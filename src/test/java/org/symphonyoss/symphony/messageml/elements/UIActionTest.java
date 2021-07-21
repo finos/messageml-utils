@@ -2,12 +2,18 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import org.junit.Test;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -440,6 +446,75 @@ public class UIActionTest extends ElementTest {
 
     assertTrue(m.find()); // assert presentationML matches the expected pattern
     assertEquals(m.group(1), m.group(2)); // assert the generated IDs are the same
+  }
+
+  @Test
+  public void testBiContextOpenIm() throws Exception {
+    String inputMessageML =
+        "<messageML><ui-action action=\"open-im\" user-ids=\"[123]\">" +
+            "<button>Open by stream ID</button>" +
+            "</ui-action></messageML>";
+    context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems =
+        Arrays.asList(new BiItem(BiFields.BUTTON.getValue(), new HashMap<>()),
+            new BiItem(BiFields.OPENIM.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)),
+            new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 114)));
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertIterableEquals(expectedBiItems, biItems);
+  }
+
+  @Test
+  public void testBiContextOpenDialog() throws Exception {
+    String inputMessageML =
+        "<messageML>" +
+            "<dialog id=\"target-dialog-id\">" +
+            "<title>title</title>" +
+            "<body>body</body>" +
+            "</dialog>" +
+            "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">" +
+            "<button>Open the dialog</button>" +
+            "</ui-action></messageML>";
+    context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems =
+        Arrays.asList(new BiItem(BiFields.POPUPS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)),
+            new BiItem(BiFields.BUTTON.getValue(), new HashMap<>()),
+            new BiItem(BiFields.OPENDIALOG.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)),
+            new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 220)));
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertIterableEquals(expectedBiItems, biItems);
+  }
+
+  @Test
+  public void testBiContextWithMultipleUIActions() throws Exception {
+    String inputMessageML =
+        "<messageML>" +
+            "<dialog id=\"target-dialog-id\">" +
+            "<title>title</title>" +
+            "<body>body</body>" +
+            "</dialog>" +
+            "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">" +
+            "<button>Open the dialog</button>" +
+            "</ui-action>" +
+            "<ui-action action=\"open-im\" user-ids=\"[123]\">" +
+            "<button>Open by stream ID</button>" +
+            "</ui-action>" +
+            "</messageML>";
+    context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+
+    List<BiItem> expectedBiItems =
+        Arrays.asList(new BiItem(BiFields.POPUPS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)),
+            new BiItem(BiFields.BUTTON.getValue(), new HashMap<>()),
+            new BiItem(BiFields.OPENDIALOG.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)),
+            new BiItem(BiFields.BUTTON.getValue(), new HashMap<>()),
+            new BiItem(BiFields.OPENIM.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)),
+            new BiItem(BiFields.MESSAGE_LENGTH.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 311)));
+
+    List<BiItem> biItems = context.getBiContext().getItems();
+    assertIterableEquals(expectedBiItems, biItems);
   }
 
   private void validateMessageMLSimpleStructure() {
