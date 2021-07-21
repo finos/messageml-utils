@@ -103,7 +103,6 @@ public class ExpandableCard extends Element {
   @Override
   void updateBiContext(BiContext context) {
     super.updateBiContext(context);
-    context.updateItemCount(BiFields.EXPANDABLE_CARDS.getValue());
     if (getAttribute(ATTR_STATE) == null) {
       return;
     }

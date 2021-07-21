@@ -3,6 +3,8 @@ package org.symphonyoss.symphony.messageml.elements;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
+import org.symphonyoss.symphony.messageml.bi.BiContext;
+import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
@@ -151,6 +153,23 @@ public class UIAction extends Element {
   @Override
   public String getPresentationMLTag() {
     return PRESENTATIONML_TAG;
+  }
+
+  @Override
+  void updateBiContext(BiContext context) {
+    super.updateBiContext(context);
+
+    final String actionAttribute = getAttribute(ACTION_ATTR);
+    if (actionAttribute != null) {
+      switch (actionAttribute) {
+        case OPEN_IM:
+          context.updateItemCount(BiFields.OPENIM.getValue());
+          break;
+        case OPEN_DIALOG:
+          context.updateItemCount(BiFields.OPENDIALOG.getValue());
+          break;
+      }
+    }
   }
 
   private void validateUserIdsAttribute() throws InvalidInputException {
