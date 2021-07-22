@@ -56,6 +56,7 @@ public enum BiFields {
   TYPE_MASKED_TRUE("masked", BiEventType.MESSAGEML_ELEMENT_SENT),
   TYPE_MASKED_FALSE("normal", BiEventType.MESSAGEML_ELEMENT_SENT),
   ENTITY_TYPE("entity_type", BiEventType.MESSAGEML_ELEMENT_SENT),
+  MULTI_SUBMIT("is_multi_submit", BiEventType.MESSAGEML_ELEMENT_SENT),
   LABEL("has_label", BiEventType.MESSAGEML_ELEMENT_SENT),
   OPTIONS_COUNT("options_count", BiEventType.MESSAGEML_ELEMENT_SENT),
   VALIDATION("validation", BiEventType.MESSAGEML_ELEMENT_SENT),
