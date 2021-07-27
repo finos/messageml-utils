@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This class specify the Symphony Component UIAction which is represented by the tag name "ui-action".
@@ -41,7 +40,7 @@ public class UIAction extends Element {
   private static final String USER_IDS_ATTR = "user-ids";
   private static final String STREAM_ID_ATTR = "stream-id";
   private static final String SIDE_BY_SIDE_ATTR = "side-by-side";
-  private static final String TARGET_ID = "target-id";
+  public static final String TARGET_ID = "target-id";
 
   private static final String DEFAULT_TRIGGER = "click";
   private static final String OPEN_IM = "open-im";
@@ -55,8 +54,7 @@ public class UIAction extends Element {
   private static final String PRESENTATIONML_USER_IDS_ATTR = "data-user-ids";
   private static final String PRESENTATIONML_STREAM_ID_ATTR = "data-stream-id";
   private static final String PRESENTATIONML_SIDE_BY_SIDE_ATTR = "data-side-by-side";
-
-  private Dialog matchingDialog;
+  private static final String DATA_TARGET_ID = "data-target-id";
 
   public UIAction(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -93,30 +91,12 @@ public class UIAction extends Element {
     if (actionAttribute.equals(OPEN_IM)) {
       validateOpenChatActionAttributes();
     } else if (actionAttribute.equals(OPEN_DIALOG)) {
-      validateTargetId(getAttribute(TARGET_ID));
+      validateIdAttribute(TARGET_ID);
     }
 
     if (getAttribute(TRIGGER_ATTR) != null) {
       assertAttributeValue(TRIGGER_ATTR, Collections.singleton(DEFAULT_TRIGGER));
     }
-  }
-
-  private void validateTargetId(String targetId) throws InvalidInputException {
-    validateIdAttribute(TARGET_ID);
-    checkMatchingDialog(targetId);
-  }
-
-  private void checkMatchingDialog(String targetId) throws InvalidInputException {
-    final List<Element> matchingDialogs = getParent().getChildren()
-        .stream()
-        .filter(e -> e instanceof Dialog && targetId.equals(e.getAttribute(ID_ATTR)))
-        .collect(Collectors.toList());
-
-    if (matchingDialogs.size() != 1) {
-      throw new InvalidInputException(
-          "ui-action with a target-id must have only one dialog sibling with a matching id");
-    }
-    matchingDialog = (Dialog) matchingDialogs.get(0);
   }
 
   private void validateOpenChatActionAttributes() throws InvalidInputException {
@@ -206,7 +186,7 @@ public class UIAction extends Element {
       presentationAttrs.put(PRESENTATIONML_SIDE_BY_SIDE_ATTR, getAttribute(SIDE_BY_SIDE_ATTR));
     }
     if (getAttribute(TARGET_ID) != null) {
-      presentationAttrs.put("data-target-id", matchingDialog.getPresentationMlIdAttribute());
+      presentationAttrs.put(DATA_TARGET_ID, getAttribute(TARGET_ID));
     }
 
     return presentationAttrs;

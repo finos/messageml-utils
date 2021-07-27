@@ -635,6 +635,18 @@ public abstract class Element {
   }
 
   /**
+   * Check that the element's children are limited to allowed element types returning a specific message given in input.
+   */
+  void assertContentModel(Collection<Class<? extends Element>> permittedChildren, String message)
+      throws InvalidInputException {
+    try {
+      assertContentModel(permittedChildren);
+    } catch (InvalidInputException e) {
+      throw new InvalidInputException(message);
+    }
+  }
+
+  /**
    * Check that the element's children are limited to allowed element types.
    */
   void assertContentModel(Collection<Class<? extends Element>> permittedChildren) throws InvalidInputException {
@@ -768,6 +780,23 @@ public abstract class Element {
               getElementNameByClass(this.getClass()), maxCountPerElementType,
               getElementsNameByClassName(elementTypes)));
     }
+  }
+
+  /**
+   * Given a target id present in a UIAction this method returns the corresponding dialog associated to the same
+   * id, if no dialog is found it throws an exception
+   */
+  Dialog checkMatchingDialog(String targetId) throws InvalidInputException {
+    final List<Element> matchingDialogs = this.getChildren()
+        .stream()
+        .filter(e -> e instanceof Dialog && targetId.equals(e.getAttribute(ID_ATTR)))
+        .collect(Collectors.toList());
+
+    if (matchingDialogs.size() != 1) {
+      throw new InvalidInputException(
+          "ui-action with a target-id must have only one dialog sibling with a matching id");
+    }
+    return (Dialog) matchingDialogs.get(0);
   }
 
   /**
