@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This class represents the Symphony Element Dialog which is represented with tag name "dialog".
@@ -134,6 +133,7 @@ public class Dialog extends Element {
       assertContentModel(Arrays.asList(DialogChild.Footer.class, DialogChild.Title.class, DialogChild.Body.class));
     }
   }
+
 
   private void validateChildren(Element rootElement) throws InvalidInputException {
     rootElement.assertContainsAlwaysChildOfType(Collections.singleton(DialogChild.Title.class));

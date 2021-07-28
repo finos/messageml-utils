@@ -428,13 +428,40 @@ public class UIActionTest extends ElementTest {
             + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">"
             + "<button>Open the dialog</button>"
             + "</ui-action>"
+            + "<button type=\"action\" name=\"send-form\">Submit</button>"
             + "</form>"
             + "</messageML>";
 
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("The form with id 'form-id' should have at least one action button");
+    expectedException.expectMessage("ui-action with a target-id must have only one dialog sibling with a matching id");
 
     context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testUIActionOpenDialogNested() throws Exception {
+    String inputMessageML =
+        "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">"
+            + "<button>Open the dialog</button>"
+            + "</ui-action>"
+            + "<dialog id=\"target-dialog-id\">"
+            + "<title>title</title>"
+            + "<body>body</body>"
+            + "</dialog>"
+            + "<button type=\"action\" name=\"send-form\">Submit</button>"
+            + "</form>"
+            + "</messageML>";
+    String expectedPattern = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"form-id\">"
+        + "<div class=\"ui-action\" data-action=\"open-dialog\" data-trigger=\"click\" data-target-id=\"\\S+-target-dialog-id\">"
+        + "<button>Open the dialog</button></div>"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-target-dialog-id\" open=\"\">"
+        + "<div class=\"dialog-title\">title</div><div class=\"dialog-body\">body</div></dialog>"
+        + "<button type=\"action\" name=\"send-form\">Submit</button></form></div>";
+    context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+    assertTrue(context.getPresentationML().matches(expectedPattern));
   }
 
   @Test

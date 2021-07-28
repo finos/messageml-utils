@@ -18,6 +18,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.symphonyoss.symphony.messageml.elements.UIAction.TARGET_ID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -784,12 +785,12 @@ public abstract class Element {
 
   /**
    * Given a target id present in a UIAction this method returns the corresponding dialog associated to the same
-   * id, if no dialog is found it throws an exception
+   * id, if no dialog is found it throws an exception. Matching element dialog must be in the same scope as the uiAction.
    */
-  Dialog checkMatchingDialog(String targetId) throws InvalidInputException {
-    final List<Element> matchingDialogs = this.getChildren()
+  Dialog findMatchingDialog(UIAction action) throws InvalidInputException {
+    final List<Element> matchingDialogs = action.getParent().getChildren()
         .stream()
-        .filter(e -> e instanceof Dialog && targetId.equals(e.getAttribute(ID_ATTR)))
+        .filter(e -> e instanceof Dialog && action.getAttribute(TARGET_ID).equals(e.getAttribute(ID_ATTR)))
         .collect(Collectors.toList());
 
     if (matchingDialogs.size() != 1) {
@@ -903,6 +904,34 @@ public abstract class Element {
       Element child = stack.pop();
       stack.addAll(0, child.getChildren());
       if (child.getClass() == type) {
+        result.add(child);
+      }
+    }
+
+    return result;
+  }
+
+
+  /**
+   * Search the MessageML tree (depth-first) for elements of a given type that contains a specific
+   * attribute.
+   *
+   * @param type the class of elements to find
+   * @param attribute the attribute that the element must contain
+   * @return found elements
+   */
+  public List<Element> findElementsWithAttribute(Class<?> type, String attribute) {
+    List<Element> result = new ArrayList<>();
+    LinkedList<Element> stack = new LinkedList<>(this.getChildren());
+
+    if (this.getClass() == type) {
+      result.add(this);
+    }
+
+    while (!stack.isEmpty()) {
+      Element child = stack.pop();
+      stack.addAll(0, child.getChildren());
+      if (child.getClass() == type && child.getAttribute(attribute) != null) {
         result.add(child);
       }
     }
