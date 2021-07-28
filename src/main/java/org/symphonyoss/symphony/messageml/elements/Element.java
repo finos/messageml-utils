@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -889,21 +890,21 @@ public abstract class Element {
   /**
    * Search the MessageML tree (depth-first) for elements of a given type.
    *
-   * @param type the class of elements to find
+   * @param predicate discriminator to match the element
    * @return found elements
    */
-  public List<Element> findElements(Class<?> type) {
+   List<Element> findElements(Predicate<Element> predicate) {
     List<Element> result = new ArrayList<>();
     LinkedList<Element> stack = new LinkedList<>(this.getChildren());
 
-    if (this.getClass() == type) {
+    if (predicate.test(this)) {
       result.add(this);
     }
 
     while (!stack.isEmpty()) {
       Element child = stack.pop();
       stack.addAll(0, child.getChildren());
-      if (child.getClass() == type) {
+      if (predicate.test(child)) {
         result.add(child);
       }
     }
@@ -911,32 +912,14 @@ public abstract class Element {
     return result;
   }
 
-
   /**
-   * Search the MessageML tree (depth-first) for elements of a given type that contains a specific
-   * attribute.
+   * Search the MessageML tree (depth-first) for elements of a given type.
    *
    * @param type the class of elements to find
-   * @param attribute the attribute that the element must contain
    * @return found elements
    */
-  public List<Element> findElementsWithAttribute(Class<?> type, String attribute) {
-    List<Element> result = new ArrayList<>();
-    LinkedList<Element> stack = new LinkedList<>(this.getChildren());
-
-    if (this.getClass() == type) {
-      result.add(this);
-    }
-
-    while (!stack.isEmpty()) {
-      Element child = stack.pop();
-      stack.addAll(0, child.getChildren());
-      if (child.getClass() == type && child.getAttribute(attribute) != null) {
-        result.add(child);
-      }
-    }
-
-    return result;
+  public List<Element> findElements(Class<?> type) {
+    return findElements(element -> element.getClass() == type);
   }
 
   /**
@@ -946,22 +929,7 @@ public abstract class Element {
    * @return found elements
    */
   public List<Element> findElements(String tag) {
-    List<Element> result = new ArrayList<>();
-    LinkedList<Element> stack = new LinkedList<>(this.getChildren());
-
-    if (tag.equalsIgnoreCase(this.getMessageMLTag())) {
-      result.add(this);
-    }
-
-    while (!stack.isEmpty()) {
-      Element child = stack.pop();
-      stack.addAll(0, child.getChildren());
-      if (tag.equalsIgnoreCase(child.getMessageMLTag())) {
-        result.add(child);
-      }
-    }
-
-    return result;
+    return findElements(element -> tag.equalsIgnoreCase(element.getMessageMLTag()));
   }
 
   /**
@@ -972,23 +940,7 @@ public abstract class Element {
    * @return found elements
    */
   public List<Element> findElements(String attribute, String value) {
-    List<Element> result = new ArrayList<>();
-    LinkedList<Element> stack = new LinkedList<>(this.getChildren());
-
-    if (value.equals(getAttribute(attribute))) {
-      result.add(this);
-    }
-
-    while (!stack.isEmpty()) {
-      Element child = stack.pop();
-      stack.addAll(0, child.getChildren());
-
-      if (value.equals(child.getAttribute(attribute))) {
-        result.add(child);
-      }
-    }
-
-    return result;
+    return findElements(element -> value.equals(element.getAttribute(attribute)));
   }
 
   public Integer countNonTextNodesInNodeList(NodeList nodeList) {

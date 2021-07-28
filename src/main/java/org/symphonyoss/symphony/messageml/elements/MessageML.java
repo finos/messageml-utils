@@ -167,7 +167,8 @@ public class MessageML extends Element {
    * dialog element with the same id.
    */
   private void validateTargetIdForUIActions() throws InvalidInputException {
-    List<Element> uiActionWithTargetId = findElementsWithAttribute(UIAction.class, TARGET_ID);
+    List<Element> uiActionWithTargetId =
+        findElements(element -> element.getClass() == UIAction.class && element.getAttribute(TARGET_ID) != null);
     for(Element uiAction: uiActionWithTargetId) {
       Dialog dialog = findMatchingDialog((UIAction) uiAction);
       uiAction.setAttribute(TARGET_ID, dialog.getPresentationMlIdAttribute());
