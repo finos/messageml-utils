@@ -56,6 +56,8 @@ public class Form extends Element {
     assertAttributeNotBlank(ID_ATTR);
     if (!getParent().getClass().equals(Dialog.class)) {
       assertAtLeastOneActionButton();
+    } else {
+      assertContentModel(Arrays.asList(DialogChild.Footer.class, DialogChild.Title.class, DialogChild.Body.class));
     }
     if(getAttribute(MULTI_SUBMIT) != null) {
       assertAttributeMaxLength(MULTI_SUBMIT, MAX_LENGTH);

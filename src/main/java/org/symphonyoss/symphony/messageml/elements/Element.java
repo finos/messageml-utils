@@ -18,6 +18,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.symphonyoss.symphony.messageml.elements.UIAction.TARGET_ID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -52,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -635,6 +637,18 @@ public abstract class Element {
   }
 
   /**
+   * Check that the element's children are limited to allowed element types returning a specific message given in input.
+   */
+  void assertContentModel(Collection<Class<? extends Element>> permittedChildren, String message)
+      throws InvalidInputException {
+    try {
+      assertContentModel(permittedChildren);
+    } catch (InvalidInputException e) {
+      throw new InvalidInputException(message);
+    }
+  }
+
+  /**
    * Check that the element's children are limited to allowed element types.
    */
   void assertContentModel(Collection<Class<? extends Element>> permittedChildren) throws InvalidInputException {
@@ -771,6 +785,23 @@ public abstract class Element {
   }
 
   /**
+   * Given a target id present in a UIAction this method returns the corresponding dialog associated to the same
+   * id, if no dialog is found it throws an exception. Matching element dialog must be in the same scope as the uiAction.
+   */
+  Dialog findMatchingDialog(UIAction action) throws InvalidInputException {
+    final List<Element> matchingDialogs = action.getParent().getChildren()
+        .stream()
+        .filter(e -> e instanceof Dialog && action.getAttribute(TARGET_ID).equals(e.getAttribute(ID_ATTR)))
+        .collect(Collectors.toList());
+
+    if (matchingDialogs.size() != 1) {
+      throw new InvalidInputException(
+          "ui-action with a target-id must have only one dialog sibling with a matching id");
+    }
+    return (Dialog) matchingDialogs.get(0);
+  }
+
+  /**
    * Return the element's MessageML tag.
    */
   public final String getMessageMLTag() {
@@ -859,26 +890,36 @@ public abstract class Element {
   /**
    * Search the MessageML tree (depth-first) for elements of a given type.
    *
-   * @param type the class of elements to find
+   * @param predicate discriminator to match the element
    * @return found elements
    */
-  public List<Element> findElements(Class<?> type) {
+   List<Element> findElements(Predicate<Element> predicate) {
     List<Element> result = new ArrayList<>();
     LinkedList<Element> stack = new LinkedList<>(this.getChildren());
 
-    if (this.getClass() == type) {
+    if (predicate.test(this)) {
       result.add(this);
     }
 
     while (!stack.isEmpty()) {
       Element child = stack.pop();
       stack.addAll(0, child.getChildren());
-      if (child.getClass() == type) {
+      if (predicate.test(child)) {
         result.add(child);
       }
     }
 
     return result;
+  }
+
+  /**
+   * Search the MessageML tree (depth-first) for elements of a given type.
+   *
+   * @param type the class of elements to find
+   * @return found elements
+   */
+  public List<Element> findElements(Class<?> type) {
+    return findElements(element -> element.getClass() == type);
   }
 
   /**
@@ -888,22 +929,7 @@ public abstract class Element {
    * @return found elements
    */
   public List<Element> findElements(String tag) {
-    List<Element> result = new ArrayList<>();
-    LinkedList<Element> stack = new LinkedList<>(this.getChildren());
-
-    if (tag.equalsIgnoreCase(this.getMessageMLTag())) {
-      result.add(this);
-    }
-
-    while (!stack.isEmpty()) {
-      Element child = stack.pop();
-      stack.addAll(0, child.getChildren());
-      if (tag.equalsIgnoreCase(child.getMessageMLTag())) {
-        result.add(child);
-      }
-    }
-
-    return result;
+    return findElements(element -> tag.equalsIgnoreCase(element.getMessageMLTag()));
   }
 
   /**
@@ -914,23 +940,7 @@ public abstract class Element {
    * @return found elements
    */
   public List<Element> findElements(String attribute, String value) {
-    List<Element> result = new ArrayList<>();
-    LinkedList<Element> stack = new LinkedList<>(this.getChildren());
-
-    if (value.equals(getAttribute(attribute))) {
-      result.add(this);
-    }
-
-    while (!stack.isEmpty()) {
-      Element child = stack.pop();
-      stack.addAll(0, child.getChildren());
-
-      if (value.equals(child.getAttribute(attribute))) {
-        result.add(child);
-      }
-    }
-
-    return result;
+    return findElements(element -> value.equals(element.getAttribute(attribute)));
   }
 
   public Integer countNonTextNodesInNodeList(NodeList nodeList) {

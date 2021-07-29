@@ -122,30 +122,22 @@ public class Dialog extends Element {
   }
 
   private void validateChildrenTypes() throws InvalidInputException {
-    if (getChildren().size() > 1 && getChildren().stream().anyMatch(element -> element instanceof Form)){
-      throw new InvalidInputException("A \"dialog\" element can't contain a \"form\" element and any other element.");
-    } else if (getChildren().size() == 1 && getChild(0).getClass().equals(Form.class)) {
-      Element formElement = getChild(0);
-      validateChildren(formElement);
-      validateNoOtherChildrenTypes(formElement, "A \"form\" element in a \"dialog\" element can only contain \"title\", \"body\", \"footer\" elements");
+    long formsCount = getChildren().stream().filter(element -> element instanceof Form).count();
+    if (formsCount == 1) {
+      assertContentModel(Collections.singleton(Form.class),
+          "A \"dialog\" element can't contain a \"form\" element and any other element.");
+    } else if (formsCount > 1) {
+      throw new InvalidInputException("A \"dialog\" element can contain only one \"form\" element");
     } else {
       validateChildren(this);
-      validateNoOtherChildrenTypes(this, "A \"dialog\" can only contain tags \"title\", \"body\", \"footer\"");
+      assertContentModel(Arrays.asList(DialogChild.Footer.class, DialogChild.Title.class, DialogChild.Body.class));
     }
   }
+
 
   private void validateChildren(Element rootElement) throws InvalidInputException {
     rootElement.assertContainsAlwaysChildOfType(Collections.singleton(DialogChild.Title.class));
     rootElement.assertContainsAlwaysChildOfType(Collections.singleton(DialogChild.Body.class));
-
-  }
-
-  private void validateNoOtherChildrenTypes(Element rootElement, String errorMessage) throws InvalidInputException {
-    final boolean areAllChildrenOfAllowedTypes =
-        rootElement.getChildren().stream().allMatch(element -> element instanceof DialogChild);
-    if (!areAllChildrenOfAllowedTypes) {
-      throw new InvalidInputException(errorMessage);
-    }
   }
 
   private Map<String, String> getPresentationMLAttributes() {

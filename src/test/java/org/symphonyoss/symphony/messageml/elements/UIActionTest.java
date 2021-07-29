@@ -338,6 +338,85 @@ public class UIActionTest extends ElementTest {
   }
 
   @Test
+  public void testTargetIdWhenUIActionComesFirst() throws InvalidInputException, IOException, ProcessingException {
+    String input = "<messageML>"
+        + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"dialogId\">"
+        + "<button>Open the Dialog</button>"
+        + "</ui-action>"
+        + "<dialog id=\"dialogId\">"
+        + "<form id=\"all-elements\">"
+        + "<title>My Form in a Dialog</title>"
+        + "<body>"
+        + "<text-field name=\"name\" placeholder=\"Input your name...\"/>"
+        + "</body>"
+        + "<footer>"
+        + "<button type=\"action\" name=\"send-form\">Submit</button>"
+        + "<button type=\"reset\">Reset Data</button>"
+        + "<button type=\"cancel\" name=\"cancel-form\">Close</button>"
+        + "</footer>"
+        + "</form>"
+        + "</dialog>"
+        + "</messageML>";
+    String expectedRegex = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<div class=\"ui-action\" data-action=\"open-dialog\" data-trigger=\"click\" data-target-id=\"(\\S+)-dialogId\">"
+        + "<button>Open the Dialog</button>"
+        + "</div>"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"(\\S+)-dialogId\" open=\"\">"
+        + "<form id=\"all-elements\">"
+        + "<div class=\"dialog-title\">My Form in a Dialog</div>"
+        + "<div class=\"dialog-body\"><input type=\"text\" name=\"name\" placeholder=\"Input your name...\"/></div>"
+        + "<div class=\"dialog-footer\">"
+        + "<button type=\"action\" name=\"send-form\">Submit</button>"
+        + "<button type=\"reset\">Reset Data</button>"
+        + "<button type=\"cancel\" name=\"cancel-form\">Close</button>"
+        + "</div>"
+        + "</form>"
+        + "</dialog>"
+        + "</div>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    Pattern expectedPattern = Pattern.compile(expectedRegex);
+    Matcher m = expectedPattern.matcher(context.getPresentationML());
+
+    assertTrue(m.find());
+    assertEquals(m.group(1), m.group(2));
+  }
+
+  @Test
+  public void testTargetIdMutipleDialogId() throws InvalidInputException, IOException, ProcessingException {
+    String input = "<messageML>"
+        + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"dialogId\">"
+        + "<button>Open the Dialog</button>"
+        + "</ui-action>"
+        + "<dialog id=\"dialogId\">"
+        + "<form id=\"all-elements\">"
+        + "<title>My Form in a Dialog</title>"
+        + "<body>"
+        + "<text-field name=\"name\" placeholder=\"Input your name...\"/>"
+        + "</body>"
+        + "<footer>"
+        + "<button type=\"action\" name=\"send-form\">Submit</button>"
+        + "</footer>"
+        + "</form>"
+        + "</dialog>"
+        + "<dialog id=\"dialogId\">"
+        + "<form id=\"all-elements1\">"
+        + "<title>My Form in a Dialog</title>"
+        + "<body>"
+        + "<text-field name=\"name\" placeholder=\"Input your name...\"/>"
+        + "</body>"
+        + "<footer>"
+        + "<button type=\"action\" name=\"send-form\">Submit</button>"
+        + "</footer>"
+        + "</form>"
+        + "</dialog>"
+        + "</messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Elements must have unique ids. The following value is not unique: [dialogId].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testUIActionOpenDialogInDifferentScopeFromDialog() throws Exception {
     String inputMessageML =
         "<messageML>"
@@ -345,10 +424,11 @@ public class UIActionTest extends ElementTest {
             + "<title>title</title>"
             + "<body>body</body>"
             + "</dialog>"
-            + "<form>"
+            + "<form id=\"form-id\">"
             + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">"
             + "<button>Open the dialog</button>"
             + "</ui-action>"
+            + "<button type=\"action\" name=\"send-form\">Submit</button>"
             + "</form>"
             + "</messageML>";
 
@@ -356,6 +436,32 @@ public class UIActionTest extends ElementTest {
     expectedException.expectMessage("ui-action with a target-id must have only one dialog sibling with a matching id");
 
     context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testUIActionOpenDialogNested() throws Exception {
+    String inputMessageML =
+        "<messageML>"
+            + "<form id=\"form-id\">"
+            + "<ui-action trigger=\"click\" action=\"open-dialog\" target-id=\"target-dialog-id\">"
+            + "<button>Open the dialog</button>"
+            + "</ui-action>"
+            + "<dialog id=\"target-dialog-id\">"
+            + "<title>title</title>"
+            + "<body>body</body>"
+            + "</dialog>"
+            + "<button type=\"action\" name=\"send-form\">Submit</button>"
+            + "</form>"
+            + "</messageML>";
+    String expectedPattern = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<form id=\"form-id\">"
+        + "<div class=\"ui-action\" data-action=\"open-dialog\" data-trigger=\"click\" data-target-id=\"\\S+-target-dialog-id\">"
+        + "<button>Open the dialog</button></div>"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-target-dialog-id\" open=\"\">"
+        + "<div class=\"dialog-title\">title</div><div class=\"dialog-body\">body</div></dialog>"
+        + "<button type=\"action\" name=\"send-form\">Submit</button></form></div>";
+    context.parseMessageML(inputMessageML, null, MessageML.MESSAGEML_VERSION);
+    assertTrue(context.getPresentationML().matches(expectedPattern));
   }
 
   @Test

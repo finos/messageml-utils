@@ -31,6 +31,11 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.symphonyoss.symphony.messageml.elements.UIAction.TARGET_ID;
+
 
 /**
  * Class representing a MessageML document (i.e. a message).
@@ -134,6 +139,7 @@ public class MessageML extends Element {
       }
 
     }
+    validateTargetIdForUIActions();
   }
 
   /**
@@ -154,5 +160,18 @@ public class MessageML extends Element {
   @Override
   public String getPresentationMLTag() {
     return PRESENTATIONML_TAG;
+  }
+
+  /**
+   * If the messageML contains a uiAction with a target-id this method checks that exists a corresponding
+   * dialog element with the same id.
+   */
+  private void validateTargetIdForUIActions() throws InvalidInputException {
+    List<Element> uiActionWithTargetId =
+        findElements(element -> element.getClass() == UIAction.class && element.getAttribute(TARGET_ID) != null);
+    for(Element uiAction: uiActionWithTargetId) {
+      Dialog dialog = findMatchingDialog((UIAction) uiAction);
+      uiAction.setAttribute(TARGET_ID, dialog.getPresentationMlIdAttribute());
+    }
   }
 }

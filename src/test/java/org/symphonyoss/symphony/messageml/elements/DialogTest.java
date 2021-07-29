@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
@@ -21,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DialogTest {
+  @Rule
+  public final ExpectedException expectedException = ExpectedException.none();
 
   private static final String TEXT_FIELD_FORM =
       "<form><text-field name=\"name1\" id=\"id1\" placeholder=\"placeholder1\" required=\"true\" /></form>";
@@ -426,7 +430,7 @@ public class DialogTest {
     Throwable exception = assertThrows(
         InvalidInputException.class,
         () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
-    assertEquals("A \"form\" element in a \"dialog\" element can only contain \"title\", \"body\", \"footer\" elements", exception.getMessage());
+    assertEquals("Element \"button\" is not allowed in \"form\"", exception.getMessage());
   }
 
   @Test
@@ -441,29 +445,6 @@ public class DialogTest {
         + "</form>"
         + "</dialog>"
         + "</messageML>";
-    Throwable exception = assertThrows(
-        InvalidInputException.class,
-        () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
-    assertEquals("A \"dialog\" element can't contain a \"form\" element and any other element.", exception.getMessage());
-  }
-
-  @Test
-  public void testWithTwoForms() {
-    String input = "<messageML>"
-        + "<dialog id=\"id-dialog\">"
-        + "<form id=\"id-form\">"
-        + "<button name=\"submit\" type=\"action\">submit</button>"
-        + "<title>title</title>"
-        + "<body>body</body>"
-        + "</form>"
-        + "<form id=\"empty-form\">"
-        + "<button name=\"submit\" type=\"action\">submit</button>"
-        + "<title>title</title>"
-        + "<body>body</body>"
-        + "</form>"
-        + "</dialog>"
-        + "</messageML>";
-
     Throwable exception = assertThrows(
         InvalidInputException.class,
         () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
@@ -492,6 +473,49 @@ public class DialogTest {
         InvalidInputException.class,
         () -> context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
     assertEquals("Element \"form\" cannot be an inner child of the following elements: [form]", exception.getMessage());
+  }
+
+  @Test
+  public void testWithFormInDialogsAndWhitespaces() throws Exception {
+    String input = "<messageML><dialog id=\"dialogId\">"
+        + "  <form id=\"form-id\">"
+        + "    <title>A title</title>"
+        + "    <body></body>"
+        + "    <footer>"
+        + "     <button type=\"action\" name=\"name\">Submit</button>\n"
+        + "     </footer></form></dialog></messageML>";
+    String expectedPattern = "^<div data-format=\"PresentationML\" data-version=\"2.0\">"
+        + "<dialog data-width=\"medium\" data-state=\"close\" id=\"\\S+-dialogId\" open=\"\">"
+        + "  <form id=\"form-id\">"
+        + "    <div class=\"dialog-title\">A title</div>"
+        + "    <div class=\"dialog-body\"></div>"
+        + "    <div class=\"dialog-footer\">"
+        + "     <button type=\"action\" name=\"name\">Submit</button>"
+        + "      </div></form></dialog></div>$";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    assertTrue(context.getPresentationML().matches(expectedPattern));
+  }
+
+  @Test
+  public void testWithMultiFormInDialog() throws Exception {
+    String input = "<messageML>"
+        + "<dialog id=\"dialogId\">"
+        + "<form id=\"form-id\">"
+        + "<title>A title</title>"
+        + "<body></body>"
+        + "<footer><button type=\"action\" name=\"name\">Submit</button></footer>"
+        + "</form>"
+        + "<form id=\"form-id1\">"
+        + "<title>Another title</title>"
+        + "<footer><button type=\"action\" name=\"name\">Submit</button></footer>"
+        + "</form>"
+        + "</dialog>"
+        + "</messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("A \"dialog\" element can contain only one \"form\" element");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
 
