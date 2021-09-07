@@ -1035,7 +1035,7 @@ public class MessageMLContextTest {
   }
 
   @Test
-  public void testFailOnInvalidAttibuteMarkup() throws Exception {
+  public void testFailOnInvalidAttributeMarkup() throws Exception {
     String invalidMarkup = "<messageML><div class=invalid>Test</div></messageML>";
     expectedException.expect(InvalidInputException.class);
     // Local test throws the correct message, but Sonar doesn't, so commenting this check out
@@ -1070,6 +1070,28 @@ public class MessageMLContextTest {
     expectedException.expectMessage("Error parsing EntityJSON: "
         + "Unexpected character ('i' (code 105)): was expecting double-quote to start field name");
     context.parseMessageML(message, json, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testFailOnJSONStringData() throws Exception {
+    String message = "<messageML>MessageML</messageML>";
+    String json = "\"hello\"";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Error parsing EntityJSON: Unrecognized token 'hello': "
+        + "was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n"
+        + " at [Source: (String)\"hello\"; line: 1, column: 6]");
+    context.parseMessageML(message, json, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testParseEntityJsonDataEncodedAsJsonString() throws Exception {
+    String message = "<messageML>MessageML</messageML>";
+    String json = MAPPER.writeValueAsString("{\"key\":\"value\"}");
+
+    context.parseMessageML(message, json, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("value", context.getEntityJson().get("key").asText());
   }
 
   @Test

@@ -179,16 +179,7 @@ public class MessageMLParser {
       throw new InvalidInputException("Error parsing message: the message cannot be null or empty");
     }
 
-    if (StringUtils.isNotBlank(entityJson)) {
-      this.biContext.addItemWithValue(BiFields.ENTITY_JSON_SIZE.getValue(), entityJson.length());
-      try {
-        this.entityJson = (ObjectNode) MAPPER.readTree(entityJson);
-      } catch (JsonProcessingException e) {
-        throw new InvalidInputException("Error parsing EntityJSON: " + e.getMessage());
-      }
-    } else {
-      this.entityJson = new ObjectNode(JsonNodeFactory.instance);
-    }
+    parseEntityJson(entityJson);
 
     try {
       expandedMessage = expandTemplates(message, this.entityJson);
@@ -203,6 +194,32 @@ public class MessageMLParser {
     this.entityJson = messageML.asEntityJson(this.entityJson);
     this.biContext.addItemWithValue(BiFields.MESSAGE_LENGTH.getValue(), message.length());
     return messageML;
+  }
+
+  private void parseEntityJson(String entityJson) throws InvalidInputException {
+    if (StringUtils.isNotBlank(entityJson)) {
+      this.biContext.addItemWithValue(BiFields.ENTITY_JSON_SIZE.getValue(), entityJson.length());
+      try {
+        JsonNode jsonNode = MAPPER.readTree(entityJson);
+        if (jsonNode.isObject()) {
+          this.entityJson = (ObjectNode) jsonNode;
+        } else if (jsonNode.isTextual()) {
+          // we got text and not a structured object, try to parse it as escaped JSON
+          jsonNode = MAPPER.readTree(jsonNode.asText());
+          if (jsonNode.isObject()) {
+            this.entityJson = (ObjectNode) jsonNode;
+          } else {
+            throw new InvalidInputException("Error parsing EntityJSON: provided content is not a JSON object");
+          }
+        } else {
+          throw new InvalidInputException("Error parsing EntityJSON: provided content is not a JSON object");
+        }
+      } catch (JsonProcessingException e) {
+        throw new InvalidInputException("Error parsing EntityJSON: " + e.getMessage());
+      }
+    } else {
+      this.entityJson = new ObjectNode(JsonNodeFactory.instance);
+    }
   }
 
   /**
