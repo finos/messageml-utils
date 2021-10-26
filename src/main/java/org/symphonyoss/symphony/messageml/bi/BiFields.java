@@ -67,6 +67,7 @@ public enum BiFields {
   HIGHLIGHTED_OPTIONS("highlighted_options", BiEventType.MESSAGEML_ELEMENT_SENT),
   VALIDATION_STRICT("validation_strict", BiEventType.MESSAGEML_ELEMENT_SENT),
   REQUIRED("required", BiEventType.MESSAGEML_ELEMENT_SENT),
+  MULTI_SELECT("is_multi_select", BiEventType.MESSAGEML_ELEMENT_SENT),
   MESSAGE_LENGTH("message_length", BiEventType.MESSAGEML_MESSAGE_SENT),
   ENTITY_JSON_SIZE("entities_json_size", BiEventType.MESSAGEML_MESSAGE_SENT),
   FREEMARKER("use_freemarker", BiEventType.MESSAGEML_MESSAGE_SENT),

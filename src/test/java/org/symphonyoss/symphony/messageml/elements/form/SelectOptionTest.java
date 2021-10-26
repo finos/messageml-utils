@@ -333,6 +333,286 @@ public class SelectOptionTest extends ElementTest {
   }
 
   @Test
+  public void testMultiSelect() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+
+    Element form = context.getMessageML().getChildren().get(0);
+    Element select = form.getChildren().get(0);
+    assertEquals("Select class", Select.class, select.getClass());
+
+    //language=HTML
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">\n"
+        + "    <form id=\"id\">\n"
+        + "        <select multiple=\"true\" name=\"multi\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</div>";
+    assertEquals(trimXml(expectedPresentationML), context.getPresentationML());
+  }
+
+  @Test
+  public void testMultiSelectMinMax() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" min=\"2\" max=\"2\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+
+    Element form = context.getMessageML().getChildren().get(0);
+    Element select = form.getChildren().get(0);
+    assertEquals("Select class", Select.class, select.getClass());
+
+    //language=HTML
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">\n"
+        + "    <form id=\"id\">\n"
+        + "        <select data-max=\"2\" data-min=\"1\" multiple=\"true\" name=\"multi\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</div>";
+    assertEquals(trimXml(expectedPresentationML), context.getPresentationML());
+  }
+
+  @Test
+  public void testMultiSelectMultiSelected() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\">\n"
+        + "            <option value=\"opt1\" selected=\"true\">Option 1</option>\n"
+        + "            <option value=\"opt2\" selected=\"true\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+
+    //language=HTML
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">\n"
+        + "    <form id=\"id\">\n"
+        + "        <select multiple=\"true\" name=\"multi\">\n"
+        + "            <option selected=\"true\" value=\"opt1\">Option 1</option>\n"
+        + "            <option selected=\"true\" value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</div>";
+    assertEquals(trimXml(expectedPresentationML), context.getPresentationML());
+  }
+
+  @Test
+  public void testMultiSelectWithoutMultiple() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" min=\"1\" max=\"2\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"min\" is not allowed. Attribute \"multiple\" missing");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectMultipleFalse() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"false\" min=\"1\" max=\"2\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"min\" is not allowed. Attribute \"multiple\" missing");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectWithoutMultipleMinOnly() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" min=\"1\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"min\" is not allowed. Attribute \"multiple\" missing");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectWithoutMultipleMaxOnly() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" max=\"1\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"max\" is not allowed. Attribute \"multiple\" missing");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectMinGreaterThanMax() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" min=\"3\" max=\"2\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"min\" is greater than attribute \"max\"");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectMinInvalid() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" min=\"1\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"min\" is not valid");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectMinInvalidType() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" min=\"abc\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"min\" is not valid");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectMaxInvalid() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" max=\"1\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"max\" is not valid");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectMaxInvalidType() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" max=\"abc\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"max\" is not valid");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectMultipleInvalid() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"invalid\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"multiple\" of element \"select\" can only be one of the following values: [true, false]");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testBiContextSelect()
       throws InvalidInputException, IOException, ProcessingException {
     MessageMLContext messageMLContext = new MessageMLContext(null);
@@ -384,6 +664,43 @@ public class SelectOptionTest extends ElementTest {
     assertSameBiItem(selectBiItemExpected, items.get(1));
     assertSameBiItem(formBiItemExpected, items.get(3));
     assertMessageLengthBiItem(items.get(4), input.length());
+  }
+
+  @Test
+  public void testBiContextMultiSelect() throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+    String input = "<messageML>\n"
+        + "  <form id=\"form_id\">\n"
+        + "<select name=\"init\" required=\"true\" title=\"title01\" label=\"label01\" multiple=\"true\" "
+        + "data-placeholder=\"placeholder01\">\n"
+        + "      <option value=\"opt1\">Unselected option 1</option>\n"
+        + "      <option value=\"opt2\" selected=\"true\">With selected option</option>\n"
+        + "      <option value=\"opt3\">Unselected option 2</option>\n"
+        + "      </select>\n"
+        + "      <button name=\"dropdown\">Submit</button>\n"
+        + "  </form>\n"
+        + "</messageML>";
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    Map<Object, Object> selectExpectedAttributes = Stream.of(new Object[][] {
+        {BiFields.MULTI_SELECT.getValue(), 1},
+        {BiFields.TITLE.getValue(), 1},
+        {BiFields.LABEL.getValue(), 1},
+        {BiFields.PLACEHOLDER.getValue(), 1},
+        {BiFields.REQUIRED.getValue(), 1},
+    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
+
+    BiItem selectBiItemExpected = new BiItem(BiFields.SELECT.getValue(),
+        selectExpectedAttributes.entrySet()
+            .stream()
+            .collect(Collectors.toMap(e ->
+                String.valueOf(e.getKey()), Map.Entry::getValue)));
+
+    assertEquals(5, items.size());
+    assertEquals(BiFields.SELECT.getValue(), items.get(1).getName());
+    assertSameBiItem(selectBiItemExpected, items.get(1));
   }
 
   private String getRequiredPresentationML(String required) {
@@ -480,5 +797,9 @@ public class SelectOptionTest extends ElementTest {
         getExpectedSelectPresentation(select, hasLabel, hasTitle, matcher.matches() ? matcher.group(2) : null),
         presentationML);
     assertEquals("Select markdown", getExpectedSelectMarkdown(select, hasLabel, hasTitle), context.getMarkdown());
+  }
+
+  private static String trimXml(String input) { // to avoid empty text element upon parsing
+    return input.replace("\n", "").replace("  ", "");
   }
 }

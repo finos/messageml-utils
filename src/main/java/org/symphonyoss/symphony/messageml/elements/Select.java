@@ -30,11 +30,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing dropdown menu - Symphony Elements.
- *
- * @author lumoura
- * @since 3/22/18
+ * This class represents the Symphony Element Dialog which is represented with tag name "select" (drop down menu).
+ * The messageML representation of the select element can contain the following attributes:
+ * <ul>
+ *   <li> name (required) -> to identify this element</li>
+ *   <li> required -> true/false, to enforce a non empty option to be selected</li>
+ *   <li> data-placeholder -> string, text displayed in the dropdown menu before an option is selected</li>
+ *   <li> title -> string, the description that will be displayed when clicking the tooltip icon</li>
+ *   <li> label -> string, definition of the label that will be displayed on top of the Masked Text Field Element</li>
+ *   <li> multiple -> true/false, to allow for multiple options to be selected</li>
+ *   <li> min -> integer, minimum number of options to select if multiple=true</li>
+ *   <li> max -> integer, maximum number of options to select if multiple=true</li>
+ * </ul>
+ * It can contain the following child tags:
+ * <ul>
+ *   <li> option (required) -> the possible options to select {@link Option}</li>
+ * </ul>
  */
+
 public class Select extends FormElement implements LabelableElement, TooltipableElement {
 
   public static final String MESSAGEML_TAG = "select";
@@ -42,6 +55,9 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   private static final String REQUIRED_ATTR = "required";
   private static final String OPTION_SELECTED_ATTR = "selected";
   private static final String DATA_PLACEHOLDER_ATTR = "data-placeholder";
+  private static final String MULTIPLE_ATTR = "multiple";
+  private static final String MIN_ATTR = "min";
+  private static final String MAX_ATTR = "max";
 
   public Select(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -59,6 +75,7 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
     if (getAttribute(NAME_ATTR) == null) {
       throw new InvalidInputException("The attribute \"name\" is required");
     }
+    assertAttributeNotBlank(NAME_ATTR);
 
     assertContentModel(Collections.singleton(Option.class));
     assertContainsChildOfType(Collections.singleton(Option.class));
@@ -67,8 +84,28 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
       assertAttributeValue(REQUIRED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
-    assertOnlyOneOptionSelected();
-    assertAttributeNotBlank(NAME_ATTR);
+    if (getAttribute(MULTIPLE_ATTR) != null) {
+      assertAttributeValue(MULTIPLE_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+    }
+
+    boolean multipleAttributeValue = Boolean.parseBoolean(getAttribute(MULTIPLE_ATTR));
+    if (getAttribute(MIN_ATTR) != null && !multipleAttributeValue) {
+      throw new InvalidInputException("Attribute \"min\" is not allowed. Attribute \"multiple\" missing");
+    }
+
+    if (getAttribute(MAX_ATTR) != null && !multipleAttributeValue) {
+      throw new InvalidInputException("Attribute \"max\" is not allowed. Attribute \"multiple\" missing");
+    }
+
+    int min = checkIntegerAttribute(MIN_ATTR, "Attribute \"min\" is not valid");
+    int max = checkIntegerAttribute(MAX_ATTR, "Attribute \"max\" is not valid");
+    if (min > max) {
+      throw new InvalidInputException("Attribute \"min\" is greater than attribute \"max\"");
+    }
+
+    if (!multipleAttributeValue) {
+      assertOnlyOneOptionSelected();
+    }
   }
 
   @Override
@@ -79,6 +116,9 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
       case DATA_PLACEHOLDER_ATTR:
       case LABEL:
       case TITLE:
+      case MULTIPLE_ATTR:
+      case MIN_ATTR:
+      case MAX_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
@@ -105,8 +145,24 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
     this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
     this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), DATA_PLACEHOLDER_ATTR);
     this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.MULTI_SELECT.getValue(), MULTIPLE_ATTR);
 
     context.addItem(new BiItem(BiFields.SELECT.getValue(), attributesMapBi));
+  }
+
+  private int checkIntegerAttribute(String attributeName, String errorMessage) throws InvalidInputException {
+    int value = 0;
+    if (getAttribute(attributeName) != null) {
+      try {
+        value = Integer.parseInt(getAttribute(attributeName));
+        if (value <= 1) {
+          throw new InvalidInputException(errorMessage);
+        }
+      } catch (NumberFormatException e) {
+        throw new InvalidInputException(errorMessage, e);
+      }
+    }
+    return value;
   }
 
   private void assertOnlyOneOptionSelected() throws InvalidInputException {
