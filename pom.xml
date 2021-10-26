@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -63,66 +64,22 @@
                 <role>Senior Developer Platform</role>
             </roles>
         </developer>
-        <developer>
-            <id>bruceskingle</id>
-            <name>Bruce Skingle</name>
-            <email>bruce.skingle@symphony.com</email>
-            <url>http://github.com/bruceskingle</url>
-            <organization>Symphony Communication Services LLC</organization>
-            <organizationUrl>http://symphony.com</organizationUrl>
-            <roles>
-                <role>Principal Software Engineer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>cristiadu</id>
-            <name>Cristiano Faustino</name>
-            <email>cristiano.faustino@symphony.com</email>
-            <url>http://github.com/cristiadu</url>
-            <organization>Symphony Communication Services LLC</organization>
-            <organizationUrl>http://symphony.com</organizationUrl>
-            <roles>
-                <role>Software Developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>miltongq</id>
-            <name>Milton Gonçalves Quilzini</name>
-            <email>mquilzini@symphony.com</email>
-            <url>http://github.com/miltongq</url>
-            <organization>Symphony Communication Services LLC</organization>
-            <organizationUrl>http://symphony.com</organizationUrl>
-            <roles>
-                <role>Software Developer</role>
-            </roles>
-        </developer>
     </developers>
-
-    <contributors>
-        <contributor>
-            <name>Daniel Nathanson</name>
-            <email>daniel.nathanson@symphony.com</email>
-            <organization>Symphony Communication Services LLC</organization>
-            <roles>
-                <role>Senior Director Platform Engineering</role>
-            </roles>
-        </contributor>
-    </contributors>
 
     <properties>
         <json.schema.validator.version>2.2.14</json.schema.validator.version>
         <jackson.version>2.10.1</jackson.version>
         <jackson.databind.version>2.10.5.1</jackson.databind.version>
-        <commons.io.version>2.10.0</commons.io.version>
+        <commons.io.version>2.11.0</commons.io.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
         <freemarker.version>2.3.31</freemarker.version>
         <commonmark.version>0.15.1</commonmark.version>
-        <mozilla.rhino.version>1.7.12</mozilla.rhino.version>
+        <mozilla.rhino.version>1.7.13</mozilla.rhino.version>
         <junit.version>4.13.2</junit.version>
-        <junit.jupiter.params.version>5.7.1</junit.jupiter.params.version>
-        <mockito.version>3.11.2</mockito.version>
+        <junit.jupiter.params.version>5.8.1</junit.jupiter.params.version>
+        <mockito.version>4.0.0</mockito.version>
         <slf4j.version>1.7.31</slf4j.version>
-        <jmh.version>1.32</jmh.version>
+        <jmh.version>1.33</jmh.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.jar.version>3.1.2</maven.jar.version>
