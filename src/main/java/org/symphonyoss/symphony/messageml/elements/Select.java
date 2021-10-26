@@ -63,7 +63,7 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
     assertContentModel(Collections.singleton(Option.class));
     assertContainsChildOfType(Collections.singleton(Option.class));
 
-    if(getAttribute(REQUIRED_ATTR) != null) {
+    if (getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeValue(REQUIRED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
@@ -72,8 +72,7 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   }
 
   @Override
-  protected void buildAttribute(MessageMLParser parser,
-      Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case REQUIRED_ATTR:
@@ -83,7 +82,7 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
-        if(format != FormatEnum.PRESENTATIONML){
+        if (format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
         fillAttributes(parser, item);
@@ -94,7 +93,7 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   }
 
   @Override
-  public String getElementId(){
+  public String getElementId() {
     return ELEMENT_ID;
   }
 
@@ -116,7 +115,7 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
         .filter(selectedAttr -> selectedAttr != null && selectedAttr.equalsIgnoreCase(Boolean.TRUE.toString()))
         .count();
 
-    if(numberOfSelectedOptions > 1) {
+    if (numberOfSelectedOptions > 1) {
       throw new InvalidInputException("Element \"select\" can only have one selected \"option\"");
     }
   }
