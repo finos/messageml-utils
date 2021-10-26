@@ -384,7 +384,7 @@ public class SelectOptionTest extends ElementTest {
     //language=HTML
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">\n"
         + "    <form id=\"id\">\n"
-        + "        <select data-max=\"2\" data-min=\"1\" multiple=\"true\" name=\"multi\">\n"
+        + "        <select data-max=\"2\" data-min=\"2\" multiple=\"true\" name=\"multi\">\n"
         + "            <option value=\"opt1\">Option 1</option>\n"
         + "            <option value=\"opt2\">Option 2</option>\n"
         + "        </select>\n"

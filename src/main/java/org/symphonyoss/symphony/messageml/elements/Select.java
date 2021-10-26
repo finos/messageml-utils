@@ -56,8 +56,10 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   private static final String OPTION_SELECTED_ATTR = "selected";
   private static final String DATA_PLACEHOLDER_ATTR = "data-placeholder";
   private static final String MULTIPLE_ATTR = "multiple";
-  private static final String MIN_ATTR = "min";
-  private static final String MAX_ATTR = "max";
+  private static final String MML_MIN_ATTR = "min";
+  private static final String MIN_ATTR = "data-min";
+  private static final String MML_MAX_ATTR = "max";
+  private static final String MAX_ATTR = "data-max";
 
   public Select(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -117,9 +119,13 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
       case LABEL:
       case TITLE:
       case MULTIPLE_ATTR:
-      case MIN_ATTR:
-      case MAX_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
+        break;
+      case MML_MIN_ATTR:
+        setAttribute(MIN_ATTR, getStringAttribute(item));
+        break;
+      case MML_MAX_ATTR:
+        setAttribute(MAX_ATTR, getStringAttribute(item));
         break;
       case ID_ATTR:
         if (format != FormatEnum.PRESENTATIONML) {
