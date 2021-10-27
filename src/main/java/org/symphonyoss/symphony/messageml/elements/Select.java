@@ -100,7 +100,7 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
     }
 
     int min = checkIntegerAttribute(MIN_ATTR, 0, "Attribute \"min\" is not valid, it must be >= 0");
-    int max = checkIntegerAttribute(MAX_ATTR, 2, "Attribute \"max\" is not valid, it must be >= 2");
+    int max = checkIntegerAttribute(MAX_ATTR, 1, "Attribute \"max\" is not valid, it must be >= 1");
     if (max > 0 && min > max) {
       throw new InvalidInputException("Attribute \"min\" is greater than attribute \"max\"");
     }

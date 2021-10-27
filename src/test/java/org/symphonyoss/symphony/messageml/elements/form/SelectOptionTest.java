@@ -634,7 +634,7 @@ public class SelectOptionTest extends ElementTest {
     //language=XML
     String input = "<messageML>\n" +
         "    <form id=\"" + "id" + "\">\n"
-        + "        <select name=\"" + "multi" + "\" multiple=\"true\" max=\"1\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" max=\"0\">\n"
         + "            <option value=\"opt1\">Option 1</option>\n"
         + "            <option value=\"opt2\">Option 2</option>\n"
         + "        </select>\n"
