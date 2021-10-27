@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -11,7 +10,7 @@
 
     <groupId>org.symphonyoss.symphony</groupId>
     <artifactId>messageml</artifactId>
-    <version>0.9.77-SNAPSHOT</version>
+    <version>0.9.78-SNAPSHOT</version>
     <name>MessageML Utils</name>
     <url>https://github.com/symphonyoss/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages</description>
