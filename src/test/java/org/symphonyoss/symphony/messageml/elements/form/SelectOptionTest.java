@@ -517,11 +517,39 @@ public class SelectOptionTest extends ElementTest {
   }
 
   @Test
+  public void testMultiSelectMinGreaterThanMaxUnset() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" min=\"2\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+
+    //language=HTML
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">\n"
+        + "    <form id=\"id\">\n"
+        + "        <select data-min=\"2\" multiple=\"true\" name=\"multi\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</div>";
+    assertEquals(trimXml(expectedPresentationML), context.getPresentationML());
+  }
+
+  @Test
   public void testMultiSelectMinInvalid() throws Exception {
     //language=XML
     String input = "<messageML>\n" +
         "    <form id=\"" + "id" + "\">\n"
-        + "        <select name=\"" + "multi" + "\" multiple=\"true\" min=\"1\">\n"
+        + "        <select name=\"" + "multi" + "\" multiple=\"true\" min=\"-1\">\n"
         + "            <option value=\"opt1\">Option 1</option>\n"
         + "            <option value=\"opt2\">Option 2</option>\n"
         + "        </select>\n"
