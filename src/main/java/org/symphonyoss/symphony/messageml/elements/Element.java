@@ -989,4 +989,20 @@ public abstract class Element {
     throw new InvalidInputException("Attribute \"" + item.getNodeName()
         + "\" is not allowed in \"" + getMessageMLTag() + "\"");
   }
+
+  protected int checkIntegerAttribute(String attributeName, int minValue, String errorMessage)
+      throws InvalidInputException {
+    int value = 0;
+    if (getAttribute(attributeName) != null) {
+      try {
+        value = Integer.parseInt(getAttribute(attributeName));
+        if (value < minValue) {
+          throw new InvalidInputException(errorMessage);
+        }
+      } catch (NumberFormatException e) {
+        throw new InvalidInputException(errorMessage, e);
+      }
+    }
+    return value;
+  }
 }

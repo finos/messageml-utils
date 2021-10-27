@@ -564,6 +564,53 @@ public class SelectOptionTest extends ElementTest {
   }
 
   @Test
+  public void testMultiSelectRequiredMinInvalid() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" required=\"true\" multiple=\"true\" min=\"0\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"min\" cannot be 0 if \"required\" is true");
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMultiSelectRequiredMinDefault() throws Exception {
+    //language=XML
+    String input = "<messageML>\n" +
+        "    <form id=\"" + "id" + "\">\n"
+        + "        <select name=\"" + "multi" + "\" required=\"true\" multiple=\"true\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</messageML>";
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+
+    //language=HTML
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">\n"
+        + "    <form id=\"id\">\n"
+        + "        <select multiple=\"true\" name=\"multi\" required=\"true\">\n"
+        + "            <option value=\"opt1\">Option 1</option>\n"
+        + "            <option value=\"opt2\">Option 2</option>\n"
+        + "        </select>\n"
+        + "        <button type=\"action\" name=\"actionName\">Send</button>\n"
+        + "    </form>\n"
+        + "</div>";
+    assertEquals(trimXml(expectedPresentationML), context.getPresentationML());
+  }
+
+  @Test
   public void testMultiSelectMinInvalidType() throws Exception {
     //language=XML
     String input = "<messageML>\n" +

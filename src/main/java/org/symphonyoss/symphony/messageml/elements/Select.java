@@ -99,10 +99,16 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
       throw new InvalidInputException("Attribute \"max\" is not allowed. Attribute \"multiple\" missing");
     }
 
-    int min = checkIntegerAttribute(MIN_ATTR, 0, "Attribute \"min\" is not valid");
-    int max = checkIntegerAttribute(MAX_ATTR, 2, "Attribute \"max\" is not valid");
+    int min = checkIntegerAttribute(MIN_ATTR, 0, "Attribute \"min\" is not valid, it must be >= 0");
+    int max = checkIntegerAttribute(MAX_ATTR, 2, "Attribute \"max\" is not valid, it must be >= 2");
     if (max > 0 && min > max) {
       throw new InvalidInputException("Attribute \"min\" is greater than attribute \"max\"");
+    }
+
+    if (multipleAttributeValue && Boolean.parseBoolean(getAttribute(REQUIRED_ATTR))
+        && getAttribute(MIN_ATTR) != null && min == 0) {
+      // multiple=true required=true min=0
+      throw new InvalidInputException("Attribute \"min\" cannot be 0 if \"required\" is true");
     }
 
     if (!multipleAttributeValue) {
@@ -154,22 +160,6 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
     this.putOneIfPresent(attributesMapBi, BiFields.MULTI_SELECT.getValue(), MULTIPLE_ATTR);
 
     context.addItem(new BiItem(BiFields.SELECT.getValue(), attributesMapBi));
-  }
-
-  private int checkIntegerAttribute(String attributeName, int minValue, String errorMessage)
-      throws InvalidInputException {
-    int value = 0;
-    if (getAttribute(attributeName) != null) {
-      try {
-        value = Integer.parseInt(getAttribute(attributeName));
-        if (value < minValue) {
-          throw new InvalidInputException(errorMessage);
-        }
-      } catch (NumberFormatException e) {
-        throw new InvalidInputException(errorMessage, e);
-      }
-    }
-    return value;
   }
 
   private void assertOnlyOneOptionSelected() throws InvalidInputException {
