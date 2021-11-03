@@ -1,3 +1,4 @@
+[![FINOS - Active](https://cdn.jsdelivr.net/gh/finos/contrib-toolbox@master/images/badge-active.svg)](https://finosfoundation.atlassian.net/wiki/display/FINOS/Active)
 [![Licence](https://img.shields.io/badge/licence-Apache%20Licence%20%282.0%29-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Maven Central](https://img.shields.io/maven-central/v/org.symphonyoss.symphony/messageml.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22messageml%22)
 [![Build Status](https://github.com/finos/messageml-utils/workflows/Build/badge.svg)](https://github.com/finos/messageml-utils/actions)
@@ -7,10 +8,8 @@
 # Introduction
 
 MessageML is a markup language used by the Symphony Agent API for representing messages, including formatting (bold,
-italic, numbered and unnumbered lists etc.)
-and entity data representing [_structured
-objects_](https://docs.developers.symphony.com/building-bots-on-symphony/messages/overview-of-messageml/entities/structured-objects)
-.
+italic, numbered and unnumbered lists etc.) and entity data representing [_structured
+objects_](https://docs.developers.symphony.com/building-bots-on-symphony/messages/overview-of-messageml/entities/structured-objects).
 
 The format is intended to allow third parties to create and render rich content messages representing complex objects,
 enabling deep workflow integrations across multiple systems, with Symphony being the central hub.
@@ -23,7 +22,7 @@ Support of Symphony structured objects comprises the ability to parse and render
   convenience tags for more complex or frequently used constructs. It is translated to PresentationML internally by the
   Agent API before ingestion in Symphony.
 * [PresentationML](https://docs.developers.symphony.com/building-bots-on-symphony/messages/overview-of-presentationml), a strict subset of HTML5
-  describing the markup which controls the formatting (presentation) of a message. PresenttionML is the format used
+  describing the markup which controls the formatting (presentation) of a message. PresentationML is the format used
   internally by Symphony and returned from message ingestion and retrieval by the Agent API.
 * [EntityJSON](https://docs.developers.symphony.com/building-bots-on-symphony/messages/overview-of-messageml/entities), JSON data representing
   complex financial objects and other structured data. EntityJSON elements are referenced in PresentationML and are
@@ -51,28 +50,28 @@ More specifically, the MessageML parser can be used to:
 
 ```java
 /* Instantiate the parsing context. The "dataProvider" object is used to resolve user mentions and check supplied URLs against a whitelist of supported URI schemes. */
-MessageMLContext context=new MessageMLContext(/*IDataProvider*/ dataProvider);
+MessageMLContext context = new MessageMLContext(/*IDataProvider*/ dataProvider);
 
-        /* Parse the message and entity data */
-        context.parseMessageML(/*String*/ message, /*String*/ entityJSON, /*String*/ version);
+/* Parse the message and entity data */
+context.parseMessageML(/*String*/ message, /*String*/ entityJSON, /*String*/ version);
 
-        /* Parse a Markdown message into a MessageML document tree */
-        context.parseMarkdown(/*String*/ markdown, /*JsonNode*/ entities, /*JsonNode*/ media);
+/* Parse a Markdown message into a MessageML document tree */
+context.parseMarkdown(/*String*/ markdown, /*JsonNode*/ entities, /*JsonNode*/ media);
 
-        /* Get the MessageML document tree */
-        Element messageML=context.getMessageML();
+/* Get the MessageML document tree */
+Element messageML = context.getMessageML();
 
-        /* Get the PresenttionML representation of the message */
-        String presentationML=context.getPresentationML();
+/* Get the PresenttionML representation of the message */
+String presentationML = context.getPresentationML();
 
-        /* Get the entity data of the message, including data auto-generated from MessageML convenience tags*/
-        String entityJSON=context.getEntityJson();
+/* Get the entity data of the message, including data auto-generated from MessageML convenience tags*/
+String entityJSON = context.getEntityJson();
 
-        /* Get the Markdown representation of the message */
-        String markdown=context.getMarkdown();
+/* Get the Markdown representation of the message */
+String markdown = context.getMarkdown();
 
-        /* Get the plain text of the message */
-        String text=context.getText();
+/* Get the plain text of the message */
+String text = context.getText();
 ```
 
 ## Contributing
