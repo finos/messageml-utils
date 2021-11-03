@@ -1,6 +1,6 @@
 [![Licence](https://img.shields.io/badge/licence-Apache%20Licence%20%282.0%29-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Maven Central](https://img.shields.io/maven-central/v/org.symphonyoss.symphony/messageml.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22messageml%22)
-[![Build Status](https://github.com/symphonyoss/messageml-utils/workflows/Build/badge.svg)](https://github.com/symphonyoss/messageml-utils/actions)
+[![Build Status](https://github.com/finos/messageml-utils/workflows/Build/badge.svg)](https://github.com/finos/messageml-utils/actions)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=symphonyoss_messageml-utils&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=symphonyoss_messageml-utils)
 [![Sonar](https://sonarcloud.io/api/project_badges/measure?project=symphonyoss_messageml-utils&metric=coverage)](https://sonarcloud.io/dashboard?id=symphonyoss_messageml-utils)
 
@@ -77,7 +77,7 @@ MessageMLContext context=new MessageMLContext(/*IDataProvider*/ dataProvider);
 
 ## Contributing
 
-1. Fork it (<https://github.com/symphonyoss/messageml-utils/fork>)
+1. Fork it (<https://github.com/finos/messageml-utils/fork>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
 3. Read our [contribution guidelines](.github/CONTRIBUTING.md)
    and [Community Code of Conduct](https://www.finos.org/code-of-conduct)
