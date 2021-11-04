@@ -15,28 +15,6 @@
     <url>https://github.com/symphonyoss/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages</description>
 
-    <!--
-  ~
-  ~ Copyright 2016 The Symphony Software Foundation
-  ~
-  ~ Licensed to The Symphony Software Foundation (SSF) under one
-  ~ or more contributor license agreements.  See the NOTICE file
-  ~ distributed with this work for additional information
-  ~ regarding copyright ownership.  The SSF licenses this file
-  ~ to you under the Apache License, Version 2.0 (the
-  ~ "License"); you may not use this file except in compliance
-  ~ with the License.  You may obtain a copy of the License at
-  ~
-  ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied.  See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
-  -->
-
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -45,9 +23,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/symphonyoss/messageml-utils.git</connection>
-        <developerConnection>scm:git:https://github.com/symphonyoss/messageml-utils.git</developerConnection>
-        <url>https://github.com/symphonyoss/messageml-utils</url>
+        <connection>scm:git:git://github.com/finos/messageml-utils.git</connection>
+        <developerConnection>scm:git:https://github.com/finos/messageml-utils.git</developerConnection>
+        <url>https://github.com/finos/messageml-utils</url>
         <tag>messageml-0.9.51</tag>
     </scm>
 
@@ -93,72 +71,6 @@
             <properties>
                 <additionalparam>-Xdoclint:none</additionalparam>
             </properties>
-        </profile>
-        <profile>
-            <id>sonar</id>
-            <activation>
-                <!-- Automatically run Sonar when credentials are set, i.e master branch, internal PRs -->
-                <property>
-                    <name>env.SONAR_LOGIN</name>
-                </property>
-            </activation>
-            <properties>
-                <sonar.projectKey>symphonyoss_messageml-utils</sonar.projectKey>
-                <sonar.organization>finos-symphonyoss</sonar.organization>
-                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                <sonar.login>${env.SONAR_LOGIN}</sonar.login>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>${maven.jar.version}</version>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                </manifest>
-                                <manifestEntries>
-                                    <Implementation-Title>${project.name}</Implementation-Title>
-                                    <Implementation-Version>${project.version}</Implementation-Version>
-                                </manifestEntries>
-                            </archive>
-                        </configuration>
-                    </plugin>
-                    <!-- Configure Jacoco to report coverage in Sonar -->
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonarsource.scanner.maven</groupId>
-                        <artifactId>sonar-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>sonar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>release</id>
@@ -290,11 +202,6 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.8.6</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.7.0.1746</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
