@@ -1,23 +1,28 @@
 package org.symphonyoss.symphony.messageml.bi;
 
+/**
+ * BiFields enum
+ * We list all the BI elements, attributes and some values. All integers attributes have a zero default value.
+ * We set a default value to be able to differentiate Integers attributes from String attributes in the agent.
+ */
 public enum BiFields {
 
-  FORM("form", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  BUTTON("button", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  TEXT_AREA("textarea", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  TEXT_FIELD("textfield", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  CHECKBOX("checkbox", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  RADIO("radio", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  TIME_PICKER("timepicker", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  TIMEZONE_PICKER("timezonepicker", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  DATE_SELECTOR("dateselector", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  PERSON_SELECTOR("personselector", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  SELECT("dropdownmenu", BiEventType.MESSAGEML_ELEMENT_SENT, null),
+  FORM("form", BiEventType.MESSAGEML_ELEMENT_SENT),
+  BUTTON("button", BiEventType.MESSAGEML_ELEMENT_SENT),
+  TEXT_AREA("textarea", BiEventType.MESSAGEML_ELEMENT_SENT),
+  TEXT_FIELD("textfield", BiEventType.MESSAGEML_ELEMENT_SENT),
+  CHECKBOX("checkbox", BiEventType.MESSAGEML_ELEMENT_SENT),
+  RADIO("radio", BiEventType.MESSAGEML_ELEMENT_SENT),
+  TIME_PICKER("timepicker", BiEventType.MESSAGEML_ELEMENT_SENT),
+  TIMEZONE_PICKER("timezonepicker", BiEventType.MESSAGEML_ELEMENT_SENT),
+  DATE_SELECTOR("dateselector", BiEventType.MESSAGEML_ELEMENT_SENT),
+  PERSON_SELECTOR("personselector", BiEventType.MESSAGEML_ELEMENT_SENT),
+  SELECT("dropdownmenu", BiEventType.MESSAGEML_ELEMENT_SENT),
   OPTION("option", BiEventType.MESSAGEML_ELEMENT_SENT, "0"),
   CHIME("chimes", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   CODE("codes", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   DIV("divs", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
-  ENTITY("entity", BiEventType.MESSAGEML_ELEMENT_SENT, null),
+  ENTITY("entity", BiEventType.MESSAGEML_ELEMENT_SENT),
   ENTITIES("entities", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   LINK("links", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   PARAGRAPH("paragraphs", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
@@ -48,14 +53,14 @@ public enum BiFields {
   TITLE("has_title", BiEventType.MESSAGEML_ELEMENT_SENT, "0"),
   DEFAULT("default", BiEventType.MESSAGEML_ELEMENT_SENT, "0"),
   PLACEHOLDER("placeholder", BiEventType.MESSAGEML_ELEMENT_SENT, "0"),
-  STYLE_COLOR("style_color", BiEventType.MESSAGEML_ELEMENT_SENT, null),
+  STYLE_COLOR("style_color", BiEventType.MESSAGEML_ELEMENT_SENT),
   STYLES_CUSTOM("styles_custom", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   STYLES_CLASS_TEMPO("styles_class_tempo", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   STYLES_CLASS_OTHER("styles_class_other", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
-  TYPE("type", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  TYPE_MASKED_TRUE("masked", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  TYPE_MASKED_FALSE("normal", BiEventType.MESSAGEML_ELEMENT_SENT, null),
-  ENTITY_TYPE("entity_type", BiEventType.MESSAGEML_ELEMENT_SENT, null),
+  TYPE("type", BiEventType.MESSAGEML_ELEMENT_SENT),
+  TYPE_MASKED_TRUE("masked", BiEventType.MESSAGEML_ELEMENT_SENT),
+  TYPE_MASKED_FALSE("normal", BiEventType.MESSAGEML_ELEMENT_SENT),
+  ENTITY_TYPE("entity_type", BiEventType.MESSAGEML_ELEMENT_SENT),
   MULTI_SUBMIT("is_multi_submit", BiEventType.MESSAGEML_ELEMENT_SENT, "0"),
   LABEL("has_label", BiEventType.MESSAGEML_ELEMENT_SENT, "0"),
   OPTIONS_COUNT("options_count", BiEventType.MESSAGEML_ELEMENT_SENT, "0"),
@@ -85,7 +90,12 @@ public enum BiFields {
     this.type = type;
     this.defaultValue = defaultValue;
   }
-  
+
+  BiFields(String value, BiEventType type) {
+    this.value = value;
+    this.type = type;
+    this.defaultValue = null;
+  }
 
   public String getValue() {
     return value;
