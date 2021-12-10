@@ -720,6 +720,14 @@ public class MessageMLParser {
     }
   }
 
+  /**
+   * Method that allows to automatically transform any PresentationML <code>div</code> to its actual MessageML
+   * corresponding element.
+   * <p>For instance:
+   * <pre>&#60;div class="ui-action"&#62;</pre>
+   * will be transformed to:
+   * <pre>&#60;ui-action&#62;</pre>
+   */
   private Element createElementFromDiv(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
     if (element.hasAttribute(SplittableElement.PRESENTATIONML_DIV_FLAG)) {
       // Special div created by a splittable element, it is not converted in MessageML or in PresentationML tree object
@@ -765,9 +773,6 @@ public class MessageMLParser {
     } else if (containsAttribute(elementClass, TimezonePicker.PRESENTATIONML_CLASS)) {
       removeAttribute(element, CLASS_ATTR, TimezonePicker.PRESENTATIONML_CLASS);
       return new TimezonePicker(parent, FormatEnum.PRESENTATIONML);
-    } else if (containsAttribute(elementClass, Dialog.PRESENTATIONML_CLASS)) {
-      removeAttribute(element, CLASS_ATTR, Dialog.PRESENTATIONML_CLASS);
-      return new Dialog(parent, FormatEnum.PRESENTATIONML);
     } else {
       return new Div(parent);
     }
