@@ -45,11 +45,12 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String DISABLED_TIMEZONE_ATTR = "disabled-timezone";
 
-  private static final String NAME_PRESENTATION_ATTR = "data-name";
-  private static final String VALUE_PRESENTATION_ATTR = "data-value";
-  private static final String REQUIRED_PRESENTATION_ATTR = "data-required";
-  private static final String PLACEHOLDER_PRESENTATION_ATTR = "data-placeholder";
-  private static final String DISABLED_TIMEZONE_PRESENTATION_ATTR = "data-disabled-timezone";
+  public static final String PRESENTATIONML_CLASS = MESSAGEML_TAG;
+  private static final String PRESENTATIONML_NAME_ATTR = "data-name";
+  private static final String PRESENTATIONML_VALUE_ATTR = "data-value";
+  private static final String PRESENTATIONML_REQUIRED_ATTR = "data-required";
+  private static final String PRESENTATIONML_PLACEHOLDER_ATTR = "data-placeholder";
+  private static final String PRESENTATIONML_DISABLED_TIMEZONE_ATTR = "data-disabled-timezone";
 
   private static final int DISABLED_TIMEZONE_MAX_LENGTH = 1024;
   private static final String PRESENTATIONML_TAG = "div";
@@ -64,29 +65,29 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
                                 Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
+      case PRESENTATIONML_NAME_ATTR:
+        setAttribute(NAME_ATTR, getStringAttribute(item));
+        break;
       case VALUE_ATTR:
-      case TITLE:
-      case LABEL:
+      case PRESENTATIONML_VALUE_ATTR:
+        setAttribute(VALUE_ATTR, getStringAttribute(item));
+        break;
       case REQUIRED_ATTR:
+      case PRESENTATIONML_REQUIRED_ATTR:
+        setAttribute(REQUIRED_ATTR, getStringAttribute(item));
+        break;
       case PLACEHOLDER_ATTR:
-        setAttribute(item.getNodeName(), getStringAttribute(item));
+      case PRESENTATIONML_PLACEHOLDER_ATTR:
+        setAttribute(PLACEHOLDER_ATTR, getStringAttribute(item));
         break;
       case DISABLED_TIMEZONE_ATTR:
-        if (this.format != FormatEnum.MESSAGEML) {
-          throwInvalidInputException(item);
-        }
-        setAttribute(item.getNodeName(), getStringAttribute(item));
+      case PRESENTATIONML_DISABLED_TIMEZONE_ATTR:
+        setAttribute(DISABLED_TIMEZONE_ATTR, getStringAttribute(item));
         break;
       case ID_ATTR:
-      case VALUE_PRESENTATION_ATTR:
-      case NAME_PRESENTATION_ATTR:
-      case REQUIRED_PRESENTATION_ATTR:
-      case PLACEHOLDER_PRESENTATION_ATTR:
-      case DISABLED_TIMEZONE_PRESENTATION_ATTR:
-        if (this.format != FormatEnum.PRESENTATIONML) {
-          throwInvalidInputException(item);
-        }
-        fillAttributes(parser, item);
+      case TITLE:
+      case LABEL:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       default:
         throwInvalidInputException(item);
@@ -188,21 +189,21 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
     Map<String, Object> presentationAttrs = new LinkedHashMap<>();
 
     presentationAttrs.put(CLASS_ATTR, MESSAGEML_TAG);
-    presentationAttrs.put(NAME_PRESENTATION_ATTR, getAttribute(NAME_ATTR));
+    presentationAttrs.put(PRESENTATIONML_NAME_ATTR, getAttribute(NAME_ATTR));
 
     if (getAttribute(VALUE_ATTR) != null) {
-      presentationAttrs.put(VALUE_PRESENTATION_ATTR, getAttribute(VALUE_ATTR));
+      presentationAttrs.put(PRESENTATIONML_VALUE_ATTR, getAttribute(VALUE_ATTR));
     }
     if (getAttribute(PLACEHOLDER_ATTR) != null) {
-      presentationAttrs.put(PLACEHOLDER_PRESENTATION_ATTR, getAttribute(PLACEHOLDER_ATTR));
+      presentationAttrs.put(PRESENTATIONML_PLACEHOLDER_ATTR, getAttribute(PLACEHOLDER_ATTR));
     }
 
     if (getAttribute(DISABLED_TIMEZONE_ATTR) != null) {
-      presentationAttrs.put(DISABLED_TIMEZONE_PRESENTATION_ATTR, convertJsonTimezoneToPresentationML(DISABLED_TIMEZONE_ATTR));
+      presentationAttrs.put(PRESENTATIONML_DISABLED_TIMEZONE_ATTR, convertJsonTimezoneToPresentationML(DISABLED_TIMEZONE_ATTR));
     }
 
     if (getAttribute(REQUIRED_ATTR) != null) {
-      presentationAttrs.put(REQUIRED_PRESENTATION_ATTR, getAttribute(REQUIRED_ATTR));
+      presentationAttrs.put(PRESENTATIONML_REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
     }
     return presentationAttrs;
   }

@@ -74,6 +74,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
         }
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
+      case TYPE_ATTR:
       case ID_ATTR:
       case DISABLED_DATE_PRESENTATION_ATTR:
       case HIGHLIGHTED_DATE_PRESENTATION_ATTR:

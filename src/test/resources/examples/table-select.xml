@@ -1,0 +1,50 @@
+<messageML>
+    <form id="example">
+        <table>
+            <thead>
+                <tr>
+                    <td>Select</td>
+                    <td>H1</td>
+                    <td>H2</td>
+                    <td>H3</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <button type="action" name="tablesel-row-1">SELECT</button>
+                    </td>
+                    <td>A1</td>
+                    <td>B1</td>
+                    <td>C1</td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="action" name="tablesel-row-2">SELECT</button>
+                    </td>
+                    <td>A2</td>
+                    <td>B2</td>
+                    <td>C2</td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="action" name="tablesel-row-3">SELECT</button>
+                    </td>
+                    <td>A3</td>
+                    <td>B3</td>
+                    <td>C3</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <button type="action" name="tablesel-footer">SELECT</button>
+                    </td>
+                    <td>F1</td>
+                    <td>F2</td>
+                    <td>F3</td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+</messageML>

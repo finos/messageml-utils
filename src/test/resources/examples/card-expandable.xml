@@ -1,0 +1,9 @@
+<messageML>
+    <expandable-card state="expanded">
+        <header>Card Header. Always visible.</header>
+        <body variant="default">
+            Card Body. User must click to view it (when the card is sent collapsed/cropped).
+            [it may contain a title, a paragraph, other elements for e.g. data bar and action bar]
+        </body>
+    </expandable-card>
+</messageML>

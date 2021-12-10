@@ -39,9 +39,9 @@ public class ExpandableCardBody extends Element {
 
   public static final String MESSAGEML_TAG = "body";
   public static final String PRESENTATIONML_CLASS = "expandableCardBody";
+  public static final String PRESENTATIONML_VARIANT_ATTR = "data-variant";
   private static final String PRESENTATIONML_TAG = "div";
   private static final String ATTR_VARIANT = "variant";
-  private static final String PRESENTATIONML_VARIANT = "data-variant";
   private static final List<String> allowedVariants = Arrays.asList("default", "error");
 
   public ExpandableCardBody(Element parent, FormatEnum format) {
@@ -49,10 +49,9 @@ public class ExpandableCardBody extends Element {
   }
 
   @Override
-  void buildAttribute(MessageMLParser parser,
-      org.w3c.dom.Node item) throws InvalidInputException {
+  void buildAttribute(MessageMLParser parser, org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case PRESENTATIONML_VARIANT:
+      case PRESENTATIONML_VARIANT_ATTR:
       case ATTR_VARIANT:
         setAttribute(ATTR_VARIANT, getStringAttribute(item));
         break;
@@ -67,7 +66,7 @@ public class ExpandableCardBody extends Element {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
     presentationAttrs.put(CLASS_ATTR, PRESENTATIONML_CLASS);
     if (getAttribute(ATTR_VARIANT) != null) {
-      presentationAttrs.put(PRESENTATIONML_VARIANT, getAttribute(ATTR_VARIANT));
+      presentationAttrs.put(PRESENTATIONML_VARIANT_ATTR, getAttribute(ATTR_VARIANT));
     }
     out.openElement(PRESENTATIONML_TAG, presentationAttrs);
 

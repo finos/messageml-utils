@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -667,6 +668,23 @@ public abstract class Element {
   }
 
   /**
+   * Check that the element's children are limited to allowed element types.
+   */
+  void assertContentModel(Predicate<Element> permittedChildrenPredicate, Function<Element, String> errorMessage) throws InvalidInputException {
+    for (Element child : this.getChildren()) {
+      if (!permittedChildrenPredicate.test(child)) {
+
+        //Permit whitespace
+        if (child instanceof TextNode && StringUtils.isBlank(((TextNode) child).getText())) {
+          continue;
+        }
+
+        throw new InvalidInputException(errorMessage.apply(child));
+      }
+    }
+  }
+
+  /**
    * Check that the element's allowed parents are limited to the specified element types.
    */
   void assertParent(Collection<Class<? extends Element>> permittedParents) throws InvalidInputException {
@@ -750,6 +768,21 @@ public abstract class Element {
   }
 
   /**
+   * Assert that the element contains at least one child and that this child is one of the allowed types.
+   *
+   * @param childPredicate the {@link Predicate} function used to match children
+   * @param errorMessage error message returned when no child matched
+   * @throws InvalidInputException when no child matched the given predicate
+   */
+  void assertContainsAlwaysChildMatching(Predicate<Element> childPredicate, String errorMessage) throws InvalidInputException {
+    boolean hasPermittedElementAsChild = this.getChildren().stream().anyMatch(childPredicate);
+
+    if (this.getChildren().isEmpty() || !hasPermittedElementAsChild) {
+      throw new InvalidInputException(errorMessage);
+    }
+  }
+
+  /**
    * Check the format of an ID attribute following the specs:
    * https://www.w3.org/TR/2011/WD-html5-20110525/elements.html#the-id-attribute
    * More precisely: attribute is not empty, does not contain any whitespace, maximum 64 characters
@@ -799,6 +832,10 @@ public abstract class Element {
           "ui-action with a target-id must have only one dialog sibling with a matching id");
     }
     return (Dialog) matchingDialogs.get(0);
+  }
+
+  boolean isPresentationMLElement(String elementName) {
+    return this.format == FormatEnum.PRESENTATIONML && this.getClass().equals(Div.class) && this.getAttribute("class").equals(elementName);
   }
 
   /**

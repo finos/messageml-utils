@@ -36,9 +36,9 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
   private static final String FORMAT_ATTR = "format";
 
   // PresentationML specific attributes
-  private static final String FORMAT_PRESENTATION_ATTR = "data-format";
-  private static final String DISABLED_TIME_PRESENTATION_ATTR = "data-disabled-time";
-  private static final String STRICT_PRESENTATION_ATTR = "data-strict";
+  private static final String PRESENTATIONML_FORMAT_ATTR = "data-format";
+  private static final String PRESENTATIONML_DISABLED_TIME_ATTR = "data-disabled-time";
+  private static final String PRESENTATIONML_STRICT_ATTR = "data-strict";
 
   private static final int DISABLED_TIME_RANGE_MAX_LENGTH = 1024;
   private static final int DEFAULT_MAX_LENGTH = 64;
@@ -76,9 +76,11 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
         }
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
+      case TYPE_ATTR:
       case ID_ATTR:
-      case DISABLED_TIME_PRESENTATION_ATTR:
-      case FORMAT_PRESENTATION_ATTR:
+      case PRESENTATIONML_DISABLED_TIME_ATTR:
+      case PRESENTATIONML_STRICT_ATTR:
+      case PRESENTATIONML_FORMAT_ATTR:
         if (this.format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
@@ -271,13 +273,13 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
       presentationAttrs.put(STEP_ATTR, getAttribute(STEP_ATTR));
     }
     if (getAttribute(FORMAT_ATTR) != null) {
-      presentationAttrs.put(FORMAT_PRESENTATION_ATTR, getAttribute(FORMAT_ATTR));
+      presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(FORMAT_ATTR));
     }
     if (getAttribute(STRICT_ATTR) != null) {
-      presentationAttrs.put(STRICT_PRESENTATION_ATTR, getAttribute(STRICT_ATTR));
+      presentationAttrs.put(PRESENTATIONML_STRICT_ATTR, getAttribute(STRICT_ATTR));
     }
     if (getAttribute(DISABLED_TIME_ATTR) != null) {
-      presentationAttrs.put(DISABLED_TIME_PRESENTATION_ATTR, convertJsonTimeToPresentationML(DISABLED_TIME_ATTR));
+      presentationAttrs.put(PRESENTATIONML_DISABLED_TIME_ATTR, convertJsonTimeToPresentationML(DISABLED_TIME_ATTR));
     }
     if (getAttribute(REQUIRED_ATTR) != null) {
       presentationAttrs.put(REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));

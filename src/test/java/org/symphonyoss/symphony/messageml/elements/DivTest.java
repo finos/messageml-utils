@@ -1,6 +1,7 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -65,13 +66,13 @@ public class DivTest extends ElementTest {
   }
 
   @Test
-  public void testDivInvaliIconSrc() throws Exception {
+  public void testDivInvalidIconSrc() throws Exception {
     String div = "<messageML><div data-icon-src=\"attr\">txt</div></messageML>";
 
-    expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(
-        "The attribute \"data-icon-src\" is only allowed if the element class is \"card\".");
-    context.parseMessageML(div, null, MessageML.MESSAGEML_VERSION);
+    InvalidInputException ex =
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(div, null, MessageML.MESSAGEML_VERSION));
+
+    assertEquals("The attribute \"data-icon-src\" is only allowed if the element class is \"card\".", ex.getMessage());
   }
 
   @Test

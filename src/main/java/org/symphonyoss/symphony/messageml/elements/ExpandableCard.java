@@ -39,10 +39,10 @@ import java.util.Map;
 public class ExpandableCard extends Element {
 
   public static final String MESSAGEML_TAG = "expandable-card";
+  public static final String PRESENTATIONML_STATE_ATTR = "data-state";
   public static final String PRESENTATIONML_CLASS = "expandable-card";
   private static final String PRESENTATIONML_TAG = "div";
   private static final String ATTR_STATE = "state";
-  private static final String PRESENTATIONML_STATE = "data-state";
   private static final String COLLAPSED = "collapsed";
   private static final String CROPPED = "cropped";
   private static final String EXPANDED = "expanded";
@@ -53,10 +53,9 @@ public class ExpandableCard extends Element {
   }
 
   @Override
-  protected void buildAttribute(MessageMLParser parser,
-      Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case PRESENTATIONML_STATE:
+      case PRESENTATIONML_STATE_ATTR:
       case ATTR_STATE:
         setAttribute(ATTR_STATE, getStringAttribute(item));
         break;
@@ -75,7 +74,7 @@ public class ExpandableCard extends Element {
       presentationAttrs.put(CLASS_ATTR, PRESENTATIONML_CLASS);
     }
     if (getAttribute(ATTR_STATE) != null) {
-      presentationAttrs.put(PRESENTATIONML_STATE, getAttribute(ATTR_STATE));
+      presentationAttrs.put(PRESENTATIONML_STATE_ATTR, getAttribute(ATTR_STATE));
     }
 
     out.openElement(PRESENTATIONML_TAG, presentationAttrs);

@@ -1,0 +1,9 @@
+<messageML>
+    <dialog id="dialog-id" width="small" state="open">
+        <title>
+            <h2>A title</h2>
+        </title>
+        <body>Some text </body>
+        <footer>Some footer</footer>
+    </dialog>
+</messageML>

@@ -49,12 +49,13 @@ public class UIAction extends Element {
   private static final int MAX_USER_IDS = 15;
 
   private static final String PRESENTATIONML_TAG = "div";
+  public static final String PRESENTATIONML_CLASS = MESSAGEML_TAG;
   private static final String PRESENTATIONML_ACTION_ATTR = "data-action";
   private static final String PRESENTATIONML_TRIGGER_ATTR = "data-trigger";
   private static final String PRESENTATIONML_USER_IDS_ATTR = "data-user-ids";
   private static final String PRESENTATIONML_STREAM_ID_ATTR = "data-stream-id";
   private static final String PRESENTATIONML_SIDE_BY_SIDE_ATTR = "data-side-by-side";
-  private static final String DATA_TARGET_ID = "data-target-id";
+  private static final String PRESENTATIONML_DATA_TARGET_ID_ATTR = "data-target-id";
 
   public UIAction(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
@@ -65,15 +66,28 @@ public class UIAction extends Element {
   protected void buildAttribute(MessageMLParser parser, org.w3c.dom.Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case ACTION_ATTR:
+      case PRESENTATIONML_ACTION_ATTR:
+        setAttribute(ACTION_ATTR, getStringAttribute(item));
+        break;
       case TRIGGER_ATTR:
+      case PRESENTATIONML_TRIGGER_ATTR:
+        setAttribute(TRIGGER_ATTR, getStringAttribute(item));
+        break;
       case USER_IDS_ATTR:
+      case PRESENTATIONML_USER_IDS_ATTR:
+        setAttribute(USER_IDS_ATTR, getStringAttribute(item));
+        break;
       case STREAM_ID_ATTR:
+      case PRESENTATIONML_STREAM_ID_ATTR:
+        setAttribute(STREAM_ID_ATTR, getStringAttribute(item));
+        break;
       case SIDE_BY_SIDE_ATTR:
+      case PRESENTATIONML_SIDE_BY_SIDE_ATTR:
+        setAttribute(SIDE_BY_SIDE_ATTR, getStringAttribute(item));
+        break;
       case TARGET_ID:
-        if (this.format != FormatEnum.MESSAGEML) {
-          throwInvalidInputException(item);
-        }
-        setAttribute(item.getNodeName(), getStringAttribute(item));
+      case PRESENTATIONML_DATA_TARGET_ID_ATTR:
+        setAttribute(TARGET_ID, getStringAttribute(item));
         break;
       default:
         throwInvalidInputException(item);
@@ -186,7 +200,7 @@ public class UIAction extends Element {
       presentationAttrs.put(PRESENTATIONML_SIDE_BY_SIDE_ATTR, getAttribute(SIDE_BY_SIDE_ATTR));
     }
     if (getAttribute(TARGET_ID) != null) {
-      presentationAttrs.put(DATA_TARGET_ID, getAttribute(TARGET_ID));
+      presentationAttrs.put(PRESENTATIONML_DATA_TARGET_ID_ATTR, getAttribute(TARGET_ID));
     }
 
     return presentationAttrs;

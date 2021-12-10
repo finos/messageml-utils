@@ -759,6 +759,15 @@ public class MessageMLParser {
     } else if (containsAttribute(elementClass, Radio.PRESENTATIONML_DIV_CLASS)) {
       removeAttribute(element, CLASS_ATTR, Radio.PRESENTATIONML_DIV_CLASS);
       return new Radio(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, UIAction.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, UIAction.PRESENTATIONML_CLASS);
+      return new UIAction(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, TimezonePicker.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, TimezonePicker.PRESENTATIONML_CLASS);
+      return new TimezonePicker(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, Dialog.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, Dialog.PRESENTATIONML_CLASS);
+      return new Dialog(parent, FormatEnum.PRESENTATIONML);
     } else {
       return new Div(parent);
     }
