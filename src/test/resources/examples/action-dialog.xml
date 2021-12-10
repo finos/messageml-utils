@@ -1,0 +1,58 @@
+<messageML>
+    <form id="wrapping_dialog">
+        <h4>First part: form wrapping a dialog</h4>
+        <p>Here is the beginning of the form containing the dialog hiding some large text</p>
+        <text-field name="input1" label="This is an interactive Element in the form but outside of the dialog" />
+        <p>Please click on the following button in order to open the dialog and see the hidden information</p>
+        <ui-action action="open-dialog" target-id="dialog_in_form">
+            <button class="secondary">Open the dialog contained in the form</button>
+        </ui-action>
+        <text-field name="input2" label="This is an interactive Element in the form but outside of the dialog" />
+        <button name="wrapping_dialog">Submit Button of the Form</button>
+        <dialog id="dialog_in_form">
+            <title>
+                This is a title
+            </title>
+            <body>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam congue viverra interdum. Integer quam odio, gravida ultricies pharetra ac, tempor eget leo. Duis vitae arcu sed turpis faucibus feugiat a at ipsum. Nulla facilisi. Phasellus egestas, leo et malesuada porttitor, felis turpis viverra tortor, quis suscipit orci nibh at augue. Curabitur erat libero, accumsan vitae ipsum eleifend, tincidunt bibendum purus. Curabitur ultricies lorem tincidunt rutrum viverra. Sed mattis dui at suscipit auctor. In rutrum neque urna, vitae lacinia turpis blandit eget. Nullam eu dignissim purus. Sed ut ante lorem. Duis quis mi nec enim imperdiet consectetur. Phasellus aliquet accumsan ipsum non ullamcorper.<br/><br/>
+                Praesent convallis odio tortor, sit amet vulputate nulla tincidunt vitae. Donec ultrices eros suscipit mauris condimentum iaculis. Ut posuere finibus quam a consequat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam aliquet dapibus vehicula. Nunc vel lectus congue, finibus felis ut, laoreet est. Maecenas eleifend gravida metus, nec viverra mi egestas eu. Pellentesque scelerisque mattis nibh, eu condimentum nulla finibus ut.<br/><br/>
+                Ut dignissim varius libero ac volutpat. Sed hendrerit nec libero ut ullamcorper. Nunc et risus sed purus luctus faucibus nec eu est. Praesent id justo ante. Sed sed enim velit. Ut ac mauris magna. Fusce bibendum ullamcorper diam quis semper. Aenean mattis auctor ultricies. Mauris dui enim, vehicula sit amet finibus non, consectetur eu ante. Fusce at mi a ipsum gravida rhoncus.<br/><br/>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam congue viverra interdum. Integer quam odio, gravida ultricies pharetra ac, tempor eget leo. Duis vitae arcu sed turpis faucibus feugiat a at ipsum. Nulla facilisi. Phasellus egestas, leo et malesuada porttitor, felis turpis viverra tortor, quis suscipit orci nibh at augue. Curabitur erat libero, accumsan vitae ipsum eleifend, tincidunt bibendum purus. Curabitur ultricies lorem tincidunt rutrum viverra. Sed mattis dui at suscipit auctor. In rutrum neque urna, vitae lacinia turpis blandit eget. Nullam eu dignissim purus. Sed ut ante lorem. Duis quis mi nec enim imperdiet consectetur. Phasellus aliquet accumsan ipsum non ullamcorper.<br/><br/>
+                Praesent convallis odio tortor, sit amet vulputate nulla tincidunt vitae. Donec ultrices eros suscipit mauris condimentum iaculis. Ut posuere finibus quam a consequat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam aliquet dapibus vehicula. Nunc vel lectus congue, finibus felis ut, laoreet est. Maecenas eleifend gravida metus, nec viverra mi egestas eu. Pellentesque scelerisque mattis nibh, eu condimentum nulla finibus ut.<br/><br/>
+                Ut dignissim varius libero ac volutpat. Sed hendrerit nec libero ut ullamcorper. Nunc et risus sed purus luctus faucibus nec eu est. Praesent id justo ante. Sed sed enim velit. Ut ac mauris magna. Fusce bibendum ullamcorper diam quis semper. Aenean mattis auctor ultricies. Mauris dui enim, vehicula sit amet finibus non, consectetur eu ante. Fusce at mi a ipsum gravida rhoncus.
+            </body>
+            <footer>
+                This is a footer
+                <button name="cancel1" type="cancel">Close</button>
+            </footer>
+        </dialog>
+    </form>
+    <br/>
+    <br/>
+    <h4>Second part: message with a dialog hiding a form</h4>
+    <p>Here is the beginning of the message containing the dialog hiding some large form</p>
+    <dialog id="dialog_containing_form" width="large">
+        <form id="wrapped_in_dialog">
+            <title>
+                This is a title
+            </title>
+            <body>
+                <text-field name="input3" label="This is an interactive Element in the form which is contained in the dialog" />
+                <textarea name="textarea" label="Other interactive Element in the dialog" />
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam congue viverra interdum. Integer quam odio, gravida ultricies pharetra ac, tempor eget leo. Duis vitae arcu sed turpis faucibus feugiat a at ipsum. Nulla facilisi. Phasellus egestas, leo et malesuada porttitor, felis turpis viverra tortor, quis suscipit orci nibh at augue. Curabitur erat libero, accumsan vitae ipsum eleifend, tincidunt bibendum purus. Curabitur ultricies lorem tincidunt rutrum viverra. Sed mattis dui at suscipit auctor. In rutrum neque urna, vitae lacinia turpis blandit eget. Nullam eu dignissim purus. Sed ut ante lorem. Duis quis mi nec enim imperdiet consectetur. Phasellus aliquet accumsan ipsum non ullamcorper.<br/><br/>
+                Praesent convallis odio tortor, sit amet vulputate nulla tincidunt vitae. Donec ultrices eros suscipit mauris condimentum iaculis. Ut posuere finibus quam a consequat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam aliquet dapibus vehicula. Nunc vel lectus congue, finibus felis ut, laoreet est. Maecenas eleifend gravida metus, nec viverra mi egestas eu. Pellentesque scelerisque mattis nibh, eu condimentum nulla finibus ut.<br/><br/>
+                Ut dignissim varius libero ac volutpat. Sed hendrerit nec libero ut ullamcorper. Nunc et risus sed purus luctus faucibus nec eu est. Praesent id justo ante. Sed sed enim velit. Ut ac mauris magna. Fusce bibendum ullamcorper diam quis semper. Aenean mattis auctor ultricies. Mauris dui enim, vehicula sit amet finibus non, consectetur eu ante. Fusce at mi a ipsum gravida rhoncus.<br/><br/>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam congue viverra interdum. Integer quam odio, gravida ultricies pharetra ac, tempor eget leo. Duis vitae arcu sed turpis faucibus feugiat a at ipsum. Nulla facilisi. Phasellus egestas, leo et malesuada porttitor, felis turpis viverra tortor, quis suscipit orci nibh at augue. Curabitur erat libero, accumsan vitae ipsum eleifend, tincidunt bibendum purus. Curabitur ultricies lorem tincidunt rutrum viverra. Sed mattis dui at suscipit auctor. In rutrum neque urna, vitae lacinia turpis blandit eget. Nullam eu dignissim purus. Sed ut ante lorem. Duis quis mi nec enim imperdiet consectetur. Phasellus aliquet accumsan ipsum non ullamcorper.<br/><br/>
+                Praesent convallis odio tortor, sit amet vulputate nulla tincidunt vitae. Donec ultrices eros suscipit mauris condimentum iaculis. Ut posuere finibus quam a consequat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam aliquet dapibus vehicula. Nunc vel lectus congue, finibus felis ut, laoreet est. Maecenas eleifend gravida metus, nec viverra mi egestas eu. Pellentesque scelerisque mattis nibh, eu condimentum nulla finibus ut.<br/><br/>
+                Ut dignissim varius libero ac volutpat. Sed hendrerit nec libero ut ullamcorper. Nunc et risus sed purus luctus faucibus nec eu est. Praesent id justo ante. Sed sed enim velit. Ut ac mauris magna. Fusce bibendum ullamcorper diam quis semper. Aenean mattis auctor ultricies. Mauris dui enim, vehicula sit amet finibus non, consectetur eu ante. Fusce at mi a ipsum gravida rhoncus.
+            </body>
+            <footer>
+                <button name="cancel2" type="cancel">Close</button>
+                <button name="wrapping_dialog">Submit Button of the Form</button>
+            </footer>
+        </form>
+    </dialog>
+    <ui-action action="open-dialog" target-id="dialog_containing_form">
+        <button class="secondary">Open the dialog containing the form</button>
+    </ui-action>
+</messageML>

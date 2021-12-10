@@ -668,7 +668,7 @@ public abstract class Element {
   }
 
   /**
-   * Check that the element's children are limited to allowed element types.
+   * Check that the element's children match the given {@link Predicate} function.
    */
   void assertContentModel(Predicate<Element> permittedChildrenPredicate, Function<Element, String> errorMessage) throws InvalidInputException {
     for (Element child : this.getChildren()) {

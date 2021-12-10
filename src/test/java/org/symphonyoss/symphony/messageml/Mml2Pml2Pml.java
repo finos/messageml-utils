@@ -33,8 +33,16 @@ import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+/**
+ * This test loads a set of MessageML files from classpath:/examples location and performs 2 successive transformation:
+ * <ul>
+ *   <li>MessageML -> PresentationML</li>
+ *   <li>PresentationML -> PresentationML</li>
+ * </ul>
+ * It allows to ensure that generated PresentationML is an actual MessageML valid one.
+ */
 @Slf4j
-public class Mml2Pml {
+public class Mml2Pml2Pml {
 
   private static final String EXAMPLES = "/examples/";
 
@@ -72,7 +80,7 @@ public class Mml2Pml {
     List<String> filenames = new ArrayList<>();
 
     try (
-        InputStream in = Mml2Pml.class.getResourceAsStream(EXAMPLES);
+        InputStream in = Mml2Pml2Pml.class.getResourceAsStream(EXAMPLES);
         BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
         String resource;
 
@@ -114,7 +122,7 @@ public class Mml2Pml {
 
   private static String load(String classpathFile) {
     try {
-      return IOUtils.toString(Mml2Pml.class.getResourceAsStream(classpathFile), StandardCharsets.UTF_8);
+      return IOUtils.toString(Mml2Pml2Pml.class.getResourceAsStream(classpathFile), StandardCharsets.UTF_8);
     } catch (Exception e) {
       return null;
     }

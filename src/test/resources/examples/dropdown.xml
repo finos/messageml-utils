@@ -1,0 +1,12 @@
+<messageML>
+    <form id="form_id">
+        <h2>dropdown menus</h2>
+        <select name="init"><option value="opt1">Unselected option 1</option><option value="opt2" selected="true">With selected option</option><option value="opt3">Unselected option 2</option></select>
+        <select name="data-placeholder" data-placeholder="Only data-placeholder"><option value="opt1">Unselected option 1</option><option value="opt2">Unselected option 2</option><option value="opt3">Unselected option 3</option></select>
+        <select name="noreq" data-placeholder="Not required"><option value="opt1">First</option><option value="opt2">Second</option><option value="opt3">Third</option></select>
+        <select name="req" required="true" data-placeholder="Required"><option value="opt1">First</option><option value="opt2">Second</option><option value="opt3">Third</option></select>
+        <select name="label" label="My Label" data-placeholder="With Label"><option value="opt1">Unselected option 1</option><option value="opt2">Unselected option 2</option><option value="opt3">Unselected option 3</option></select>
+        <select name="tooltip" title="My Tooltip\n With a second line" data-placeholder="With Tooltip"><option value="opt1">Unselected option 1</option><option value="opt2">Unselected option 2</option><option value="opt3">Unselected option 3</option></select>
+        <button name="dropdown">Submit</button>
+    </form>
+</messageML>

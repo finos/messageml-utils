@@ -1,6 +1,14 @@
 <messageML>
-    <ui-action action='open-im' stream-id='rKiuGRoGDTrPtpHSIgmUgH///oVFs7kzdA=='><button>Stream</button></ui-action>
-    <ui-action action='open-im' trigger='click' user-ids='[13056700583037]'><button class='secondary'>User A</button></ui-action>
-    <ui-action action='open-im' trigger='click' user-ids='[13056700583037,13056700583039]'><button class='tertiary'>List of Users</button></ui-action>
-    <ui-action action='open-im' trigger='click' stream-id='rKiuGRoGDTrPtpHSIgmUgH///oVFs7kzdA==' side-by-side='false'><button class='destructive'>Replace current chat</button></ui-action>
+    <ui-action action='open-im' stream-id='rKiuGRoGDTrPtpHSIgmUgH///oVFs7kzdA=='>
+        <button>Stream</button>
+    </ui-action>
+    <ui-action action='open-im' trigger='click' user-ids='[13056700583037]'>
+        <button class='secondary'>User A</button>
+    </ui-action>
+    <ui-action action='open-im' trigger='click' user-ids='[13056700583037,13056700583039]'>
+        <button class='tertiary'>List of Users</button>
+    </ui-action>
+    <ui-action action='open-im' trigger='click' stream-id='rKiuGRoGDTrPtpHSIgmUgH///oVFs7kzdA==' side-by-side='false'>
+        <button class='destructive'>Replace current chat</button>
+    </ui-action>
 </messageML>
