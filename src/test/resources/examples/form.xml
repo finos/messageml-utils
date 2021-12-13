@@ -1,0 +1,84 @@
+<messageML>
+
+    <h2>Symphony Form Elements</h2>
+
+    <form id="all-elements">
+
+        <div>You can have content inside the form element. This for example is a div inside of it.</div>
+
+        <h5>Checkboxes</h5>
+        <checkbox checked="true" name="fruits" value="orange">Orange</checkbox>
+        <checkbox checked="true" name="fruits" value="apple">Apple</checkbox>
+        <checkbox name="fruits" value="grapes">Grapes</checkbox>
+        <checkbox name="fruits" value="strawberry">Strawberry</checkbox>
+        <checkbox checked="true" name="fruits" value="raspberry">Raspberry</checkbox>
+        <checkbox checked="true" name="fruits" value="grapefruit">Grapefruit</checkbox>
+        <checkbox name="fruits" value="passion">Passion Fruit</checkbox>
+        <checkbox name="fruits" value="peach">Peach</checkbox>
+
+        <br/>
+
+        <checkbox checked="true" name="status" value="off">Off</checkbox>
+        <checkbox name="status">On</checkbox>
+
+        <h5>Radio Buttons</h5>
+        <radio checked="true" name="color" value="blue">Blue</radio>
+        <radio name="color" value="green">Green</radio>
+        <radio name="color" value="yellow">Yellow</radio>
+        <radio name="color" value="red">Red</radio>
+        <radio checked="true" name="color" value="purple">Purple</radio>
+        <radio name="color" value="orange">Orange</radio>
+        <radio name="color" value="pink">Pink</radio>
+        <radio name="color" value="brown">Brown</radio>
+
+        <br/>
+
+        <radio checked="true" name="internetStatus" value="offline">Offline</radio>
+        <radio name="internetStatus">Online (On)</radio>
+
+        <h5>Dropdown Select</h5>
+        <select name="cities">
+            <option selected="true" value="ny">New York</option>
+            <option value="van">Vancouver</option>
+            <option value="par">Paris</option>
+        </select>
+
+        <select data-placeholder="Insert the languages you know..." label="Select your language" name="languages" required="true">
+            <option selected="true" value="en">English</option>
+            <option value="sp">Spanish</option>
+            <option value="pt">Portuguese</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="it">Italian</option>
+        </select>
+
+        <h5>Person Selector</h5>
+
+        <person-selector name="person-selector" placeholder="Type a person's name"/>
+
+        <h5>Text Fields</h5>
+        <text-field name="name" placeholder="Input your name..." required="true"/>
+        <text-field name="age" placeholder="Text field with a tool tip" title="What's your age?"/>
+
+        <br/>
+
+        <text-field label="Text field with a default value" name="obs" placeholder="Observations here...">No observation.</text-field>
+
+        <h5>Textarea</h5>
+        <textarea name="id" placeholder="What did you think of this?" required="true">No comments.</textarea>
+        <textarea name="comments" maxlength="25" minlength="3">No comments.</textarea>
+
+        <h5>Masked Text Fields</h5>
+        <text-field masked="true" maxlength="25" minlength="3" name="answer" placeholder="Insert answer..." required="true"/>
+        <text-field masked="true" name="hiddenNotes" placeholder="I don't want to tell but..." required="true"/>
+
+        <br/>
+
+        <text-field masked="true" maxlength="100" minlength="3" name="movieEnding" placeholder="What's the movie ending?" required="true">The bad guy was the main character all along.</text-field>
+
+        <h5>Buttons</h5>
+        <button name="send-answers" type="action">Send Answers</button>
+        <button type="reset">Reset Data</button>
+    </form>
+
+</messageML>

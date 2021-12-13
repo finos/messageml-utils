@@ -1,5 +1,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
@@ -10,8 +13,6 @@ import org.symphonyoss.symphony.messageml.util.ShortID;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,14 +38,16 @@ public class Dialog extends Element {
 
   public static final String STATE_ATTR = "state";
   public static final String CLOSE_STATE = "close";
-  public static final List<String> ALLOWED_STATE_VALUES = Arrays.asList("open", CLOSE_STATE);
+  public static final List<String> ALLOWED_STATE_VALUES = asList("open", CLOSE_STATE);
 
   public static final String WIDTH_ATTR = "width";
   public static final String MEDIUM_WIDTH = "medium";
-  public static final List<String> ALLOWED_WIDTH_VALUES = Arrays.asList("small", MEDIUM_WIDTH, "large", "full-width");
+  public static final List<String> ALLOWED_WIDTH_VALUES = asList("small", MEDIUM_WIDTH, "large", "full-width");
 
   private static final String DATA_ATTRIBUTE_PREFIX = "data-";
-  private static final String OPEN_ATTRIBUTE = "open";
+  private static final String OPEN_ATTR = "open";
+
+  public static final String PRESENTATIONML_CLASS = MESSAGEML_TAG;
 
   private static final ShortID SHORT_ID = new ShortID();
 
@@ -62,9 +65,18 @@ public class Dialog extends Element {
   @Override
   protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case ID_ATTR:
+      case DATA_ATTRIBUTE_PREFIX + WIDTH_ATTR:
       case WIDTH_ATTR:
+      case DATA_ATTRIBUTE_PREFIX + STATE_ATTR:
       case STATE_ATTR:
+      case DATA_ATTRIBUTE_PREFIX + OPEN_ATTR:
+      case ID_ATTR:
+        setAttribute(item.getNodeName().replace(DATA_ATTRIBUTE_PREFIX, ""), item.getNodeValue());
+        break;
+      case OPEN_ATTR:
+        if (format == FormatEnum.MESSAGEML) {
+          throwInvalidInputException(item);
+        }
         setAttribute(item.getNodeName(), item.getNodeValue());
         break;
       default:
@@ -124,29 +136,39 @@ public class Dialog extends Element {
   private void validateChildrenTypes() throws InvalidInputException {
     long formsCount = getChildren().stream().filter(element -> element instanceof Form).count();
     if (formsCount == 1) {
-      assertContentModel(Collections.singleton(Form.class),
+      assertContentModel(singleton(Form.class),
           "A \"dialog\" element can't contain a \"form\" element and any other element.");
     } else if (formsCount > 1) {
       throw new InvalidInputException("A \"dialog\" element can contain only one \"form\" element");
     } else {
-      validateChildren(this);
-      assertContentModel(Arrays.asList(DialogChild.Footer.class, DialogChild.Title.class, DialogChild.Body.class));
+      if (this.format == FormatEnum.MESSAGEML) {
+        assertContainsAlwaysChildOfType(singleton(DialogChild.Title.class));
+        assertContainsAlwaysChildOfType(singleton(DialogChild.Body.class));
+        assertContentModel(asList(DialogChild.Footer.class, DialogChild.Title.class, DialogChild.Body.class));
+      } else {
+        assertContainsAlwaysChildMatching(
+            e -> e.isPresentationMLElement("dialog-title") || e.isPresentationMLElement("dialog-body"),
+            "The \"dialog\" element must have at least one child that is any of the following elements: [title,body]."
+        );
+        assertContentModel(
+            e -> e.isPresentationMLElement("dialog-title") || e.isPresentationMLElement("dialog-body") || e.isPresentationMLElement("dialog-footer"),
+            child -> "Element \"" + child.getMessageMLTag() + "\" is not allowed in \"" + this.getMessageMLTag() + "\"");
+      }
     }
-  }
-
-
-  private void validateChildren(Element rootElement) throws InvalidInputException {
-    rootElement.assertContainsAlwaysChildOfType(Collections.singleton(DialogChild.Title.class));
-    rootElement.assertContainsAlwaysChildOfType(Collections.singleton(DialogChild.Body.class));
   }
 
   private Map<String, String> getPresentationMLAttributes() {
     Map<String, String> pmlAttributes = new HashMap<>();
 
-    pmlAttributes.put(OPEN_ATTRIBUTE, "");
+    if (this.format == FormatEnum.MESSAGEML) {
+      pmlAttributes.put(OPEN_ATTR, "");
+    }
+
     for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
       if (mmlAttribute.getKey().equals(ID_ATTR)) {
         pmlAttributes.put(mmlAttribute.getKey(), getPresentationMlIdAttribute());
+      } else if (mmlAttribute.getKey().equals(OPEN_ATTR)) {
+        pmlAttributes.put(OPEN_ATTR, "");
       } else {
         pmlAttributes.put(DATA_ATTRIBUTE_PREFIX + mmlAttribute.getKey(), mmlAttribute.getValue());
       }

@@ -35,7 +35,6 @@ import java.util.Map;
  *   Value attribute and timezones defined in the disabled-timezone should be valid and belonging to the
  *   "tz database"
  */
-
 public class TimezonePicker extends FormElement implements LabelableElement, TooltipableElement {
 
   public static final String MESSAGEML_TAG = "timezone-picker";
@@ -45,6 +44,7 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String DISABLED_TIMEZONE_ATTR = "disabled-timezone";
 
+  public static final String PRESENTATIONML_CLASS = MESSAGEML_TAG;
   private static final String NAME_PRESENTATION_ATTR = "data-name";
   private static final String VALUE_PRESENTATION_ATTR = "data-value";
   private static final String REQUIRED_PRESENTATION_ATTR = "data-required";
@@ -61,7 +61,7 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
 
   @Override
   protected void buildAttribute(MessageMLParser parser,
-                                Node item) throws InvalidInputException {
+      Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case VALUE_ATTR:
@@ -86,6 +86,7 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
         if (this.format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         fillAttributes(parser, item);
         break;
       default:
@@ -96,7 +97,8 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
   @Override
   public void validate() throws InvalidInputException {
     super.validate();
-    assertAttributeNotBlank(NAME_ATTR);
+
+    assertAttributeNotBlank(this.format == FormatEnum.MESSAGEML ? NAME_ATTR : NAME_PRESENTATION_ATTR);
 
     if (getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeValue(REQUIRED_ATTR, Arrays.asList("true", "false"));
@@ -115,19 +117,19 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
     if (disabledTimezones == null) return;
     try {
       List<String> timezones = MAPPER.readValue(disabledTimezones,
-              MAPPER.getTypeFactory().constructCollectionType(List.class, String.class));
+          MAPPER.getTypeFactory().constructCollectionType(List.class, String.class));
       for (String timezone : timezones) {
         assertTimezoneValid(attributeName, timezone);
       }
     } catch (JsonProcessingException e) {
       throw new InvalidInputException(
-              String.format("Error parsing json in attribute \"%s\". It should contain an array of Strings",
-                      attributeName), e);
+          String.format("Error parsing json in attribute \"%s\". It should contain an array of Strings",
+              attributeName), e);
     }
   }
 
   private void assertTimezoneValid(String attributeValue, String timezone)
-          throws InvalidInputException {
+      throws InvalidInputException {
     try {
       ZoneId.of(timezone);
     } catch (DateTimeException e) {
@@ -136,8 +138,7 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out,
-                               MessageMLContext context) {
+  public void asPresentationML(XmlPrintStream out, MessageMLContext context) {
     Map<String, Object> presentationAttrs = buildTimezonePickerInputAttributes();
     if (isSplittable()) {
       // open div + adding splittable elements
@@ -176,7 +177,11 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
 
   @Override
   public org.commonmark.node.Node asMarkdown() {
-    return new TimezonePickerNode(getAttribute(LABEL), getAttribute(TITLE), getAttribute(PLACEHOLDER_ATTR));
+    return new TimezonePickerNode(
+        getAttribute(LABEL),
+        getAttribute(TITLE),
+        this.format == FormatEnum.MESSAGEML ? getAttribute(PLACEHOLDER_ATTR) : getAttribute(PLACEHOLDER_PRESENTATION_ATTR)
+    );
   }
 
   private void innerAsPresentationML(XmlPrintStream out, Map<String, Object> presentationAttrs) {
@@ -188,29 +193,46 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
     Map<String, Object> presentationAttrs = new LinkedHashMap<>();
 
     presentationAttrs.put(CLASS_ATTR, MESSAGEML_TAG);
-    presentationAttrs.put(NAME_PRESENTATION_ATTR, getAttribute(NAME_ATTR));
 
+    if (getAttribute(NAME_ATTR) != null) {
+      presentationAttrs.put(NAME_PRESENTATION_ATTR, getAttribute(NAME_ATTR));
+    }
     if (getAttribute(VALUE_ATTR) != null) {
       presentationAttrs.put(VALUE_PRESENTATION_ATTR, getAttribute(VALUE_ATTR));
     }
     if (getAttribute(PLACEHOLDER_ATTR) != null) {
       presentationAttrs.put(PLACEHOLDER_PRESENTATION_ATTR, getAttribute(PLACEHOLDER_ATTR));
     }
-
     if (getAttribute(DISABLED_TIMEZONE_ATTR) != null) {
       presentationAttrs.put(DISABLED_TIMEZONE_PRESENTATION_ATTR, convertJsonTimezoneToPresentationML(DISABLED_TIMEZONE_ATTR));
     }
-
     if (getAttribute(REQUIRED_ATTR) != null) {
       presentationAttrs.put(REQUIRED_PRESENTATION_ATTR, getAttribute(REQUIRED_ATTR));
     }
+
+    if (getAttribute(NAME_PRESENTATION_ATTR) != null) {
+      presentationAttrs.put(NAME_PRESENTATION_ATTR, getAttribute(NAME_PRESENTATION_ATTR));
+    }
+    if (getAttribute(VALUE_PRESENTATION_ATTR) != null) {
+      presentationAttrs.put(VALUE_PRESENTATION_ATTR, getAttribute(VALUE_PRESENTATION_ATTR));
+    }
+    if (getAttribute(PLACEHOLDER_PRESENTATION_ATTR) != null) {
+      presentationAttrs.put(PLACEHOLDER_PRESENTATION_ATTR, getAttribute(PLACEHOLDER_PRESENTATION_ATTR));
+    }
+    if (getAttribute(DISABLED_TIMEZONE_PRESENTATION_ATTR) != null) {
+      presentationAttrs.put(DISABLED_TIMEZONE_PRESENTATION_ATTR, convertJsonTimezoneToPresentationML(DISABLED_TIMEZONE_PRESENTATION_ATTR));
+    }
+    if (getAttribute(REQUIRED_PRESENTATION_ATTR) != null) {
+      presentationAttrs.put(REQUIRED_PRESENTATION_ATTR, getAttribute(REQUIRED_PRESENTATION_ATTR));
+    }
+
     return presentationAttrs;
   }
 
   private XMLAttribute convertJsonTimezoneToPresentationML(String attributeName) {
     try {
       List<String> timezones = MAPPER.readValue(getAttribute(attributeName),
-              MAPPER.getTypeFactory().constructCollectionType(List.class, String.class));
+          MAPPER.getTypeFactory().constructCollectionType(List.class, String.class));
       String result = MAPPER.writeValueAsString(timezones);
       return XMLAttribute.of(result, XMLAttribute.Format.JSON);
     } catch (JsonProcessingException e) {

@@ -1,0 +1,16 @@
+<messageML>
+    <form id="form_id">
+        <h2>time-pickers</h2>
+        <time-picker name="init" label="With default value" value="13:51:06" />
+        <time-picker name="placeholder" placeholder="Only Placeholder..." />
+        <time-picker name="label" label="My Label" />
+        <time-picker name="tooltip" label="With Tooltip" title="My Tooltip\n With a second line" />
+        <time-picker name="noreq" placeholder="Not required" />
+        <time-picker name="req" required="true" placeholder="Required" />
+        <time-picker name="format" label="Other Format" format="hh:mm a" />
+        <time-picker name="step" label="With a customed time-step" step="600" />
+        <time-picker name="strict_step" label="Restricting values to the time-step defined" strict="true" />
+        <time-picker name="rules" label="With Disabled values" min="08:00:00" max="17:00:00" disabled-time='[{"from": "12:00:00", "to": "14:00:00"}, {"time": "15:00:00"}]' />
+        <button name="time-picker">Submit</button>
+    </form>
+</messageML>

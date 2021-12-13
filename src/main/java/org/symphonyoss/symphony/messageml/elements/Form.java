@@ -57,7 +57,13 @@ public class Form extends Element {
     if (!getParent().getClass().equals(Dialog.class)) {
       assertAtLeastOneActionButton();
     } else {
-      assertContentModel(Arrays.asList(DialogChild.Footer.class, DialogChild.Title.class, DialogChild.Body.class));
+      if (format == FormatEnum.MESSAGEML) {
+        assertContentModel(Arrays.asList(DialogChild.Footer.class, DialogChild.Title.class, DialogChild.Body.class));
+      } else {
+        assertContentModel(
+            e -> e.isPresentationMLElement("dialog-title") || e.isPresentationMLElement("dialog-body") || e.isPresentationMLElement("dialog-footer"),
+            child -> "Element \"" + child.getMessageMLTag() + "\" is not allowed in \"" + this.getMessageMLTag() + "\"");
+      }
     }
     if(getAttribute(MULTI_SUBMIT) != null) {
       assertAttributeMaxLength(MULTI_SUBMIT, MAX_LENGTH);

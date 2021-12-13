@@ -42,9 +42,9 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   private static final int DEFAULT_MAX_LENGTH = 64;
 
   // PresentationML specific attributes
-  private static final String DISABLED_DATE_PRESENTATION_ATTR = "data-disabled-date";
-  private static final String HIGHLIGHTED_DATE_PRESENTATION_ATTR = "data-highlighted-date";
-  private static final String FORMAT_PRESENTATION_ATTR = "data-format";
+  private static final String PRESENTATIONML_DISABLED_DATE_ATTR = "data-disabled-date";
+  private static final String PRESENTATIONML_HIGHLIGHTED_DATE_ATTR = "data-highlighted-date";
+  private static final String PRESENTATIONML_FORMAT_ATTR = "data-format";
 
   private static final String DATE_FORMAT_ALLOWED = "^[0-9Mdy\\/. -:]+$";
 
@@ -53,8 +53,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   }
 
   @Override
-  protected void buildAttribute(MessageMLParser parser,
-      Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case VALUE_ATTR:
@@ -74,14 +73,16 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
         }
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
+      case TYPE_ATTR:
       case ID_ATTR:
-      case DISABLED_DATE_PRESENTATION_ATTR:
-      case HIGHLIGHTED_DATE_PRESENTATION_ATTR:
-      case FORMAT_PRESENTATION_ATTR:
+      case PRESENTATIONML_DISABLED_DATE_ATTR:
+      case PRESENTATIONML_HIGHLIGHTED_DATE_ATTR:
+      case PRESENTATIONML_FORMAT_ATTR:
         if (this.format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
         fillAttributes(parser, item);
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       default:
         throwInvalidInputException(item);
@@ -114,15 +115,12 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
       assertAttributeMaxLength(FORMAT_ATTR, DEFAULT_MAX_LENGTH);
       String format = getAttribute(FORMAT_ATTR);
       if(!format.matches(DATE_FORMAT_ALLOWED)){
-        throw new InvalidInputException(
-            String.format("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/',':' as separator", FORMAT_ATTR)
-        );
+        throw new InvalidInputException("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/',':' as separator", FORMAT_ATTR);
       }
       try {
         DateTimeFormatter.ofPattern(getAttribute(FORMAT_ATTR));
       } catch (IllegalArgumentException i) {
-        throw new InvalidInputException(
-            String.format("Attribute \"%s\" contains an invalid date format", FORMAT_ATTR));
+        throw new InvalidInputException("Attribute \"%s\" contains an invalid date format", FORMAT_ATTR);
       }
     }
     assertAttributeMaxLength(TITLE, DEFAULT_MAX_LENGTH);
@@ -130,8 +128,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out,
-      MessageMLContext context) {
+  public void asPresentationML(XmlPrintStream out, MessageMLContext context) {
     Map<String, Object> presentationAttrs = buildDataPickerInputAttributes();
     if (isSplittable()) {
       // open div + adding splittable elements
@@ -142,66 +139,6 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
       out.closeElement();
     } else {
       innerAsPresentationML(out, presentationAttrs);
-    }
-  }
-
-  @Override
-  public void updateBiContext(BiContext context) {
-    Map<String, Object> attributesMapBi = new HashMap<>();
-
-    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
-    this.computeAndPutDefault(attributesMapBi);
-    this.computeAndPutValidationProperties(attributesMapBi);
-
-    context.addItem(new BiItem(BiFields.DATE_SELECTOR.getValue(), attributesMapBi));
-  }
-
-  @Override
-  public org.commonmark.node.Node asMarkdown() {
-    return new DatePickerNode(getAttribute(LABEL), getAttribute(TITLE), getAttribute(PLACEHOLDER_ATTR));
-  }
-
-  private void computeAndPutDefault(Map<String, Object> attributesMapBi) {
-    boolean hasDefaultValue = getAttribute(VALUE_ATTR) != null;
-    if (hasDefaultValue) {
-      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
-    }
-  }
-
-  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
-    boolean validationMin = getAttribute(MIN_ATTR) != null;
-    boolean validationMax = getAttribute(MAX_ATTR) != null;
-    boolean validationPattern = getAttribute(FORMAT_ATTR) != null;
-    boolean validationOptions = getAttribute(DISABLED_DATE_ATTR) != null;
-    boolean highlightedOptions = getAttribute(HIGHLIGHTED_DATE_ATTR) != null;
-    boolean hasValidation =
-        validationMin || validationMax || validationPattern || validationOptions;
-
-    if (validationMin) {
-      attributesMapBi.put(BiFields.VALIDATION_MIN.getValue(), 1);
-    }
-
-    if (validationMax) {
-      attributesMapBi.put(BiFields.VALIDATION_MAX.getValue(), 1);
-    }
-
-    if (validationPattern) {
-      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
-    }
-
-    if (validationOptions) {
-      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getValue(), 1);
-    }
-
-    if (highlightedOptions) {
-      attributesMapBi.put(BiFields.HIGHLIGHTED_OPTIONS.getValue(), 1);
-    }
-
-    if (hasValidation) {
-      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 
@@ -228,29 +165,35 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
     if (getAttribute(MAX_ATTR) != null) {
       presentationAttrs.put(MAX_ATTR, getAttribute(MAX_ATTR));
     }
-    if (getAttribute(DISABLED_DATE_ATTR) != null) {
-      presentationAttrs.put(DISABLED_DATE_PRESENTATION_ATTR,
-          convertJsonDateToPresentationML(DISABLED_DATE_ATTR));
-    }
-    if (getAttribute(HIGHLIGHTED_DATE_ATTR) != null) {
-      presentationAttrs.put(HIGHLIGHTED_DATE_PRESENTATION_ATTR,
-          convertJsonDateToPresentationML(HIGHLIGHTED_DATE_ATTR));
-    }
     if (getAttribute(REQUIRED_ATTR) != null) {
       presentationAttrs.put(REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
     }
-    if (getAttribute(FORMAT_ATTR) != null) {
-      presentationAttrs.put(FORMAT_PRESENTATION_ATTR, getAttribute(FORMAT_ATTR));
+    if (getAttribute(DISABLED_DATE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_DISABLED_DATE_ATTR, convertJsonDateToPresentationML(DISABLED_DATE_ATTR));
     }
+    if (getAttribute(HIGHLIGHTED_DATE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_HIGHLIGHTED_DATE_ATTR, convertJsonDateToPresentationML(HIGHLIGHTED_DATE_ATTR));
+    }
+    if (getAttribute(FORMAT_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(FORMAT_ATTR));
+    }
+    // PresentationML compatibility
+    if (getAttribute(PRESENTATIONML_DISABLED_DATE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_DISABLED_DATE_ATTR, getAttribute(PRESENTATIONML_DISABLED_DATE_ATTR));
+    }
+    if (getAttribute(PRESENTATIONML_HIGHLIGHTED_DATE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_HIGHLIGHTED_DATE_ATTR, getAttribute(PRESENTATIONML_HIGHLIGHTED_DATE_ATTR));
+    }
+    if (getAttribute(PRESENTATIONML_FORMAT_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(PRESENTATIONML_FORMAT_ATTR));
+    }
+
     return presentationAttrs;
   }
 
   /**
    * The Json for PresentationML is different from MessageML It needs to be rewritten, by adding the
    * type attribute, based on the content
-   *
-   * @param attributeName
-   * @return
    */
   private XMLAttribute convertJsonDateToPresentationML(String attributeName) {
     try {
@@ -287,6 +230,65 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
             String.format("Error parsing json in attribute \"%s\": %s", attributeName,
                 e.getMessage()), e);
       }
+    }
+  }
+
+  @Override
+  public org.commonmark.node.Node asMarkdown() {
+    return new DatePickerNode(getAttribute(LABEL), getAttribute(TITLE), getAttribute(PLACEHOLDER_ATTR));
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
+    this.computeAndPutDefault(attributesMapBi);
+    this.computeAndPutValidationProperties(attributesMapBi);
+
+    context.addItem(new BiItem(BiFields.DATE_SELECTOR.getValue(), attributesMapBi));
+  }
+
+  private void computeAndPutDefault(Map<String, Object> attributesMapBi) {
+    boolean hasDefaultValue = getAttribute(VALUE_ATTR) != null;
+    if (hasDefaultValue) {
+      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
+    }
+  }
+
+  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
+    boolean validationMin = getAttribute(MIN_ATTR) != null;
+    boolean validationMax = getAttribute(MAX_ATTR) != null;
+    boolean validationPattern = getAttribute(FORMAT_ATTR) != null;
+    boolean validationOptions = getAttribute(DISABLED_DATE_ATTR) != null;
+    boolean highlightedOptions = getAttribute(HIGHLIGHTED_DATE_ATTR) != null;
+    boolean hasValidation = validationMin || validationMax || validationPattern || validationOptions;
+
+    if (validationMin) {
+      attributesMapBi.put(BiFields.VALIDATION_MIN.getValue(), 1);
+    }
+
+    if (validationMax) {
+      attributesMapBi.put(BiFields.VALIDATION_MAX.getValue(), 1);
+    }
+
+    if (validationPattern) {
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
+    }
+
+    if (validationOptions) {
+      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getValue(), 1);
+    }
+
+    if (highlightedOptions) {
+      attributesMapBi.put(BiFields.HIGHLIGHTED_OPTIONS.getValue(), 1);
+    }
+
+    if (hasValidation) {
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 }

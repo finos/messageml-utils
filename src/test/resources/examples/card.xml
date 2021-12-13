@@ -1,0 +1,8 @@
+<messageML>
+    <br/>
+    <h2>Cards</h2>
+    <card accent="tempo-bg-color--blue" iconSrc="./images/favicon.png">
+        <header>Card Header. Always visible.</header>
+        <body>Card Body. User must click to view it.</body>
+    </card>
+</messageML>

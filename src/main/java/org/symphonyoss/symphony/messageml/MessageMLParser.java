@@ -715,11 +715,18 @@ public class MessageMLParser {
     } else if (containsAttribute(elementType, TimePicker.PRESENTATIONML_INPUT_TYPE)) {
       return new TimePicker(parent, FormatEnum.PRESENTATIONML);
     } else {
-      throw new InvalidInputException(
-          String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
+      throw new InvalidInputException("The input type \"%s\" is not allowed on PresentationML", elementType);
     }
   }
 
+  /**
+   * Method that allows to automatically transform any PresentationML <code>div</code> to its actual MessageML
+   * corresponding element.
+   * <p>For instance:
+   * <pre>&#60;div class="ui-action"&#62;</pre>
+   * will be transformed to:
+   * <pre>&#60;ui-action&#62;</pre>
+   */
   private Element createElementFromDiv(org.w3c.dom.Element element, Element parent) throws InvalidInputException {
     if (element.hasAttribute(SplittableElement.PRESENTATIONML_DIV_FLAG)) {
       // Special div created by a splittable element, it is not converted in MessageML or in PresentationML tree object
@@ -759,6 +766,12 @@ public class MessageMLParser {
     } else if (containsAttribute(elementClass, Radio.PRESENTATIONML_DIV_CLASS)) {
       removeAttribute(element, CLASS_ATTR, Radio.PRESENTATIONML_DIV_CLASS);
       return new Radio(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, UIAction.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, UIAction.PRESENTATIONML_CLASS);
+      return new UIAction(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, TimezonePicker.PRESENTATIONML_CLASS)) {
+      removeAttribute(element, CLASS_ATTR, TimezonePicker.PRESENTATIONML_CLASS);
+      return new TimezonePicker(parent, FormatEnum.PRESENTATIONML);
     } else {
       return new Div(parent);
     }

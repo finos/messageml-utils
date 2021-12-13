@@ -335,9 +335,9 @@ public class DialogTest {
     assertEquals("---\n"
             + "**Dialog**\n"
             + "title\n"
-            + "body\n"
-            + "footer\n"
-            + "---\n",
+            + "\nbody\n"
+            + "\nfooter\n"
+            + "\n---\n",
         context.getMarkdown());
   }
 
@@ -354,8 +354,8 @@ public class DialogTest {
     assertEquals("---\n"
             + "**Dialog**\n"
             + "**A title**\n"
-            + "body\n"
-            + "---\n",
+            + "\nbody\n"
+            + "\n---\n",
         context.getMarkdown());
   }
 

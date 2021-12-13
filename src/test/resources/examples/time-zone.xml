@@ -1,0 +1,21 @@
+<messageML>
+    <form id="example">
+        <timezone-picker
+                name="timezone-name"
+                value="America/New_York"
+                placeholder="Please select a timezone"
+                required="true"
+                disabled-timezone='["America/Detroit", "America/Los_Angeles"]'
+        />
+
+        <timezone-picker
+                name="timezone-name"
+                value="America/New_York"
+                label="Field label" title="This is a \n hint"
+                placeholder="Please select a timezone"
+                required="true"
+                disabled-timezone='["America/Detroit", "America/Los_Angeles"]'
+        />
+        <button name="send-answers" type="action">Submit</button>
+    </form>
+</messageML>

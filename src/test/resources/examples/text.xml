@@ -1,0 +1,33 @@
+<messageML>
+
+    <h2>Text-level formatting and semantics</h2>
+
+    <hr/>
+
+    <a href="http://www.symphony.com">This is a link to Symphony's Website</a>
+
+    <br/>
+    Here goes a line break using the "br" tag:
+
+    <br/>
+
+    <b>this is bold text</b>
+    ,
+
+    <i>now it's italic</i>
+
+    <br/>
+
+    <span class="tempo-text-color--green">
+        This is a span with the "class" attribute. See, all the text inside the tag is green.
+    </span>
+
+    <br/>
+
+    <span style="border: 1px solid black;">
+        This is a span with the "style" attribute. See documentation for supported styles.
+    </span>
+
+    <pre>This is preformatted text</pre>
+
+</messageML>

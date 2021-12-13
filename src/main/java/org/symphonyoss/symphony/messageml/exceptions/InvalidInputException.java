@@ -30,6 +30,10 @@ public class InvalidInputException extends MessageMLException {
     super(message);
   }
 
+  public InvalidInputException(String message, Object... args) {
+    super(String.format(message, args));
+  }
+
   public InvalidInputException(String message, Throwable cause) {
     super(message, cause);
   }

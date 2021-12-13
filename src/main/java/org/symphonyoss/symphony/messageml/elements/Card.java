@@ -37,26 +37,25 @@ import java.util.Map;
 public class Card extends Element {
 
   public static final String MESSAGEML_TAG = "card";
+  public static final String PRESENTATIONML_ICON_ATTR = "data-icon-src";
+  public static final String PRESENTATIONML_ACCENT_ATTR = "data-accent-color";
   public static final String PRESENTATIONML_CLASS = "card";
   private static final String PRESENTATIONML_TAG = "div";
   private static final String ATTR_ICON = "iconSrc";
   private static final String ATTR_ACCENT = "accent";
-  private static final String PRESENTATIONML_ICON = "data-icon-src";
-  private static final String PRESENTATIONML_ACCENT = "data-accent-color";
 
   public Card(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
   }
 
   @Override
-  protected void buildAttribute(MessageMLParser parser,
-      Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case PRESENTATIONML_ICON:
+      case PRESENTATIONML_ICON_ATTR:
       case ATTR_ICON:
         setAttribute(ATTR_ICON, getStringAttribute(item));
         break;
-      case PRESENTATIONML_ACCENT:
+      case PRESENTATIONML_ACCENT_ATTR:
       case ATTR_ACCENT:
         setAttribute(ATTR_ACCENT, getStringAttribute(item));
         break;
@@ -66,8 +65,7 @@ public class Card extends Element {
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out,
-      MessageMLContext context) {
+  public void asPresentationML(XmlPrintStream out, MessageMLContext context) {
     Map<String, String> presentationAttrs = new LinkedHashMap<>();
     if (getAttribute(CLASS_ATTR) != null) {
       presentationAttrs.put(CLASS_ATTR, String.format("%s %s", PRESENTATIONML_CLASS, getAttribute(CLASS_ATTR)));
@@ -75,10 +73,10 @@ public class Card extends Element {
       presentationAttrs.put(CLASS_ATTR, PRESENTATIONML_CLASS);
     }
     if (getAttribute(ATTR_ICON) != null) {
-      presentationAttrs.put(PRESENTATIONML_ICON, getAttribute(ATTR_ICON));
+      presentationAttrs.put(PRESENTATIONML_ICON_ATTR, getAttribute(ATTR_ICON));
     }
     if (getAttribute(ATTR_ACCENT) != null) {
-      presentationAttrs.put(PRESENTATIONML_ACCENT, getAttribute(ATTR_ACCENT));
+      presentationAttrs.put(PRESENTATIONML_ACCENT_ATTR, getAttribute(ATTR_ACCENT));
     }
 
     out.openElement(PRESENTATIONML_TAG, presentationAttrs);

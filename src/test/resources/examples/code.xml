@@ -1,0 +1,9 @@
+<messageML>
+    <h2>Code Block</h2>
+    <code>
+        public void someMethod(String someAttribute) {
+            System.out.println("This is a code block");
+            System.out.println("Value of Attribute:" + someAttribute);
+        }
+    </code>
+</messageML>
