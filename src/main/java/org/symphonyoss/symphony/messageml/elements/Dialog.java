@@ -67,15 +67,9 @@ public class Dialog extends Element {
     switch (item.getNodeName()) {
       case DATA_ATTRIBUTE_PREFIX + WIDTH_ATTR:
       case WIDTH_ATTR:
-//        setAttribute(WIDTH_ATTR, item.getNodeValue());
-//        break;
       case DATA_ATTRIBUTE_PREFIX + STATE_ATTR:
       case STATE_ATTR:
-//        setAttribute(STATE_ATTR, item.getNodeValue());
-//        break;
       case DATA_ATTRIBUTE_PREFIX + OPEN_ATTR:
-//        setAttribute(OPEN_ATTR, item.getNodeValue());
-//        break;
       case ID_ATTR:
         setAttribute(item.getNodeName().replace(DATA_ATTRIBUTE_PREFIX, ""), item.getNodeValue());
         break;
