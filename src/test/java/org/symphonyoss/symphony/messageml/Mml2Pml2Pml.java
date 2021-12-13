@@ -3,6 +3,7 @@ package org.symphonyoss.symphony.messageml;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.isExtension;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.symphonyoss.symphony.messageml.util.XmlUtils.prettyXml;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,11 +15,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
-import org.w3c.dom.Node;
-import org.w3c.dom.bootstrap.DOMImplementationRegistry;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSSerializer;
-import org.xml.sax.InputSource;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -29,7 +25,6 @@ import org.xmlunit.diff.DifferenceEngine;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,8 +32,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * This test loads a set of MessageML files from classpath:/examples location and performs 2 successive transformation:
@@ -131,22 +124,6 @@ public class Mml2Pml2Pml {
     MessageMLContext context = new MessageMLContext(createDataProvider());
     context.parseMessageML(message, entityJson, MessageML.MESSAGEML_VERSION);
     return context;
-  }
-
-  private static String prettyXml(String input) {
-    try {
-      final InputSource src = new InputSource(new StringReader(input));
-      final Node document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(src).getDocumentElement();
-      final DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-      final DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-      final LSSerializer writer = impl.createLSSerializer();
-      writer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-      writer.getDomConfig().setParameter("xml-declaration", false);
-      return writer.writeToString(document);
-    } catch (Exception ex) {
-      System.out.printf("Cannot prettify XML input: %s", ex.getMessage());
-      return input;
-    }
   }
 
   private static String load(String classpathFile) {

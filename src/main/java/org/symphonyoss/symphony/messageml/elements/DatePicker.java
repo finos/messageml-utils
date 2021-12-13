@@ -115,15 +115,12 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
       assertAttributeMaxLength(FORMAT_ATTR, DEFAULT_MAX_LENGTH);
       String format = getAttribute(FORMAT_ATTR);
       if(!format.matches(DATE_FORMAT_ALLOWED)){
-        throw new InvalidInputException(
-            String.format("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/',':' as separator", FORMAT_ATTR)
-        );
+        throw new InvalidInputException("Attribute \"%s\" contains an unsupported date format, only 'M', 'd' and 'y' are supported with a space or '.','-','/',':' as separator", FORMAT_ATTR);
       }
       try {
         DateTimeFormatter.ofPattern(getAttribute(FORMAT_ATTR));
       } catch (IllegalArgumentException i) {
-        throw new InvalidInputException(
-            String.format("Attribute \"%s\" contains an invalid date format", FORMAT_ATTR));
+        throw new InvalidInputException("Attribute \"%s\" contains an invalid date format", FORMAT_ATTR);
       }
     }
     assertAttributeMaxLength(TITLE, DEFAULT_MAX_LENGTH);
@@ -142,66 +139,6 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
       out.closeElement();
     } else {
       innerAsPresentationML(out, presentationAttrs);
-    }
-  }
-
-  @Override
-  public void updateBiContext(BiContext context) {
-    Map<String, Object> attributesMapBi = new HashMap<>();
-
-    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
-    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
-    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
-    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
-    this.computeAndPutDefault(attributesMapBi);
-    this.computeAndPutValidationProperties(attributesMapBi);
-
-    context.addItem(new BiItem(BiFields.DATE_SELECTOR.getValue(), attributesMapBi));
-  }
-
-  @Override
-  public org.commonmark.node.Node asMarkdown() {
-    return new DatePickerNode(getAttribute(LABEL), getAttribute(TITLE), getAttribute(PLACEHOLDER_ATTR));
-  }
-
-  private void computeAndPutDefault(Map<String, Object> attributesMapBi) {
-    boolean hasDefaultValue = getAttribute(VALUE_ATTR) != null;
-    if (hasDefaultValue) {
-      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
-    }
-  }
-
-  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
-    boolean validationMin = getAttribute(MIN_ATTR) != null;
-    boolean validationMax = getAttribute(MAX_ATTR) != null;
-    boolean validationPattern = getAttribute(FORMAT_ATTR) != null;
-    boolean validationOptions = getAttribute(DISABLED_DATE_ATTR) != null;
-    boolean highlightedOptions = getAttribute(HIGHLIGHTED_DATE_ATTR) != null;
-    boolean hasValidation =
-        validationMin || validationMax || validationPattern || validationOptions;
-
-    if (validationMin) {
-      attributesMapBi.put(BiFields.VALIDATION_MIN.getValue(), 1);
-    }
-
-    if (validationMax) {
-      attributesMapBi.put(BiFields.VALIDATION_MAX.getValue(), 1);
-    }
-
-    if (validationPattern) {
-      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
-    }
-
-    if (validationOptions) {
-      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getValue(), 1);
-    }
-
-    if (highlightedOptions) {
-      attributesMapBi.put(BiFields.HIGHLIGHTED_OPTIONS.getValue(), 1);
-    }
-
-    if (hasValidation) {
-      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 
@@ -293,6 +230,65 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
             String.format("Error parsing json in attribute \"%s\": %s", attributeName,
                 e.getMessage()), e);
       }
+    }
+  }
+
+  @Override
+  public org.commonmark.node.Node asMarkdown() {
+    return new DatePickerNode(getAttribute(LABEL), getAttribute(TITLE), getAttribute(PLACEHOLDER_ATTR));
+  }
+
+  @Override
+  public void updateBiContext(BiContext context) {
+    Map<String, Object> attributesMapBi = new HashMap<>();
+
+    this.putOneIfPresent(attributesMapBi, BiFields.TITLE.getValue(), TITLE);
+    this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
+    this.putOneIfPresent(attributesMapBi, BiFields.LABEL.getValue(), LABEL);
+    this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
+    this.computeAndPutDefault(attributesMapBi);
+    this.computeAndPutValidationProperties(attributesMapBi);
+
+    context.addItem(new BiItem(BiFields.DATE_SELECTOR.getValue(), attributesMapBi));
+  }
+
+  private void computeAndPutDefault(Map<String, Object> attributesMapBi) {
+    boolean hasDefaultValue = getAttribute(VALUE_ATTR) != null;
+    if (hasDefaultValue) {
+      attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
+    }
+  }
+
+  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
+    boolean validationMin = getAttribute(MIN_ATTR) != null;
+    boolean validationMax = getAttribute(MAX_ATTR) != null;
+    boolean validationPattern = getAttribute(FORMAT_ATTR) != null;
+    boolean validationOptions = getAttribute(DISABLED_DATE_ATTR) != null;
+    boolean highlightedOptions = getAttribute(HIGHLIGHTED_DATE_ATTR) != null;
+    boolean hasValidation = validationMin || validationMax || validationPattern || validationOptions;
+
+    if (validationMin) {
+      attributesMapBi.put(BiFields.VALIDATION_MIN.getValue(), 1);
+    }
+
+    if (validationMax) {
+      attributesMapBi.put(BiFields.VALIDATION_MAX.getValue(), 1);
+    }
+
+    if (validationPattern) {
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
+    }
+
+    if (validationOptions) {
+      attributesMapBi.put(BiFields.VALIDATION_OPTIONS.getValue(), 1);
+    }
+
+    if (highlightedOptions) {
+      attributesMapBi.put(BiFields.HIGHLIGHTED_OPTIONS.getValue(), 1);
+    }
+
+    if (hasValidation) {
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
     }
   }
 }

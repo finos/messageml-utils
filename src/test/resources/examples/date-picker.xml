@@ -1,13 +1,14 @@
 <messageML>
     <form id="form_id">
         <h2>date-pickers</h2>
-        <date-picker name="init" value="2020-08-28"></date-picker>
+        <date-picker name="init" value="2020-08-28" required="true"></date-picker>
         <date-picker name="placeholder" placeholder="Only Placeholder: MM-DD-YYYY"></date-picker>
-        <date-picker name="label" label="My Label"></date-picker>
+        <date-picker name="label" label="My Label" required="true"></date-picker>
         <date-picker name="tooltip" label="With Tooltip" title="My Tooltip\n With a second line"></date-picker>
         <date-picker name="req" required="true" label="Required"></date-picker>
         <date-picker name="format" label="Other Format" format="dd/MM/yyyy"></date-picker>
-        <date-picker name="rules" label="With disabled and highlighted dates" min="2021-01-04" max="2021-01-27"
+        <date-picker name="rules" label="With disabled and highlighted dates"
+                     min="2021-01-04" max="2021-01-27" required="true"
                      disabled-date='[{"from": "2021-01-13", "to": "2021-01-15"}, {"from": "2021-01-19", "to": "2021-01-21"}, {"day": "2021-01-06"}, {"daysOfWeek": [0,6]}]'
                      highlighted-date='[{"day": "2021-01-05"}, {"day": "2021-01-26"}]'/>
         <button name="date-picker">Submit</button>

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -71,12 +70,12 @@ public class DatePickerTest extends ElementTest {
         + "---\n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2"
         + ".0\"><form id=\"datepicker-form\"><input type=\"date\" name=\"date-travel\" value=\"2020-09-15\" "
-        + "placeholder=\"Please pick a date\" min=\"2020-09-01\" max=\"2020-09-29\" "
+        + "placeholder=\"Please pick a date\" min=\"2020-09-01\" max=\"2020-09-29\" required=\"true\" "
         + "data-disabled-date='[{\"type\":\"date\",\"day\":\"2020-09-23\"},{\"type\":\"range\","
         + "\"from\":\"2020-09-18\",\"to\":\"2020-09-20\"},{\"type\":\"weekdays\",\"daysOfWeek\":[0,1]}]' "
         + "data-highlighted-date='[{\"type\":\"date\",\"day\":\"2020-09-24\"},{\"type\":\"range\","
         + "\"from\":\"2020-09-26\",\"to\":\"2020-09-28\"},{\"type\":\"date\",\"day\":\"2020-09-03\"},"
-        + "{\"type\":\"weekdays\",\"daysOfWeek\":[4,6]}]' required=\"true\" "
+        + "{\"type\":\"weekdays\",\"daysOfWeek\":[4,6]}]' "
         + "data-format=\"yyyy-MM-dd\"></input><button type=\"action\" "
         + "name=\"actionName\">Send</button></form></div>";
 
@@ -128,12 +127,12 @@ public class DatePickerTest extends ElementTest {
         + "date</label><span class=\"info-hint\" data-target-id=\"date-picker-%s\" "
         + "data-title=\"This is \\n a hint\"></span><input type=\"date\" name=\"date-travel\" "
         + "value=\"2020-09-15\" placeholder=\"Please pick a date\" min=\"2020-09-01\" "
-        + "max=\"2020-09-29\" data-disabled-date='[{\"type\":\"date\",\"day\":\"2020-09-23\"},"
+        + "max=\"2020-09-29\" required=\"true\" data-disabled-date='[{\"type\":\"date\",\"day\":\"2020-09-23\"},"
         + "{\"type\":\"range\",\"from\":\"2020-09-18\",\"to\":\"2020-09-20\"},{\"type\":\"weekdays\","
         + "\"daysOfWeek\":[0,1]}]' data-highlighted-date='[{\"type\":\"date\",\"day\":"
         + "\"2020-09-24\"},{\"type\":\"range\",\"from\":\"2020-09-26\",\"to\":\"2020-09-28\"},{\"type\":"
         + "\"date\",\"day\":\"2020-09-03\"},{\"type\":\"weekdays\",\"daysOfWeek\":[4,6]}]' "
-        + "required=\"true\" data-format=\"yyyy-MM-dd\" "
+        + "data-format=\"yyyy-MM-dd\" "
         + "id=\"date-picker-%s\"></input></div><button type=\"action\" "
         + "name=\"actionName\">Send</button></form></div>", uniqueLabelId, uniqueLabelId, uniqueLabelId, uniqueLabelId);
 
@@ -185,12 +184,12 @@ public class DatePickerTest extends ElementTest {
             + "date</label><span class=\"info-hint\" data-target-id=\"date-picker-%s\" "
             + "data-title=\"This_is_a_hint\"></span><input type=\"date\" name=\"date-travel\" "
             + "value=\"2020-09-15\" placeholder=\"Please_pick_a_date\" min=\"2020-09-01\" "
-            + "max=\"2020-09-29\" data-disabled-date='[{\"type\":\"date\",\"day\":\"2020-09-23\"},"
+            + "max=\"2020-09-29\" required=\"true\" data-disabled-date='[{\"type\":\"date\",\"day\":\"2020-09-23\"},"
             + "{\"type\":\"range\",\"from\":\"2020-09-18\",\"to\":\"2020-09-20\"},{\"type\":\"weekdays\","
             + "\"daysOfWeek\":[0,1]}]' data-highlighted-date='[{\"type\":\"date\",\"day\":"
             + "\"2020-09-24\"},{\"type\":\"range\",\"from\":\"2020-09-26\",\"to\":\"2020-09-28\"},{\"type\":"
             + "\"date\",\"day\":\"2020-09-03\"},{\"type\":\"weekdays\",\"daysOfWeek\":[4,6]}]' "
-            + "required=\"true\" data-format=\"yyyy-MM-dd\" "
+            + "data-format=\"yyyy-MM-dd\" "
             + "id=\"date-picker-%s\"></input></div><button type=\"action\" "
             + "name=\"actionName\">Send</button></form></div>", uniqueLabelId, uniqueLabelId, uniqueLabelId, uniqueLabelId);
 
