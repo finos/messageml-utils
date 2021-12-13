@@ -42,9 +42,9 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   private static final int DEFAULT_MAX_LENGTH = 64;
 
   // PresentationML specific attributes
-  private static final String DISABLED_DATE_PRESENTATION_ATTR = "data-disabled-date";
-  private static final String HIGHLIGHTED_DATE_PRESENTATION_ATTR = "data-highlighted-date";
-  private static final String FORMAT_PRESENTATION_ATTR = "data-format";
+  private static final String PRESENTATIONML_DISABLED_DATE_ATTR = "data-disabled-date";
+  private static final String PRESENTATIONML_HIGHLIGHTED_DATE_ATTR = "data-highlighted-date";
+  private static final String PRESENTATIONML_FORMAT_ATTR = "data-format";
 
   private static final String DATE_FORMAT_ALLOWED = "^[0-9Mdy\\/. -:]+$";
 
@@ -53,8 +53,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   }
 
   @Override
-  protected void buildAttribute(MessageMLParser parser,
-      Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
       case NAME_ATTR:
       case VALUE_ATTR:
@@ -76,13 +75,14 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
         break;
       case TYPE_ATTR:
       case ID_ATTR:
-      case DISABLED_DATE_PRESENTATION_ATTR:
-      case HIGHLIGHTED_DATE_PRESENTATION_ATTR:
-      case FORMAT_PRESENTATION_ATTR:
+      case PRESENTATIONML_DISABLED_DATE_ATTR:
+      case PRESENTATIONML_HIGHLIGHTED_DATE_ATTR:
+      case PRESENTATIONML_FORMAT_ATTR:
         if (this.format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
         fillAttributes(parser, item);
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       default:
         throwInvalidInputException(item);
@@ -131,8 +131,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   }
 
   @Override
-  public void asPresentationML(XmlPrintStream out,
-      MessageMLContext context) {
+  public void asPresentationML(XmlPrintStream out, MessageMLContext context) {
     Map<String, Object> presentationAttrs = buildDataPickerInputAttributes();
     if (isSplittable()) {
       // open div + adding splittable elements
@@ -229,29 +228,35 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
     if (getAttribute(MAX_ATTR) != null) {
       presentationAttrs.put(MAX_ATTR, getAttribute(MAX_ATTR));
     }
-    if (getAttribute(DISABLED_DATE_ATTR) != null) {
-      presentationAttrs.put(DISABLED_DATE_PRESENTATION_ATTR,
-          convertJsonDateToPresentationML(DISABLED_DATE_ATTR));
-    }
-    if (getAttribute(HIGHLIGHTED_DATE_ATTR) != null) {
-      presentationAttrs.put(HIGHLIGHTED_DATE_PRESENTATION_ATTR,
-          convertJsonDateToPresentationML(HIGHLIGHTED_DATE_ATTR));
-    }
     if (getAttribute(REQUIRED_ATTR) != null) {
       presentationAttrs.put(REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
     }
-    if (getAttribute(FORMAT_ATTR) != null) {
-      presentationAttrs.put(FORMAT_PRESENTATION_ATTR, getAttribute(FORMAT_ATTR));
+    if (getAttribute(DISABLED_DATE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_DISABLED_DATE_ATTR, convertJsonDateToPresentationML(DISABLED_DATE_ATTR));
     }
+    if (getAttribute(HIGHLIGHTED_DATE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_HIGHLIGHTED_DATE_ATTR, convertJsonDateToPresentationML(HIGHLIGHTED_DATE_ATTR));
+    }
+    if (getAttribute(FORMAT_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(FORMAT_ATTR));
+    }
+    // PresentationML compatibility
+    if (getAttribute(PRESENTATIONML_DISABLED_DATE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_DISABLED_DATE_ATTR, getAttribute(PRESENTATIONML_DISABLED_DATE_ATTR));
+    }
+    if (getAttribute(PRESENTATIONML_HIGHLIGHTED_DATE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_HIGHLIGHTED_DATE_ATTR, getAttribute(PRESENTATIONML_HIGHLIGHTED_DATE_ATTR));
+    }
+    if (getAttribute(PRESENTATIONML_FORMAT_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(PRESENTATIONML_FORMAT_ATTR));
+    }
+
     return presentationAttrs;
   }
 
   /**
    * The Json for PresentationML is different from MessageML It needs to be rewritten, by adding the
    * type attribute, based on the content
-   *
-   * @param attributeName
-   * @return
    */
   private XMLAttribute convertJsonDateToPresentationML(String attributeName) {
     try {

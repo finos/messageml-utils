@@ -2,11 +2,11 @@ package org.symphonyoss.symphony.messageml;
 
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.isExtension;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,6 +19,12 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.Comparison;
+import org.xmlunit.diff.ComparisonResult;
+import org.xmlunit.diff.ComparisonType;
+import org.xmlunit.diff.DOMDifferenceEngine;
+import org.xmlunit.diff.DifferenceEngine;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -26,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,30 +48,52 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * </ul>
  * It allows to ensure that generated PresentationML is an actual MessageML valid one.
  */
-@Slf4j
 public class Mml2Pml2Pml {
 
   private static final String EXAMPLES = "/examples/";
+  private static final String[] IGNORED_ATTRIBUTES = { "id", "for", "data-target-id" };
 
   @ParameterizedTest(name = "File {0}")
   @MethodSource("examples")
-  void mml2Pml2Pml(String file, String message, String entityJson) throws Exception {
+  void mml2Pml2Pml(String file, String message, String entityJson) {
 
-    log.info("\n----\n### EXAMPLE({})", file);
-    log.info("1 # MML:\n{}\n{}{}", LINE, prettyXml(message), LINE);
+    String pml1, pml2, md1, md2;
+
+    System.out.printf("----\n### EXAMPLE(%s)%n", file);
+    System.out.printf("> MessageML:\n%s\n%s%s%n", LINE, prettyXml(message), LINE);
     //
     // STEP 1 / MML -> PML
     //
-    log.info("1 # MML -> PML:");
+    System.out.println("### MML -> PML:");
     MessageMLContext context = parse(message, entityJson);
-    log.info("\n{}\n{}{}", LINE, prettyXml(context.getPresentationML()), LINE);
+    System.out.printf("> PresentationML:\n%s\n%s\n%s\n", LINE, prettyXml(pml1 = context.getPresentationML()), LINE);
+    System.out.printf("> Markdown:\n%s\n%s\n%s", LINE, md1 = context.getMarkdown(), LINE);
+
     //
     // STEP 2 / PML -> PML
     //
-    log.info("2 # PML -> PML:");
+    System.out.println("### PML -> PML:");
     context = parse(context.getPresentationML(), context.getEntityJson());
-    context.getText();
-    log.info("\n{}\n{}{}", LINE, prettyXml(context.getPresentationML()), LINE);
+    System.out.printf("> PresentationML:\n%s\n%s\n%s\n", LINE, prettyXml(pml2 = context.getPresentationML()), LINE);
+    System.out.printf("> Markdown:\n%s\n%s\n%s", LINE, md2 = context.getMarkdown(), LINE);
+
+    // compare Markdowns
+    assertEquals(md1, md2);
+
+    // compare PresentationMLs
+    final DifferenceEngine diff = new DOMDifferenceEngine();
+    diff.addDifferenceListener(Mml2Pml2Pml::failOnNonExcludedAttributes);
+    diff.compare(Input.fromString(pml1).build(), Input.fromString(pml2).build());
+  }
+
+  /**
+   * For some elements, the id attribute is prefixed with a random value. We want to fail only for other differences.
+   */
+  private static void failOnNonExcludedAttributes(Comparison comparison, ComparisonResult comparisonResult) {
+    String nodeName = comparison.getControlDetails().getTarget().getNodeName();
+    if (!(comparison.getType() == ComparisonType.ATTR_VALUE && Arrays.asList(IGNORED_ATTRIBUTES).contains(nodeName))) {
+      fail(comparison.toString());
+    }
   }
 
   @SneakyThrows
@@ -115,7 +144,7 @@ public class Mml2Pml2Pml {
       writer.getDomConfig().setParameter("xml-declaration", false);
       return writer.writeToString(document);
     } catch (Exception ex) {
-      log.warn("Cannot prettify XML input: {}", ex.getMessage());
+      System.out.printf("Cannot prettify XML input: %s", ex.getMessage());
       return input;
     }
   }

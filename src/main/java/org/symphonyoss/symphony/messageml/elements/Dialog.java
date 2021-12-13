@@ -65,13 +65,24 @@ public class Dialog extends Element {
   @Override
   protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     switch (item.getNodeName()) {
-      case ID_ATTR:
-      case WIDTH_ATTR:
-      case STATE_ATTR:
-      case OPEN_ATTR:
-      case DATA_ATTRIBUTE_PREFIX + STATE_ATTR:
       case DATA_ATTRIBUTE_PREFIX + WIDTH_ATTR:
+      case WIDTH_ATTR:
+//        setAttribute(WIDTH_ATTR, item.getNodeValue());
+//        break;
+      case DATA_ATTRIBUTE_PREFIX + STATE_ATTR:
+      case STATE_ATTR:
+//        setAttribute(STATE_ATTR, item.getNodeValue());
+//        break;
       case DATA_ATTRIBUTE_PREFIX + OPEN_ATTR:
+//        setAttribute(OPEN_ATTR, item.getNodeValue());
+//        break;
+      case ID_ATTR:
+        setAttribute(item.getNodeName().replace(DATA_ATTRIBUTE_PREFIX, ""), item.getNodeValue());
+        break;
+      case OPEN_ATTR:
+        if (format == FormatEnum.MESSAGEML) {
+          throwInvalidInputException(item);
+        }
         setAttribute(item.getNodeName(), item.getNodeValue());
         break;
       default:
@@ -155,10 +166,15 @@ public class Dialog extends Element {
   private Map<String, String> getPresentationMLAttributes() {
     Map<String, String> pmlAttributes = new HashMap<>();
 
-    pmlAttributes.put(OPEN_ATTR, "");
+    if (this.format == FormatEnum.MESSAGEML) {
+      pmlAttributes.put(OPEN_ATTR, "");
+    }
+
     for (Map.Entry<String, String> mmlAttribute : getAttributes().entrySet()) {
       if (mmlAttribute.getKey().equals(ID_ATTR)) {
         pmlAttributes.put(mmlAttribute.getKey(), getPresentationMlIdAttribute());
+      } else if (mmlAttribute.getKey().equals(OPEN_ATTR)) {
+        pmlAttributes.put(OPEN_ATTR, "");
       } else {
         pmlAttributes.put(DATA_ATTRIBUTE_PREFIX + mmlAttribute.getKey(), mmlAttribute.getValue());
       }

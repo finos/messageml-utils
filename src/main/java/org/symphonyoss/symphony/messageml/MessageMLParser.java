@@ -715,8 +715,7 @@ public class MessageMLParser {
     } else if (containsAttribute(elementType, TimePicker.PRESENTATIONML_INPUT_TYPE)) {
       return new TimePicker(parent, FormatEnum.PRESENTATIONML);
     } else {
-      throw new InvalidInputException(
-          String.format("The input type \"%s\" is not allowed on PresentationML", elementType));
+      throw new InvalidInputException("The input type \"%s\" is not allowed on PresentationML", elementType);
     }
   }
 

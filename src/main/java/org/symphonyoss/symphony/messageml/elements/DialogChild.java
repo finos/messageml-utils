@@ -1,11 +1,11 @@
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.commonmark.node.Node;
+import org.commonmark.node.Paragraph;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -63,8 +63,6 @@ public abstract class DialogChild extends Element {
     assertNoAttributes();
     assertParent(list);
 
-
-
     boolean containsDialog = getChildren().stream().anyMatch(e -> e instanceof Dialog);
     if (containsDialog) {
       throw new InvalidInputException(getMessageMLTag() + " should not contain a dialog");
@@ -85,5 +83,10 @@ public abstract class DialogChild extends Element {
       child.asPresentationML(out, context);
     }
     out.closeElement();
+  }
+
+  @Override
+  Node asMarkdown() throws InvalidInputException {
+    return new Paragraph();
   }
 }

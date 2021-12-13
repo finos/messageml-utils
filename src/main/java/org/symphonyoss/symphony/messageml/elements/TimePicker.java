@@ -85,6 +85,7 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
           throwInvalidInputException(item);
         }
         fillAttributes(parser, item);
+        setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       default:
         throwInvalidInputException(item);
@@ -283,6 +284,16 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
     }
     if (getAttribute(REQUIRED_ATTR) != null) {
       presentationAttrs.put(REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
+    }
+    // PresentationML compatibility
+    if (getAttribute(PRESENTATIONML_FORMAT_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(PRESENTATIONML_FORMAT_ATTR));
+    }
+    if (getAttribute(PRESENTATIONML_STRICT_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_STRICT_ATTR, getAttribute(PRESENTATIONML_STRICT_ATTR));
+    }
+    if (getAttribute(PRESENTATIONML_DISABLED_TIME_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_DISABLED_TIME_ATTR, getAttribute(PRESENTATIONML_DISABLED_TIME_ATTR));
     }
     return presentationAttrs;
   }

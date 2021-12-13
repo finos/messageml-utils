@@ -3,7 +3,7 @@
         <title>
             <h2>A title</h2>
         </title>
-        <body>Some text </body>
-        <footer>Some footer</footer>
+        <body>Some text in the body</body>
+        <footer>Some footer in the footer</footer>
     </dialog>
 </messageML>
