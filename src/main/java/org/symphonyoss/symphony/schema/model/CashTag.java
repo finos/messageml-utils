@@ -12,6 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CashTag {
 
-  @XmlAttribute
+  @XmlAttribute(required = true)
   private String tag;
 }

@@ -1,5 +1,20 @@
 <messageML xmlns="https://finos.org/messageml">
 
-    <h1>This is a <b>title</b></h1>
+    <h1>This is a title <b>in bold</b></h1>
+
+    <h2>Here a sub-title with a <i>mention</i> to user <mention email="test@symphony.com"/></h2>
+
+    <hr/>
+
+    Do you want to <hash tag="drink"/> a <emoji shortcode="beer"/> at the following place:<br/>
+    <img src="https://place.png"/>
+
+    <pre>
+        Preformatted content that accepts <a href="link">phrasing content</a>
+    </pre>
+
+    <cash tag="symphony"/>
+
+    <span class="entity" data-entity-id="foorbar"/>
 
 </messageML>

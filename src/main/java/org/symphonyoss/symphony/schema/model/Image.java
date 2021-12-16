@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Image {
 
-  @XmlAttribute
+  @XmlAttribute(required = true)
   private String src;
 
 }

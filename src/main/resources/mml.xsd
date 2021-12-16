@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified" version="1.0" targetNamespace="https://finos.org/messageml" xmlns:tns="https://finos.org/messageml" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="a" type="tns:link"/>
+
+  <xs:element name="b" type="tns:bold"/>
+
+  <xs:element name="br" type="tns:lineBreak"/>
+
+  <xs:element name="cash" type="tns:cashTag"/>
+
+  <xs:element name="chime" type="tns:chime"/>
+
+  <xs:element name="emoji" type="tns:emoji"/>
+
+  <xs:element name="h1" type="tns:h1"/>
+
+  <xs:element name="h2" type="tns:h2"/>
+
+  <xs:element name="h3" type="tns:h3"/>
+
+  <xs:element name="h4" type="tns:h4"/>
+
+  <xs:element name="h5" type="tns:h5"/>
+
+  <xs:element name="h6" type="tns:h6"/>
+
+  <xs:element name="hash" type="tns:hashTag"/>
+
+  <xs:element name="hr" type="tns:horizontalRule"/>
+
+  <xs:element name="i" type="tns:italic"/>
+
+  <xs:element name="img" type="tns:image"/>
+
+  <xs:element name="mention" type="tns:mention"/>
+
+  <xs:element name="messageML" type="tns:messageML"/>
+
+  <xs:element name="pre" type="tns:preformatted"/>
+
+  <xs:element name="span" type="tns:span"/>
+
+  <xs:complexType name="messageML" mixed="true">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="tns:a"/>
+        <xs:element ref="tns:b"/>
+        <xs:element ref="tns:i"/>
+        <xs:element ref="tns:pre"/>
+        <xs:element ref="tns:br"/>
+        <xs:element ref="tns:hr"/>
+        <xs:element ref="tns:span"/>
+        <xs:element ref="tns:mention"/>
+        <xs:element ref="tns:hash"/>
+        <xs:element ref="tns:cash"/>
+        <xs:element ref="tns:emoji"/>
+        <xs:element ref="tns:img"/>
+        <xs:element ref="tns:h1"/>
+        <xs:element ref="tns:h2"/>
+        <xs:element ref="tns:h3"/>
+        <xs:element ref="tns:h4"/>
+        <xs:element ref="tns:h5"/>
+        <xs:element ref="tns:h6"/>
+        <xs:element ref="tns:chime"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="link">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="href" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="bold">
+    <xs:complexContent>
+      <xs:extension base="tns:phrasingContent">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="phrasingContent" abstract="true" mixed="true">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="tns:a"/>
+        <xs:element ref="tns:b"/>
+        <xs:element ref="tns:i"/>
+        <xs:element ref="tns:br"/>
+        <xs:element ref="tns:span"/>
+        <xs:element ref="tns:mention"/>
+        <xs:element ref="tns:hash"/>
+        <xs:element ref="tns:cash"/>
+        <xs:element ref="tns:emoji"/>
+        <xs:element ref="tns:img"/>
+        <xs:element ref="tns:chime"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="italic">
+    <xs:complexContent>
+      <xs:extension base="tns:phrasingContent">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="lineBreak">
+    <xs:all/>
+  </xs:complexType>
+
+  <xs:complexType name="span">
+    <xs:complexContent>
+      <xs:extension base="tns:phrasingContent">
+        <xs:all/>
+        <xs:attribute name="class" type="xs:string"/>
+        <xs:attribute name="style" type="xs:string"/>
+        <xs:attribute name="data-entity-id" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="mention">
+    <xs:all/>
+    <xs:attribute name="uid" type="xs:string"/>
+    <xs:attribute name="email" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="hashTag">
+    <xs:all/>
+    <xs:attribute name="tag" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="cashTag">
+    <xs:all/>
+    <xs:attribute name="tag" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="emoji">
+    <xs:all/>
+    <xs:attribute name="shortcode" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="image">
+    <xs:all/>
+    <xs:attribute name="src" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="chime">
+    <xs:all/>
+  </xs:complexType>
+
+  <xs:complexType name="preformatted">
+    <xs:complexContent>
+      <xs:extension base="tns:phrasingContent">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="horizontalRule">
+    <xs:all/>
+  </xs:complexType>
+
+  <xs:complexType name="h1">
+    <xs:complexContent>
+      <xs:extension base="tns:header">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="header">
+    <xs:complexContent>
+      <xs:extension base="tns:phrasingContent">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="h2">
+    <xs:complexContent>
+      <xs:extension base="tns:header">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="h3">
+    <xs:complexContent>
+      <xs:extension base="tns:header">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="h4">
+    <xs:complexContent>
+      <xs:extension base="tns:header">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="h5">
+    <xs:complexContent>
+      <xs:extension base="tns:header">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="h6">
+    <xs:complexContent>
+      <xs:extension base="tns:header">
+        <xs:all/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>
+
