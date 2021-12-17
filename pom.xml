@@ -252,10 +252,12 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>src/main/resources</outputDirectory>
+                            <outputDirectory>${project.basedir}/src/main/resources/</outputDirectory>
                             <clearOutputDir>false</clearOutputDir>
+                            <workDirectory>${project.build.directory}/schemagen-work/compile_scope</workDirectory>
+                            <episode>true</episode>
                             <sources>
-                                <source>src/main/java/org/symphonyoss/symphony/schema/model/</source>
+                                <source>${project.basedir}/src/main/java/org/symphonyoss/symphony/schema/model/</source>
                             </sources>
                         </configuration>
                     </execution>
