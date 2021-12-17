@@ -26,7 +26,6 @@ import static org.symphonyoss.symphony.messageml.elements.UIAction.TARGET_ID;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Document;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
@@ -131,10 +130,6 @@ public class MessageML extends Element {
     if (format == FormatEnum.MESSAGEML) {
 
       assertNoAttributes();
-
-      if (StringUtils.isNotEmpty(this.xmlns) && !MESSAGEML_XMLNS.equals(this.xmlns)) {
-        throw new InvalidInputException("Invalid namespace \"%s\". Only \"%s\" is allowed.", this.xmlns, MESSAGEML_XMLNS);
-      }
 
     } else if (format == FormatEnum.PRESENTATIONML) {
 
