@@ -10,6 +10,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
+/**
+ * Insert a hyperlink that will be displayed in the message.
+ */
 @Data
 @XmlRootElement(name = "a")
 @XmlAccessorType(XmlAccessType.FIELD)

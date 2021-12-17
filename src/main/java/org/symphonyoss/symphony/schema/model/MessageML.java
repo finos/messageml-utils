@@ -31,13 +31,14 @@ public class MessageML {
       @XmlElementRef(type = CashTag.class),
       @XmlElementRef(type = Emoji.class),
       @XmlElementRef(type = Image.class),
-      @XmlElementRef(type = Header.H1.class),
-      @XmlElementRef(type = Header.H2.class),
-      @XmlElementRef(type = Header.H3.class),
-      @XmlElementRef(type = Header.H4.class),
-      @XmlElementRef(type = Header.H5.class),
-      @XmlElementRef(type = Header.H6.class),
+      @XmlElementRef(type = H1.class),
+      @XmlElementRef(type = H2.class),
+      @XmlElementRef(type = H3.class),
+      @XmlElementRef(type = H4.class),
+      @XmlElementRef(type = H5.class),
+      @XmlElementRef(type = H6.class),
       @XmlElementRef(type = Chime.class),
   })
   private List<Object> content;
+
 }

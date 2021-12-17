@@ -2,9 +2,5 @@ package org.symphonyoss.symphony.schema.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * Insert a line break.
- */
-@XmlRootElement(name = "br")
-public class LineBreak {
-}
+@XmlRootElement(name = "h6")
+public class H6 extends Header {}
