@@ -22,6 +22,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 
+import static org.symphonyoss.symphony.messageml.elements.UIAction.TARGET_ID;
+
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.commonmark.node.Document;
@@ -32,9 +34,6 @@ import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 import org.w3c.dom.Node;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.symphonyoss.symphony.messageml.elements.UIAction.TARGET_ID;
 
 
 /**
@@ -49,13 +48,16 @@ public class MessageML extends Element {
 
   public static final String MESSAGEML_VERSION = "2.0";
   public static final String MESSAGEML_TAG = "messageML";
+  public static final String MESSAGEML_XMLNS = "https://finos.org/messageml";
   public static final String PRESENTATIONML_TAG = "div";
   private static final String ATTR_FORMAT = "data-format";
   private static final String ATTR_VERSION = "data-version";
+  private static final String ATTR_XMLNS = "xmlns";
   private static final String PRESENTATIONML_FORMAT = "PresentationML";
 
   private String version;
   private boolean chime;
+  private String xmlns;
 
   public MessageML(FormatEnum format, String version) {
     super(null, MESSAGEML_TAG, format);
@@ -63,8 +65,7 @@ public class MessageML extends Element {
   }
 
   @Override
-  protected void buildAttribute(MessageMLParser parser,
-      Node item) throws InvalidInputException {
+  protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
     if (getFormat() == FormatEnum.PRESENTATIONML) {
       switch (item.getNodeName()) {
         case ATTR_FORMAT:
@@ -79,7 +80,14 @@ public class MessageML extends Element {
           super.buildAttribute(parser, item);
       }
     } else {
-      super.buildAttribute(parser, item);
+      switch (item.getNodeName()) {
+        case ATTR_XMLNS:
+          this.xmlns = getStringAttribute(item);
+          break;
+
+        default:
+          super.buildAttribute(parser, item);
+      }
     }
   }
 

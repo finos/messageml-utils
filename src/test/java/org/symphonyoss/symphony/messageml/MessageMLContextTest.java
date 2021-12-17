@@ -1315,6 +1315,13 @@ public class MessageMLContextTest {
 
   }
 
+  @Test
+  public void testParseMessageMLWithXmlns() throws Exception {
+    final String message = "<messageML xmlns=\"https://finos.org/messageml\">hello</messageML>";
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+    // nothing should be thrown
+  }
+
   private String getPayload(String filename) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
     try (Scanner scanner = new Scanner(classLoader.getResourceAsStream(filename))) {
