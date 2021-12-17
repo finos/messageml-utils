@@ -19,6 +19,7 @@ package org.symphonyoss.symphony.messageml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -1313,6 +1314,21 @@ public class MessageMLContextTest {
     assertEquals("Hashtag count", 2, hashtags.size());
     assertEquals("Label count", 3, labels.size());
 
+  }
+
+  @Test
+  public void testParseMessageMLWithXmlns() throws Exception {
+    final String message = "<messageML xmlns=\"https://finos.org/messageml\">hello</messageML>";
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+    // nothing should be thrown
+  }
+
+  @Test
+  public void testParseMessageMLWithWrongXmlns() throws Exception {
+    final String message = "<messageML xmlns=\"https://domain.com\">hello</messageML>";
+    InvalidInputException ex = assertThrows(InvalidInputException.class,
+        () -> context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION));
+    assertEquals("Invalid namespace \"https://domain.com\". Only \"https://finos.org/messageml\" is allowed.", ex.getMessage());
   }
 
   private String getPayload(String filename) throws IOException {
