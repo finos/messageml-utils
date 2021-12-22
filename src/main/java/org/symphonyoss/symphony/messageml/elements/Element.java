@@ -316,7 +316,12 @@ public abstract class Element {
       Node node = child.asMarkdown();
 
       if (node != null) {
-        parent.appendChild(node);
+        try {
+          parent.appendChild(node);
+        } catch (IllegalArgumentException ex) {
+          // minor issue that appears while parsing Markdown, this fix does not impact Markdown generation
+          logger.trace("{} cannot be appended to {}", node, parent, ex);
+        }
       } else {
         node = parent;
       }
