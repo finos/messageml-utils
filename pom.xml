@@ -45,17 +45,17 @@
 
     <properties>
         <json.schema.validator.version>2.2.14</json.schema.validator.version>
-        <jackson.version>2.10.1</jackson.version>
-        <jackson.databind.version>2.10.5.1</jackson.databind.version>
+        <jackson.version>2.13.1</jackson.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
         <freemarker.version>2.3.31</freemarker.version>
-        <commonmark.version>0.15.1</commonmark.version>
+        <commonmark.version>0.15.2</commonmark.version>
         <mozilla.rhino.version>1.7.13</mozilla.rhino.version>
         <junit.version>4.13.2</junit.version>
         <junit.jupiter.params.version>5.8.1</junit.jupiter.params.version>
         <mockito.version>4.0.0</mockito.version>
-        <slf4j.version>1.7.31</slf4j.version>
+        <slf4j.version>1.7.32</slf4j.version>
+        <logback.version>1.2.9</logback.version>
         <jmh.version>1.33</jmh.version>
         <xmlunit.version>2.8.3</xmlunit.version>
         <lombok.version>1.18.22</lombok.version>
@@ -144,7 +144,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.databind.version}</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -205,6 +205,12 @@
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
             <version>${xmlunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
