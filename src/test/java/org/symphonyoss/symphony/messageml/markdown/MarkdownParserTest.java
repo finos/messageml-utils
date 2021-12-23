@@ -29,7 +29,6 @@ public class MarkdownParserTest {
     final MessageMLContext context = new MessageMLContext(new TestDataProvider());
     context.parseMarkdown(example.markdown, null, null);
     final String presentationML = context.getPresentationML();
-    log.info("\n" + presentationML);
     assertEquals(example.presentationML, presentationML);
   }
 }
