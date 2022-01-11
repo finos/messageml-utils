@@ -92,6 +92,10 @@ public interface RegexElement {
       presentationAttrs.put(PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR, getAttribute(PATTERN_ERROR_MESSAGE_ATTR));
     }
 
+    if (getAttribute(PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR) != null) {
+      presentationAttrs.put(PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR, getAttribute(PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR));
+    }
+
     return presentationAttrs;
   }
 
@@ -101,7 +105,7 @@ public interface RegexElement {
    */
   default Map<String, String> getOtherAttributes(){
     Map<String, String> presentationAttrs = new LinkedHashMap<>(getAttributes());
-    ALL_REGEX_ATTRS.stream().forEach(attr -> presentationAttrs.remove(attr));
+    ALL_REGEX_ATTRS.forEach(presentationAttrs::remove);
     return presentationAttrs;
   }
 
