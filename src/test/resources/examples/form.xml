@@ -58,7 +58,7 @@
 
         <h5>Text Fields</h5>
         <text-field name="name" placeholder="Input your name..." required="true"/>
-        <text-field name="age" placeholder="Text field with a tool tip" title="What's your age?"/>
+        <text-field name="age" placeholder="Text field with a tool tip" title="What's your age?" pattern="(^[0-9,]+$|^$)" pattern-error-message="Please input numbers."/>
 
         <br/>
 
