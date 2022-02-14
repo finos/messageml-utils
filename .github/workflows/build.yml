@@ -25,4 +25,4 @@ jobs:
         # 11 runtime needed for Sonar, we still build with 8 as a target
         java-version: 11
     - name: Build with Maven
-      run: mvn -B --file pom.xml verify
+      run: ./mvnw -B --file pom.xml verify
