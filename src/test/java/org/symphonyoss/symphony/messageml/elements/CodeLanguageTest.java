@@ -83,4 +83,15 @@ public class CodeLanguageTest {
 
     assertEquals(expectedPml, this.context.getPresentationML());
   }
+
+  @Test
+  public void testUnknownAttributeIsNotAllowed() {
+
+    final String input = "<messageML><code foo=\"bar\">Some Code</code></messageML>";
+
+    InvalidInputException ex = assertThrows(InvalidInputException.class,
+        () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
+
+    assertEquals("Attribute \"foo\" is not allowed in \"code\"", ex.getMessage());
+  }
 }
