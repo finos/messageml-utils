@@ -1,55 +1,54 @@
 package org.symphonyoss.symphony.messageml.elements;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThrows;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.symphonyoss.symphony.messageml.MessageMLContext;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.util.TestDataProvider;
 
-@RunWith(value = Parameterized.class)
-public class CodeLanguageTest {
+import java.util.stream.Stream;
 
-  @Parameterized.Parameter
-  public String language;
+public class CodeLanguageTest {
 
   private MessageMLContext context;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     this.context = new MessageMLContext(new TestDataProvider());
   }
 
-  @Parameterized.Parameters(name = "{index}: language - {0}")
-  public static Object[] languages() {
-    return new Object[] {
-        "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r", "typescript", "tsx"
-    };
+  public static Stream<Arguments> languages() {
+    return Stream.of( "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r", "typescript", "tsx").map(Arguments::of);
   }
 
-  @Test
-  public void testCodeWithLanguageAttribute() throws Exception {
+  @ParameterizedTest
+  @MethodSource("languages")
+  public void testCodeWithLanguageAttribute(String language) throws Exception {
 
-    final String input = "<messageML><code language=\"" + this.language + "\">Some Code</code></messageML>";
-    final String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + this.language + "\">Some Code</code></div>";
+    final String input = "<messageML><code language=\"" + language + "\">Some Code</code></messageML>";
+    final String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language + "\">Some Code</code></div>";
 
     this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    assertEquals(expectedPml, this.context.getPresentationML());
+    Assertions.assertEquals(expectedPml, this.context.getPresentationML());
   }
 
-  @Test
-  public void testCodeWithLanguageAttributeInPresentationML() throws Exception {
+  @ParameterizedTest
+  @MethodSource("languages")
+  public void testCodeWithLanguageAttributeInPresentationML(String language) throws Exception {
 
-    final String input = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + this.language + "\">Some Code</code></div>";
-    final String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + this.language + "\">Some Code</code></div>";
+    final String input = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language + "\">Some Code</code></div>";
+    final String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language + "\">Some Code</code></div>";
 
     this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    assertEquals(expectedPml, this.context.getPresentationML());
+    Assertions.assertEquals(expectedPml, this.context.getPresentationML());
   }
 
   @Test
@@ -60,7 +59,9 @@ public class CodeLanguageTest {
     InvalidInputException ex = assertThrows(InvalidInputException.class,
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
-    assertEquals("Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].", ex.getMessage());
+    Assertions.assertEquals(
+        "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].",
+        ex.getMessage());
   }
 
   @Test
@@ -71,17 +72,20 @@ public class CodeLanguageTest {
     InvalidInputException ex = assertThrows(InvalidInputException.class,
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
-    assertEquals("Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].", ex.getMessage());
+    Assertions.assertEquals(
+        "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].",
+        ex.getMessage());
   }
 
-  @Test
-  public void testParseLanguageAttributeInMarkdown() throws Exception {
-    String input = "```" + this.language + "\nSome Code\n```";
-    String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + this.language + "\">Some Code</code></div>";
+  @ParameterizedTest
+  @MethodSource("languages")
+  public void testParseLanguageAttributeInMarkdown(String language) throws Exception {
+    String input = "```" + language + "\nSome Code\n```";
+    String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language + "\">Some Code</code></div>";
 
     this.context.parseMarkdown(input, null, null);
 
-    assertEquals(expectedPml, this.context.getPresentationML());
+    Assertions.assertEquals(expectedPml, this.context.getPresentationML());
   }
 
   @Test
@@ -92,6 +96,6 @@ public class CodeLanguageTest {
     InvalidInputException ex = assertThrows(InvalidInputException.class,
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
-    assertEquals("Attribute \"foo\" is not allowed in \"code\"", ex.getMessage());
+    Assertions.assertEquals("Attribute \"foo\" is not allowed in \"code\"", ex.getMessage());
   }
 }
