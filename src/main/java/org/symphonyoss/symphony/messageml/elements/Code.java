@@ -16,11 +16,20 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.Node;
+import org.symphonyoss.symphony.messageml.MessageMLContext;
+import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class representing a block container for block or inline content.
@@ -30,27 +39,90 @@ import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 public class Code extends Element {
 
   public static final String MESSAGEML_TAG = "code";
+  private static final String MML_LANGUAGE_ATTR = "language";
+  private static final String PML_LANGUAGE_ATTR = "data-language";
   public static final char MARKDOWN_DELIMITER_CHAR = '`';
   public static final int MARKDOWN_DELIMITER_LENGTH = 3;
   private static final int MARKDOWN_DELIMITER_INDENT = 0;
 
+  private static final List<String> SUPPORTED_LANGUAGES = Arrays.asList(
+      "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r", "typescript", "tsx"
+  );
+
   public Code(Element parent) {
     super(parent, MESSAGEML_TAG);
+  }
+  public Code(Element parent, String language) {
+    super(parent, MESSAGEML_TAG);
+    this.setAttribute(PML_LANGUAGE_ATTR, language);
+  }
+
+  @Override
+  void buildAttribute(MessageMLParser parser, org.w3c.dom.Node item) throws InvalidInputException {
+    switch (item.getNodeName()) {
+      case MML_LANGUAGE_ATTR:
+      case PML_LANGUAGE_ATTR:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
+        break;
+      default:
+        super.buildAttribute(parser, item);
+    }
+  }
+
+  @Override
+  void asPresentationML(XmlPrintStream out, MessageMLContext context) {
+    final Map<String, Object> attrs = new HashMap<>();
+
+    if (getAttribute(MML_LANGUAGE_ATTR) != null) {
+      attrs.put(PML_LANGUAGE_ATTR, getAttribute(MML_LANGUAGE_ATTR));
+    }
+
+    if (getAttribute(PML_LANGUAGE_ATTR) != null) {
+      attrs.put(PML_LANGUAGE_ATTR, getAttribute(PML_LANGUAGE_ATTR));
+    }
+
+    out.openElement(MESSAGEML_TAG, attrs);
+
+    for (Element child : getChildren()) {
+      child.asPresentationML(out, context);
+    }
+
+    out.closeElement();
   }
 
   @Override
   public Node asMarkdown() {
-    FencedCodeBlock node = new FencedCodeBlock();
+    final FencedCodeBlock node = new FencedCodeBlock();
     node.setFenceChar(MARKDOWN_DELIMITER_CHAR);
     node.setFenceLength(MARKDOWN_DELIMITER_LENGTH);
     node.setFenceIndent(MARKDOWN_DELIMITER_INDENT);
+
+    if (getAttribute(MML_LANGUAGE_ATTR) != null) {
+      node.setInfo(getAttribute(MML_LANGUAGE_ATTR));
+    }
+
+    if (getAttribute(PML_LANGUAGE_ATTR) != null) {
+      node.setInfo(getAttribute(PML_LANGUAGE_ATTR));
+    }
+
     return node;
   }
 
   @Override
   public void validate() throws InvalidInputException {
-    assertNoAttributes();
+    super.validate();
+    if (StringUtils.isNotEmpty(getAttribute(MML_LANGUAGE_ATTR))) {
+      assertAttributeValue(MML_LANGUAGE_ATTR, SUPPORTED_LANGUAGES);
+    }
+    if (StringUtils.isNotEmpty(getAttribute(PML_LANGUAGE_ATTR))) {
+      assertAttributeValue(PML_LANGUAGE_ATTR, SUPPORTED_LANGUAGES);
+    }
     assertPhrasingContent();
+  }
+
+  @Override
+  public String getPresentationMLTag() {
+    return super.getPresentationMLTag();
   }
 
   @Override

@@ -193,6 +193,9 @@ public class MarkdownRenderer extends AbstractVisitor {
   public void visit(FencedCodeBlock code) {
     writer.line();
     writer.writeStripped(StringUtils.repeat(code.getFenceChar(), code.getFenceLength()));
+    if (code.getInfo() != null) {
+      writer.write(code.getInfo());
+    }
     writer.line();
     visitChildren(code, Collections.<Class<? extends Node>>singleton(Text.class));
     writer.line();

@@ -188,7 +188,7 @@ public class MarkdownParser extends AbstractVisitor {
   @Override
   public void visit(FencedCodeBlock code) {
     if (code.getFenceChar() == Code.MARKDOWN_DELIMITER_CHAR && code.getFenceLength() == Code.MARKDOWN_DELIMITER_LENGTH) {
-      Code node = new Code(parent);
+      Code node = new Code(parent, StringUtils.isNotEmpty(code.getInfo()) ? code.getInfo() : null);
       TextNode text = new TextNode(node, code.getLiteral().trim());
       node.addChild(text);
       visitChildren(node, code);
