@@ -2,7 +2,7 @@ package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertThrows;
 
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +36,7 @@ public class CodeLanguageTest {
 
     this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    Assertions.assertEquals(expectedPml, this.context.getPresentationML());
+    assertEquals(expectedPml, this.context.getPresentationML());
   }
 
   @ParameterizedTest
@@ -48,7 +48,7 @@ public class CodeLanguageTest {
 
     this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    Assertions.assertEquals(expectedPml, this.context.getPresentationML());
+    assertEquals(expectedPml, this.context.getPresentationML());
   }
 
   @Test
@@ -59,7 +59,7 @@ public class CodeLanguageTest {
     InvalidInputException ex = assertThrows(InvalidInputException.class,
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
-    Assertions.assertEquals(
+    assertEquals(
         "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].",
         ex.getMessage());
   }
@@ -72,7 +72,7 @@ public class CodeLanguageTest {
     InvalidInputException ex = assertThrows(InvalidInputException.class,
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
-    Assertions.assertEquals(
+    assertEquals(
         "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].",
         ex.getMessage());
   }
@@ -85,7 +85,7 @@ public class CodeLanguageTest {
 
     this.context.parseMarkdown(input, null, null);
 
-    Assertions.assertEquals(expectedPml, this.context.getPresentationML());
+    assertEquals(expectedPml, this.context.getPresentationML());
   }
 
   @Test
@@ -96,6 +96,6 @@ public class CodeLanguageTest {
     InvalidInputException ex = assertThrows(InvalidInputException.class,
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
-    Assertions.assertEquals("Attribute \"foo\" is not allowed in \"code\"", ex.getMessage());
+    assertEquals("Attribute \"foo\" is not allowed in \"code\"", ex.getMessage());
   }
 }
