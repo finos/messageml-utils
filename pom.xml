@@ -2,17 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.symphonyoss</groupId>
-        <artifactId>symphonyoss</artifactId>
-        <version>2</version>
-    </parent>
-
     <groupId>org.symphonyoss.symphony</groupId>
     <artifactId>messageml</artifactId>
-    <version>0.9.87-SNAPSHOT</version>
+    <version>0.10.0-SNAPSHOT</version>
     <name>MessageML Utils</name>
-    <url>https://github.com/symphonyoss/messageml-utils</url>
+    <url>https://github.com/finos/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages</description>
 
     <licenses>
@@ -26,24 +20,11 @@
         <connection>scm:git:git://github.com/finos/messageml-utils.git</connection>
         <developerConnection>scm:git:https://github.com/finos/messageml-utils.git</developerConnection>
         <url>https://github.com/finos/messageml-utils</url>
-        <tag>messageml-0.9.51</tag>
     </scm>
 
-    <developers>
-        <developer>
-            <id>ldrozdz</id>
-            <name>Łukasz Dróżdż</name>
-            <email>lukasz@symphony.com</email>
-            <url>http://github.com/ldrozdz</url>
-            <organization>Symphony Communication Services LLC</organization>
-            <organizationUrl>http://symphony.com</organizationUrl>
-            <roles>
-                <role>Senior Developer Platform</role>
-            </roles>
-        </developer>
-    </developers>
-
     <properties>
+
+        <!-- Dependencies -->
         <json.schema.validator.version>2.2.14</json.schema.validator.version>
         <jackson.version>2.13.1</jackson.version>
         <commons.io.version>2.11.0</commons.io.version>
@@ -58,9 +39,24 @@
         <jmh.version>1.33</jmh.version>
         <xmlunit.version>2.8.3</xmlunit.version>
         <lombok.version>1.18.22</lombok.version>
+
+        <!-- Maven Plugins -->
+        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.10</nexus-staging-maven-plugin.version>
+        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
+        <maven.jar.version>3.2.2</maven.jar.version>
+        <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+
+        <!-- Project Properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.jar.version>3.1.2</maven.jar.version>
+        <gpg.useagent>true</gpg.useagent>
+
     </properties>
 
     <profiles>
@@ -70,7 +66,7 @@
                 <jdk>[1.8,)</jdk>
             </activation>
             <properties>
-                <additionalparam>-Xdoclint:none</additionalparam>
+                <doclint>none</doclint>
             </properties>
         </profile>
         <profile>
@@ -106,6 +102,22 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <inherited>true</inherited>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <configuration>
+                            <updateReleaseInfo>true</updateReleaseInfo>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
@@ -240,12 +252,66 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.6</version>
+                    <version>${jacoco-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.8</version>
+                    <version>${nexus-staging-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                    <configuration>
+                        <gpgArguments>
+                            <arg>--digest-algo=SHA512</arg>
+                        </gpgArguments>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -253,8 +319,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>${maven-surefire-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>ossrh-distro</id>
+            <name>Symphony Foundation Release Distribution Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>Symphony Foundation Development Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
 </project>
