@@ -4,7 +4,7 @@
 
     <groupId>org.symphonyoss.symphony</groupId>
     <artifactId>messageml</artifactId>
-    <version>0.10.0-SNAPSHOT</version>
+    <version>0.11.0-SNAPSHOT</version>
     <name>MessageML Utils</name>
     <url>https://github.com/finos/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages</description>
