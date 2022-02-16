@@ -327,12 +327,12 @@
     <distributionManagement>
         <repository>
             <id>ossrh-distro</id>
-            <name>Symphony Foundation Release Distribution Repository</name>
+            <name>Sonatype Release Distribution Repository</name>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
             <id>ossrh</id>
-            <name>Symphony Foundation Development Snapshot Repository</name>
+            <name>Sonatype Development Snapshot Repository</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
