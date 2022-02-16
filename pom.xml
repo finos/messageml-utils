@@ -337,5 +337,18 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <developers>
+        <developer>
+            <id>ldrozdz</id>
+            <name>Łukasz Dróżdż</name>
+            <email>lukasz@symphony.com</email>
+            <url>http://github.com/ldrozdz</url>
+            <organization>Symphony Communication Services LLC</organization>
+            <organizationUrl>http://symphony.com</organizationUrl>
+            <roles>
+                <role>Senior Developer Platform</role>
+            </roles>
+        </developer>
+    </developers>
 
 </project>
