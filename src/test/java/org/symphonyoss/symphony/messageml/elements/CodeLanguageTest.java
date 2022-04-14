@@ -1,8 +1,8 @@
 package org.symphonyoss.symphony.messageml.elements;
 
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -97,5 +97,15 @@ public class CodeLanguageTest {
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
     assertEquals("Attribute \"foo\" is not allowed in \"code\"", ex.getMessage());
+  }
+
+  @Test
+  public void testPreformattedInsideCodeIsAllowed() throws Exception {
+    final String input = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code language=\"plaintext\"><pre>Hello</pre></code></div>";
+
+    this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"plaintext\"><pre>Hello</pre></code></div>",
+        this.context.getPresentationML());
   }
 }
