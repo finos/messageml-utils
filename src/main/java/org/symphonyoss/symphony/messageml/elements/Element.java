@@ -79,6 +79,15 @@ public abstract class Element {
 
   public static final int ID_MAX_LENGTH = 64;
 
+  private static final List<Class<? extends Element>> PHRASING_TYPES =
+      Arrays.asList(TextNode.class, Link.class, Chime.class, Bold.class, Italic.class, Image.class,
+          LineBreak.class, Span.class, Emoji.class, HashTag.class, CashTag.class, Mention.class);
+
+  private static final List<Class<? extends Element>> PHRASING_OR_PREFORMATTED_TYPES = new ArrayList<Class<? extends Element>>() {{
+    addAll(PHRASING_TYPES);
+    add(Preformatted.class);
+  }};
+
   protected FormatEnum format;
   private final Map<String, String> attributes = new LinkedHashMap<>();
   private final List<Element> children = new ArrayList<>();
@@ -638,8 +647,15 @@ public abstract class Element {
    * Check that the element's children are limited to phrasing content.
    */
   void assertPhrasingContent() throws InvalidInputException {
-    assertContentModel(Arrays.asList(TextNode.class, Link.class, Chime.class, Bold.class, Italic.class, Image.class,
-        LineBreak.class, Span.class, Emoji.class, HashTag.class, CashTag.class, Mention.class));
+    assertContentModel(PHRASING_TYPES);
+  }
+
+  /**
+   * Check that the element's children are valid children of a {@link Code} elemet,
+   * i.e. limited to phrasing content or are preformatted elements.
+   */
+  void assertPreformattedOrPhrasingContent() throws InvalidInputException {
+    assertContentModel(PHRASING_OR_PREFORMATTED_TYPES);
   }
 
   /**

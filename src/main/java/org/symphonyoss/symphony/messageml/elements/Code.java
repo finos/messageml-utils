@@ -117,7 +117,7 @@ public class Code extends Element {
     if (StringUtils.isNotEmpty(getAttribute(PML_LANGUAGE_ATTR))) {
       assertAttributeValue(PML_LANGUAGE_ATTR, SUPPORTED_LANGUAGES);
     }
-    assertPhrasingContent();
+    assertPreformattedOrPhrasingContent();
   }
 
   @Override
