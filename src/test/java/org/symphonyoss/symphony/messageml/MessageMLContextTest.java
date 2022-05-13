@@ -518,7 +518,7 @@ public class MessageMLContextTest {
     List<BiItem> expectedBiItems = getExpectedBiItems();
 
     List<BiItem> biItems = context.getBiContext().getItems();
-    assertEquals(biItems.size(), expectedBiItems.size());
+    assertEquals(expectedBiItems.size(), biItems.size());
     assertTrue(biItems.containsAll(expectedBiItems));
     assertTrue(expectedBiItems.containsAll(biItems));
   }
@@ -535,7 +535,7 @@ public class MessageMLContextTest {
     biItems.add(
         new BiItem(BiFields.MENTIONS.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
     biItems.add(new BiItem(BiFields.CARD.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
-    biItems.add(new BiItem(BiFields.ENTITIES.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
+    biItems.add(new BiItem(BiFields.ENTITIES.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 10)));
     biItems.add(
         new BiItem(BiFields.STYLES_CUSTOM.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
     biItems.add(new BiItem(BiFields.STYLES_CLASS_OTHER.getValue(),
@@ -549,6 +549,24 @@ public class MessageMLContextTest {
         Collections.singletonMap(BiFields.COUNT.getValue(), 2984)));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(),
         Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.mention")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.jira.event.v2.state")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.user")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.jira.label")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.jira.issue")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.icon")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.jira.priority")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.user")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.jira.issueType")));
+    biItems.add(new BiItem(BiFields.ENTITY.getValue(),
+            Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.integration.jira.label")));
     return biItems;
   }
 
