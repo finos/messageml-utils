@@ -231,7 +231,7 @@ public class MessageMLParser {
    * - increase the total count of entities found in the message
    */
   private void addCustomEntitiesToBiContext(JsonNode entityNode) {
-    entityNode.findValues("type").forEach(entityType -> {
+    entityNode.findValues(Entity.TYPE_FIELD).forEach(entityType -> {
       biContext.updateItemCount(BiFields.ENTITIES.getValue());
       biContext.addItem(new BiItem(BiFields.ENTITY.getValue(),
               Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), entityType.asText())));
