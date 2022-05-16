@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
+import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.elements.Bold;
 import org.symphonyoss.symphony.messageml.elements.BulletList;
 import org.symphonyoss.symphony.messageml.elements.Button;
@@ -89,6 +90,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -214,12 +216,26 @@ public class MessageMLParser {
         } else {
           throw new InvalidInputException("Error parsing EntityJSON: provided content is not a JSON object");
         }
+        addCustomEntitiesToBiContext(jsonNode);
       } catch (JsonProcessingException e) {
         throw new InvalidInputException("Error parsing EntityJSON: " + e.getMessage());
       }
     } else {
       this.entityJson = new ObjectNode(JsonNodeFactory.instance);
     }
+  }
+
+  /**
+   * For each custom entity found in the entityJson payload we:
+   * - create a BiItem containing the type of entity found
+   * - increase the total count of entities found in the message
+   */
+  private void addCustomEntitiesToBiContext(JsonNode entityNode) {
+    entityNode.findValues(Entity.TYPE_FIELD).forEach(entityType -> {
+      biContext.updateItemCount(BiFields.ENTITIES.getValue());
+      biContext.addItem(new BiItem(BiFields.ENTITY.getValue(),
+              Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), entityType.asText())));
+    });
   }
 
   /**
