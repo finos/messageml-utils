@@ -18,7 +18,6 @@ public enum BiFields {
   DATE_SELECTOR("dateselector", BiEventType.MESSAGEML_ELEMENT_SENT),
   PERSON_SELECTOR("personselector", BiEventType.MESSAGEML_ELEMENT_SENT),
   SELECT("dropdownmenu", BiEventType.MESSAGEML_ELEMENT_SENT),
-  OPTION("option", BiEventType.MESSAGEML_ELEMENT_SENT, "0"),
   CHIME("chimes", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   CODE("codes", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   DIV("divs", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),

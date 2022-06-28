@@ -159,14 +159,22 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
     this.putOneIfPresent(attributesMapBi, BiFields.REQUIRED.getValue(), REQUIRED_ATTR);
     this.putOneIfPresent(attributesMapBi, BiFields.MULTI_SELECT.getValue(), MULTIPLE_ATTR);
 
+    attributesMapBi.put(BiFields.OPTIONS_COUNT.getValue(), countChildrenOfType(Option.class));
+    attributesMapBi.put(BiFields.DEFAULT.getValue(), isAtLeastOneOptionSelected());
+
     context.addItem(new BiItem(BiFields.SELECT.getValue(), attributesMapBi));
+  }
+
+  private int isAtLeastOneOptionSelected() {
+    return getChildren().stream()
+            .anyMatch(child -> child.getAttribute(OPTION_SELECTED_ATTR) != null) ? 1 : 0;
   }
 
   private void assertOnlyOneOptionSelected() throws InvalidInputException {
     long numberOfSelectedOptions = getChildren().stream()
-        .map(child -> child.getAttribute(OPTION_SELECTED_ATTR))
-        .filter(selectedAttr -> selectedAttr != null && selectedAttr.equalsIgnoreCase(Boolean.TRUE.toString()))
-        .count();
+            .map(child -> child.getAttribute(OPTION_SELECTED_ATTR))
+            .filter(selectedAttr -> selectedAttr != null && selectedAttr.equalsIgnoreCase(Boolean.TRUE.toString()))
+            .count();
 
     if (numberOfSelectedOptions > 1) {
       throw new InvalidInputException("Element \"select\" can only have one selected \"option\"");
