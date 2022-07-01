@@ -711,11 +711,8 @@ public class SelectOptionTest extends ElementTest {
         {BiFields.LABEL.getValue(), 1},
         {BiFields.PLACEHOLDER.getValue(), 1},
         {BiFields.REQUIRED.getValue(), 1},
-    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
-
-    Map<Object, Object> optionExpectedAttributes = Stream.of(new Object[][] {
-        {BiFields.DEFAULT.getValue(), 1},
         {BiFields.OPTIONS_COUNT.getValue(), 3},
+        {BiFields.DEFAULT.getValue(), 1}
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
     BiItem selectBiItemExpected = new BiItem(BiFields.SELECT.getValue(),
@@ -724,21 +721,13 @@ public class SelectOptionTest extends ElementTest {
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
-    BiItem optionBiItemExpected = new BiItem(BiFields.OPTION.getValue(),
-        optionExpectedAttributes.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e ->
-                String.valueOf(e.getKey()), Map.Entry::getValue)));
-
     BiItem formBiItemExpected = new BiItem(BiFields.FORM.getValue(), Collections.emptyMap());
 
-    assertEquals(5, items.size());
-    assertEquals(BiFields.OPTION.getValue(), items.get(0).getName());
-    assertEquals(BiFields.SELECT.getValue(), items.get(1).getName());
-    assertSameBiItem(optionBiItemExpected, items.get(0));
-    assertSameBiItem(selectBiItemExpected, items.get(1));
-    assertSameBiItem(formBiItemExpected, items.get(3));
-    assertMessageLengthBiItem(items.get(4), input.length());
+    assertEquals(4, items.size());
+    assertEquals(BiFields.SELECT.getValue(), items.get(0).getName());
+    assertSameBiItem(selectBiItemExpected, items.get(0));
+    assertSameBiItem(formBiItemExpected, items.get(2));
+    assertMessageLengthBiItem(items.get(3), input.length());
   }
 
   @Test
@@ -765,6 +754,8 @@ public class SelectOptionTest extends ElementTest {
         {BiFields.LABEL.getValue(), 1},
         {BiFields.PLACEHOLDER.getValue(), 1},
         {BiFields.REQUIRED.getValue(), 1},
+        {BiFields.OPTIONS_COUNT.getValue(), 3},
+        {BiFields.DEFAULT.getValue(), 1}
     }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
 
     BiItem selectBiItemExpected = new BiItem(BiFields.SELECT.getValue(),
@@ -773,11 +764,59 @@ public class SelectOptionTest extends ElementTest {
             .collect(Collectors.toMap(e ->
                 String.valueOf(e.getKey()), Map.Entry::getValue)));
 
-    assertEquals(5, items.size());
-    assertEquals(BiFields.SELECT.getValue(), items.get(1).getName());
-    assertSameBiItem(selectBiItemExpected, items.get(1));
+    assertEquals(4, items.size());
+    assertEquals(BiFields.SELECT.getValue(), items.get(0).getName());
+    assertSameBiItem(selectBiItemExpected, items.get(0));
   }
 
+
+  @Test
+  public void testBiContextMultipleSelect() throws InvalidInputException, IOException, ProcessingException {
+    MessageMLContext messageMLContext = new MessageMLContext(null);
+    String input = "<messageML>\n" +
+            "  <form id=\"form_id\">\n" +
+            "    <h2>dropdown menus</h2>\n" +
+            "      <select name=\"data-placeholder\" data-placeholder=\"Only data-placeholder\"><option value=\"opt1\">Unselected option 1</option><option value=\"opt2\">Unselected option 2</option><option value=\"opt3\">Unselected option 3</option></select>\n" +
+            "      <select name=\"multiple\" label=\"With multiple select options - between 3 and 5\" multiple=\"true\" min=\"3\" max=\"5\"><option value=\"opt1\" selected=\"true\">Preselected option 1</option><option value=\"opt2\" selected=\"true\">Preselected option 2</option><option value=\"opt3\" selected=\"true\">Preselected option 3</option><option value=\"opt4\">Unselected option 4</option><option value=\"opt5\">Unselected option 5</option><option value=\"opt6\">Unselected option 6</option></select>\n" +
+            "      <button name=\"dropdown\">Submit</button>\n" +
+            "  </form>\n" +
+            "</messageML>";
+
+    messageMLContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    List<BiItem> items = messageMLContext.getBiContext().getItems();
+
+    Map<Object, Object> selectExpectedAttributes = Stream.of(new Object[][] {
+            {BiFields.MULTI_SELECT.getValue(), 1},
+            {BiFields.LABEL.getValue(), 1},
+            {BiFields.OPTIONS_COUNT.getValue(), 6},
+            {BiFields.DEFAULT.getValue(), 1}
+    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
+
+    BiItem selectBiItemExpected = new BiItem(BiFields.SELECT.getValue(),
+            selectExpectedAttributes.entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(e ->
+                            String.valueOf(e.getKey()), Map.Entry::getValue)));
+
+    Map<Object, Object> selectExpectedAttributes1 = Stream.of(new Object[][] {
+            {BiFields.PLACEHOLDER.getValue(), 1},
+            {BiFields.OPTIONS_COUNT.getValue(), 3},
+            {BiFields.DEFAULT.getValue(), 0}
+    }).collect(Collectors.toMap(property -> property[0], property -> property[1]));
+
+    BiItem selectBiItemExpected1 = new BiItem(BiFields.SELECT.getValue(),
+            selectExpectedAttributes1.entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(e ->
+                            String.valueOf(e.getKey()), Map.Entry::getValue)));
+
+
+    assertEquals(6, items.size());
+    assertEquals(BiFields.SELECT.getValue(), items.get(1).getName());
+    assertSameBiItem(selectBiItemExpected1, items.get(1));
+    assertEquals(BiFields.SELECT.getValue(), items.get(2).getName());
+    assertSameBiItem(selectBiItemExpected, items.get(2));
+  }
   private String getRequiredPresentationML(String required) {
     if (required != null) {
       if (required.equals("true") || required.equals("false")) {
