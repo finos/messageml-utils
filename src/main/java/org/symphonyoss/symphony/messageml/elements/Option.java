@@ -46,17 +46,6 @@ public class Option extends FormElement {
     assertContentModel(Collections.singleton(TextNode.class));
     assertContainsChildOfType(Collections.singleton(TextNode.class));
   }
-
-  @Override
-  public void updateBiContext(BiContext context) {
-    Map<String, Object> attributesMapBi = new HashMap<>();
-
-    attributesMapBi.put(BiFields.OPTIONS_COUNT.getValue(), 1);
-    this.putOneIfPresent(attributesMapBi, BiFields.DEFAULT.getValue(), SELECTED_ATTR);
-
-    context.updateItemCount(BiFields.OPTION.getValue(), attributesMapBi);
-  }
-
   @Override
   protected void buildAttribute(MessageMLParser parser,
       Node item) throws InvalidInputException {
