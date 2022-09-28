@@ -46,6 +46,30 @@ public class CashtagTest extends ElementTest {
   }
 
   @Test
+  public void testCashTagWithSpaceAndOnlyNumbers() throws Exception {
+    String input = "<messageML>Hello <cash tag=\"1234 789\"/>!</messageML>";
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
+            + "Hello <span class=\"entity\" data-entity-id=\"keyword1\">$1234 789</span>!"
+            + "</div>";
+    String expectedJson = "{\"keyword1\":{"
+            + "\"type\":\"org.symphonyoss.fin.security\","
+            + "\"version\":\"1.0\","
+            + "\"id\":[{"
+            + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
+            + "\"value\":\"1234 789\""
+            + "}]}}";
+    String expectedText = "1234 789";
+    String expectedMarkdown = "Hello $1234 789!";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    assertEquals("Element attributes", Collections.emptyMap(), messageML.getChildren().get(1).getAttributes());
+    verifyCashTag(messageML, expectedPresentationML, expectedJson, expectedText, expectedMarkdown);
+  }
+
+  @Test
   public void testCashTagNonAlnum() throws Exception {
     String input = "<messageML>Hello <cash tag=\"_hello.w-o-r-l-d_\"/>!</messageML>";
 
@@ -166,38 +190,6 @@ public class CashtagTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"data-entity-id\" is required");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-  }
-
-  @Test
-  public void testCashTagInvalidCharacter() throws Exception {
-    String input = "<messageML>Hello <cash tag=\"invalid chars!\"/></messageML>";
-
-    expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(
-        String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s",
-            CashTag.CASHTAG_PATTERN));
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
-  }
-
-  @Test
-  public void testCashTagByPresentationMLInvalidCharacter() throws Exception {
-    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
-        + "Hello <div class=\"entity\" data-entity-id=\"cash123\">world</div>!"
-        + "</div>";
-
-    String entityJson = "{\"cash123\":{"
-        + "\"type\":\"org.symphonyoss.fin.security\","
-        + "\"version\":\"1.0\","
-        + "\"id\":[{"
-        + "\"type\":\"org.symphonyoss.fin.security.id.ticker\","
-        + "\"value\":\"invalid chars!\""
-        + "}]}}";
-
-    expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage(
-        String.format("Values of the attribute 'tag' for the element 'cash' must match the pattern %s",
-            CashTag.CASHTAG_PATTERN));
-    context.parseMessageML(input, entityJson, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
