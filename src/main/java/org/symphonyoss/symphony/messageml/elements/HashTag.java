@@ -20,6 +20,7 @@ import org.commonmark.node.Node;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
+import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 
 import java.util.Collections;
@@ -37,6 +38,7 @@ public class HashTag extends Keyword {
   public static final String HASHTAG_PATTERN = "[\\S]*[^\\s!@#$%^&*()+=<>,./?`~:;'\"\\\\|-]+[\\S]*$";
   private static final String ENTITY_SUBTYPE = "org.symphonyoss.taxonomy.hashtag";
   private static final String ENTITY_VERSION = "1.0";
+  private static final String MSG_INVALID_TAG_PATTERN = "Values of the attribute 'tag' for the element '%s' must match the pattern %s.";
 
   public HashTag(Element parent, int entityIndex) {
     super(parent, MESSAGEML_TAG, DEFAULT_PRESENTATIONML_TAG, FormatEnum.MESSAGEML);
@@ -55,6 +57,19 @@ public class HashTag extends Keyword {
   }
 
   @Override
+  public void validate() throws InvalidInputException {
+    String pattern = getTagPattern();
+    if (!this.tag.matches(pattern)) {
+      throw new InvalidInputException(String.format(MSG_INVALID_TAG_PATTERN, this.getMessageMLTag(), pattern));
+    }
+    super.validate();
+  }
+
+  public String getTagPattern() {
+    return HASHTAG_PATTERN;
+  }
+
+  @Override
   public String asText() {
     return "#" + getTag();
   }
@@ -67,11 +82,6 @@ public class HashTag extends Keyword {
   @Override
   public String toString() {
     return "HashTag(" + getTag() + ")";
-  }
-
-  @Override
-  public String getTagPattern() {
-    return HASHTAG_PATTERN;
   }
 
   @Override

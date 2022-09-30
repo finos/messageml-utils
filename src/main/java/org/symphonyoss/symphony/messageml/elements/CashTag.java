@@ -34,8 +34,6 @@ public class CashTag extends Keyword {
   public static final String MESSAGEML_TAG = "cash";
   public static final String PREFIX = "$";
   public static final String ENTITY_TYPE = "org.symphonyoss.fin.security";
-  public static final String CASHTAG_PATTERN =
-      "^(?!(?:[0-9,.]+$))(?!(?:[0-9,.]+(m|b|t|mm|bn|M|B|T|MM|BN|\\+|\\-|\\)|\\(|\\[|\\]|\\*|\\/)(\\s|$)))[^\\s\\$]*[^\\s!@#$%^&*()+=<>,.\\/?`~:;'\"\\\\|\\-]+[^\\s\\$]*$";
   private static final String ENTITY_SUBTYPE = "org.symphonyoss.fin.security.id.ticker";
   private static final String ENTITY_VERSION = "1.0";
 
@@ -68,11 +66,6 @@ public class CashTag extends Keyword {
   @Override
   public String toString() {
     return "CashTag(" + getTag() + ")";
-  }
-
-  @Override
-  public String getTagPattern() {
-    return CASHTAG_PATTERN;
   }
 
   @Override
