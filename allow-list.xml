@@ -2,87 +2,9 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress>
         <notes><![CDATA[
-        Testing false positives by suppressing a CVE
-        ]]></notes>
-        <gav>org.apache.struts:struts2-core:2.3.8</gav>
-        <cve>CVE-2017-5638</cve>
-        <cve>CVE-2016-3082</cve>
-        <cve>CVE-2016-4436</cve>
-        <cve>CVE-2017-12611</cve>
-        <cve>CVE-2017-9791</cve>
-        <cve>CVE-2019-0230</cve>
-        <cve>CVE-2020-17530</cve>
-        <cve>CVE-2021-31805</cve>
-        <cve>CVE-2013-4316</cve>
-        <cve>CVE-2013-1965</cve>
-        <cve>CVE-2013-1966</cve>
-        <cve>CVE-2013-2134</cve>
-        <cve>CVE-2013-2135</cve>
-        <cve>CVE-2013-2251</cve>
-        <cve>CVE-2016-0785</cve>
-        <cve>CVE-2016-3090</cve>
-        <cve>CVE-2016-4430</cve>
-        <cve>CVE-2016-4461</cve>
-        <cve>CVE-2013-2115</cve>
-        <cve>CVE-2016-3081</cve>
-        <cve>CVE-2017-9805</cve>
-        <cve>CVE-2018-11776</cve>
-        <cve>CVE-2014-0112</cve>
-        <cve>CVE-2014-0113</cve>
-        <cve>CVE-2015-5209</cve>
-        <cve>CVE-2017-9787</cve>
-        <cve>CVE-2017-9793</cve>
-        <cve>CVE-2017-9804</cve>
-        <cve>CVE-2018-1327</cve>
-        <cve>CVE-2019-0233</cve>
-        <cve>CVE-2012-0394</cve>
-        <cve>CVE-2014-7809</cve>
-        <cve>CVE-2015-2992</cve>
-        <cve>CVE-2015-5169</cve>
-        <cve>CVE-2016-2162</cve>
-        <cve>CVE-2016-4003</cve>
-        <cve>CVE-2013-2248</cve>
-        <cve>CVE-2013-4310</cve>
-        <cve>CVE-2014-0116</cve>
-        <cve>CVE-2016-3093</cve>
-        <cve>CVE-2014-0094</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-        Testing false positives by suppressing a CVE
-        ]]></notes>
-        <gav>commons-fileupload:commons-fileupload:1.2.2</gav>
-        <cve>CVE-2016-1000031</cve>
-        <cve>CVE-2013-2186</cve>
-        <cve>CVE-2014-0050</cve>
-        <cve>CVE-2016-3092</cve>
-        <cve>CVE-2013-0248</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-        Testing false positives by suppressing a CVE
+        createTempDir() is not used in the project. There is no fix in the dependency outside not using the method
         ]]></notes>
         <gav>commons-io:commons-io:2.0.1</gav>
         <cve>CVE-2021-29425</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-        Testing false positives by suppressing a CVE
-        ]]></notes>
-        <gav>ognl:ognl:3.0.6</gav>
-        <cve>CVE-2016-3093</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-        Testing false positives by suppressing a CVE
-        ]]></notes>
-        <gav>org.apache.struts.xwork:xwork-core:2.3.8</gav>
-        <cve>CVE-2013-1965</cve>
-        <cve>CVE-2013-1966</cve>
-        <cve>CVE-2016-4461</cve>
-        <cve>CVE-2013-2115</cve>
-        <cve>CVE-2014-0112</cve>
-        <cve>CVE-2019-0233</cve>
-        <cve>CVE-2016-2162</cve>
     </suppress>
 </suppressions>
