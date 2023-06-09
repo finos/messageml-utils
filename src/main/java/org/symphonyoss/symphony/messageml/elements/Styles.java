@@ -15,6 +15,9 @@ public class Styles {
 
   public static Set<String> ALLOWED_PROPERTIES = new HashSet<>();
   static {
+    ALLOWED_PROPERTIES.add("align-content");
+    ALLOWED_PROPERTIES.add("align-items");
+    ALLOWED_PROPERTIES.add("align-self");
     ALLOWED_PROPERTIES.add("background");
     ALLOWED_PROPERTIES.add("background-attachment");
     ALLOWED_PROPERTIES.add("background-blend-mode");
@@ -67,6 +70,13 @@ public class Styles {
     ALLOWED_PROPERTIES.add("counter-reset");
     ALLOWED_PROPERTIES.add("display");
     ALLOWED_PROPERTIES.add("empty-cells");
+    ALLOWED_PROPERTIES.add("flex");
+    ALLOWED_PROPERTIES.add("flex-basis");
+    ALLOWED_PROPERTIES.add("flex-direction");
+    ALLOWED_PROPERTIES.add("flex-flow");
+    ALLOWED_PROPERTIES.add("flex-grow");
+    ALLOWED_PROPERTIES.add("flex-shrink");
+    ALLOWED_PROPERTIES.add("flex-wrap");
     ALLOWED_PROPERTIES.add("font");
     ALLOWED_PROPERTIES.add("font-family");
     ALLOWED_PROPERTIES.add("font-kerning");
@@ -76,7 +86,29 @@ public class Styles {
     ALLOWED_PROPERTIES.add("font-style");
     ALLOWED_PROPERTIES.add("font-variant");
     ALLOWED_PROPERTIES.add("font-weight");
+    ALLOWED_PROPERTIES.add("gap");
+    ALLOWED_PROPERTIES.add("grid");
+    ALLOWED_PROPERTIES.add("grid-area");
+    ALLOWED_PROPERTIES.add("grid-auto-columns");
+    ALLOWED_PROPERTIES.add("grid-auto-flow");
+    ALLOWED_PROPERTIES.add("grid-auto-rows");
+    ALLOWED_PROPERTIES.add("grid-column");
+    ALLOWED_PROPERTIES.add("grid-column-end");
+    ALLOWED_PROPERTIES.add("grid-column-gap");
+    ALLOWED_PROPERTIES.add("grid-column-start");
+    ALLOWED_PROPERTIES.add("grid-gap");
+    ALLOWED_PROPERTIES.add("grid-row");
+    ALLOWED_PROPERTIES.add("grid-row-end");
+    ALLOWED_PROPERTIES.add("grid-row-gap");
+    ALLOWED_PROPERTIES.add("grid-row-start");
+    ALLOWED_PROPERTIES.add("grid-template");
+    ALLOWED_PROPERTIES.add("grid-template-areas");
+    ALLOWED_PROPERTIES.add("grid-template-columns");
+    ALLOWED_PROPERTIES.add("grid-template-rows");
     ALLOWED_PROPERTIES.add("height");
+    ALLOWED_PROPERTIES.add("justify-content");
+    ALLOWED_PROPERTIES.add("justify-items");
+    ALLOWED_PROPERTIES.add("justify-self");
     ALLOWED_PROPERTIES.add("letter-spacing");
     ALLOWED_PROPERTIES.add("line-height");
     ALLOWED_PROPERTIES.add("list-style");
@@ -106,6 +138,9 @@ public class Styles {
     ALLOWED_PROPERTIES.add("padding-left");
     ALLOWED_PROPERTIES.add("padding-right");
     ALLOWED_PROPERTIES.add("padding-top");
+    ALLOWED_PROPERTIES.add("place-content");
+    ALLOWED_PROPERTIES.add("place-items");
+    ALLOWED_PROPERTIES.add("place-self");
     ALLOWED_PROPERTIES.add("table-layout");
     ALLOWED_PROPERTIES.add("text-align");
     ALLOWED_PROPERTIES.add("text-align-last");
