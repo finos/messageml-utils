@@ -36,7 +36,7 @@ public class LinkTest extends ElementTest {
     assertEquals("PresentationML",
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"https://hello.org\">Hello world!</a></div>",
         context.getPresentationML());
-    assertEquals("Markdown", "https://hello.org", context.getMarkdown());
+    assertEquals("Markdown", "Hello world!", context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
 
     String noText = "<messageML><a href=\"https://hello.org\"/></messageML>";
@@ -111,7 +111,7 @@ public class LinkTest extends ElementTest {
     String expectedPresentationML =
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
     String expectedJson = "{}";
-    String expectedMarkdown = "invalid://hello.org";
+    String expectedMarkdown = "Hello world!";
     String expectedText = "Hello world!";
 
     assertEquals("Generated PresentationML", expectedPresentationML, presentationML);
@@ -136,7 +136,7 @@ public class LinkTest extends ElementTest {
     String expectedPresentationML =
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><a href=\"invalid://hello.org\">Hello world!</a></div>";
     String expectedJson = "{}";
-    String expectedMarkdown = "invalid://hello.org";
+    String expectedMarkdown = "Hello world!";
     String expectedText = "Hello world!";
 
     assertEquals("Generated PresentationML", expectedPresentationML, presentationML);

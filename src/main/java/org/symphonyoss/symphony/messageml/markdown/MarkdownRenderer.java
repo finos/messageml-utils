@@ -56,6 +56,7 @@ import java.util.regex.Pattern;
 public class MarkdownRenderer extends AbstractVisitor {
 
   private static final String TEXT = "text";
+  private static final String EXPANDED_URL = "expandedUrl";
   private static final String ID = "id";
   private static final String INDEX_START = "indexStart";
   private static final String INDEX_END = "indexEnd";
@@ -65,6 +66,7 @@ public class MarkdownRenderer extends AbstractVisitor {
   private static final String USER_TYPE = "userType";
   private static final String USER_MENTIONS = "userMentions";
   private static final String HASHTAGS = "hashtags";
+  private static final String URLS = "urls";
   private static final String INDENT = "  ";
 
   private static final Pattern NOESCAPE_PATTERN = Pattern.compile("^\\s*([_*\\-+`])\\1*\\s*$");
@@ -129,8 +131,16 @@ public class MarkdownRenderer extends AbstractVisitor {
   @Override
   public void visit(Link a) {
     String href = a.getDestination();
-
-    writer.write(href);
+    String title = StringUtils.defaultIfBlank(a.getTitle(),a.getDestination()) ;
+    ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
+    node.put(ID, href);
+    node.put(TYPE, "URL");
+    node.put(INDEX_END, writer.length() + title.length());
+    node.put(INDEX_START, writer.length());
+    node.put(TEXT, title);
+    node.put(EXPANDED_URL, href);
+    putJsonObject(URLS,node);
+    writer.write(title);
   }
 
   @Override
