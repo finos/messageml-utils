@@ -62,6 +62,8 @@ import org.symphonyoss.symphony.messageml.elements.Radio;
 import org.symphonyoss.symphony.messageml.elements.Select;
 import org.symphonyoss.symphony.messageml.elements.Span;
 import org.symphonyoss.symphony.messageml.elements.SplittableElement;
+import org.symphonyoss.symphony.messageml.elements.Sub;
+import org.symphonyoss.symphony.messageml.elements.Sup;
 import org.symphonyoss.symphony.messageml.elements.Table;
 import org.symphonyoss.symphony.messageml.elements.TableBody;
 import org.symphonyoss.symphony.messageml.elements.TableCell;
@@ -609,6 +611,12 @@ public class MessageMLParser {
         String id = getAttribute(element, LabelableElement.LABEL_FOR);
         createSplittable(id, LabelableElement.class, Pair.of(LabelableElement.LABEL, element.getTextContent()));
         return null;
+
+      case Sub.MESSAGEML_TAG:
+        return new Sub(parent);
+
+      case Sup.MESSAGEML_TAG:
+        return new Sup(parent);
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
