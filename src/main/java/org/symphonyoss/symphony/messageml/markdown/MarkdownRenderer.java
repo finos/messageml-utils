@@ -41,6 +41,7 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextAreaNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.TextFieldNode;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -131,7 +132,8 @@ public class MarkdownRenderer extends AbstractVisitor {
   @Override
   public void visit(Link a) {
     String href = a.getDestination();
-    String title = StringUtils.defaultIfBlank(a.getTitle(),a.getDestination()) ;
+    String title = StringUtils.defaultIfBlank(a.getTitle(), a.getDestination());
+    String markdown = MessageFormat.format("[ {0} ]({1})", title, href);
 
     ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
     node.put(ID, href);
@@ -140,9 +142,9 @@ public class MarkdownRenderer extends AbstractVisitor {
     node.put(INDEX_START, writer.length());
     node.put(TEXT, title);
     node.put(EXPANDED_URL, href);
-    putJsonObject(URLS,node);
+    putJsonObject(URLS, node);
 
-    writer.write(title);
+    writer.write(markdown);
   }
 
   @Override
