@@ -544,9 +544,9 @@ public class MessageMLContextTest {
         Collections.singletonMap(BiFields.COUNT.getValue(), 15)));
     biItems.add(new BiItem(BiFields.FREEMARKER.getValue(), Collections.singletonMap(BiFields.COUNT.getValue(), 1)));
     biItems.add(new BiItem(BiFields.ENTITY_JSON_SIZE.getValue(),
-        Collections.singletonMap(BiFields.COUNT.getValue(), 1948)));
+        Collections.singletonMap(BiFields.COUNT.getValue(), 2008)));
     biItems.add(new BiItem(BiFields.MESSAGE_LENGTH.getValue(),
-        Collections.singletonMap(BiFields.COUNT.getValue(), 2984)));
+        Collections.singletonMap(BiFields.COUNT.getValue(), 3038)));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(),
         Collections.singletonMap(BiFields.ENTITY_TYPE.getValue(), "com.symphony.user.mention")));
     biItems.add(new BiItem(BiFields.ENTITY.getValue(),
@@ -1187,7 +1187,7 @@ public class MessageMLContextTest {
     String data = getPayload("payloads/templated_message_all_tags.json");
 
     String expectedText =
-        "   Sample JIRA issue  Bot User01 updated Bug  SAM-24,Sample Bug Blocker     FieldOld Value => New Value     "
+        "   Sample JIRA issue  Bot User01 updated Bug SAM-24,Sample Bug Blocker    FieldOld Value => New Value     "
             + "resolution Open => Done   status To Do => Done         Field Value     Assignee @Bot User01   Labels   "
             + "#production #major       Priority Highest   Status Done     ";
 

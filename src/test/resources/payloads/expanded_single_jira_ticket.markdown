@@ -5,7 +5,7 @@
 
  
 
- **Bot User01 updated Bug https://whiteam1.atlassian.net/browse/SAM-24 **  
+ **Bot User01 updated Bug [ SAM-24,Sample Bug Blocker ](https://whiteam1.atlassian.net/browse/SAM-24) **  
 
  FieldOld Value => New Value 
 
@@ -36,4 +36,3 @@
 ---
  
 
- 

@@ -2,9 +2,7 @@
 <p>
 <img src="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg"/><br/> Sample JIRA issue</p>
 <div class="entity" data-entity-id="jiraUpdated">
-<h1>Bot User01 updated Bug <a href="https://whiteam1.atlassian.net/browse/SAM-24">
-<i>SAM-24</i>,<b>Sample Bug Blocker</b>
-</a>
+<h1>Bot User01 updated Bug <a href="https://whiteam1.atlassian.net/browse/SAM-24"><i>SAM-24</i>,<b>Sample Bug Blocker</b></a>
 </h1>
 <div class="card barStyle" data-icon-src="https://symphony.com/images/web/logo/symphony-logo-nav-light.svg">
 <div class="cardHeader">
