@@ -518,7 +518,7 @@ public class MessageMLContextTest {
     List<BiItem> expectedBiItems = getExpectedBiItems();
 
     List<BiItem> biItems = context.getBiContext().getItems();
-    assertEquals(expectedBiItems.size(), biItems.size());
+	assertEquals(expectedBiItems.size(), biItems.size());
     assertTrue(biItems.containsAll(expectedBiItems));
     assertTrue(expectedBiItems.containsAll(biItems));
   }

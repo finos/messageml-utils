@@ -1,30 +1,41 @@
 {
-  "userMentions": [
-    {
-      "id": 123456789,
-      "screenName": "bot.user1",
-      "prettyName": "Bot User01",
-      "text": "@Bot User01",
-      "indexStart": 262,
-      "indexEnd": 273,
-      "userType": "lc",
-      "type": "USER_FOLLOW"
-    }
-  ],
-  "hashtags": [
-    {
-      "id": "#production",
-      "text": "#production",
-      "indexStart": 295,
-      "indexEnd": 306,
-      "type": "KEYWORD"
-    },
-    {
-      "id": "#major",
-      "text": "#major",
-      "indexStart": 310,
-      "indexEnd": 316,
-      "type": "KEYWORD"
-    }
-  ]
+    "urls": [
+        {
+		    "id": "https://whiteam1.atlassian.net/browse/SAM-24",
+            "type": "URL",
+            "indexEnd": 81,
+            "indexStart": 54,
+            "text": "\nSAM-24,Sample Bug Blocker\n",
+            "expandedUrl": "https://whiteam1.atlassian.net/browse/SAM-24"
+		}
+    ],
+    "userMentions": [
+        {
+            "id": 123456789,
+            "screenName": "bot.user1",
+            "prettyName": "Bot User01",
+            "text": "@Bot User01",
+            "indexStart": 295,
+            "indexEnd": 306,
+            "userType": "lc",
+            "type": "USER_FOLLOW"
+        }
+    ],
+    "hashtags": [
+        {
+            "id": "#production",
+            "text": "#production",
+            "indexStart": 328,
+            "indexEnd": 339,
+            "type": "KEYWORD"
+        },
+        {
+            "id": "#major",
+            "text": "#major",
+            "indexStart": 343,
+            "indexEnd": 349,
+            "type": "KEYWORD"
+        }
+    ]
+
 }
