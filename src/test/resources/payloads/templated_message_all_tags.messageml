@@ -2,7 +2,9 @@
 <p><img src="${data["jiraUpdated"].issue.logo}"/> <br/> Sample JIRA issue</p>
 <div class="entity" data-entity-id="jiraUpdated">
 <h1>${data["jiraUpdated"].user.displayName} updated Bug
-<a href="${data["jiraUpdated"].issue.link}"><i>${data["jiraUpdated"].issue.key}</i>,<b>${data["jiraUpdated"].issue.subject}</b></a>
+<a href="${data["jiraUpdated"].issue.link}">
+<i>${data["jiraUpdated"].issue.key}</i>,<b>${data["jiraUpdated"].issue.subject}</b>
+</a>
 </h1>
 <card iconSrc="${data["jiraUpdated"].issue.logo}" class="barStyle">
 <header>
