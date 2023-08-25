@@ -26,8 +26,8 @@
 
         <!-- Dependencies -->
         <json.schema.validator.version>2.2.14</json.schema.validator.version>
-        <jackson.core.version>2.14.1</jackson.core.version>
-        <jackson.databind.version>2.14.1</jackson.databind.version>
+        <jackson.core.version>2.15.2</jackson.core.version>
+        <jackson.databind.version>2.15.2</jackson.databind.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
         <freemarker.version>2.3.31</freemarker.version>
@@ -40,6 +40,7 @@
         <jmh.version>1.33</jmh.version>
         <xmlunit.version>2.8.3</xmlunit.version>
         <lombok.version>1.18.22</lombok.version>
+        <guava.version>32.1.2-jre</guava.version>
 
         <!-- Maven Plugins -->
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
@@ -152,12 +153,25 @@
                     <groupId>org.mozilla</groupId>
                     <artifactId>rhino</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mozilla</groupId>
             <artifactId>rhino</artifactId>
             <version>${mozilla.rhino.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
