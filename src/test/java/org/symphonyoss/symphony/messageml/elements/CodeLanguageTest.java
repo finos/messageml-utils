@@ -24,7 +24,8 @@ public class CodeLanguageTest {
   }
 
   public static Stream<Arguments> languages() {
-    return Stream.of( "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r", "typescript", "tsx").map(Arguments::of);
+    return Stream.of("plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r",
+        "typescript", "tsx", "markdown", "json", "scala", "shell", "yaml").map(Arguments::of);
   }
 
   @ParameterizedTest
@@ -32,7 +33,9 @@ public class CodeLanguageTest {
   public void testCodeWithLanguageAttribute(String language) throws Exception {
 
     final String input = "<messageML><code language=\"" + language + "\">Some Code</code></messageML>";
-    final String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language + "\">Some Code</code></div>";
+    final String expectedPml =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language
+            + "\">Some Code</code></div>";
 
     this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -43,8 +46,11 @@ public class CodeLanguageTest {
   @MethodSource("languages")
   public void testCodeWithLanguageAttributeInPresentationML(String language) throws Exception {
 
-    final String input = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language + "\">Some Code</code></div>";
-    final String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language + "\">Some Code</code></div>";
+    final String input = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language
+        + "\">Some Code</code></div>";
+    final String expectedPml =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language
+            + "\">Some Code</code></div>";
 
     this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -60,20 +66,21 @@ public class CodeLanguageTest {
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
     assertEquals(
-        "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].",
+        "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx, markdown, json, scala, shell, yaml].",
         ex.getMessage());
   }
 
   @Test
   public void testWithUnknownLanguageAttributeInPresentationML() {
 
-    final String input = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code language=\"clojure\">Some Code</code></div>";
+    final String input =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><code language=\"clojure\">Some Code</code></div>";
 
     InvalidInputException ex = assertThrows(InvalidInputException.class,
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
     assertEquals(
-        "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].",
+        "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx, markdown, json, scala, shell, yaml].",
         ex.getMessage());
   }
 
@@ -81,7 +88,8 @@ public class CodeLanguageTest {
   @MethodSource("languages")
   public void testParseLanguageAttributeInMarkdown(String language) throws Exception {
     String input = "```" + language + "\nSome Code\n```";
-    String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language + "\">Some Code</code></div>";
+    String expectedPml = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"" + language
+        + "\">Some Code</code></div>";
 
     this.context.parseMarkdown(input, null, null);
 
@@ -101,11 +109,13 @@ public class CodeLanguageTest {
 
   @Test
   public void testPreformattedInsideCodeIsAllowed() throws Exception {
-    final String input = "<div data-format=\"PresentationML\" data-version=\"2.0\"><code language=\"plaintext\"><pre>Hello</pre></code></div>";
+    final String input =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><code language=\"plaintext\"><pre>Hello</pre></code></div>";
 
     this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"plaintext\"><pre>Hello</pre></code></div>",
+    assertEquals(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><code data-language=\"plaintext\"><pre>Hello</pre></code></div>",
         this.context.getPresentationML());
   }
 }
