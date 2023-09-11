@@ -138,6 +138,23 @@ public class CodeTest extends ElementTest {
   }
 
   @Test
+  public void testCodeInvalidLanguageAttribute() {
+    String input =
+        "<messageML><code data-language='kotlin'>val reader = Scanner(System.`in`)</code></messageML>";
+
+    try {
+      context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+      fail("Should have thrown an exception");
+    } catch (Exception e) {
+      assertEquals("Exception class", InvalidInputException.class, e.getClass());
+      assertEquals("Exception message",
+          "Attribute \"data-language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx, markdown, json, scala, shell, yaml].",
+          e.getMessage());
+    }
+  }
+
+
+  @Test
   public void testCodeByPresentationML() throws Exception {
     String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">"
         + "<code>System.out.println(\"Hello world!\");</code></div>";
