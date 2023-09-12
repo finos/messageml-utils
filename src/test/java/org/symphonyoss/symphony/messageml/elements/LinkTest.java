@@ -75,7 +75,7 @@ public class LinkTest extends ElementTest {
   public void testLinkInvalidUri() throws Exception {
     String invalidUri = "<messageML><a href=\"[invalid]\">Hello world!</a></messageML>";
     expectedException.expect(InvalidInputException.class);
-    expectedException.expectMessage("Invalid input: null must be a URI value not \"[invalid]\"");
+    expectedException.expectMessage("Invalid input: href must be a URI value not \"[invalid]\"");
     context.parseMessageML(invalidUri, null, MessageML.MESSAGEML_VERSION);
   }
 

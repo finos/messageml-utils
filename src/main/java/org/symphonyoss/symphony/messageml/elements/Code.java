@@ -33,6 +33,7 @@ import java.util.Map;
 
 /**
  * Class representing a block container for block or inline content.
+ *
  * @author lukasz
  * @since 3/27/17
  */
@@ -46,12 +47,14 @@ public class Code extends Element {
   private static final int MARKDOWN_DELIMITER_INDENT = 0;
 
   private static final List<String> SUPPORTED_LANGUAGES = Arrays.asList(
-      "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r", "typescript", "tsx"
+      "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r", "typescript", "tsx",
+      "markdown", "json", "scala", "shell", "yaml"
   );
 
   public Code(Element parent) {
     super(parent, MESSAGEML_TAG);
   }
+
   public Code(Element parent, String language) {
     super(parent, MESSAGEML_TAG);
     this.setAttribute(PML_LANGUAGE_ATTR, language);
