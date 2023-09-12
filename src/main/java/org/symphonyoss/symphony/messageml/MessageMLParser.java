@@ -126,11 +126,11 @@ public class MessageMLParser {
     try {
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       // XXE prevention as per https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet
-      dbFactory.setXIncludeAware(true);
-      dbFactory.setNamespaceAware(true);
+      dbFactory.setXIncludeAware(false);
+      dbFactory.setExpandEntityReferences(false);
+      dbFactory.setIgnoringElementContentWhitespace(true);
+      dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
       dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-      dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-      dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
       return dbFactory;
     } catch (ParserConfigurationException e) {
       throw new RuntimeException(e); //NOSONAR
@@ -371,9 +371,10 @@ public class MessageMLParser {
   /**
    * Parse the message string into a DOM element tree.
    * <br>
-   * CWE-611 on <code> dBuilder.parse(ris) </code> :  The fix is done as recommended
-   * <a href="https://sg.run/gLbR">https://sg.run/gLbR</a> , but some how the fix it is not detected by semgrep scanner
-   * so its ignored for now to pass the workflow checklist
+   * CWE-611 on <code> dBuilder.parse(ris) </code> :  There are ambiguities between what was recommended
+   * <a href="https://sg.run/gLbR">https://sg.run/gLbR</a> and the documentation
+   * <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">XML External Entity Prevention Cheat Sheet</a>,
+   * so for now we prefer keeping the old code and ignore the rule to pass the workflow checklist
    * </br>
    */
   org.w3c.dom.Element parseDocument(String messageML) throws InvalidInputException, ProcessingException {
