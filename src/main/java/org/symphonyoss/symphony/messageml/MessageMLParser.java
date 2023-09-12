@@ -371,8 +371,7 @@ public class MessageMLParser {
   /**
    * Parse the message string into a DOM element tree.
    * <br>
-   * CWE-611 on <code> dBuilder.parse(ris) </code> :  There are ambiguities between what was
-   * recommended
+   * CWE-611 on <code> dBuilder.parse(ris) </code> :  There are ambiguities between what was recommended
    * <a href="https://sg.run/gLbR">https://sg.run/gLbR</a> and the documentation
    * <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">XML External Entity Prevention Cheat Sheet</a>,
    * so for now we prefer keeping the old code and ignore the rule to pass the workflow checklist
