@@ -81,7 +81,8 @@ public abstract class Element {
 
   private static final List<Class<? extends Element>> PHRASING_TYPES =
       Arrays.asList(TextNode.class, Link.class, Chime.class, Bold.class, Italic.class, Image.class,
-          LineBreak.class, Span.class, Emoji.class, HashTag.class, CashTag.class, Mention.class);
+          LineBreak.class, Span.class, Emoji.class, HashTag.class, CashTag.class, Mention.class,
+          Subscript.class, Superscript.class);
 
   private static final List<Class<? extends Element>> PHRASING_OR_PREFORMATTED_TYPES = new ArrayList<Class<? extends Element>>() {{
     addAll(PHRASING_TYPES);
