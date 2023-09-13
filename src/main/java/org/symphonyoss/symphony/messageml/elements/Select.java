@@ -16,6 +16,8 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
@@ -60,6 +62,9 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   private static final String MIN_ATTR = "data-min";
   private static final String MML_MAX_ATTR = "max";
   private static final String MAX_ATTR = "data-max";
+  private static final String MML_AUTO_SUBMIT_ATTR = "auto-submit";
+  private static final String AUTO_SUBMIT_ATTR = "data-auto-submit";
+
 
   public Select(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -88,6 +93,11 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
 
     if (getAttribute(MULTIPLE_ATTR) != null) {
       assertAttributeValue(MULTIPLE_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+    }
+
+    if (getAttribute(AUTO_SUBMIT_ATTR) != null) {
+      assertAttributeValue(AUTO_SUBMIT_ATTR,
+          Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
     boolean multipleAttributeValue = Boolean.parseBoolean(getAttribute(MULTIPLE_ATTR));
@@ -132,6 +142,9 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
         break;
       case MML_MAX_ATTR:
         setAttribute(MAX_ATTR, getStringAttribute(item));
+        break;
+      case MML_AUTO_SUBMIT_ATTR:
+        setAttribute(AUTO_SUBMIT_ATTR, getStringAttribute(item));
         break;
       case ID_ATTR:
         if (format != FormatEnum.PRESENTATIONML) {
