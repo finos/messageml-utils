@@ -3,7 +3,7 @@
         {
 		    "id": "https://whiteam1.atlassian.net/browse/SAM-24",
             "type": "URL",
-            "indexEnd": 81,
+            "indexEnd": 131,
             "indexStart": 54,
             "text": "\nSAM-24,Sample Bug Blocker\n",
             "expandedUrl": "https://whiteam1.atlassian.net/browse/SAM-24"

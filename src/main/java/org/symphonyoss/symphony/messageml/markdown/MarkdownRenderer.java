@@ -138,7 +138,7 @@ public class MarkdownRenderer extends AbstractVisitor {
     ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
     node.put(ID, href);
     node.put(TYPE, "URL");
-    node.put(INDEX_END, writer.length() + title.length());
+    node.put(INDEX_END, writer.length() + markdown.length());
     node.put(INDEX_START, writer.length());
     node.put(TEXT, title);
     node.put(EXPANDED_URL, href);
