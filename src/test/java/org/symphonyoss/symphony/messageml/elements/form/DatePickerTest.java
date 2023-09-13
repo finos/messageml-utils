@@ -519,5 +519,54 @@ public class DatePickerTest extends ElementTest {
     assertMessageLengthBiItem(items.get(3), input.length());
   }
 
+  @Test
+  public void testDatePickerWithReadyOnlyAndDisabledAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><date-picker name=\"init\" value=\"2020-08-28\" "
+            + "disabled=\"true\" readonly=\"true\"></date-picker><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><input "
+            + "type=\"date\" name=\"init\" value=\"2020-08-28\" disabled=\"true\" "
+            + "readonly=\"true\"></input><button type=\"action\" "
+            + "name=\"submit\">Submit</button></form></div>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testDatePickerWithInvalidReadyOnlyAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><date-picker name=\"init\" value=\"2020-08-28\" "
+            + "readonly=\"invalid\"></date-picker><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"readonly\" of element \"date-picker\" can only be one of the following "
+            + "values: "
+            + "[true, false].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testDatePickerWithInvalidDisabledAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><date-picker name=\"init\" value=\"2020-08-28\" "
+            + "disabled=\"invalid\"></date-picker><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"disabled\" of element \"date-picker\" can only be one of the following "
+            + "values: "
+            + "[true, false].");
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+
+
 
 }

@@ -34,6 +34,8 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
   private static final String STEP_ATTR = "step";
   private static final String STRICT_ATTR = "strict";
   private static final String FORMAT_ATTR = "format";
+  private static final String DISABLED_ATTR = "disabled";
+  private static final String READONLY_ATTR = "readonly";
 
   // PresentationML specific attributes
   private static final String PRESENTATIONML_FORMAT_ATTR = "data-format";
@@ -67,6 +69,8 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
       case MIN_ATTR:
       case MAX_ATTR:
       case STEP_ATTR:
+      case DISABLED_ATTR:
+      case READONLY_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case DISABLED_TIME_ATTR:
@@ -114,6 +118,13 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
 
     if (getAttribute(STRICT_ATTR) != null) {
       assertAttributeValue(STRICT_ATTR, Arrays.asList("true", "false"));
+    }
+
+    if (getAttribute(DISABLED_ATTR) != null) {
+      assertAttributeValue(DISABLED_ATTR, Arrays.asList("true", "false"));
+    }
+    if (getAttribute(READONLY_ATTR) != null) {
+      assertAttributeValue(READONLY_ATTR, Arrays.asList("true", "false"));
     }
   }
 
@@ -294,6 +305,12 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
     }
     if (getAttribute(PRESENTATIONML_DISABLED_TIME_ATTR) != null) {
       presentationAttrs.put(PRESENTATIONML_DISABLED_TIME_ATTR, getAttribute(PRESENTATIONML_DISABLED_TIME_ATTR));
+    }
+    if (getAttribute(DISABLED_ATTR) != null) {
+      presentationAttrs.put(DISABLED_ATTR, getAttribute(DISABLED_ATTR));
+    }
+    if (getAttribute(READONLY_ATTR) != null) {
+      presentationAttrs.put(READONLY_ATTR, getAttribute(READONLY_ATTR));
     }
     return presentationAttrs;
   }

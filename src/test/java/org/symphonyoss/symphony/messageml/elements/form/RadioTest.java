@@ -604,6 +604,58 @@ public class RadioTest extends ElementTest {
     assertMessageLengthBiItem(items.get(4), input.length());
   }
 
+  @Test
+  public void testRadioWithReadyOnlyAndDisabledAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><radio name=\"groupId\" value=\"value01\" "
+            + "checked=\"true\" disabled=\"true\" readonly=\"true\">Red</radio><button "
+            + "name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    String id = getInputId(context.getPresentationML());
+
+    String expectedPresentationML =
+        String.format(
+            "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><div "
+                + "class=\"radio-group\"><input type=\"radio\" name=\"groupId\" checked=\"true\" "
+                + "value=\"value01\" disabled=\"true\" readonly=\"true\" "
+                + "id=\"%s\"/><label "
+                + "for=\"%s\">Red</label></div><button type=\"action\" "
+                + "name=\"submit\">Submit</button></form></div>",
+            id, id);
+
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testRadioWithInvalidReadyOnlyAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><radio name=\"groupId\" value=\"value01\" "
+            + "checked=\"true\" readonly=\"invalid\">Red</radio><button "
+            + "name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"readonly\" of element \"radio\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testRadioWithInvalidDisabledAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><radio name=\"groupId\" value=\"value01\" "
+            + "checked=\"true\" disabled=\"invalid\">Red</radio><button "
+            + "name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"disabled\" of element \"radio\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
   static String getInputId(String presentationML) {
     int startId = presentationML.indexOf("label for=\"");
     int endId = presentationML.indexOf('"', startId + "label for=\"".length());

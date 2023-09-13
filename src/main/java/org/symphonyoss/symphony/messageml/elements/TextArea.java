@@ -28,6 +28,8 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
 
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
+  private static final String DISABLED_ATTR = "disabled";
+  private static final String READONLY_ATTR = "readonly";
   private static final List<String> VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
 
   public TextArea(Element parent, FormatEnum format) {
@@ -44,6 +46,14 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
 
     if (getAttribute(REQUIRED_ATTR) != null) {
       assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
+    }
+
+    if (getAttribute(DISABLED_ATTR) != null) {
+      assertAttributeValue(DISABLED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
+    }
+
+    if (getAttribute(READONLY_ATTR) != null) {
+      assertAttributeValue(READONLY_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
     }
 
     assertAttributeNotBlank(NAME_ATTR);
@@ -64,6 +74,8 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
       case PATTERN_ATTR:
       case LABEL:
       case TITLE:
+      case DISABLED_ATTR:
+      case READONLY_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case PATTERN_ERROR_MESSAGE_ATTR:

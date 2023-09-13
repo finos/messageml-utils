@@ -60,6 +60,8 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   private static final String MIN_ATTR = "data-min";
   private static final String MML_MAX_ATTR = "max";
   private static final String MAX_ATTR = "data-max";
+  protected static final String DISABLED_ATTR = "disabled";
+  protected static final String READONLY_ATTR = "readonly";
 
   public Select(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -88,6 +90,16 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
 
     if (getAttribute(MULTIPLE_ATTR) != null) {
       assertAttributeValue(MULTIPLE_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+    }
+
+    if (getAttribute(DISABLED_ATTR) != null) {
+      assertAttributeValue(DISABLED_ATTR,
+          Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+    }
+
+    if (getAttribute(READONLY_ATTR) != null) {
+      assertAttributeValue(READONLY_ATTR,
+          Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
     boolean multipleAttributeValue = Boolean.parseBoolean(getAttribute(MULTIPLE_ATTR));
@@ -125,6 +137,8 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
       case LABEL:
       case TITLE:
       case MULTIPLE_ATTR:
+      case DISABLED_ATTR:
+      case READONLY_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case MML_MIN_ATTR:

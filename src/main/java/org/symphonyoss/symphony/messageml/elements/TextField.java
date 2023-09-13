@@ -35,7 +35,8 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
   private static final String MASKED_ATTR = "masked";
   private static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String VALUE_ATTR = "value";
-
+  private static final String DISABLED_ATTR = "disabled";
+  private static final String READONLY_ATTR = "readonly";
   private static final String PRESENTATIONML_MASKED_ATTR = "data-masked";
 
   private static final Set<String> VALID_BOOLEAN_VALUES = new HashSet<>(Arrays.asList("true", "false"));
@@ -62,6 +63,14 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
     if (getAttribute(MASKED_ATTR) != null) {
       assertAttributeValue(MASKED_ATTR, VALID_BOOLEAN_VALUES);
+    }
+
+    if (getAttribute(DISABLED_ATTR) != null) {
+      assertAttributeValue(DISABLED_ATTR, VALID_BOOLEAN_VALUES);
+    }
+
+    if (getAttribute(READONLY_ATTR) != null) {
+      assertAttributeValue(READONLY_ATTR, VALID_BOOLEAN_VALUES);
     }
 
     assertAttributeNotBlank(NAME_ATTR);
@@ -102,6 +111,8 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
       case PATTERN_ERROR_MESSAGE_ATTR:
       case LABEL:
       case TITLE:
+      case DISABLED_ATTR:
+      case READONLY_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
@@ -182,6 +193,14 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
     if (getAttribute(MAXLENGTH_ATTR) != null) {
       presentationAttrs.put(MAXLENGTH_ATTR, getAttribute(MAXLENGTH_ATTR));
+    }
+
+    if (getAttribute(DISABLED_ATTR) != null) {
+      presentationAttrs.put(DISABLED_ATTR, getAttribute(DISABLED_ATTR));
+    }
+
+    if (getAttribute(READONLY_ATTR) != null) {
+      presentationAttrs.put(READONLY_ATTR, getAttribute(READONLY_ATTR));
     }
 
     if (getChildren() != null && getChildren().size() == 1) {
