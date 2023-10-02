@@ -2,6 +2,7 @@ package org.symphonyoss.symphony.messageml.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,8 @@ public class TableReplyTransformerWorkaround {
    */
   public static void replaceEmphasis(StringBuilder markdown, JsonNode media) {
 
-    Iterable<JsonNode> iterable = () -> media.path("content").elements();
+    Iterable<JsonNode> iterable =
+        () -> media == null ? Collections.emptyIterator() : media.path("content").elements();
     // extract tables from message, if any
     List<JsonNode> tables = StreamSupport.stream(iterable.spliterator(), false)
         .filter(node -> node.get("type").asText().equals(EXCEL_CONTENT_TYPE))
