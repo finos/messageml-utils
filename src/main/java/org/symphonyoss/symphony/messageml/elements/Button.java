@@ -45,9 +45,11 @@ public class Button extends Element {
   public static final String ACTION_TYPE = "action";
   public static final String CANCEL_TYPE = "cancel";
   public static final String RESET_TYPE = "reset";
-
+  public static final String MML_ICON_ATTR = "icon";
+  public static final String ICON_ATTR = "data-icon";
   private static final Set<String> VALID_CLASSES = new HashSet<>(Arrays.asList("primary", "secondary", "tertiary", "destructive",
-      "primary-destructive", "secondary-destructive")); // primary-destructive, secondary-destructive are deprecated
+      "primary-destructive", "secondary-destructive", "primary-link", "destructive-link"));
+  // primary-destructive, secondary-destructive are deprecated
   private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList(ACTION_TYPE, RESET_TYPE, CANCEL_TYPE));
 
   public Button(Element parent, FormatEnum format) {
@@ -65,6 +67,9 @@ public class Button extends Element {
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       // The button can a have tooltips but is not a tooltipable element because it dont generate the span with tooltip
+      case MML_ICON_ATTR:
+        setAttribute(ICON_ATTR, getStringAttribute(item));
+        break;
       case CLASS_ATTR:
         if (getStringAttribute(item).contains("-destructive")) {
           logger.info("Button class cannot be a destructive one, replacing it accordingly.");
