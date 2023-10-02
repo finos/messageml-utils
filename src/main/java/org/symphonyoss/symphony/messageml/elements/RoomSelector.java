@@ -1,5 +1,6 @@
 package org.symphonyoss.symphony.messageml.elements;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.commonmark.node.Node;
@@ -26,9 +27,6 @@ import java.util.Set;
 
 /**
  * Class representing a room selector inside a Symphony Elements form.
- *
- * @author Mohamed Rojbeni
- * @since 09/14/2023
  */
 public class RoomSelector extends FormElement implements LabelableElement, TooltipableElement {
   public static final String MESSAGEML_TAG = "room-selector";
@@ -52,6 +50,10 @@ public class RoomSelector extends FormElement implements LabelableElement, Toolt
 
   public RoomSelector(Element parent, FormatEnum messageFormat) {
     super(parent, MESSAGEML_TAG, messageFormat);
+  }
+
+  static {
+    MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
   }
 
   @Override
@@ -84,9 +86,10 @@ public class RoomSelector extends FormElement implements LabelableElement, Toolt
     }
 
     if (getAttribute(VALUE_ATTR) != null) {
+      String attribute = getAttribute(VALUE_ATTR);
       try {
         MAPPER.readValue(getAttribute(VALUE_ATTR),
-            MAPPER.getTypeFactory().constructCollectionType(List.class, Long.class));
+            MAPPER.getTypeFactory().constructCollectionType(List.class, String.class));
       } catch (JsonProcessingException e) {
         throw new InvalidInputException(
             String.format(

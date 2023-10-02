@@ -85,7 +85,7 @@ public class RoomSelectorTest extends ElementTest {
     context.parseMessageML("<messageML>" +
         "  <form id=\"all-elements\">" +
         "    <room-selector name=\"room-selector\" placeholder=\"Type a room's name\" "
-        + "value=\"[123]\"/>" +
+        + "value=\"['rsxB51ieSYfPLQ0jgFKg93___nUqhvz4dA']\"/>" +
         "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
         "  </form>" +
         "</messageML>", null, MessageML.MESSAGEML_VERSION);
@@ -95,7 +95,8 @@ public class RoomSelectorTest extends ElementTest {
     String expectedPresentationML =
         "<div data-format=\"PresentationML\" data-version=\"2.0\">  <form id=\"all-elements\">   "
             + " <div class=\"room-selector\" data-name=\"room-selector\" data-placeholder=\"Type "
-            + "a room's name\" data-value=\"[123]\"></div>    <button type=\"action\" "
+            + "a room's name\" data-value=\"['rsxB51ieSYfPLQ0jgFKg93___nUqhvz4dA']\"></div>    "
+            + "<button type=\"action\" "
             + "name=\"send-answers\">Send Answers</button>  </form></div>";
 
     assertEquals("The parsed content should be equivalent to the expected presentation ML",
@@ -107,7 +108,7 @@ public class RoomSelectorTest extends ElementTest {
     context.parseMessageML("<messageML>" +
         "  <form id=\"all-elements\">" +
         "    <room-selector name=\"room-selector\" placeholder=\"Type a room's name\" "
-        + "value=\"[123,456]\"/>"
+        + "value=\"['rsxB51ieSYfPLQ0jgFKg93___nUqhvz4dA','5fXylrRrqEb1vH4bvBMWNn___nWQegjtdA']\"/>"
         +
         "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
         "  </form>" +
@@ -118,7 +119,8 @@ public class RoomSelectorTest extends ElementTest {
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "  <form id=\"all-elements\">" +
         "    <div class=\"room-selector\" data-name=\"room-selector\" data-placeholder=\"Type"
-        + " a room's name\" data-value=\"[123,456]\"></div>"
+        + " a room's name\" data-value=\"['rsxB51ieSYfPLQ0jgFKg93___nUqhvz4dA',"
+        + "'5fXylrRrqEb1vH4bvBMWNn___nWQegjtdA']\"></div>"
         +
         "    <button type=\"action\" name=\"send-answers\">Send Answers</button>" +
         "  </form>" +
