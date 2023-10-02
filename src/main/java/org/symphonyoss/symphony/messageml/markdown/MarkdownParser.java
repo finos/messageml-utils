@@ -66,6 +66,7 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
+import org.symphonyoss.symphony.messageml.util.TableReplyTransformerWorkaround;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -88,6 +89,8 @@ public class MarkdownParser extends AbstractVisitor {
   private MessageML messageML;
   private Element parent;
   private int index;
+
+
 
   static {
     Set<Class<? extends Block>> enabledBlockTypes = new HashSet<>();
@@ -341,7 +344,7 @@ public class MarkdownParser extends AbstractVisitor {
         output.append(c);
       }
     }
-
+    TableReplyTransformerWorkaround.replaceEmphasis(output, mediaNode);
     return output.toString();
   }
 
