@@ -812,6 +812,47 @@ public class TextFieldTest extends ElementTest {
     assertMessageLengthBiItem(items.get(3), input.length());
   }
 
+  @Test
+  public void testTextFieldWithReadyOnlyAndDisabledAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><text-field name=\"init\" disabled=\"true\" "
+            + "readonly=\"true\">With initial value</text-field><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><input "
+            + "type=\"text\" name=\"init\" disabled=\"true\" readonly=\"true\" value=\"With "
+            + "initial value\"/><button type=\"action\" "
+            + "name=\"submit\">Submit</button></form></div>";
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testTextFieldWithInvalidReadyOnlyAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><text-field name=\"init\" readonly=\"invalid\">With "
+            + "initial value</text-field><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"readonly\" of element \"text-field\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldWithInvalidDisabledAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><text-field name=\"init\" disabled=\"invalid\">With "
+            + "initial value</text-field><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"disabled\" of element \"text-field\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
 
   private String getLabelId(String presentationML) {
     String textFieldRegex = ".*(\"textfield-(.*?)\").*";

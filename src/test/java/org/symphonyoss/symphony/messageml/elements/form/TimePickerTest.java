@@ -463,4 +463,57 @@ public class TimePickerTest extends ElementTest {
         0, items.size());
   }
 
+  @Test
+  public void testTextFieldWithReadyOnlyAndDisabledAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><time-picker name=\"init\" label=\"With default value\" "
+            + "value=\"13:51:06\" disabled=\"true\" readonly=\"true\"/><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+    String timePickerRegex = ".*(\"time-picker-(.*?)\").*";
+    Pattern pattern = Pattern.compile(timePickerRegex);
+    Matcher matcher = pattern.matcher(presentationML);
+    String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
+
+    String expectedPresentationML = String.format(
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><div "
+            + "class=\"time-picker-group\" data-generated=\"true\"><label "
+            + "for=\"time-picker-%s\">With default value</label><input type=\"time\" "
+            + "name=\"init\" value=\"13:51:06\" disabled=\"true\" readonly=\"true\" "
+            + "id=\"time-picker-%s\"/></div><button type=\"action\" "
+            + "name=\"submit\">Submit</button></form></div>", uniqueLabelId, uniqueLabelId);
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testTimePickerWithInvalidReadyOnlyAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><time-picker name=\"init\" label=\"With default value\" "
+            + "value=\"13:51:06\" readonly=\"invalid\"/><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"readonly\" of element \"time-picker\" can only be one of the following "
+            + "values: [true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTimePickerWithInvalidDisabledAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><time-picker name=\"init\" label=\"With default value\" "
+            + "value=\"13:51:06\" disabled=\"invalid\"/><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"disabled\" of element \"time-picker\" can only be one of the following "
+            + "values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+
+
 }

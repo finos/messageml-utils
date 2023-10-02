@@ -368,6 +368,58 @@ public class CheckboxTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testCheckboxWithReadyOnlyAndDisabledAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><checkbox name=\"id1\" value=\"value01\" "
+            + "checked=\"true\" readonly=\"false\" disabled=\"true\">Red</checkbox><button "
+            + "name=\"submit\" type=\"action\">Submit</button></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    String presentationML = context.getPresentationML();
+    int startId = presentationML.indexOf("label for=\"");
+    int endId = presentationML.indexOf('"', startId + "label for=\"".length());
+    String id = presentationML.substring(startId + "label for=\"".length(), endId);
+
+    String expectedPresentationML =
+        String.format(
+            "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><div "
+                + "class=\"checkbox-group\"><input type=\"checkbox\" name=\"id1\" checked=\"true\" "
+                + "value=\"value01\" disabled=\"true\" readonly=\"false\" "
+                + "id=\"%s\"/><label "
+                + "for=\"%s\">Red</label></div><button type=\"action\" "
+                + "name=\"submit\">Submit</button></form></div>", id, id);
+
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testCheckboxWithInvalidReadyOnlyAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><checkbox name=\"id1\" value=\"value01\" "
+            + "checked=\"true\" readonly=\"invalid\">Red</checkbox><button "
+            + "name=\"submit\" type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"readonly\" of element \"checkbox\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testCheckboxWithInvalidDisabledAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><checkbox name=\"id1\" value=\"value01\" "
+            + "checked=\"true\" disabled=\"invalid\">Red</checkbox><button "
+            + "name=\"submit\" type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"disabled\" of element \"checkbox\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+
+
   private static Stream<Arguments> messageMlStream() {
     return Stream.of(
         Arguments.of(
