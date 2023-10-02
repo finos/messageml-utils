@@ -30,6 +30,8 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
   private static final String REQUIRED_ATTR = "required";
   private static final String DISABLED_ATTR = "disabled";
   private static final String READONLY_ATTR = "readonly";
+  private static final String ROWS = "rows";
+  private static final String COLS = "cols";
   private static final List<String> VALID_VALUES_FOR_REQUIRED_ATTR = Arrays.asList("true", "false");
 
   public TextArea(Element parent, FormatEnum format) {
@@ -48,12 +50,20 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
       assertAttributeValue(REQUIRED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
     }
 
+
     if (getAttribute(DISABLED_ATTR) != null) {
       assertAttributeValue(DISABLED_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
     }
 
     if (getAttribute(READONLY_ATTR) != null) {
       assertAttributeValue(READONLY_ATTR, VALID_VALUES_FOR_REQUIRED_ATTR);
+    }
+    if (getAttribute(ROWS) != null) {
+      checkIntegerAttribute(ROWS, 0, "Attribute \"rows\" is not valid, it must be an integer >= 0");
+    }
+
+    if (getAttribute(COLS) != null) {
+      checkIntegerAttribute(COLS, 0, "Attribute \"cols\" is not valid, it must be an integer >= 0");
     }
 
     assertAttributeNotBlank(NAME_ATTR);
@@ -76,6 +86,8 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
       case TITLE:
       case DISABLED_ATTR:
       case READONLY_ATTR:
+      case ROWS:
+      case COLS:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case PATTERN_ERROR_MESSAGE_ATTR:

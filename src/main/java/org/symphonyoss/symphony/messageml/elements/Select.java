@@ -16,6 +16,7 @@
 
 package org.symphonyoss.symphony.messageml.elements;
 
+
 import org.symphonyoss.symphony.messageml.MessageMLParser;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
@@ -62,6 +63,8 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
   private static final String MAX_ATTR = "data-max";
   protected static final String DISABLED_ATTR = "disabled";
   protected static final String READONLY_ATTR = "readonly";
+  private static final String AUTO_SUBMIT_ATTR = "data-auto-submit";
+  private static final String MML_AUTO_SUBMIT_ATTR = "auto-submit";
 
   public Select(Element parent) {
     super(parent, MESSAGEML_TAG);
@@ -99,6 +102,12 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
 
     if (getAttribute(READONLY_ATTR) != null) {
       assertAttributeValue(READONLY_ATTR,
+
+          Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+    }
+
+    if (getAttribute(AUTO_SUBMIT_ATTR) != null) {
+      assertAttributeValue(AUTO_SUBMIT_ATTR,
           Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
@@ -146,6 +155,9 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
         break;
       case MML_MAX_ATTR:
         setAttribute(MAX_ATTR, getStringAttribute(item));
+        break;
+      case MML_AUTO_SUBMIT_ATTR:
+        setAttribute(AUTO_SUBMIT_ATTR, getStringAttribute(item));
         break;
       case ID_ATTR:
         if (format != FormatEnum.PRESENTATIONML) {
