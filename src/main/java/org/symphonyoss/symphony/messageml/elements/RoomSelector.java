@@ -88,7 +88,7 @@ public class RoomSelector extends FormElement implements LabelableElement, Toolt
     if (getAttribute(VALUE_ATTR) != null) {
       String attribute = getAttribute(VALUE_ATTR);
       try {
-        MAPPER.readValue(getAttribute(VALUE_ATTR),
+        MAPPER.readValue(attribute,
             MAPPER.getTypeFactory().constructCollectionType(List.class, String.class));
       } catch (JsonProcessingException e) {
         throw new InvalidInputException(
