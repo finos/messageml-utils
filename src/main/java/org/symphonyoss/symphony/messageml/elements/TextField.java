@@ -38,6 +38,9 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
   private static final String PRESENTATIONML_MASKED_ATTR = "data-masked";
 
+  private static final String MML_AUTO_SUBMIT_ATTR = "auto-submit";
+  private static final String AUTO_SUBMIT_ATTR = "data-auto-submit";
+
   private static final Set<String> VALID_BOOLEAN_VALUES = new HashSet<>(Arrays.asList("true", "false"));
   private static final Integer MIN_ALLOWED_LENGTH = 1;
   private static final Integer MAX_ALLOWED_LENGTH = 128;
@@ -62,6 +65,10 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
     if (getAttribute(MASKED_ATTR) != null) {
       assertAttributeValue(MASKED_ATTR, VALID_BOOLEAN_VALUES);
+    }
+
+    if (getAttribute(AUTO_SUBMIT_ATTR) != null) {
+      assertAttributeValue(AUTO_SUBMIT_ATTR, VALID_BOOLEAN_VALUES);
     }
 
     assertAttributeNotBlank(NAME_ATTR);
@@ -109,6 +116,9 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
           throwInvalidInputException(item);
         }
         fillAttributes(parser, item);
+        break;
+      case MML_AUTO_SUBMIT_ATTR:
+        setAttribute(AUTO_SUBMIT_ATTR, getStringAttribute(item));
         break;
       default:
         throwInvalidInputException(item);
@@ -182,6 +192,10 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
 
     if (getAttribute(MAXLENGTH_ATTR) != null) {
       presentationAttrs.put(MAXLENGTH_ATTR, getAttribute(MAXLENGTH_ATTR));
+    }
+
+    if (getAttribute(AUTO_SUBMIT_ATTR) != null) {
+      presentationAttrs.put(AUTO_SUBMIT_ATTR, getAttribute(AUTO_SUBMIT_ATTR));
     }
 
     if (getChildren() != null && getChildren().size() == 1) {
