@@ -55,7 +55,9 @@ public class TableReplyTransformerWorkaround {
         () -> media == null ? Collections.emptyIterator() : media.path("content").elements();
     // extract tables from message, if any
     List<JsonNode> tables = StreamSupport.stream(iterable.spliterator(), false)
-        .filter(node -> node.get("type").asText().equals(EXCEL_CONTENT_TYPE))
+        .filter(node -> node.get("type") != null && node.get("type")
+            .asText()
+            .equals(EXCEL_CONTENT_TYPE))
         .collect(Collectors.toList());
     // Process all tables to remove emphasis
     Set<Integer> processedLines = new HashSet<>();
