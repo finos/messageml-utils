@@ -93,7 +93,7 @@ public class RoomSelector extends FormElement implements LabelableElement, Toolt
       } catch (JsonProcessingException e) {
         throw new InvalidInputException(
             String.format(
-                "Attribute \"%s\" contains an unsupported format, should be an array of user ids",
+                "Attribute \"%s\" contains an unsupported format, should be an array of room ids",
                 VALUE_ATTR)
         );
       }

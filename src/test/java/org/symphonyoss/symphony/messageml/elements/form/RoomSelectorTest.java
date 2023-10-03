@@ -134,7 +134,7 @@ public class RoomSelectorTest extends ElementTest {
   public void sendInvalidRoomSelectorWithValueNotALong() throws Exception {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage(
-        "Attribute \"value\" contains an unsupported format, should be an array of user ids");
+        "Attribute \"value\" contains an unsupported format, should be an array of room ids");
     context.parseMessageML("<messageML>" +
         "  <form id=\"all-elements\">" +
         "    <room-selector name=\"room-selector\" placeholder=\"Type a room's name\" "
@@ -149,7 +149,7 @@ public class RoomSelectorTest extends ElementTest {
   public void sendInvalidRoomSelectorWithValueWrongFormat() throws Exception {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage(
-        "Attribute \"value\" contains an unsupported format, should be an array of user ids");
+        "Attribute \"value\" contains an unsupported format, should be an array of room ids");
     context.parseMessageML("<messageML>" +
         "  <form id=\"all-elements\">" +
         "    <room-selector name=\"room-selector\" placeholder=\"Type a room's name\" "
