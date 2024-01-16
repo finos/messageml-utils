@@ -31,6 +31,7 @@ import org.symphonyoss.symphony.messageml.markdown.nodes.PreformattedNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableCellNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TableRowNode;
+import org.symphonyoss.symphony.messageml.markdown.nodes.TagNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.ButtonNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormElementNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.form.FormNode;
@@ -62,6 +63,7 @@ public class MarkdownRenderer extends AbstractVisitor {
   private static final String INDEX_START = "indexStart";
   private static final String INDEX_END = "indexEnd";
   private static final String TYPE = "type";
+  private static final String DATA = "data";
   private static final String SCREEN_NAME = "screenName";
   private static final String PRETTY_NAME = "prettyName";
   private static final String USER_TYPE = "userType";
@@ -225,6 +227,8 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((EmojiNode) node);
     } else if (node instanceof MentionNode) {
       visit((MentionNode) node);
+    } else if (node instanceof TagNode) {
+      visit(TagNode.class.cast(node));
     }
   }
 
@@ -342,7 +346,6 @@ public class MarkdownRenderer extends AbstractVisitor {
 
     writer.write(text);
   }
-
   private void visit(TableNode table) {
     writer.write(table.getOpeningDelimiter());
     visitChildren(table);
@@ -370,6 +373,21 @@ public class MarkdownRenderer extends AbstractVisitor {
     writer.write(pre.getClosingDelimiter());
     writer.line();
     this.removeNewlines = true;
+  }
+
+  private void visit(TagNode tag) {
+    String text = tag.getPrefix() + tag.getText();
+    ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
+    node.put(ID, text);
+    node.put(TEXT, text);
+    node.put(INDEX_START, writer.length());
+    node.put(INDEX_END, writer.length() + text.length());
+    node.put(TYPE, "KEYWORD");
+    if (tag.getData() != null) {
+      node.set(DATA, tag.getData());
+    }
+    putJsonObject(HASHTAGS, node);
+    writer.write(text);
   }
 
   private void visitDelimited(Delimited delimited) {

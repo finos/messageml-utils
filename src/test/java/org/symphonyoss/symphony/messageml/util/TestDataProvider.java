@@ -16,10 +16,14 @@
 
 package org.symphonyoss.symphony.messageml.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
+import org.symphonyoss.symphony.messageml.util.instrument.resolver.InstrumentResolution;
+import org.symphonyoss.symphony.messageml.util.instrument.resolver.ResolutionResults;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -30,6 +34,8 @@ import java.util.Set;
 public class TestDataProvider implements IDataProvider {
   private static final Set<String> STANDARD_URI_SCHEMES = new HashSet<>();
   private UserPresentation user;
+  private ResolutionResults results;
+
 
   public TestDataProvider() {
     STANDARD_URI_SCHEMES.add("http");
@@ -62,6 +68,12 @@ public class TestDataProvider implements IDataProvider {
     }
   }
 
+  @Override
+  public ResolutionResults getFinTagPresentation(List<InstrumentResolution> criteria)
+      throws InvalidInputException {
+    return this.results;
+  }
+
   public void setUserPresentation(UserPresentation user) {
     this.user = user;
   }
@@ -69,4 +81,9 @@ public class TestDataProvider implements IDataProvider {
   public void setUserPresentation(long id, String screenName, String prettyName, String email) {
     this.user = new UserPresentation(id, screenName, prettyName, email);
   }
+
+  public void setResolutionResults(ResolutionResults results) {
+    this.results = results;
+  }
+
 }

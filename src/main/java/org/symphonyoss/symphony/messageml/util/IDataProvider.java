@@ -18,8 +18,11 @@ package org.symphonyoss.symphony.messageml.util;
 
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
 import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
+import org.symphonyoss.symphony.messageml.util.instrument.resolver.InstrumentResolution;
+import org.symphonyoss.symphony.messageml.util.instrument.resolver.ResolutionResults;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * Used during message parsing to provide external data.
@@ -50,4 +53,14 @@ public interface IDataProvider {
    * @throws ProcessingException thrown on a malformed URI or a backend error
    */
   void validateURI(URI uri) throws InvalidInputException, ProcessingException;
+
+  /**
+   * Retrieve financial tag information based on list of instrument resolution list
+   *
+   * @param criteria List of instrument resolution criteria
+   * @return Resolution results
+   * @throws InvalidInputException
+   */
+  ResolutionResults getFinTagPresentation(List<InstrumentResolution> criteria)
+      throws InvalidInputException;
 }
