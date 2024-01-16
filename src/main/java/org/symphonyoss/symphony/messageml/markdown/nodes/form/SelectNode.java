@@ -1,5 +1,7 @@
 package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Class that Represents a Markdown Node for the "Select" form element.
  *
@@ -8,7 +10,7 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
  */
 public class SelectNode extends FormElementNode implements PlaceholderLabelTooltipNode {
   private final static String MARKDOWN = "Dropdown";
-  private final static String RIGHT_DELIMITER = "):";
+  private final static String SELECT_DELIMITER = " ";
   
   private String placeholder;
   private String label;
@@ -20,14 +22,18 @@ public class SelectNode extends FormElementNode implements PlaceholderLabelToolt
     this.label = label;
     this.tooltip = tooltip;
   }
-  
-  @Override
-  public String getClosingDelimiter() {
-    return RIGHT_DELIMITER + "\n";
-  }
 
   @Override
-  public String getText() {
-    return generateMarkdownPlaceholderLabelAndTooltip(placeholder, label, tooltip);
+  public String getOpeningDelimiter() {
+    return SELECT_DELIMITER;
   }
+  @Override
+  public String getClosingDelimiter() {
+    return SELECT_DELIMITER + "\n";
+  }
+
+  public String getText() {
+    return StringUtils.defaultIfBlank(label, StringUtils.EMPTY);
+  }
+
 }

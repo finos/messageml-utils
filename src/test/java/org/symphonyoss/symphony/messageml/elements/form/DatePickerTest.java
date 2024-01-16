@@ -64,10 +64,10 @@ public class DatePickerTest extends ElementTest {
 
     String presentationML = context.getPresentationML();
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-        + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
         + "(Date Picker:[Please pick a date])(Button:Send)\n"
-        + "---\n";
+        + "   \n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2"
         + ".0\"><form id=\"datepicker-form\"><input type=\"date\" name=\"date-travel\" value=\"2020-09-15\" "
         + "placeholder=\"Please pick a date\" min=\"2020-09-01\" max=\"2020-09-29\" required=\"true\" "
@@ -117,10 +117,10 @@ public class DatePickerTest extends ElementTest {
     Matcher matcher = pattern.matcher(presentationML);
     String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-        + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
         + "(Date Picker:[Departure date][This is \\n a hint][Please pick a date])(Button:Send)\n"
-        + "---\n";
+        + "   \n";
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" "
         + "data-version=\"2.0\"><form id=\"datepicker-form\"><div class=\"date-picker-group\" "
         + "data-generated=\"true\"><label for=\"date-picker-%s\">Departure "
@@ -174,10 +174,10 @@ public class DatePickerTest extends ElementTest {
     Matcher matcher = pattern.matcher(presentationML);
     String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Date Picker:[Departure\\_date][This\\_is\\_a\\_hint][Please\\_pick\\_a\\_date])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" "
             + "data-version=\"2.0\"><form id=\"datepicker-form\"><div class=\"date-picker-group\" "
             + "data-generated=\"true\"><label for=\"date-picker-%s\">Departure_"
@@ -423,10 +423,10 @@ public class DatePickerTest extends ElementTest {
     String input = "<messageML><form id=\"" + formId + "\">"
         + "<date-picker name=\"date-travel\"/>"
         + ACTION_BTN_ELEMENT + "</form></messageML>";
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-        + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
         + "(Date Picker)(Button:Send)\n"
-        + "---\n";
+        + "   \n";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }
@@ -436,10 +436,10 @@ public class DatePickerTest extends ElementTest {
     String input = "<messageML><form id=\"" + formId + "\">"
         + "<date-picker name=\"date-travel\" placeholder=\"Please pick a date\"/>"
         + ACTION_BTN_ELEMENT + "</form></messageML>";
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-        + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
         + "(Date Picker:[Please pick a date])(Button:Send)\n"
-        + "---\n";
+        + "   \n";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }

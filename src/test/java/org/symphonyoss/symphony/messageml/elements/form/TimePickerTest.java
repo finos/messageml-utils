@@ -59,10 +59,10 @@ public class TimePickerTest extends ElementTest {
 
     String presentationML = context.getPresentationML();
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Time Picker:[Please pick a time])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
             "<form id=\"" + formId + "\">" +
             "<input type=\"time\" " +
@@ -115,10 +115,10 @@ public class TimePickerTest extends ElementTest {
     String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
 
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Time Picker:[Please pick a time][Meeting time][This is a hint])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
             "<form id=\"" + formId + "\">" +
             "<div class=\"time-picker-group\" data-generated=\"true\">" +
@@ -181,10 +181,10 @@ public class TimePickerTest extends ElementTest {
     Matcher matcher = pattern.matcher(presentationML);
     String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Time Picker:[This is \\n a hint])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
             "<form id=\"timepicker-form\">" +
             "<div class=\"time-picker-group\" data-generated=\"true\">" +
@@ -350,10 +350,10 @@ public class TimePickerTest extends ElementTest {
     String input = "<messageML><form id=\"" + formId + "\">"
             + "<time-picker name=\"meeting-time\"/>"
             + ACTION_BTN_ELEMENT + "</form></messageML>";
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Time Picker)(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }
@@ -369,10 +369,10 @@ public class TimePickerTest extends ElementTest {
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Time Picker:[This is\\_a\\_hint])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
 
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }

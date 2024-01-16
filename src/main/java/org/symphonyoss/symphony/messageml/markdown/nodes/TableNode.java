@@ -28,11 +28,11 @@ import org.commonmark.node.Node;
  * @since 4/7/17
  */
 public class TableNode extends CustomBlock {
-  private final static String LEAD = "Table:";
-  private final static String DELIMITER = "---";
+
+  private final static String DELIMITER = "   ";
 
   public String getOpeningDelimiter() {
-    return LEAD + "\n" + DELIMITER + "\n";
+    return "\n" + DELIMITER + "\n";
   }
 
   public String getClosingDelimiter() {

@@ -867,7 +867,8 @@ public class TextFieldTest extends ElementTest {
         ((title != null) ? "[" + addEscapeCharacter(title) + "]" : "") +
         ((initialValue != null) ? addEscapeCharacter(initialValue) : "");
 
-    return String.format("Form (log into desktop client to answer):\n---\n(Text Field%s)"+ ACTION_BTN_MARKDOWN + "\n---\n", (!expectedMarkdownText.isEmpty()) ? ":" + expectedMarkdownText : "");
+    return String.format("\n   \n(Text Field%s)" + ACTION_BTN_MARKDOWN + "\n   \n",
+        (!expectedMarkdownText.isEmpty()) ? ":" + expectedMarkdownText : "");
   }
 
   private void verifyTextFieldMarkdown(String placeholder, String initialValue, String label, String title) {

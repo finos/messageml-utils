@@ -91,7 +91,8 @@ public class TableTest extends ElementTest {
     assertEquals("Element attributes", Collections.emptyMap(), tfoot.getAttributes());
     assertEquals("Element children", 1, tfoot.getChildren().size());
 
-    assertEquals("Markdown", "Table:\n---\nIt | was\nthe | best\nof | times\n---\n", context.getMarkdown());
+    assertEquals("Markdown", "\n   \nIt   was\nthe   best\nof   times\n   \n",
+        context.getMarkdown());
     assertEquals("EntityJSON", new ObjectNode(JsonNodeFactory.instance), context.getEntityJson());
     assertEquals("Legacy entities", new ObjectNode(JsonNodeFactory.instance), context.getEntities());
 
@@ -161,11 +162,11 @@ public class TableTest extends ElementTest {
     assertEquals("Generated PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">"
             + "<table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table></div>",
         context.getPresentationML());
-    assertEquals("Generated Markdown", "Table:\n"
-            + "---\n"
-            + "A1 | B1\n"
-            + "A2 | B2\n"
-            + "---\n",
+    assertEquals("Generated Markdown", "\n"
+            + "   \n"
+            + "A1   B1\n"
+            + "A2   B2\n"
+            + "   \n",
         context.getMarkdown());
   }
 

@@ -15,8 +15,8 @@
             "screenName": "bot.user1",
             "prettyName": "Bot User01",
             "text": "@Bot User01",
-            "indexStart": 295,
-            "indexEnd": 306,
+            "indexStart": 289,
+            "indexEnd": 300,
             "userType": "lc",
             "type": "USER_FOLLOW"
         }
@@ -25,15 +25,15 @@
         {
             "id": "#production",
             "text": "#production",
-            "indexStart": 328,
-            "indexEnd": 339,
+            "indexStart": 322,
+            "indexEnd": 333,
             "type": "KEYWORD"
         },
         {
             "id": "#major",
             "text": "#major",
-            "indexStart": 343,
-            "indexEnd": 349,
+            "indexStart": 337,
+            "indexEnd": 343,
             "type": "KEYWORD"
         }
     ]

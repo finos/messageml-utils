@@ -69,8 +69,8 @@ public class PersonSelectorTest extends ElementTest {
         expectedPresentationML, presentationML);
 
     String expectedMarkdownText = "[label here][title here]";
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector:" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
-        + "\n---\n", context.getMarkdown());
+    assertEquals("\n   \n(Person Selector:" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
+        + "\n   \n", context.getMarkdown());
   }
 
   @Test
@@ -214,8 +214,8 @@ public class PersonSelectorTest extends ElementTest {
     assertEquals(personSelector.getClass(), PersonSelector.class);
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
         "\"><div><div class=\"person-selector\" data-name=\"some-name\"></div></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector)\n\n" + ACTION_BTN_MARKDOWN
-        + "\n---\n", context.getMarkdown());
+    assertEquals("\n   \n(Person Selector)\n\n" + ACTION_BTN_MARKDOWN
+        + "\n   \n", context.getMarkdown());
   }
 
   @Test
@@ -280,8 +280,8 @@ public class PersonSelectorTest extends ElementTest {
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
         "></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
     String expectedMarkdownText = (dataPlaceholder != null) ? ":[" + addEscapeCharacter(dataPlaceholder) + "]" : "";
-    assertEquals("Form (log into desktop client to answer):\n---\n(Person Selector" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
-        + "\n---\n", context.getMarkdown());
+    assertEquals("\n   \n(Person Selector" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
+        + "\n   \n", context.getMarkdown());
   }
 
 }

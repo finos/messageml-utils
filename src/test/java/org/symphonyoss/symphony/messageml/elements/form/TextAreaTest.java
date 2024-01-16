@@ -39,19 +39,22 @@ public class TextAreaTest extends ElementTest {
   private static final String LABEL = "label here";
   private static final String TITLE = "title here";
 
-  private static final String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n---\n(Text Area)" + ACTION_BTN_MARKDOWN
-      + "\n---\n";
+  private static final String EXPECTED_MARKDOWN = "\n   \n(Text Area)" + ACTION_BTN_MARKDOWN
+      + "\n   \n";
 
-  private static final String EXPECTED_MARKDOWN_WITH_UNDERSCORE = "Form (log into desktop client to answer):\n---\n(Text Area:test\\_underscore)" + ACTION_BTN_MARKDOWN
-          + "\n---\n";
+  private static final String EXPECTED_MARKDOWN_WITH_UNDERSCORE =
+      "\n   \n(Text Area:test\\_underscore)" + ACTION_BTN_MARKDOWN
+          + "\n   \n";
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s])" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE);
+      String.format("\n   \n(Text Area:[%s])" + ACTION_BTN_MARKDOWN + "\n   \n", PLACEHOLDER_VALUE);
   private static final String EXPECTED_MARKDOWN_WITH_INITIAL_VALUE =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE);
+      String.format("\n   \n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n   \n", INITIAL_VALUE);
   private static final String EXPECTED_MARKDOWN_WITH_LINE_BREAK =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n---\n", INITIAL_VALUE_WITH_LINE_BREAK);
+      String.format("\n   \n(Text Area:%s)" + ACTION_BTN_MARKDOWN + "\n   \n",
+          INITIAL_VALUE_WITH_LINE_BREAK);
   private static final String EXPECTED_MARKDOWN_WITH_PLACEHOLDER_INITIAL_VALUE_LABEL_TITLE =
-      String.format("Form (log into desktop client to answer):\n---\n(Text Area:[%s][%s][%s]%s)" + ACTION_BTN_MARKDOWN + "\n---\n", PLACEHOLDER_VALUE, LABEL, TITLE, INITIAL_VALUE);
+      String.format("\n   \n(Text Area:[%s][%s][%s]%s)" + ACTION_BTN_MARKDOWN + "\n   \n",
+          PLACEHOLDER_VALUE, LABEL, TITLE, INITIAL_VALUE);
 
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();

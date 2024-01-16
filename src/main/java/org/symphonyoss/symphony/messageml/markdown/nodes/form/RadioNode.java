@@ -1,5 +1,7 @@
 package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Class that Represents a Markdown Node for the "Radio" form element.
  *
@@ -8,6 +10,7 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
  */
 public class RadioNode extends FormElementNode {
   private final static String MARKDOWN = "Radio Button";
+  private final static String RADIO_DELIMITER = " ";
 
   private String label;
   
@@ -19,9 +22,19 @@ public class RadioNode extends FormElementNode {
     super(MARKDOWN, label);
     this.label = label;
   }
+
+  @Override
+  public String getOpeningDelimiter() {
+    return RADIO_DELIMITER;
+  }
+
+  @Override
+  public String getClosingDelimiter() {
+    return RADIO_DELIMITER;
+  }
   
   @Override
   public String getText() {
-    return (label != null) ? ":" + label : "";
+    return StringUtils.defaultIfBlank(label, StringUtils.EMPTY);
   }
 }

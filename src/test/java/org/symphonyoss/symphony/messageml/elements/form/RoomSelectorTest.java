@@ -75,9 +75,9 @@ public class RoomSelectorTest extends ElementTest {
 
     String expectedMarkdownText = "[label here][title here]";
     assertEquals(
-        "Form (log into desktop client to answer):\n---\n(Room Selector:" + expectedMarkdownText
+        "\n   \n(Room Selector:" + expectedMarkdownText
             + ")" + ACTION_BTN_MARKDOWN
-            + "\n---\n", context.getMarkdown());
+            + "\n   \n", context.getMarkdown());
   }
 
   @Test
@@ -257,9 +257,9 @@ public class RoomSelectorTest extends ElementTest {
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
             "\"><div><div class=\"room-selector\" data-name=\"some-name\"></div></div>"
             + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Room Selector)\n\n"
+    assertEquals("\n   \n(Room Selector)\n\n"
         + ACTION_BTN_MARKDOWN
-        + "\n---\n", context.getMarkdown());
+        + "\n   \n", context.getMarkdown());
   }
 
   @Test
@@ -328,9 +328,9 @@ public class RoomSelectorTest extends ElementTest {
     String expectedMarkdownText =
         (dataPlaceholder != null) ? ":[" + addEscapeCharacter(dataPlaceholder) + "]" : "";
     assertEquals(
-        "Form (log into desktop client to answer):\n---\n(Room Selector" + expectedMarkdownText
+        "\n   \n(Room Selector" + expectedMarkdownText
             + ")" + ACTION_BTN_MARKDOWN
-            + "\n---\n", context.getMarkdown());
+            + "\n   \n", context.getMarkdown());
   }
 
 }
