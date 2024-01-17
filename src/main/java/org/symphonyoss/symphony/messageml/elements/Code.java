@@ -46,7 +46,8 @@ public class Code extends Element {
   private static final int MARKDOWN_DELIMITER_INDENT = 0;
 
   private static final List<String> SUPPORTED_LANGUAGES = Arrays.asList(
-      "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r", "typescript", "tsx"
+      "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r",
+      "typescript", "tsx", "markdown", "json", "scala", "shell", "yaml"
   );
 
   public Code(Element parent) {

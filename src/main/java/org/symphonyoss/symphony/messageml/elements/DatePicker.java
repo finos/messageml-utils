@@ -45,6 +45,8 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
   private static final String PRESENTATIONML_DISABLED_DATE_ATTR = "data-disabled-date";
   private static final String PRESENTATIONML_HIGHLIGHTED_DATE_ATTR = "data-highlighted-date";
   private static final String PRESENTATIONML_FORMAT_ATTR = "data-format";
+  protected static final String DISABLED_ATTR = "disabled";
+  protected static final String READONLY_ATTR = "readonly";
 
   private static final String DATE_FORMAT_ALLOWED = "^[0-9Mdy\\/. -:]+$";
 
@@ -63,6 +65,8 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
       case MAX_ATTR:
       case LABEL:
       case TITLE:
+      case DISABLED_ATTR:
+      case READONLY_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case DISABLED_DATE_ATTR:
@@ -107,6 +111,12 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
     }
     if (getAttribute(MAX_ATTR) != null) {
       assertDateFormat(MAX_ATTR, DateTimeFormatter.ISO_DATE);
+    }
+    if (getAttribute(DISABLED_ATTR) != null) {
+      assertAttributeValue(DISABLED_ATTR, Arrays.asList("true", "false"));
+    }
+    if (getAttribute(READONLY_ATTR) != null) {
+      assertAttributeValue(READONLY_ATTR, Arrays.asList("true", "false"));
     }
     assertJsonDatesRange(DISABLED_DATE_ATTR);
     assertJsonDatesRange(HIGHLIGHTED_DATE_ATTR);
@@ -177,6 +187,12 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
     if (getAttribute(FORMAT_ATTR) != null) {
       presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(FORMAT_ATTR));
     }
+    if (getAttribute(DISABLED_ATTR) != null) {
+      presentationAttrs.put(DISABLED_ATTR, getAttribute(DISABLED_ATTR));
+    }
+    if (getAttribute(READONLY_ATTR) != null) {
+      presentationAttrs.put(READONLY_ATTR, getAttribute(READONLY_ATTR));
+    }
     // PresentationML compatibility
     if (getAttribute(PRESENTATIONML_DISABLED_DATE_ATTR) != null) {
       presentationAttrs.put(PRESENTATIONML_DISABLED_DATE_ATTR, getAttribute(PRESENTATIONML_DISABLED_DATE_ATTR));
@@ -187,7 +203,6 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
     if (getAttribute(PRESENTATIONML_FORMAT_ATTR) != null) {
       presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(PRESENTATIONML_FORMAT_ATTR));
     }
-
     return presentationAttrs;
   }
 

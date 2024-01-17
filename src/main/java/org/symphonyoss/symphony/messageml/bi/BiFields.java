@@ -17,6 +17,7 @@ public enum BiFields {
   TIMEZONE_PICKER("timezonepicker", BiEventType.MESSAGEML_ELEMENT_SENT),
   DATE_SELECTOR("dateselector", BiEventType.MESSAGEML_ELEMENT_SENT),
   PERSON_SELECTOR("personselector", BiEventType.MESSAGEML_ELEMENT_SENT),
+  ROOM_SELECTOR("roomselector", BiEventType.MESSAGEML_ELEMENT_SENT),
   SELECT("dropdownmenu", BiEventType.MESSAGEML_ELEMENT_SENT),
   CHIME("chimes", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   CODE("codes", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),

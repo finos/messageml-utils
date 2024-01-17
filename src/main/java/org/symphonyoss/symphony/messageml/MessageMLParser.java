@@ -59,9 +59,12 @@ import org.symphonyoss.symphony.messageml.elements.Paragraph;
 import org.symphonyoss.symphony.messageml.elements.PersonSelector;
 import org.symphonyoss.symphony.messageml.elements.Preformatted;
 import org.symphonyoss.symphony.messageml.elements.Radio;
+import org.symphonyoss.symphony.messageml.elements.RoomSelector;
 import org.symphonyoss.symphony.messageml.elements.Select;
 import org.symphonyoss.symphony.messageml.elements.Span;
 import org.symphonyoss.symphony.messageml.elements.SplittableElement;
+import org.symphonyoss.symphony.messageml.elements.Subscript;
+import org.symphonyoss.symphony.messageml.elements.Superscript;
 import org.symphonyoss.symphony.messageml.elements.Table;
 import org.symphonyoss.symphony.messageml.elements.TableBody;
 import org.symphonyoss.symphony.messageml.elements.TableCell;
@@ -585,6 +588,9 @@ public class MessageMLParser {
       case PersonSelector.MESSAGEML_TAG:
         return new PersonSelector(parent, messageFormat);
 
+      case RoomSelector.MESSAGEML_TAG:
+        return new RoomSelector(parent, messageFormat);
+
       case DateSelector.MESSAGEML_TAG:
         return new DateSelector(parent, messageFormat);
 
@@ -616,6 +622,12 @@ public class MessageMLParser {
         String id = getAttribute(element, LabelableElement.LABEL_FOR);
         createSplittable(id, LabelableElement.class, Pair.of(LabelableElement.LABEL, element.getTextContent()));
         return null;
+
+      case Subscript.MESSAGEML_TAG:
+        return new Subscript(parent);
+
+      case Superscript.MESSAGEML_TAG:
+        return new Superscript(parent);
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");
@@ -780,6 +792,9 @@ public class MessageMLParser {
     } else if (containsAttribute(elementClass, PersonSelector.MESSAGEML_TAG)) {
       removeAttribute(element, CLASS_ATTR, PersonSelector.MESSAGEML_TAG);
       return new PersonSelector(parent, FormatEnum.PRESENTATIONML);
+    } else if (containsAttribute(elementClass, RoomSelector.MESSAGEML_TAG)) {
+      removeAttribute(element, CLASS_ATTR, RoomSelector.MESSAGEML_TAG);
+      return new RoomSelector(parent, FormatEnum.PRESENTATIONML);
     } else if (containsAttribute(elementClass, DateSelector.MESSAGEML_TAG)) {
       removeAttribute(element, CLASS_ATTR, DateSelector.MESSAGEML_TAG);
       return new DateSelector(parent, FormatEnum.PRESENTATIONML);
