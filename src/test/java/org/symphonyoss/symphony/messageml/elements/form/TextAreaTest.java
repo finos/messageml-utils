@@ -400,6 +400,47 @@ public class TextAreaTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testTextAreaWithReadyOnlyAndDisabledAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><textarea name=\"id1\" disabled=\"true\" "
+            + "readonly=\"true\">With initial value</textarea><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><textarea "
+            + "disabled=\"true\" name=\"id1\" readonly=\"true\">With initial "
+            + "value</textarea><button type=\"action\" "
+            + "name=\"submit\">Submit</button></form></div>";
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testTextAreaWithInvalidReadyOnlyAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><textarea name=\"id1\" readonly=\"invalid\">With initial"
+            + " value</textarea><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"readonly\" of element \"textarea\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaWithInvalidDisabledAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><textarea name=\"id1\" disabled=\"invalid\">With initial"
+            + " value</textarea><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"disabled\" of element \"textarea\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
   private static Stream<Arguments> messageMlStream() {
     return Stream.of(
         Arguments.of(
@@ -452,6 +493,43 @@ public class TextAreaTest extends ElementTest {
     assertEquals(BiFields.TEXT_AREA.getValue(), items.get(0).getName());
     assertSameBiItem(textAreaBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(3), input.length());
+  }
+
+  @Test
+  public void testTextAreaWithRowsAndColsAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><textarea name=\"id1\" rows=\"2\" cols=\"3\">With "
+            + "initial value</textarea><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><textarea "
+            + "cols=\"3\" name=\"id1\" rows=\"2\">With initial value</textarea><button "
+            + "type=\"action\" name=\"submit\">Submit</button></form></div>";
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+
+  @Test
+  public void testTextAreaWithInvalidRowsAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><textarea name=\"id1\" rows=\"invalid\">With "
+            + "initial value</textarea><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"rows\" is not valid, it must be an integer >= 0");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextAreaWithInvalidColsAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><textarea name=\"id1\" cols=\"-1\">With "
+            + "initial value</textarea><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"cols\" is not valid, it must be an integer >= 0");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
 }

@@ -191,7 +191,16 @@ public class ButtonTest extends ElementTest {
         + "<button name=\"send-answers\" type=\"action\" class=\"primary\">Send Answers</button>\n"
         + "<button name=\"send-answers\" type=\"action\" class=\"secondary\">Send Answers</button>\n"
         + "<button name=\"send-answers\" type=\"action\" class=\"tertiary\">Send Answers</button>\n"
-        + "<button name=\"send-answers\" type=\"action\" class=\"destructive\">Send Answers</button>"
+        + "<button name=\"send-answers\" type=\"action\" class=\"destructive\">Send "
+        + "Answers</button>\n"
+        + "<button name=\"send-answers\" type=\"action\" class=\"primary-destructive\">Send "
+        + "Answers</button>\n"
+        + "<button name=\"send-answers\" type=\"action\" class=\"secondary-destructive\">Send "
+        + "Answers</button>\n"
+        + "<button name=\"send-answers\" type=\"action\" class=\"primary-link\">Send "
+        + "Answers</button>\n"
+        + "<button name=\"send-answers\" type=\"action\" class=\"destructive-link\">Send "
+        + "Answers</button>"
         + "</form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION); // if no exception thrown all is ok
   }
@@ -388,6 +397,19 @@ public class ButtonTest extends ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attributes \"type\" and \"name\" are not allowed on a button inside a UIAction.");
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testButtonWithIconAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><button name=\"submit\" class=\"primary-link\" "
+            + "icon=\"search\" type=\"action\">Submit</button></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><button "
+            + "type=\"action\" class=\"primary-link\" data-icon=\"search\" "
+            + "name=\"submit\">Submit</button></form></div>";
+    assertEquals(expectedPresentationML, context.getPresentationML());
   }
 
   @Test

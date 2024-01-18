@@ -688,6 +688,93 @@ public class SelectOptionTest extends ElementTest {
   }
 
   @Test
+  public void testSelectWithReadyOnlyAndDisabledAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><select name=\"init\" disabled=\"true\" "
+            + "readonly=\"true\"><option value=\"opt1\">Unselected option 1</option><option "
+            + "value=\"opt2\" selected=\"true\">With selected option</option><option "
+            + "value=\"opt3\">Unselected option 2</option></select><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><select "
+            + "disabled=\"true\" name=\"init\" readonly=\"true\"><option "
+            + "value=\"opt1\">Unselected option 1</option><option selected=\"true\" "
+            + "value=\"opt2\">With selected option</option><option value=\"opt3\">Unselected "
+            + "option 2</option></select><button type=\"action\" "
+            + "name=\"submit\">Submit</button></form></div>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testSelectWithInvalidReadyOnlyAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><select name=\"init\" readonly=\"invalid\"><option "
+            + "value=\"opt1\">Unselected option 1</option><option "
+            + "value=\"opt2\" selected=\"true\">With selected option</option><option "
+            + "value=\"opt3\">Unselected option 2</option></select><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"readonly\" of element \"select\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testSelectWithInvalidDisabledAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><select name=\"init\" disabled=\"invalid\"><option "
+            + "value=\"opt1\">Unselected option 1</option><option "
+            + "value=\"opt2\" selected=\"true\">With selected option</option><option "
+            + "value=\"opt3\">Unselected option 2</option></select><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"disabled\" of element \"select\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  public void testAutoSubmitSelect() throws Exception {
+    //language=XML
+    String input =
+        "<messageML><form id=\"form_id\"><select name=\"auto-submit\" "
+            + "auto-submit=\"true\"><option value=\"opt1\">option 1</option><option "
+            + "value=\"opt2\">option 2</option><option value=\"opt3\">option "
+            + "3</option></select><button name=\"dropdown\">Submit</button></form></messageML>";
+
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+    //language=HTML
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><select "
+            + "data-auto-submit=\"true\" name=\"auto-submit\"><option value=\"opt1\">option "
+            + "1</option><option value=\"opt2\">option 2</option><option value=\"opt3\">option "
+            + "3</option></select><button type=\"action\" "
+            + "name=\"dropdown\">Submit</button></form></div>";
+    assertEquals(trimXml(expectedPresentationML), context.getPresentationML());
+  }
+
+  @Test
+  public void testAutoSubmitSelectInvalidAttribute() throws Exception {
+    //language=XML
+    String input =
+        "<messageML><form id=\"form_id\"><select name=\"auto-submit\" "
+            + "auto-submit=\"invalid\"><option value=\"opt1\">option 1</option><option "
+            + "value=\"opt2\">option 2</option><option value=\"opt3\">option "
+            + "3</option></select><button name=\"dropdown\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"data-auto-submit\" of element \"select\" can only be one of the following "
+            + "values: "
+            + "[true, false]");
+    context.parseMessageML(trimXml(input), null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
   public void testBiContextSelect()
       throws InvalidInputException, IOException, ProcessingException {
     MessageMLContext messageMLContext = new MessageMLContext(null);

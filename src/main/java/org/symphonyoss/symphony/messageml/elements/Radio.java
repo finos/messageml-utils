@@ -67,6 +67,16 @@ public class Radio extends GroupedElement implements LabelableElement{
       assertAttributeValue(CHECKED_ATTR, Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
     }
 
+    if (getAttribute(DISABLED_ATTR) != null) {
+      assertAttributeValue(DISABLED_ATTR,
+          Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+    }
+
+    if (getAttribute(READONLY_ATTR) != null) {
+      assertAttributeValue(READONLY_ATTR,
+          Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+    }
+
     if (!getChildren().isEmpty()) {
       assertContentModel(Arrays.asList(TextNode.class, Bold.class, Italic.class));
     }
@@ -80,6 +90,8 @@ public class Radio extends GroupedElement implements LabelableElement{
       case NAME_ATTR:
       case VALUE_ATTR:
       case LABEL:
+      case DISABLED_ATTR:
+      case READONLY_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:

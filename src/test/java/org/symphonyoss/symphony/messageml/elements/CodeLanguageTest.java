@@ -24,7 +24,9 @@ public class CodeLanguageTest {
   }
 
   public static Stream<Arguments> languages() {
-    return Stream.of( "plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php", "python", "r", "typescript", "tsx").map(Arguments::of);
+    return Stream.of("plaintext", "c", "cpp", "csharp", "css", "html", "java", "js", "jsx", "php",
+            "python", "r", "typescript", "tsx", "markdown", "json", "scala", "shell", "yaml")
+        .map(Arguments::of);
   }
 
   @ParameterizedTest
@@ -60,7 +62,9 @@ public class CodeLanguageTest {
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
     assertEquals(
-        "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].",
+        "Attribute \"language\" of element \"code\" can only be one of the following values: "
+            + "[plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, "
+            + "tsx, markdown, json, scala, shell, yaml].",
         ex.getMessage());
   }
 
@@ -73,7 +77,9 @@ public class CodeLanguageTest {
         () -> this.context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION));
 
     assertEquals(
-        "Attribute \"language\" of element \"code\" can only be one of the following values: [plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, tsx].",
+        "Attribute \"language\" of element \"code\" can only be one of the following values: "
+            + "[plaintext, c, cpp, csharp, css, html, java, js, jsx, php, python, r, typescript, "
+            + "tsx, markdown, json, scala, shell, yaml].",
         ex.getMessage());
   }
 

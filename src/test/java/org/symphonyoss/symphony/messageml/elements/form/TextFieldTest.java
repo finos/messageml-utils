@@ -709,6 +709,36 @@ public class TextFieldTest extends ElementTest {
     context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testAutoSubmitTextField() throws Exception {
+
+    String messageMLInput =
+        "<messageML><form id=\"form_id\"><text-field name=\"init\" auto-submit=\"true\">With "
+            + "initial value</text-field><button type=\"action\" "
+            + "name=\"text-field\">Submit</button></form></messageML>";
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><input "
+            + "type=\"text\" name=\"init\" data-auto-submit=\"true\" value=\"With initial "
+            + "value\"/><button type=\"action\" name=\"text-field\">Submit</button></form></div>";
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testAutoSubmitTextFieldInvalid() throws Exception {
+
+    String messageMLInput =
+        "<messageML><form id=\"form_id\"><text-field name=\"init\" auto-submit=\"invalid\">With "
+            + "initial value</text-field><button type=\"action\" "
+            + "name=\"text-field\">Submit</button></form></messageML>";
+    exceptionRule.expect(InvalidInputException.class);
+    exceptionRule.expectMessage(
+        "Attribute \"data-auto-submit\" of element \"text-field\" can only be one of the "
+            + "following values: [true, false].");
+    context.parseMessageML(messageMLInput, null, MessageML.MESSAGEML_VERSION);
+  }
+
   private static Stream<Arguments> messageMlStream() {
     return Stream.of(
         Arguments.of(
@@ -780,6 +810,47 @@ public class TextFieldTest extends ElementTest {
     assertEquals(BiFields.TEXT_FIELD.getValue(), items.get(0).getName());
     assertSameBiItem(textAreaBiItemExpected, items.get(0));
     assertMessageLengthBiItem(items.get(3), input.length());
+  }
+
+  @Test
+  public void testTextFieldWithReadyOnlyAndDisabledAttributes() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><text-field name=\"init\" disabled=\"true\" "
+            + "readonly=\"true\">With initial value</text-field><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"form_id\"><input "
+            + "type=\"text\" name=\"init\" disabled=\"true\" readonly=\"true\" value=\"With "
+            + "initial value\"/><button type=\"action\" "
+            + "name=\"submit\">Submit</button></form></div>";
+    assertEquals(expectedPresentationML, context.getPresentationML());
+  }
+
+  @Test
+  public void testTextFieldWithInvalidReadyOnlyAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><text-field name=\"init\" readonly=\"invalid\">With "
+            + "initial value</text-field><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"readonly\" of element \"text-field\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testTextFieldWithInvalidDisabledAttribute() throws Exception {
+    String input =
+        "<messageML><form id=\"form_id\"><text-field name=\"init\" disabled=\"invalid\">With "
+            + "initial value</text-field><button name=\"submit\" "
+            + "type=\"action\">Submit</button></form></messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage(
+        "Attribute \"disabled\" of element \"text-field\" can only be one of the following values: "
+            + "[true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
 

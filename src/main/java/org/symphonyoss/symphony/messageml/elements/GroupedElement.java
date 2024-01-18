@@ -29,6 +29,9 @@ public abstract class GroupedElement extends FormElement {
   protected static final String VALUE_ATTR = "value";
   protected static final String CHECKED_ATTR = "checked";
   protected static final String FOR_ATTR = "for";
+  protected static final String DISABLED_ATTR = "disabled";
+  protected static final String READONLY_ATTR = "readonly";
+
 
   public GroupedElement(Element parent, String messageMLTag,
       FormatEnum format) {
@@ -188,6 +191,15 @@ public abstract class GroupedElement extends FormElement {
     } else {
       presentationAttrs.put(VALUE_ATTR, PRESENTATIONML_DEFAULT_VALUE);
     }
+
+    if (getAttribute(DISABLED_ATTR) != null) {
+      presentationAttrs.put(DISABLED_ATTR, getAttribute(DISABLED_ATTR));
+    }
+
+    if (getAttribute(READONLY_ATTR) != null) {
+      presentationAttrs.put(READONLY_ATTR, getAttribute(READONLY_ATTR));
+    }
+
     return presentationAttrs;
   }
 
