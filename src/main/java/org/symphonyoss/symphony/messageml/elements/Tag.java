@@ -30,12 +30,9 @@ import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
 import org.symphonyoss.symphony.messageml.bi.BiItem;
 import org.symphonyoss.symphony.messageml.exceptions.InvalidInputException;
-import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.TagNode;
 import org.symphonyoss.symphony.messageml.util.TagAttributes;
 import org.symphonyoss.symphony.messageml.util.XmlPrintStream;
-import org.symphonyoss.symphony.messageml.util.instrument.resolver.Equity;
-import org.symphonyoss.symphony.messageml.util.instrument.resolver.Index;
 import org.symphonyoss.symphony.messageml.util.instrument.resolver.Instrument;
 import org.symphonyoss.symphony.messageml.util.instrument.resolver.InstrumentKind;
 import org.symphonyoss.symphony.messageml.util.instrument.resolver.MarketSector;
@@ -168,11 +165,7 @@ public class Tag extends Entity {
         instrument.getFullBbgCompTicker()));
     idArray.add(buildNode("org.symphonyoss.fin.security.bbgcompticker",
         instrument.getBbgCompTicker()));
-    String isin = null;
-    if (instrument instanceof Index) {
-      isin = Index.class.cast(instrument).getIsin();
-    } else if (instrument instanceof Equity) {isin = Equity.class.cast(instrument).getIsin();}
-    idArray.add(buildNode("org.symphonyoss.fin.security.id.isin", isin));
+    idArray.add(buildNode("org.symphonyoss.fin.security.id.isin", instrument.getIsin()));
     idArray.add(buildNode("org.symphonyoss.fin.security.id.figi", instrument.getFigi()));
     idArray.add(buildNode("org.symphonyoss.fin.security.id.figiTicker",
         instrument.getFigiTicker()));
@@ -181,28 +174,13 @@ public class Tag extends Entity {
     idArray.add(
         buildNode("org.symphonyoss.fin.security.id.localCode", instrument.getLocalCode()));
     String operationalMic = null;
-    if (instrument instanceof Equity) {
-      operationalMic = Equity.class.cast(instrument).getOperationalMic();
-    }
     idArray.add(buildNode("org.symphonyoss.fin.security.id.operationalMic",
-        operationalMic));
-    String countryCode = null;
-    if (instrument instanceof Equity) {
-      countryCode = Equity.class.cast(instrument).getCountryCode();
-    } else if (instrument instanceof Index) {
-      countryCode = Index.class.cast(instrument).getCountryCode();
-    }
-    idArray.add(buildNode("org.symphonyoss.fin.security.countryCode", countryCode));
+        instrument.getOperationalMic()));
+    idArray.add(buildNode("org.symphonyoss.fin.security.countryCode", instrument.getCountryCode()));
     String countryName = null;
-    if (instrument instanceof Equity) {
-      countryName = Equity.class.cast(instrument).getCountryName();
-    }
-    idArray.add(buildNode("org.symphonyoss.fin.security.countryName", countryName));
-    String exchangeName = null;
-    if (instrument instanceof Equity) {
-      exchangeName = Equity.class.cast(instrument).getExchangeName();
-    }
-    idArray.add(buildNode("org.symphonyoss.fin.security.exchangeName", exchangeName));
+    idArray.add(buildNode("org.symphonyoss.fin.security.countryName", instrument.getCountryName()));
+    idArray.add(
+        buildNode("org.symphonyoss.fin.security.exchangeName", instrument.getExchangeName()));
     idArray.add(buildNode("org.symphonyoss.fin.security.displayName", instrument.getDisplayName()));
     idArray.add(buildNode("org.symphonyoss.fin.security.currency", instrument.getCurrency()));
     idArray.add(buildNode("org.symphonyoss.fin.security.instrumentTypeCode",
