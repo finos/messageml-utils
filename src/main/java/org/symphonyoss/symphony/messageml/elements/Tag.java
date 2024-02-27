@@ -173,11 +173,9 @@ public class Tag extends Entity {
         buildNode("org.symphonyoss.fin.security.id.lei", instrument.getFigiTicker()));
     idArray.add(
         buildNode("org.symphonyoss.fin.security.id.localCode", instrument.getLocalCode()));
-    String operationalMic = null;
     idArray.add(buildNode("org.symphonyoss.fin.security.id.operationalMic",
         instrument.getOperationalMic()));
     idArray.add(buildNode("org.symphonyoss.fin.security.countryCode", instrument.getCountryCode()));
-    String countryName = null;
     idArray.add(buildNode("org.symphonyoss.fin.security.countryName", instrument.getCountryName()));
     idArray.add(
         buildNode("org.symphonyoss.fin.security.exchangeName", instrument.getExchangeName()));
