@@ -51,10 +51,10 @@ public class TimezonePickerTest extends ElementTest {
 
     String presentationML = context.getPresentationML();
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Timezone Picker:[Please pick a timezone])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
             "<form id=\"" + formId + "\">" +
             "<div class=\"timezone-picker\" " +
@@ -96,10 +96,10 @@ public class TimezonePickerTest extends ElementTest {
     Matcher matcher = pattern.matcher(presentationML);
     String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Timezone Picker:[Please pick a timezone][Field label][This is a hint])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
             "<form id=\"" + formId + "\">" +
             "<div class=\"timezone-picker-group\" data-generated=\"true\">" +
@@ -137,10 +137,10 @@ public class TimezonePickerTest extends ElementTest {
     Matcher matcher = pattern.matcher(presentationML);
     String uniqueLabelId = matcher.matches() ? matcher.group(2) : null;
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Timezone Picker:[This is a \\n timezone picker])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
             "<form id=\"" + formId + "\">" +
             "<div class=\"timezone-picker-group\" data-generated=\"true\">" +
@@ -233,10 +233,10 @@ public class TimezonePickerTest extends ElementTest {
             "<timezone-picker " +
             "name=\"timezone-name\"/>" +
             ACTION_BTN_ELEMENT + "</form></messageML>";
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Timezone Picker)(Button:Send)\n"
-            + "---\n";
+        + "   \n";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }
@@ -251,10 +251,10 @@ public class TimezonePickerTest extends ElementTest {
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    String EXPECTED_MARKDOWN = "Form (log into desktop client to answer):\n"
-            + "---\n"
+    String EXPECTED_MARKDOWN = "\n"
+        + "   \n"
             + "(Timezone Picker:[This is\\_a\\_hint])(Button:Send)\n"
-            + "---\n";
+        + "   \n";
 
     assertEquals("Markdown", EXPECTED_MARKDOWN, context.getMarkdown());
   }

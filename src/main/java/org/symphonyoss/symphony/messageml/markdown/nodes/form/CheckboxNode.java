@@ -1,5 +1,7 @@
 package org.symphonyoss.symphony.messageml.markdown.nodes.form;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Class that Represents a Markdown Node for the "Checkbox" form element.
  *
@@ -8,6 +10,7 @@ package org.symphonyoss.symphony.messageml.markdown.nodes.form;
  */
 public class CheckboxNode extends FormElementNode {
   private final static String MARKDOWN = "Checkbox";
+  private final static String CHECKBOX_DELIMITER = " ";
 
   private String label;
   
@@ -19,9 +22,19 @@ public class CheckboxNode extends FormElementNode {
     super(MARKDOWN);
     this.label = label;
   }
-  
+
+  @Override
+  public String getOpeningDelimiter() {
+    return CHECKBOX_DELIMITER;
+  }
+
+  @Override
+  public String getClosingDelimiter() {
+    return CHECKBOX_DELIMITER;
+  }
+
   @Override
   public String getText() {
-    return (label != null) ? ":" + label : "";
+    return StringUtils.defaultIfBlank(label, StringUtils.EMPTY);
   }
 }

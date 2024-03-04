@@ -25,7 +25,7 @@ import org.commonmark.node.CustomBlock;
  * @since 4/7/17
  */
 public class TableCellNode extends CustomBlock {
-  private final static String DELIMITER = " | ";
+  private final static String DELIMITER = "   ";
 
   public String getDelimiter() {
     return DELIMITER;

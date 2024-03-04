@@ -95,7 +95,8 @@ public class DateSelectorTest extends ElementTest {
     assertEquals(dateSelector.getClass(), DateSelector.class);
     assertEquals("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR +
         "\"><div><div class=\"date-selector\" data-name=\"some-name\"></div></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
-    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector)\n\n" + ACTION_BTN_MARKDOWN + "\n---\n", context.getMarkdown());
+    assertEquals("\n   \n(Date Selector)\n\n" + ACTION_BTN_MARKDOWN + "\n   \n",
+        context.getMarkdown());
   }
 
   @Test
@@ -146,8 +147,8 @@ public class DateSelectorTest extends ElementTest {
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
         "></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
     String expectedMarkdownText = (dataPlaceholder != null) ? ":[" + addEscapeCharacter(dataPlaceholder) + "]" : "";
-    assertEquals("Form (log into desktop client to answer):\n---\n(Date Selector" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
-        + "\n---\n", context.getMarkdown());
+    assertEquals("\n   \n(Date Selector" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN
+        + "\n   \n", context.getMarkdown());
   }
 
 }

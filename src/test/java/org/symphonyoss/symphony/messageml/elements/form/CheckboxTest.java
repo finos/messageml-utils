@@ -172,10 +172,10 @@ public class CheckboxTest extends ElementTest {
                     + "    </form>"
                     + " </div>", id, id);
     assertEquals(expectedResult, presentationML);
-    String expectedMarkdown = "    Form (log into desktop client to answer):\n" +
-            "---\n" +
-            "       (Checkbox:Orange\\_fruit)        (Button:Send)    \n" +
-            "---\n" +
+    String expectedMarkdown = "    \n" +
+        "   \n" +
+        "        Orange\\_fruit         (Button:Send)    \n" +
+        "   \n" +
             " ";
     assertEquals(expectedMarkdown, context.getMarkdown());
   }
@@ -514,8 +514,8 @@ public class CheckboxTest extends ElementTest {
   }
 
   private String buildExpectedMarkdownForCheckbox(String label) {
-    String expectedMarkdownText = ((label != null) ? ":" + label : "") ;
-    return String.format("Form (log into desktop client to answer):\n---\n(Checkbox%s)%s\n---\n", expectedMarkdownText,
+    String expectedMarkdownText = StringUtils.defaultIfBlank(label, StringUtils.EMPTY);
+    return String.format("\n   \n %s %s\n   \n", expectedMarkdownText,
         ACTION_BTN_MARKDOWN);
   }
 }

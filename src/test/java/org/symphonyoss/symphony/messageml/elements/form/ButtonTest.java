@@ -352,7 +352,7 @@ public class ButtonTest extends ElementTest {
     assertNull("Button clazz attribute", button.getAttribute(CLASS_ATTR));
     assertEquals("Button inner text", "SELECT", button.getChild(0).asText());
 
-    assertEquals("Button markdown", "Form (log into desktop client to answer):\n---\n(Button:SELECT)\n\n\n---\n", context.getMarkdown());
+    assertEquals("Button markdown", "\n   \n(Button:SELECT)\n\n\n   \n", context.getMarkdown());
     assertEquals("Button presentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"example\"><div><button type=\"action\" name=\"div-button\">SELECT</button></div></form></div>",
         context.getPresentationML());
   }
@@ -468,9 +468,9 @@ public class ButtonTest extends ElementTest {
 
   private String getExpectedButtonMarkdown(String innerText, Boolean shouldHaveAdditionalStandardActionBtn) {
     if (shouldHaveAdditionalStandardActionBtn) {
-      return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")\n---\n";
+      return "\n   \n(Button:" + innerText + ")\n   \n";
     } else {
-      return "Form (log into desktop client to answer):\n---\n(Button:"+ innerText + ")" + ACTION_BTN_MARKDOWN + "\n---\n";
+      return "\n   \n(Button:" + innerText + ")" + ACTION_BTN_MARKDOWN + "\n   \n";
     }
   }
 

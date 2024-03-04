@@ -23,19 +23,19 @@ SAM-24,Sample Bug Blocker
 
 ---
 
- Table:
----
-   Field |  Value |  
-    Assignee |  @Bot User01 |  
-  Labels |   
+ 
+   
+   Field    Value    
+    Assignee    @Bot User01    
+  Labels     
  - #production
  - #major
  
-  |  
-    Priority |  Highest |  
-  Status |  Done |  
+     
+    Priority    Highest    
+  Status    Done    
   
----
+   
  
 
  

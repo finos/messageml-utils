@@ -915,17 +915,13 @@ public class SelectOptionTest extends ElementTest {
   }
 
   private String getExpectedSelectMarkdown(Select select, boolean hasLabel, boolean hasTitle) {
-    String FORM_MARKDOWN_HEADER = "Form (log into desktop client to answer):\n---\n";
-    String FORM_MARKDOWN_FOOTER = "---\n";
+    String FORM_MARKDOWN_HEADER = "\n   \n";
+    String FORM_MARKDOWN_FOOTER = "   \n";
 
     StringBuilder expectedMarkdown = new StringBuilder(FORM_MARKDOWN_HEADER);
-    expectedMarkdown.append("(Dropdown");
-    String placeholder = select.getAttribute(DATA_PLACEHOLDER_ATTR);
-    expectedMarkdown.append((placeholder != null || hasLabel || hasTitle) ? ":" : "");
-    expectedMarkdown.append((placeholder != null) ? "[" + addEscapeCharacter((placeholder)) + "]" : "");
-    expectedMarkdown.append(hasLabel ? "[" + addEscapeCharacter(select.getAttribute(LABEL_ATTR)) + "]" : "");
-    expectedMarkdown.append(hasTitle ? "[" + addEscapeCharacter(select.getAttribute(TITLE_ATTR)) + "]" : "");
-    expectedMarkdown.append("):\n");
+    expectedMarkdown.append(" ");
+    expectedMarkdown.append(hasLabel ? addEscapeCharacter(select.getAttribute(LABEL_ATTR)) : "");
+    expectedMarkdown.append(" \n");
 
     for (Element option : select.getChildren()) {
       if (option instanceof Option) {

@@ -52,12 +52,12 @@ public class RadioTest extends ElementTest {
     assertEquals(form.getClass(), Form.class);
     assertEquals(radio.getClass(), Radio.class);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
-    expectedMarkdown.append("(Radio Button:Second)");
-    expectedMarkdown.append("(Radio Button:Third)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n First ");
+    expectedMarkdown.append(" Second ");
+    expectedMarkdown.append(" Third ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
 
@@ -100,9 +100,9 @@ public class RadioTest extends ElementTest {
             "</form></messageML>";
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    String expectedMarkdown = "Form (log into desktop client to answer):\n---" + "\n(Radio Button:First\\_label)" +
+    String expectedMarkdown = "\n   " + "\n First\\_label " +
             ACTION_BTN_MARKDOWN +
-            "\n---\n";
+        "\n   \n";
     assertEquals(expectedMarkdown, context.getMarkdown());
     String presentationML = context.getPresentationML();
     int startId1 = presentationML.indexOf("label for=\"");
@@ -138,10 +138,10 @@ public class RadioTest extends ElementTest {
     assertEquals(form.getClass(), Form.class);
     assertEquals(radio.getClass(), Radio.class);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:Second)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n Second ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
 
@@ -178,10 +178,10 @@ public class RadioTest extends ElementTest {
         + "</form></div>", getInputId(presentationML));
     assertEquals(expectedPresentationML, presentationML);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n  ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
 
@@ -264,10 +264,10 @@ public class RadioTest extends ElementTest {
     assertEquals(form.getClass(), Form.class);
     assertEquals(radio.getClass(), Radio.class);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n First ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
 
@@ -299,10 +299,10 @@ public class RadioTest extends ElementTest {
     assertEquals(form.getClass(), Form.class);
     assertEquals(radio.getClass(), Radio.class);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n First ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
 
@@ -334,10 +334,10 @@ public class RadioTest extends ElementTest {
     assertEquals(form.getClass(), Form.class);
     assertEquals(radio.getClass(), Radio.class);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n First ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
 
@@ -369,10 +369,10 @@ public class RadioTest extends ElementTest {
     assertEquals(form.getClass(), Form.class);
     assertEquals(radio.getClass(), Radio.class);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n First ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
 
@@ -404,10 +404,10 @@ public class RadioTest extends ElementTest {
     assertEquals(form.getClass(), Form.class);
     assertEquals(radio.getClass(), Radio.class);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button:First)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n First ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
 
@@ -495,10 +495,10 @@ public class RadioTest extends ElementTest {
 
     assertEquals(expectedPresentationML, presentationML);
 
-    StringBuilder expectedMarkdown = new StringBuilder("Form (log into desktop client to answer):\n---");
-    expectedMarkdown.append("\n(Radio Button)");
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n  ");
     expectedMarkdown.append(ACTION_BTN_MARKDOWN);
-    expectedMarkdown.append("\n---\n");
+    expectedMarkdown.append("\n   \n");
 
     String markdown = context.getMarkdown();
     assertEquals(expectedMarkdown.toString(), markdown);
