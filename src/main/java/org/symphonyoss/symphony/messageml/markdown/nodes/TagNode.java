@@ -16,18 +16,29 @@
 
 package org.symphonyoss.symphony.messageml.markdown.nodes;
 
-import org.commonmark.node.CustomBlock;
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Getter;
+import org.commonmark.node.CustomNode;
+import org.symphonyoss.symphony.messageml.util.instrument.resolver.Instrument;
 
 /**
- * Class representing a Markdown node for table cells.
+ * Class representing a Markdown node for financial tags.
  *
- * @author lukasz
- * @since 4/7/17
  */
-public class TableCellNode extends CustomBlock {
-  private final static String DELIMITER = " | ";
+public class TagNode extends CustomNode {
 
-  public String getDelimiter() {
-    return DELIMITER;
+  @Getter
+  private String prefix;
+  @Getter
+  private String text;
+  @Getter
+  private JsonNode data;
+
+  public TagNode(String prefix, String text, JsonNode data) {
+    this.prefix = prefix;
+    this.text = text;
+    this.data = data;
   }
+
 }
+

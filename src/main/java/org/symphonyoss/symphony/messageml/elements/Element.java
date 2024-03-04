@@ -437,6 +437,28 @@ public abstract class Element {
   }
 
   /**
+   * This method applies a breadth-first traversal of a tree of elements getting list of
+   * elements found which
+   * belong to the class type passed as input
+   */
+  public List<Element> getChildrenOfType(Class<? extends Element> type) {
+    List<Element> elements = new ArrayList<>();
+    Stack<Element> stack = new Stack<>();
+    Element current = this;
+    stack.push(current);
+    while (!stack.isEmpty()) {
+      current = stack.pop();
+      if (current.getClass() == type) {
+        elements.add(current);
+      }
+      for (Element child : current.getChildren()) {
+        stack.push(child);
+      }
+    }
+    return elements;
+  }
+
+  /**
    * Return the EntityJSON representation of the node.
    */
   ObjectNode asEntityJson(ObjectNode parent) {
