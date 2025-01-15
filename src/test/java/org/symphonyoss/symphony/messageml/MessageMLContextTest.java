@@ -1340,6 +1340,21 @@ public class MessageMLContextTest {
     // nothing should be thrown
   }
 
+  @Test
+  public void testParseRichTextArea() throws Exception{
+    final String message = "<messageML>\n"
+        + "  <form id=\"form_id\">\n"
+        + "    <h2>textareas</h2>\n"
+        + "      <richtextarea name=\"req\" required=\"true\" label=\"My label\" title=\"My title\" placeholder=\"Required, with a placeholder, a label, and a tooltip\"></richtextarea>\n"
+        + "      <button name=\"textarea\">Submit</button>\n"
+        + "  </form>\n"
+        + "</messageML>";
+    context.parseMessageML(message, null, MessageML.MESSAGEML_VERSION);
+
+    String PML = context.getPresentationML();
+    System.out.printf(PML);
+  }
+
   private String getPayload(String filename) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
     try (Scanner scanner = new Scanner(classLoader.getResourceAsStream(filename))) {

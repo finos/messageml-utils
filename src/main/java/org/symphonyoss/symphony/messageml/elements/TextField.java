@@ -119,6 +119,7 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
       case TITLE:
       case DISABLED_ATTR:
       case READONLY_ATTR:
+      case FORMNOVALIDATE_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
@@ -161,6 +162,7 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
       case LABEL:
       case PATTERN_ATTR:
       case PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR:
+      case FORMNOVALIDATE_PML_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case VALUE_ATTR:
@@ -213,6 +215,14 @@ public class TextField extends FormElement implements RegexElement, LabelableEle
     }
     if (getAttribute(AUTO_SUBMIT_ATTR) != null) {
       presentationAttrs.put(AUTO_SUBMIT_ATTR, getAttribute(AUTO_SUBMIT_ATTR));
+    }
+
+    if(getAttribute(FORMNOVALIDATE_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_ATTR));
+    }
+
+    if(getAttribute(FORMNOVALIDATE_PML_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_PML_ATTR));
     }
 
     if (getChildren() != null && getChildren().size() == 1) {

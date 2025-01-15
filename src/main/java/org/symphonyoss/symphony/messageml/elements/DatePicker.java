@@ -72,6 +72,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
       case DISABLED_DATE_ATTR:
       case HIGHLIGHTED_DATE_ATTR:
       case FORMAT_ATTR:
+      case FORMNOVALIDATE_ATTR:
         if (this.format != FormatEnum.MESSAGEML) {
           throwInvalidInputException(item);
         }
@@ -82,6 +83,7 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
       case PRESENTATIONML_DISABLED_DATE_ATTR:
       case PRESENTATIONML_HIGHLIGHTED_DATE_ATTR:
       case PRESENTATIONML_FORMAT_ATTR:
+      case FORMNOVALIDATE_PML_ATTR:
         if (this.format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
@@ -202,6 +204,12 @@ public class DatePicker extends FormElement implements LabelableElement, Tooltip
     }
     if (getAttribute(PRESENTATIONML_FORMAT_ATTR) != null) {
       presentationAttrs.put(PRESENTATIONML_FORMAT_ATTR, getAttribute(PRESENTATIONML_FORMAT_ATTR));
+    }
+    if (getAttribute(FORMNOVALIDATE_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_ATTR));
+    }
+    if(getAttribute(FORMNOVALIDATE_PML_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_ATTR));
     }
     return presentationAttrs;
   }

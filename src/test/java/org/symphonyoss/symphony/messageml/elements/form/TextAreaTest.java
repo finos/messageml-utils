@@ -101,7 +101,7 @@ public class TextAreaTest extends ElementTest {
   @Test
   public void testTextAreaWithAllAttributes() throws Exception {
     String input =
-        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\" minlength=\"3\" maxlength=\"25\" label=\"%s\" title=\"%s\">%s</textarea>%s</form></messageML>",
+        String.format("<messageML><form id=\"form-id\"><textarea name=\"%s\" placeholder=\"%s\" required=\"true\" minlength=\"3\" maxlength=\"25\" label=\"%s\" title=\"%s\" formnovalidate=\"true\">%s</textarea>%s</form></messageML>",
             NAME_VALUE, PLACEHOLDER_VALUE, LABEL, TITLE, INITIAL_VALUE, ACTION_BTN_ELEMENT);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     Element messageML = context.getMessageML();
@@ -119,7 +119,7 @@ public class TextAreaTest extends ElementTest {
             + "<div class=\"textarea-group\" data-generated=\"true\">"
             + "<label for=\"textarea-%s\">label here</label>"
             + "<span class=\"info-hint\" data-target-id=\"textarea-%s\" data-title=\"title here\"></span>"
-            + "<textarea maxlength=\"25\" minlength=\"3\" name=\"%s\" placeholder=\"%s\" "
+            + "<textarea data-formnovalidate=\"true\" maxlength=\"25\" minlength=\"3\" name=\"%s\" placeholder=\"%s\" "
             + "required=\"true\" id=\"textarea-%s\">%s</textarea></div>%s</form></div>",
         uniqueLabelId, uniqueLabelId, NAME_VALUE, PLACEHOLDER_VALUE, uniqueLabelId, INITIAL_VALUE, ACTION_BTN_ELEMENT);
 

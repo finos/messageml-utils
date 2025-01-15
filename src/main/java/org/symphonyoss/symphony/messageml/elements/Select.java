@@ -159,7 +159,11 @@ public class Select extends FormElement implements LabelableElement, Tooltipable
       case MML_AUTO_SUBMIT_ATTR:
         setAttribute(AUTO_SUBMIT_ATTR, getStringAttribute(item));
         break;
+      case FORMNOVALIDATE_ATTR:
+        setAttribute(FORMNOVALIDATE_PML_ATTR, getStringAttribute(item));
+        break;
       case ID_ATTR:
+      case FORMNOVALIDATE_PML_ATTR:
         if (format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }

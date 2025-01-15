@@ -95,6 +95,9 @@ public class DateSelector extends FormElement {
       case REQUIRED_ATTR:
         setAttribute(REQUIRED_ATTR, getStringAttribute(item));
         break;
+      case FORMNOVALIDATE_ATTR:
+        setAttribute(FORMNOVALIDATE_ATTR, getStringAttribute(item));
+        break;
       default:
         throwInvalidInputException(item);
     }
@@ -131,6 +134,10 @@ public class DateSelector extends FormElement {
       presentationAttrs.put(PRESENTATIONML_REQUIRED_ATTR, getAttribute(REQUIRED_ATTR));
     }
 
+    if(getAttribute(FORMNOVALIDATE_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_ATTR));
+    }
+
     return presentationAttrs;
   }
 
@@ -147,6 +154,11 @@ public class DateSelector extends FormElement {
     if (element.hasAttribute(PRESENTATIONML_REQUIRED_ATTR)) {
       element.setAttribute(REQUIRED_ATTR, element.getAttribute(PRESENTATIONML_REQUIRED_ATTR));
       element.removeAttribute(PRESENTATIONML_REQUIRED_ATTR);
+    }
+
+    if (element.hasAttribute(FORMNOVALIDATE_PML_ATTR)) {
+      element.setAttribute(FORMNOVALIDATE_ATTR, element.getAttribute(FORMNOVALIDATE_PML_ATTR));
+      element.removeAttribute(FORMNOVALIDATE_PML_ATTR);
     }
 
     NamedNodeMap attributes = element.getAttributes();

@@ -54,7 +54,7 @@ public class ButtonTest extends ElementTest {
     Element button = form.getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-    verifyButtonPresentation((Button) button, name, type, clazz, innerText);
+    verifyButtonPresentation((Button) button, name, type, clazz, innerText, null);
   }
 
   @Test
@@ -70,7 +70,7 @@ public class ButtonTest extends ElementTest {
     Element button = form.getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-    verifyButtonPresentation((Button) button,null, type, null, innerText);
+    verifyButtonPresentation((Button) button,null, type, null, innerText, null);
   }
 
   @Test
@@ -89,7 +89,7 @@ public class ButtonTest extends ElementTest {
     Element button = form.getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-    verifyButtonPresentation((Button) button, name, type, null, innerText);
+    verifyButtonPresentation((Button) button, name, type, null, innerText, null);
   }
 
   @Test
@@ -136,7 +136,7 @@ public class ButtonTest extends ElementTest {
     Element button = form.getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-    verifyButtonPresentation((Button) button, name, "action", null, innerText);
+    verifyButtonPresentation((Button) button, name, "action", null, innerText, null);
   }
 
   @Test
@@ -155,7 +155,7 @@ public class ButtonTest extends ElementTest {
     Element button = form.getChildren().get(0);
 
     assertEquals("Button class", Button.class, button.getClass());
-    verifyButtonPresentation((Button) button, name, type, null, innerText);
+    verifyButtonPresentation((Button) button, name, type, null, innerText, null);
   }
 
   @Test
@@ -181,7 +181,7 @@ public class ButtonTest extends ElementTest {
       if("secondary-destructive".equals(clazz)) {
         clazz = "secondary";
       }
-      verifyButtonPresentation((Button) button, null, type, clazz, innerText);
+      verifyButtonPresentation((Button) button, null, type, clazz, innerText, null);
     }
   }
 
@@ -438,6 +438,26 @@ public class ButtonTest extends ElementTest {
     assertMessageLengthBiItem(items.get(2), input.length());
   }
 
+
+  @Test
+  public void testButtonFormnovalidate() throws Exception {
+    String type = ACTION_TYPE;
+    String name = "btnName";
+    String innerText = "Action Button With Name";
+    String input =
+        "<messageML><form id=\"" + FORM_ID_ATTR + "\"><button type=\"" + type + "\" name=\"" + name + "\" formnovalidate=\"true\">" + innerText
+            + "</button></form></messageML>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element button = form.getChildren().get(0);
+
+    assertEquals("Button class", Button.class, button.getClass());
+    verifyButtonPresentation((Button) button, name, type, null, innerText, true);
+  }
+
   private String getNamePresentationML(String name) {
     if (name != null) {
       return " name=\"" + name + "\"";
@@ -454,14 +474,15 @@ public class ButtonTest extends ElementTest {
     }
   }
 
-  private String getExpectedButtonPresentation(String name, String type, String clazz, String innerText, Boolean shouldHaveAdditionalStandardActionBtn) {
+  private String getExpectedButtonPresentation(String name, String type, String clazz, String innerText, Boolean shouldHaveAdditionalStandardActionBtn,
+      Boolean formnovalidate) {
     if (shouldHaveAdditionalStandardActionBtn) {
       return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
-          + "\"><button type=\"" + type + "\"" + getClassPresentationML(clazz) + getNamePresentationML(name) + ">"
+          + "\"><button type=\"" + type + "\"" + getClassPresentationML(clazz) + getNamePresentationML(name) + getFormnovalidate(formnovalidate) + ">"
           + innerText + "</button></form></div>";
     } else {
       return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
-          + "\"><button type=\"" + type + "\"" + getClassPresentationML(clazz) + getNamePresentationML(name) + ">"
+          + "\"><button type=\"" + type + "\"" + getClassPresentationML(clazz) + getNamePresentationML(name) + getFormnovalidate(formnovalidate) + ">"
           + innerText + "</button>" + ACTION_BTN_ELEMENT + "</form></div>";
     }
   }
@@ -474,7 +495,15 @@ public class ButtonTest extends ElementTest {
     }
   }
 
-  private void verifyButtonPresentation(Button button, String name, String type, String clazz, String innerText) {
+  private String getFormnovalidate(Boolean formnovalidate) {
+    if (formnovalidate == null) {
+      return "";
+    }
+    return " data-formnovalidate=\"" + formnovalidate + "\"";
+  }
+
+  private void verifyButtonPresentation(Button button, String name, String type, String clazz, String innerText,
+      Boolean formnovalidate) {
     assertEquals("Button name attribute", name, button.getAttribute(NAME_ATTR));
     assertEquals("Button type attribute", type, button.getAttribute(TYPE_ATTR));
     assertEquals("Button clazz attribute", clazz, button.getAttribute(CLASS_ATTR));
@@ -483,6 +512,6 @@ public class ButtonTest extends ElementTest {
     Boolean isActionType = type.equals(ACTION_TYPE);
     assertEquals("Button markdown", getExpectedButtonMarkdown(innerText, isActionType), context.getMarkdown());
     assertEquals("Button presentationML",
-        getExpectedButtonPresentation(name, type, clazz, innerText, isActionType), context.getPresentationML());
+        getExpectedButtonPresentation(name, type, clazz, innerText, isActionType, formnovalidate), context.getPresentationML());
   }
 }

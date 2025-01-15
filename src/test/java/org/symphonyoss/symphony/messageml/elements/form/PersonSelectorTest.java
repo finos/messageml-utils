@@ -95,6 +95,29 @@ public class PersonSelectorTest extends ElementTest {
             expectedPresentationML, presentationML);
   }
 
+
+  @Test
+  public void sendValidPersonSelectorWithFormnovalidate() throws Exception {
+    context.parseMessageML("<messageML>" +
+        "  <form id=\"all-elements\">" +
+        "    <person-selector name=\"person-selector\" placeholder=\"Type a person's name\" formnovalidate=\"true\"/>" +
+        "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
+        "  </form>" +
+        "</messageML>", null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+
+    String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "  <form id=\"all-elements\">" +
+        "    <div class=\"person-selector\" data-name=\"person-selector\" data-placeholder=\"Type a person's name\" data-formnovalidate=\"true\"></div>" +
+        "    <button type=\"action\" name=\"send-answers\">Send Answers</button>" +
+        "  </form>" +
+        "</div>";
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, presentationML);
+  }
+
   @Test
   public void sendValidPersonSelectorWithValueMultipleIds() throws Exception {
     context.parseMessageML("<messageML>" +
