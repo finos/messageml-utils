@@ -10,7 +10,7 @@ public enum BiFields {
   FORM("form", BiEventType.MESSAGEML_ELEMENT_SENT),
   BUTTON("button", BiEventType.MESSAGEML_ELEMENT_SENT),
   TEXT_AREA("textarea", BiEventType.MESSAGEML_ELEMENT_SENT),
-  RICH_TEXT_AREA("riohtextarea", BiEventType.MESSAGEML_MESSAGE_SENT),
+  RICH_TEXT_AREA("richtextarea", BiEventType.MESSAGEML_MESSAGE_SENT),
   TEXT_FIELD("textfield", BiEventType.MESSAGEML_ELEMENT_SENT),
   CHECKBOX("checkbox", BiEventType.MESSAGEML_ELEMENT_SENT),
   RADIO("radio", BiEventType.MESSAGEML_ELEMENT_SENT),
