@@ -101,7 +101,7 @@ public class TextFieldTest extends ElementTest {
     String messageMLInput = "<messageML>"
         + "<form id=\"" + FORM_ID_ATTR + "\">"
         + "<text-field name=\"text-field\" label=\"label text here\" title=\"title here\" "
-        + "placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\"/>"
+        + "placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\" formnovalidate=\"true\"/>"
         + ACTION_BTN_ELEMENT
         + "</form>"
         + "</messageML>";
@@ -123,7 +123,7 @@ public class TextFieldTest extends ElementTest {
         + "<div class=\"textfield-group\" data-generated=\"true\">"
         + "<label for=\"textfield-" + uniqueLabelId + "\">label text here</label>"
         + "<span class=\"info-hint\" data-target-id=\"textfield-" + uniqueLabelId + "\" data-title=\"title here\"></span>"
-        + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\" id=\"textfield-" + uniqueLabelId + "\"/>"
+        + "<input type=\"text\" name=\"text-field\" placeholder=\"Input some text here\" required=\"true\" minlength=\"10\" maxlength=\"20\" data-formnovalidate=\"true\" id=\"textfield-" + uniqueLabelId + "\"/>"
         + "</div>"
         + ACTION_BTN_ELEMENT
         + "</form>"

@@ -21,6 +21,14 @@ public class TextAreaNode extends FormElementNode implements PlaceholderLabelToo
     this.label = label;
     this.tooltip = tooltip;
   }
+
+  TextAreaNode(String markdown, String placeholder, String initialValue, String label, String tooltip) {
+    super(markdown);
+    this.placeholder = placeholder;
+    this.initialValue = initialValue;
+    this.label = label;
+    this.tooltip = tooltip;
+  }
   
   @Override
   public String getText() {

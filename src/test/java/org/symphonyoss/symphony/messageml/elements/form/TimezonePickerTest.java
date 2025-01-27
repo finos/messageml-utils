@@ -82,7 +82,8 @@ public class TimezonePickerTest extends ElementTest {
             "title=\"This is a hint\" " +
             "placeholder=\"Please pick a timezone\" " +
             "disabled-timezone='[\"America/Detroit\", \"America/Los_Angeles\"]' " +
-            "required=\"true\"/>" +
+            "required=\"true\" "  +
+            "formnovalidate=\"true\"/>" +
             ACTION_BTN_ELEMENT + "</form></messageML>";
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
@@ -111,6 +112,7 @@ public class TimezonePickerTest extends ElementTest {
             "data-placeholder=\"Please pick a timezone\" " +
             "data-disabled-timezone='[\"America/Detroit\",\"America/Los_Angeles\"]' " +
             "data-required=\"true\" " +
+            "data-formnovalidate=\"true\" " +
             "id=\"timezone-picker-%s\"></div>" +
             "</div>%s</form></div>", uniqueLabelId, uniqueLabelId, uniqueLabelId, ACTION_BTN_ELEMENT);
 

@@ -14,7 +14,6 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.symphonyoss.symphony.messageml.bi.BiContext;
 import org.symphonyoss.symphony.messageml.bi.BiFields;
@@ -40,6 +39,7 @@ import org.symphonyoss.symphony.messageml.elements.Entity;
 import org.symphonyoss.symphony.messageml.elements.ExpandableCard;
 import org.symphonyoss.symphony.messageml.elements.ExpandableCardBody;
 import org.symphonyoss.symphony.messageml.elements.ExpandableCardHeader;
+import org.symphonyoss.symphony.messageml.elements.RichTextArea;
 import org.symphonyoss.symphony.messageml.elements.Tag;
 import org.symphonyoss.symphony.messageml.elements.Form;
 import org.symphonyoss.symphony.messageml.elements.FormElement;
@@ -76,6 +76,7 @@ import org.symphonyoss.symphony.messageml.elements.TableHeaderCell;
 import org.symphonyoss.symphony.messageml.elements.TableRow;
 import org.symphonyoss.symphony.messageml.elements.TextArea;
 import org.symphonyoss.symphony.messageml.elements.TextField;
+import org.symphonyoss.symphony.messageml.elements.DateTime;
 import org.symphonyoss.symphony.messageml.elements.TimePicker;
 import org.symphonyoss.symphony.messageml.elements.TimezonePicker;
 import org.symphonyoss.symphony.messageml.elements.TooltipableElement;
@@ -85,9 +86,6 @@ import org.symphonyoss.symphony.messageml.exceptions.ProcessingException;
 import org.symphonyoss.symphony.messageml.util.IDataProvider;
 import org.symphonyoss.symphony.messageml.util.NoOpEntityResolver;
 import org.symphonyoss.symphony.messageml.util.NullErrorHandler;
-import org.symphonyoss.symphony.messageml.util.instrument.resolver.InstrumentKind;
-import org.symphonyoss.symphony.messageml.util.instrument.resolver.InstrumentResolution;
-import org.symphonyoss.symphony.messageml.util.instrument.resolver.ResolutionResults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -107,7 +105,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -637,6 +634,12 @@ public class MessageMLParser {
 
       case Tag.MESSAGEML_TAG:
         return new Tag(parent, ++index);
+
+      case RichTextArea.MESSAGEML_TAG:
+        return new RichTextArea(parent, messageFormat);
+
+      case DateTime.MESSAGEML_TAG:
+        return new DateTime(parent, ++index);
 
       default:
         throw new InvalidInputException("Invalid MessageML content at element \"" + tag + "\"");

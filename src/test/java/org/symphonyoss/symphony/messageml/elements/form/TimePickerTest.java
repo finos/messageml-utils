@@ -40,6 +40,7 @@ public class TimePickerTest extends ElementTest {
   public void testTimePickerBasic() throws Exception {
     String input = "<messageML><form id=\"" + formId + "\">" +
             "<time-picker " +
+            "formnovalidate=\"true\" " +
             "name=\"time-meeting\" " +
             "value=\"14:00:00\" " +
             "format=\"HH:mm:ss\" " +
@@ -75,7 +76,8 @@ public class TimePickerTest extends ElementTest {
             "data-format=\"HH:mm:ss\" " +
             "data-strict=\"true\" " +
             "data-disabled-time='[{\"type\":\"time\",\"time\":\"16:00:00\"}]' " +
-            "required=\"true\"/>" + ACTION_BTN_ELEMENT +
+            "required=\"true\" " +
+            "data-formnovalidate=\"true\"/>" + ACTION_BTN_ELEMENT +
             "</form></div>";
 
     assertEquals(Form.class, form.getClass());

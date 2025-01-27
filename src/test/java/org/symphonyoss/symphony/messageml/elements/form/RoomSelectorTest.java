@@ -104,6 +104,29 @@ public class RoomSelectorTest extends ElementTest {
   }
 
   @Test
+  public void sendValidRoomSelectorWithFormnovalidate() throws Exception {
+    context.parseMessageML("<messageML>" +
+        "  <form id=\"all-elements\">" +
+        "    <room-selector name=\"room-selector\" placeholder=\"Type a room's name\" "
+        + "formnovalidate=\"true\"/>" +
+        "    <button name=\"send-answers\" type=\"action\">Send Answers</button>" +
+        "  </form>" +
+        "</messageML>", null, MessageML.MESSAGEML_VERSION);
+
+    String presentationML = context.getPresentationML();
+
+    String expectedPresentationML =
+        "<div data-format=\"PresentationML\" data-version=\"2.0\">  <form id=\"all-elements\">   "
+            + " <div class=\"room-selector\" data-name=\"room-selector\" data-placeholder=\"Type "
+            + "a room's name\" data-formnovalidate=\"true\"></div>    "
+            + "<button type=\"action\" "
+            + "name=\"send-answers\">Send Answers</button>  </form></div>";
+
+    assertEquals("The parsed content should be equivalent to the expected presentation ML",
+        expectedPresentationML, presentationML);
+  }
+
+  @Test
   public void sendValidRoomSelectorWithValueMultipleIds() throws Exception {
     context.parseMessageML("<messageML>" +
         "  <form id=\"all-elements\">" +

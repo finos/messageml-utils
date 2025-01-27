@@ -40,7 +40,7 @@ public class RadioTest extends ElementTest {
     StringBuilder input = new StringBuilder("<messageML><form id=\"" + formId + "\">");
     input.append("<radio name=\"groupId\" value=\"value01\">First</radio>");
     input.append("<radio name=\"groupId\" value=\"value02\">Second</radio>");
-    input.append("<radio name=\"groupId\" value=\"value03\">Third</radio>");
+    input.append("<radio name=\"groupId\" value=\"value03\" formnovalidate=\"true\">Third</radio>");
     input.append(ACTION_BTN_ELEMENT);
     input.append("</form></messageML>");
 
@@ -85,7 +85,7 @@ public class RadioTest extends ElementTest {
         "<input type=\"radio\" name=\"groupId\" value=\"value02\" id=\"%s\"/>" +
         "<label for=\"%s\">Second</label></div>" +
         "<div class=\"radio-group\">" +
-        "<input type=\"radio\" name=\"groupId\" value=\"value03\" id=\"%s\"/>" +
+        "<input type=\"radio\" name=\"groupId\" value=\"value03\" data-formnovalidate=\"true\" id=\"%s\"/>" +
         "<label for=\"%s\">Third</label></div>" +
         ACTION_BTN_ELEMENT +
         "</form></div>", id1, id1, id2, id2, id3, id3);
@@ -175,6 +175,35 @@ public class RadioTest extends ElementTest {
 
     String presentationML = context.getPresentationML();
     String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"radio-form\"><input type=\"radio\" name=\"radio-name\" value=\"on\"/>" + ACTION_BTN_ELEMENT
+        + "</form></div>", getInputId(presentationML));
+    assertEquals(expectedPresentationML, presentationML);
+
+    StringBuilder expectedMarkdown = new StringBuilder("\n   ");
+    expectedMarkdown.append("\n  ");
+    expectedMarkdown.append(ACTION_BTN_MARKDOWN);
+    expectedMarkdown.append("\n   \n");
+
+    String markdown = context.getMarkdown();
+
+    assertEquals(expectedMarkdown.toString(), markdown);
+  }
+  @Test
+  public void testPresentationMLRadioWithFormnovalidate() throws Exception {
+    String input = "<div data-format=\"PresentationML\" data-version=\"2.0\">" +
+        "<form id=\"radio-form\">" +
+        "<input type=\"radio\" name=\"radio-name\" data-formnovalidate=\"true\"/>" + ACTION_BTN_ELEMENT +
+        "</form></div>";
+
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    MessageML messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element radio = form.getChildren().get(0);
+    assertEquals(form.getClass(), Form.class);
+    assertEquals(radio.getClass(), Radio.class);
+
+    String presentationML = context.getPresentationML();
+    String expectedPresentationML = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"radio-form\"><input type=\"radio\" name=\"radio-name\" value=\"on\" data-formnovalidate=\"true\"/>" + ACTION_BTN_ELEMENT
         + "</form></div>", getInputId(presentationML));
     assertEquals(expectedPresentationML, presentationML);
 

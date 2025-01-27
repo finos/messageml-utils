@@ -200,6 +200,15 @@ public abstract class GroupedElement extends FormElement {
       presentationAttrs.put(READONLY_ATTR, getAttribute(READONLY_ATTR));
     }
 
+    if (getAttribute(FORMNOVALIDATE_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_ATTR));
+    }
+
+    if (getAttribute(FORMNOVALIDATE_PML_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_PML_ATTR));
+    }
+
+
     return presentationAttrs;
   }
 

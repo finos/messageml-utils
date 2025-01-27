@@ -140,6 +140,7 @@ public class RoomSelector extends FormElement implements LabelableElement, Toolt
       case LABEL:
       case TITLE:
       case VALUE_ATTR:
+      case FORMNOVALIDATE_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:
@@ -171,6 +172,10 @@ public class RoomSelector extends FormElement implements LabelableElement, Toolt
       presentationAttrs.put(PRESENTATIONML_VALUE_ATTR, getAttribute(VALUE_ATTR));
     }
 
+    if (getAttribute(FORMNOVALIDATE_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_ATTR));
+    }
+
     return presentationAttrs;
   }
 
@@ -193,6 +198,12 @@ public class RoomSelector extends FormElement implements LabelableElement, Toolt
     if (element.hasAttribute(PRESENTATIONML_VALUE_ATTR)) {
       element.setAttribute(VALUE_ATTR, element.getAttribute(PRESENTATIONML_VALUE_ATTR));
       element.removeAttribute(PRESENTATIONML_VALUE_ATTR);
+    }
+
+
+    if(element.hasAttribute(FORMNOVALIDATE_PML_ATTR)) {
+      element.setAttribute(FORMNOVALIDATE_ATTR, element.getAttribute(FORMNOVALIDATE_PML_ATTR));
+      element.removeAttribute(FORMNOVALIDATE_PML_ATTR);
     }
 
     NamedNodeMap attributes = element.getAttributes();

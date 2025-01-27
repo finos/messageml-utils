@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.*;
 import org.commonmark.renderer.text.TextContentWriter;
 import org.symphonyoss.symphony.messageml.elements.MessageML;
+import org.symphonyoss.symphony.messageml.markdown.nodes.DateTimeNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.EmojiNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.KeywordNode;
 import org.symphonyoss.symphony.messageml.markdown.nodes.MentionNode;
@@ -64,12 +65,15 @@ public class MarkdownRenderer extends AbstractVisitor {
   private static final String INDEX_END = "indexEnd";
   private static final String TYPE = "type";
   private static final String DATA = "data";
+  private static final String VALUE = "value";
+  private static final String FORMAT = "format";
   private static final String SCREEN_NAME = "screenName";
   private static final String PRETTY_NAME = "prettyName";
   private static final String USER_TYPE = "userType";
   private static final String USER_MENTIONS = "userMentions";
   private static final String HASHTAGS = "hashtags";
   private static final String URLS = "urls";
+  private static final String DATETIMES = "datetimes";
   private static final String INDENT = "  ";
 
   private static final Pattern NOESCAPE_PATTERN = Pattern.compile("^\\s*([_*\\-+`])\\1*\\s*$");
@@ -229,6 +233,8 @@ public class MarkdownRenderer extends AbstractVisitor {
       visit((MentionNode) node);
     } else if (node instanceof TagNode) {
       visit(TagNode.class.cast(node));
+    } else if (node instanceof DateTimeNode) {
+      visit((DateTimeNode) node);
     }
   }
 
@@ -387,6 +393,22 @@ public class MarkdownRenderer extends AbstractVisitor {
       node.set(DATA, tag.getData());
     }
     putJsonObject(HASHTAGS, node);
+    writer.write(text);
+  }
+
+  private void visit(DateTimeNode dateTimeNode) {
+    String text = dateTimeNode.getValue();
+    ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
+    node.put(ID, dateTimeNode.getEntityId());
+    node.put(TEXT, text);
+    node.put(INDEX_START, writer.length());
+    node.put(INDEX_END, writer.length() + text.length());
+    node.put(TYPE, "DATE_TIME");
+    node.put(VALUE, dateTimeNode.getValue());
+    if (dateTimeNode.getFormat() != null) {
+      node.put(FORMAT, dateTimeNode.getFormat());
+    }
+    putJsonObject(DATETIMES, node);
     writer.write(text);
   }
 

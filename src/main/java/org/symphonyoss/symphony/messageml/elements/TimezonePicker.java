@@ -72,6 +72,7 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case DISABLED_TIMEZONE_ATTR:
+      case FORMNOVALIDATE_ATTR:
         if (this.format != FormatEnum.MESSAGEML) {
           throwInvalidInputException(item);
         }
@@ -83,6 +84,7 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
       case REQUIRED_PRESENTATION_ATTR:
       case PLACEHOLDER_PRESENTATION_ATTR:
       case DISABLED_TIMEZONE_PRESENTATION_ATTR:
+      case FORMNOVALIDATE_PML_ATTR:
         if (this.format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
@@ -225,6 +227,13 @@ public class TimezonePicker extends FormElement implements LabelableElement, Too
     if (getAttribute(REQUIRED_PRESENTATION_ATTR) != null) {
       presentationAttrs.put(REQUIRED_PRESENTATION_ATTR, getAttribute(REQUIRED_PRESENTATION_ATTR));
     }
+    if (getAttribute(FORMNOVALIDATE_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_ATTR));
+    }
+    if (getAttribute(FORMNOVALIDATE_PML_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_PML_ATTR));
+    }
+
 
     return presentationAttrs;
   }

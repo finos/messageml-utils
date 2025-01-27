@@ -30,7 +30,7 @@ public class DateSelectorTest extends ElementTest {
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR +
         "\"><div class=\"date-selector\" data-name=\"some-name\" data-placeholder=\"some-placeholder\" data-required=\"true\"/>" + ACTION_BTN_ELEMENT
         + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag("some-name", "some-placeholder", true);
+    assertDataFromValidParsedTag("some-name", "some-placeholder", true, null);
   }
 
   @Test
@@ -50,16 +50,16 @@ public class DateSelectorTest extends ElementTest {
   @Test
   public void sendValidDateSelector() throws Exception {
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR +
-        "\"><date-selector name=\"some-name\" placeholder=\"Date placeholder\" required=\"false\"/>" + ACTION_BTN_ELEMENT
+        "\"><date-selector name=\"some-name\" placeholder=\"Date placeholder\" required=\"false\" formnovalidate=\"true\"/>" + ACTION_BTN_ELEMENT
         + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag("some-name", "Date placeholder", false);
+    assertDataFromValidParsedTag("some-name", "Date placeholder", false, true);
   }
 
   @Test
   public void sendValidDateSelectorWithClosingTag() throws Exception {
     context.parseMessageML("<messageML><form id=\"" + FORM_ID_ATTR +
         "\"><date-selector name=\"some-name\"></date-selector>" + ACTION_BTN_ELEMENT + "</form></messageML>", null, MessageML.MESSAGEML_VERSION);
-    assertDataFromValidParsedTag("some-name", null, null);
+    assertDataFromValidParsedTag("some-name", null, null, null);
   }
 
   @Test
@@ -135,7 +135,8 @@ public class DateSelectorTest extends ElementTest {
     assertMessageLengthBiItem(items.get(3), input.length());
   }
 
-  private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired) {
+  private void assertDataFromValidParsedTag(String dataName, String dataPlaceholder, Boolean dataRequired,
+      Boolean formnovalidate) {
     MessageML messageML = context.getMessageML();
     Element form = messageML.getChildren().get(0);
     Element dateSelector = form.getChildren().get(0);
@@ -145,6 +146,7 @@ public class DateSelectorTest extends ElementTest {
         "\"><div class=\"date-selector\" data-name=\"" + dataName + "\"" + 
         (dataPlaceholder != null ? " data-placeholder=\"" + dataPlaceholder + "\"" : "") +
         (dataRequired != null ? " data-required=\"" + dataRequired.toString() + "\"" : "") +
+        (formnovalidate != null ? String.format(" data-formnovalidate=\"%s\"",formnovalidate) : "") +
         "></div>" + ACTION_BTN_ELEMENT + "</form></div>", context.getPresentationML());
     String expectedMarkdownText = (dataPlaceholder != null) ? ":[" + addEscapeCharacter(dataPlaceholder) + "]" : "";
     assertEquals("\n   \n(Date Selector" + expectedMarkdownText + ")" + ACTION_BTN_MARKDOWN

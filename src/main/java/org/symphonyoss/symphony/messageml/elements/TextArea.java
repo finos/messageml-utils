@@ -26,7 +26,7 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
   private Integer MIN_ALLOWED_LENGTH = 0;
   private Integer MAX_ALLOWED_LENGTH = 10000;
 
-  private static final String PLACEHOLDER_ATTR = "placeholder";
+  protected static final String PLACEHOLDER_ATTR = "placeholder";
   private static final String REQUIRED_ATTR = "required";
   private static final String DISABLED_ATTR = "disabled";
   private static final String READONLY_ATTR = "readonly";
@@ -36,6 +36,10 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
 
   public TextArea(Element parent, FormatEnum format) {
     super(parent, MESSAGEML_TAG, format);
+  }
+
+  TextArea(Element parent, String messageMLTag, FormatEnum format) {
+    super(parent, messageMLTag, format);
   }
 
   @Override
@@ -102,6 +106,18 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
         }
         setAttribute(PRESENTATIONML_PATTERN_ERROR_MESSAGE_ATTR, getStringAttribute(item));
         break;
+      case FORMNOVALIDATE_ATTR:
+        if(this.format != FormatEnum.MESSAGEML){
+          throwInvalidInputException(item);
+        }
+        setAttribute(FORMNOVALIDATE_PML_ATTR, getStringAttribute(item));
+        break;
+      case FORMNOVALIDATE_PML_ATTR:
+        if(this.format != FormatEnum.PRESENTATIONML){
+          throwInvalidInputException(item);
+        }
+        setAttribute(FORMNOVALIDATE_PML_ATTR, getStringAttribute(item));
+        break;
       case ID_ATTR:
         if(this.format != FormatEnum.PRESENTATIONML){
           throwInvalidInputException(item);
@@ -156,6 +172,19 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
 
   @Override
   public void updateBiContext(BiContext context) {
+    context.addItem(new BiItem(BiFields.TEXT_AREA.getValue(), computeCommonBiContext()));
+  }
+
+  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
+    boolean validationPattern = getAttribute(PATTERN_ATTR) != null;
+
+    if (validationPattern) {
+      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
+      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
+    }
+  }
+
+  protected Map<String, Object> computeCommonBiContext() {
     Map<String, Object> attributesMapBi = new HashMap<>();
 
     this.putOneIfPresent(attributesMapBi, BiFields.PLACEHOLDER.getValue(), PLACEHOLDER_ATTR);
@@ -167,16 +196,6 @@ public class TextArea extends FormElement implements RegexElement, LabelableElem
     if (this.hasElementInitialValue()) {
       attributesMapBi.put(BiFields.DEFAULT.getValue(), 1);
     }
-
-    context.addItem(new BiItem(BiFields.TEXT_AREA.getValue(), attributesMapBi));
-  }
-
-  private void computeAndPutValidationProperties(Map<String, Object> attributesMapBi) {
-    boolean validationPattern = getAttribute(PATTERN_ATTR) != null;
-
-    if (validationPattern) {
-      attributesMapBi.put(BiFields.VALIDATION_PATTERN.getValue(), 1);
-      attributesMapBi.put(BiFields.VALIDATION.getValue(), 1);
-    }
+    return attributesMapBi;
   }
 }

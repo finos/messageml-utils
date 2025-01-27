@@ -54,6 +54,7 @@ public class DatePickerTest extends ElementTest {
         + "{\"day\": \"2020-09-03\"}, {\"daysOfWeek\": [4,6]}]'"
         + "      required=\"true\"\n"
         + "      format=\"yyyy-MM-dd\"\n"
+        + "      formnovalidate=\"true\""
         + "    />"
         + ACTION_BTN_ELEMENT + "</form></messageML>";
 
@@ -76,7 +77,7 @@ public class DatePickerTest extends ElementTest {
         + "data-highlighted-date='[{\"type\":\"date\",\"day\":\"2020-09-24\"},{\"type\":\"range\","
         + "\"from\":\"2020-09-26\",\"to\":\"2020-09-28\"},{\"type\":\"date\",\"day\":\"2020-09-03\"},"
         + "{\"type\":\"weekdays\",\"daysOfWeek\":[4,6]}]' "
-        + "data-format=\"yyyy-MM-dd\"></input><button type=\"action\" "
+        + "data-format=\"yyyy-MM-dd\" data-formnovalidate=\"true\"></input><button type=\"action\" "
         + "name=\"actionName\">Send</button></form></div>";
 
     assertEquals(Form.class, form.getClass());

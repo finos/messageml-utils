@@ -71,6 +71,7 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
       case STEP_ATTR:
       case DISABLED_ATTR:
       case READONLY_ATTR:
+      case FORMNOVALIDATE_ATTR:
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case DISABLED_TIME_ATTR:
@@ -85,6 +86,7 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
       case PRESENTATIONML_DISABLED_TIME_ATTR:
       case PRESENTATIONML_STRICT_ATTR:
       case PRESENTATIONML_FORMAT_ATTR:
+      case FORMNOVALIDATE_PML_ATTR:
         if (this.format != FormatEnum.PRESENTATIONML) {
           throwInvalidInputException(item);
         }
@@ -311,6 +313,12 @@ public class TimePicker extends FormElement implements LabelableElement, Tooltip
     }
     if (getAttribute(READONLY_ATTR) != null) {
       presentationAttrs.put(READONLY_ATTR, getAttribute(READONLY_ATTR));
+    }
+    if (getAttribute(FORMNOVALIDATE_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_ATTR));
+    }
+    if (getAttribute(FORMNOVALIDATE_PML_ATTR) != null) {
+      presentationAttrs.put(FORMNOVALIDATE_PML_ATTR, getAttribute(FORMNOVALIDATE_PML_ATTR));
     }
     return presentationAttrs;
   }

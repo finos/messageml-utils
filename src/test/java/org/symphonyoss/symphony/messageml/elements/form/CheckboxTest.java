@@ -55,7 +55,7 @@ public class CheckboxTest extends ElementTest {
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, value, text, null, false);
+    verifyCheckboxPresentationML(context, name, value, text, null, false, null);
     verifyCheckboxMarkdown(context, text);
   }
 
@@ -64,13 +64,13 @@ public class CheckboxTest extends ElementTest {
     String input = String.format("<div data-format=\"PresentationML\" data-version=\"2.0\">" +
         "<form id=\"" + formId + "\">" +
         "<div class=\"checkbox-group\">" +
-        "<input type=\"checkbox\" name=\"%s\" value=\"%s\"/>" +
+        "<input type=\"checkbox\" name=\"%s\" value=\"%s\" data-formnovalidate=\"true\"/>" +
         "<label>%s</label>" +
         "</div>" + ACTION_BTN_ELEMENT + "</form></div>", this.name, this.value, this.text);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, value, text, null, false);
+    verifyCheckboxPresentationML(context, name, value, text, null, false, true);
     verifyCheckboxMarkdown(context, text);
   }
 
@@ -213,52 +213,61 @@ public class CheckboxTest extends ElementTest {
   @Test
   public void testCompleteFilledCheckbox() throws Exception {
     checked = "true";
-    String input = buildMessageMLFromParameters(name, value, text, checked, true);
+    String input = buildMessageMLFromParameters(name, value, text, checked, true, null);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, value, text, checked, true);
+    verifyCheckboxPresentationML(context, name, value, text, checked, true, null);
     verifyCheckboxMarkdown(context, text);
   }
 
   @Test
   public void testNonCheckedCompleteCheckbox() throws Exception {
-    String input = buildMessageMLFromParameters(name, value, text, checked, true);
+    String input = buildMessageMLFromParameters(name, value, text, checked, true, null);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, value, text, checked, true);
+    verifyCheckboxPresentationML(context, name, value, text, checked, true, null);
     verifyCheckboxMarkdown(context, text);
   }
 
   @Test
   public void testNoCheckedParameterCheckbox() throws Exception {
-    String input = buildMessageMLFromParameters(name, value, text, checked, false);
+    String input = buildMessageMLFromParameters(name, value, text, checked, false, null);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, value, text, checked, false);
+    verifyCheckboxPresentationML(context, name, value, text, checked, false, null);
     verifyCheckboxMarkdown(context, text);
   }
 
   @Test
   public void testNoValueParameterCheckbox() throws Exception {
-    String input = buildMessageMLFromParameters(name, null, text, checked, true);
+    String input = buildMessageMLFromParameters(name, null, text, checked, true, null);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, null, text, checked, true);
+    verifyCheckboxPresentationML(context, name, null, text, checked, true, null);
     verifyCheckboxMarkdown(context, text);
   }
 
   @Test
   public void testSimplerCheckbox() throws Exception {
-    String input = buildMessageMLFromParameters(name, null, text, checked, false);
+    String input = buildMessageMLFromParameters(name, null, text, checked, false, null);
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
     verifyMessageMLObjectsForCheckbox(context);
-    verifyCheckboxPresentationML(context, name, null, text, checked, false);
+    verifyCheckboxPresentationML(context, name, null, text, checked, false, null);
+    verifyCheckboxMarkdown(context, text);
+  }
+
+  @Test
+  public void testCheckboxWithFormnovalidate() throws Exception {
+    String input = buildMessageMLFromParameters(name, null, text, checked, false, true);
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    verifyMessageMLObjectsForCheckbox(context);
+    verifyCheckboxPresentationML(context, name, null, text, checked, false, true);
     verifyCheckboxMarkdown(context, text);
   }
 
   @Test
   public void testCheckboxWithoutName() throws Exception {
-    String input = buildMessageMLFromParameters(null, value, text, checked, true);
+    String input = buildMessageMLFromParameters(null, value, text, checked, true, null);
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"name\" is required");
@@ -268,7 +277,7 @@ public class CheckboxTest extends ElementTest {
 
   @Test
   public void testCheckboxWithBlankName() throws Exception {
-    String input = buildMessageMLFromParameters(" ", value, text, checked, true);
+    String input = buildMessageMLFromParameters(" ", value, text, checked, true, null);
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"name\" is required");
@@ -278,7 +287,7 @@ public class CheckboxTest extends ElementTest {
 
   @Test
   public void testCheckboxWithoutAny() throws Exception {
-    String input = buildMessageMLFromParameters(null, null, null, "false", false);
+    String input = buildMessageMLFromParameters(null, null, null, "false", false, null);
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("The attribute \"name\" is required");
@@ -298,7 +307,7 @@ public class CheckboxTest extends ElementTest {
 
   @Test
   public void testNoTextParameterCheckbox() throws Exception {
-    String input = buildMessageMLFromParameters(name, value, null, checked, true);
+    String input = buildMessageMLFromParameters(name, value, null, checked, true, null);
 
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
@@ -313,7 +322,7 @@ public class CheckboxTest extends ElementTest {
 
   @Test
   public void testCheckboxWithInvalidValueForChecked() throws Exception {
-    String input = buildMessageMLFromParameters(name, value, text, "somethingElse", true);
+    String input = buildMessageMLFromParameters(name, value, text, "somethingElse", true, null);
 
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"checked\" of element \"checkbox\" can only be one of the following values: [true, false].");
@@ -472,11 +481,13 @@ public class CheckboxTest extends ElementTest {
     assertMessageLengthBiItem(items.get(3), input.length());
   }
 
-  private String buildMessageMLFromParameters(String name, String value, String text, String checked, boolean shouldSendCheckedAttribute) {
+  private String buildMessageMLFromParameters(String name, String value, String text, String checked, boolean shouldSendCheckedAttribute,
+      Boolean formnovalidate) {
     return "<messageML><form id=\"" + formId + "\"><checkbox" +
         (name != null ? String.format(" name=\"%s\"", name) : "") +
         (value != null ? String.format(" value=\"%s\"", value) : "") +
         (shouldSendCheckedAttribute ? String.format(" checked=\"%s\"", checked) : "") +
+        (formnovalidate != null ? String.format(" formnovalidate=\"%s\"", formnovalidate) : "") +
         ">" +
         (text != null ? text : "") +
         "</checkbox>" + ACTION_BTN_ELEMENT + "</form></messageML>";
@@ -490,18 +501,22 @@ public class CheckboxTest extends ElementTest {
     assertEquals(checkbox.getClass(), Checkbox.class);
   }
 
-  private void verifyCheckboxPresentationML(MessageMLContext context, String name, String value, String text, String checked, boolean shouldShowChecked) {
+  private void verifyCheckboxPresentationML(MessageMLContext context, String name, String value, String text, String checked, boolean shouldShowChecked,
+      Boolean formnovalidate) {
     String presentationML = context.getPresentationML();
     String id = RadioTest.getInputId(presentationML);
-    String expectedPresentationML = buildExpectedPresentationMLForCheckbox(id, name, value, text, checked, shouldShowChecked);
+    String expectedPresentationML = buildExpectedPresentationMLForCheckbox(id, name, value, text, checked, shouldShowChecked,
+        formnovalidate);
     assertEquals(expectedPresentationML, presentationML);
   }
 
-  private String buildExpectedPresentationMLForCheckbox(String id, String name, String value, String text, String checked, boolean shouldShowChecked) {
+  private String buildExpectedPresentationMLForCheckbox(String id, String name, String value, String text, String checked, boolean shouldShowChecked,
+      Boolean formnovalidate) {
     return "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + formId + "\"><div class=\"checkbox-group\"><input type=\"checkbox\"" +
         String.format(" name=\"%s\"", name) +
         (shouldShowChecked ? String.format(" checked=\"%s\"", checked) : "") +
         (value != null ? String.format(" value=\"%s\"", value) : " value=\"on\"") +
+        (formnovalidate != null ? String.format(" data-formnovalidate=\"%s\"", formnovalidate) : "") +
         " id=\"" + id + "\"/><label for=\""+ id + "\">" +
         (text != null ? text : "") +
         "</label></div>" + ACTION_BTN_ELEMENT + "</form></div>";

@@ -21,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.symphonyoss.symphony.messageml.elements.FormElement.FORMNOVALIDATE_ATTR;
+import static org.symphonyoss.symphony.messageml.elements.FormElement.FORMNOVALIDATE_PML_ATTR;
 import static org.symphonyoss.symphony.messageml.elements.FormElement.NAME_ATTR;
 import static org.symphonyoss.symphony.messageml.elements.FormElement.TYPE_ATTR;
 
@@ -88,6 +90,18 @@ public class Button extends Element {
         }
         setAttribute(TooltipableElement.DATA_TITLE, getStringAttribute(item));
         break;
+      case FORMNOVALIDATE_ATTR:
+        if (format != FormatEnum.MESSAGEML) {
+          throwInvalidInputException(item);
+        }
+        setAttribute(FORMNOVALIDATE_ATTR, getStringAttribute(item));
+        break;
+      case FORMNOVALIDATE_PML_ATTR:
+        if (format != FormatEnum.PRESENTATIONML) {
+          throwInvalidInputException(item);
+        }
+        setAttribute(FORMNOVALIDATE_PML_ATTR, getStringAttribute(item));
+        break;
       default:
         throwInvalidInputException(item);
     }
@@ -103,14 +117,18 @@ public class Button extends Element {
   }
 
   private Map<String, String> getPresentationMLAttributes() {
-    Map<String, String> attributes = getAttributes();
-    if (format == FormatEnum.MESSAGEML && attributes.containsKey(TooltipableElement.TITLE)) {
-      Map<String, String> presentationAttributes = new LinkedHashMap<>(attributes);
-      presentationAttributes.put(TooltipableElement.DATA_TITLE, attributes.get(TooltipableElement.TITLE));
-      presentationAttributes.remove(TooltipableElement.TITLE);
-      return presentationAttributes;
+    Map<String, String> presentationAttributes = new LinkedHashMap<>(getAttributes());
+    if (format == FormatEnum.MESSAGEML) {
+      if (presentationAttributes.containsKey(TooltipableElement.TITLE)) {
+        presentationAttributes.put(TooltipableElement.DATA_TITLE, presentationAttributes.get(TooltipableElement.TITLE));
+        presentationAttributes.remove(TooltipableElement.TITLE);
+      }
+      if (presentationAttributes.containsKey(FORMNOVALIDATE_ATTR)) {
+        presentationAttributes.put(FORMNOVALIDATE_PML_ATTR, presentationAttributes.get(FORMNOVALIDATE_ATTR));
+        presentationAttributes.remove(FORMNOVALIDATE_ATTR);
+      }
     }
-    return attributes;
+    return presentationAttributes;
   }
 
   @Override

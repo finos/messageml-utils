@@ -66,6 +66,13 @@ public class Checkbox extends GroupedElement implements LabelableElement {
       case LABEL:
       case DISABLED_ATTR:
       case READONLY_ATTR:
+      case FORMNOVALIDATE_ATTR:
+        setAttribute(item.getNodeName(), getStringAttribute(item));
+        break;
+      case FORMNOVALIDATE_PML_ATTR:
+        if(this.format != FormatEnum.PRESENTATIONML){
+          throwInvalidInputException(item);
+        }
         setAttribute(item.getNodeName(), getStringAttribute(item));
         break;
       case ID_ATTR:

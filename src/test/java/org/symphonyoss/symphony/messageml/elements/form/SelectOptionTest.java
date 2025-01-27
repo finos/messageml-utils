@@ -52,7 +52,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, true, required, placeholder, false, false);
+    verifySelectPresentation((Select) select, name, true, required, placeholder, false, false, null);
   }
 
   @Test
@@ -74,7 +74,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, true, required, placeholder, true, true);
+    verifySelectPresentation((Select) select, name, true, required, placeholder, true, true, null);
   }
 
   @Test
@@ -96,7 +96,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, true, required, placeholder, true, true);
+    verifySelectPresentation((Select) select, name, true, required, placeholder, true, true, null);
   }
 
   @Test
@@ -112,7 +112,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, true, required, null, false, false);
+    verifySelectPresentation((Select) select, name, true, required, null, false, false, null);
   }
 
   @Test
@@ -128,7 +128,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false, false, null, false, false);
+    verifySelectPresentation((Select) select, name, false, false, null, false, false, null);
   }
 
   @Test
@@ -144,7 +144,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false, false, null, false, false);
+    verifySelectPresentation((Select) select, name, false, false, null, false, false, null);
   }
 
   @Test
@@ -160,7 +160,7 @@ public class SelectOptionTest extends ElementTest {
     Element select = form.getChildren().get(0);
 
     assertEquals("Select class", Select.class, select.getClass());
-    verifySelectPresentation((Select) select, name, false, false, null, false, false);
+    verifySelectPresentation((Select) select, name, false, false, null, false, false, null);
   }
 
   @Test
@@ -332,6 +332,21 @@ public class SelectOptionTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
+  @Test
+  public void testFormnovalidate() throws Exception {
+    String name = "simple-id";
+    String input = "<messageML><form id=\"" + FORM_ID_ATTR + "\"><select name=\"" + name
+        + "\" formnovalidate=\"true\"><option value=\"\">Option 1</option></select>" + ACTION_BTN_ELEMENT
+        + "</form></messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    Element messageML = context.getMessageML();
+    Element form = messageML.getChildren().get(0);
+    Element select = form.getChildren().get(0);
+
+    assertEquals("Select class", Select.class, select.getClass());
+    verifySelectPresentation((Select) select, name, false, false, null, false, false, true);
+  }
   @Test
   public void testMultiSelect() throws Exception {
     //language=XML
@@ -934,7 +949,7 @@ public class SelectOptionTest extends ElementTest {
   }
 
   private String getExpectedSelectPresentation(Select select, boolean hasLabel, boolean hasTitle,
-      String uniqueLabelId) {
+      String uniqueLabelId, Boolean formnovalidate) {
     String selectOpeningTag =
         "<div data-format=\"PresentationML\" data-version=\"2.0\"><form id=\"" + FORM_ID_ATTR
             + "\">"
@@ -943,8 +958,10 @@ public class SelectOptionTest extends ElementTest {
             + "</label>" : "")
             + (hasTitle ? "<span class=\"info-hint\" data-target-id=\"dropdown-" + uniqueLabelId + "\" data-title=\""
             + select.getAttribute(TITLE_ATTR) + "\"></span>" : "")
-            + "<select " + getPlaceholderAttribute(select.getAttribute(DATA_PLACEHOLDER_ATTR))
-            + "name=\"" + select.getAttribute(NAME_ATTR) + "\""
+            + "<select"
+            + (formnovalidate != null ? String.format(" data-formnovalidate=\"%s\"", formnovalidate) : "")
+            + getPlaceholderAttribute(select.getAttribute(DATA_PLACEHOLDER_ATTR))
+            + " name=\"" + select.getAttribute(NAME_ATTR) + "\""
             + getRequiredPresentationML(select.getAttribute(REQUIRED_ATTR))
             + ((hasLabel || hasTitle) ? " id=\"dropdown-" + uniqueLabelId + "\"" : "")
             + ">";
@@ -963,7 +980,7 @@ public class SelectOptionTest extends ElementTest {
   }
 
   private String getPlaceholderAttribute(String placeholder) {
-    return placeholder != null ? "data-placeholder=\"" + placeholder + "\" " : "";
+    return placeholder != null ? " data-placeholder=\"" + placeholder + "\"" : "";
   }
 
   private String getOptionSelectedExpectedText(Element option) {
@@ -971,7 +988,7 @@ public class SelectOptionTest extends ElementTest {
   }
 
   private void verifySelectPresentation(Select select, String name, boolean requiredAttrProvided, boolean requiredValue,
-      String placeholder, boolean hasLabel, boolean hasTitle) {
+      String placeholder, boolean hasLabel, boolean hasTitle, Boolean formnovalidate) {
     assertEquals("Select name attribute", name, select.getAttribute(NAME_ATTR));
     if (requiredAttrProvided) {
       assertEquals("Select required attribute", String.valueOf(requiredValue), select.getAttribute(REQUIRED_ATTR));
@@ -991,7 +1008,7 @@ public class SelectOptionTest extends ElementTest {
     Matcher matcher = pattern.matcher(presentationML);
 
     assertEquals("Select presentationML",
-        getExpectedSelectPresentation(select, hasLabel, hasTitle, matcher.matches() ? matcher.group(2) : null),
+        getExpectedSelectPresentation(select, hasLabel, hasTitle, matcher.matches() ? matcher.group(2) : null, formnovalidate),
         presentationML);
     assertEquals("Select markdown", getExpectedSelectMarkdown(select, hasLabel, hasTitle), context.getMarkdown());
   }
