@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.symphonyoss.symphony</groupId>
-    <artifactId>messageml</artifactId>
-    <version>0.14.0</version>
+    <groupId>org.finos.symphony.messageml</groupId>
+    <artifactId>messageml-utils</artifactId>
+    <version>1.0.0</version>
     <name>MessageML Utils</name>
     <url>https://github.com/finos/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages
