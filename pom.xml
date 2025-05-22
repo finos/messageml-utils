@@ -6,7 +6,7 @@
 
     <groupId>org.finos.symphony.messageml</groupId>
     <artifactId>messageml-utils</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>MessageML Utils</name>
     <url>https://github.com/finos/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages
