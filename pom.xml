@@ -6,7 +6,7 @@
 
     <groupId>org.finos.symphony.messageml</groupId>
     <artifactId>messageml-utils</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <name>MessageML Utils</name>
     <url>https://github.com/finos/messageml-utils</url>
     <description>A set of utilities for parsing, processing and rendering of MessageML messages
@@ -85,7 +85,7 @@
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh-distro</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <nexusUrl>https://ossrh-staging-api.central.sonatype.com</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                             <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
                         </configuration>
@@ -349,12 +349,12 @@
         <repository>
             <id>ossrh-distro</id>
             <name>Sonatype Release Distribution Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
             <id>ossrh</id>
             <name>Sonatype Development Snapshot Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
