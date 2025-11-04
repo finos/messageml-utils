@@ -32,10 +32,10 @@ public class DateTimeTest extends ElementTest {
     context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
     String expectedPresentationML = "<div data-format=\"PresentationML\" data-version=\"2.0\"> "
-        + "<time data-entity-id=\"datetime1\" datetime=\"2024-12-31T09:29:47Z\" data-format=\"date\">2024-12-31T09:29:47Z</time> "
-        + "<time data-entity-id=\"datetime2\" datetime=\"2025-12-31T09:29:47Z\" data-format=\"time\">2025-12-31T09:29:47Z</time> "
-        + "<time data-entity-id=\"datetime3\" datetime=\"2026-12-31T09:29:47Z\" data-format=\"time_secs\">2026-12-31T09:29:47Z</time> "
-        + "<time data-entity-id=\"datetime4\" datetime=\"2027-12-31T09:29:47Z\">2027-12-31T09:29:47Z</time> "
+        + "<span><time data-entity-id=\"datetime1\" datetime=\"2024-12-31T09:29:47Z\" data-format=\"date\">2024-12-31T09:29:47Z</time></span> "
+        + "<span><time data-entity-id=\"datetime2\" datetime=\"2025-12-31T09:29:47Z\" data-format=\"time\">2025-12-31T09:29:47Z</time></span> "
+        + "<span><time data-entity-id=\"datetime3\" datetime=\"2026-12-31T09:29:47Z\" data-format=\"time_secs\">2026-12-31T09:29:47Z</time></span> "
+        + "<span><time data-entity-id=\"datetime4\" datetime=\"2027-12-31T09:29:47Z\">2027-12-31T09:29:47Z</time></span> "
         + "</div>";
     String expectedMarkdown = " 2024-12-31T09:29:47Z 2025-12-31T09:29:47Z 2026-12-31T09:29:47Z 2027-12-31T09:29:47Z ";
     assertEquals(expectedPresentationML, context.getPresentationML());
