@@ -121,7 +121,10 @@ public class DateTime extends Entity {
       attributes.put(ATTR_PML_FORMAT, getAttribute(ATTR_FORMAT));
     }
     attributes.put(ATTR_PML_VALUE, getAttribute(ATTR_VALUE));
+
+    out.openElement(DEFAULT_PRESENTATIONML_TAG);
     out.printElement(PRESENTATIONML_TAG, value, attributes);
+    out.closeElement();
   }
 
   @Override
