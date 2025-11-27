@@ -33,7 +33,7 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_KEY }}
           gpg-passphrase: GPG_KEY_PASSPHRASE
       - name: Deploy on Maven Central
-        run: ./mvnw -B --file pom.xml deploy -Prelease
+        run: ./mvnw -B --file pom.xml deploy -Prelease --settings settings.xml
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
