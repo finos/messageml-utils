@@ -27,8 +27,8 @@ jobs:
           server-id: ossrh-distro
           server-username: CI_DEPLOY_USERNAME
           server-password: CI_DEPLOY_PASSWORD
-          gpg-private-key: ${{ secrets.CI_GPG_PRIVATE_KEY }}
-          gpg-passphrase: CI_GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.GPG_KEY }}
+          gpg-passphrase: GPG_KEY_PASSPHRASE
       - name: Deploy on Maven Central
         run: ./mvnw -B --file pom.xml deploy -Prelease
         env:
