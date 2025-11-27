@@ -112,11 +112,13 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <inherited>true</inherited>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-deploy-plugin</artifactId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>3.1.1</version>
                         <configuration>
-                            <updateReleaseInfo>true</updateReleaseInfo>
+                            <autoVersionSubmodules>true</autoVersionSubmodules>
+                            <releaseProfiles>release</releaseProfiles>
+                            <goals>${release.goals}</goals>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -342,18 +344,6 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>ossrh-distro</id>
-            <name>Sonatype Release Distribution Repository</name>
-            <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <name>Sonatype Development Snapshot Repository</name>
-            <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <developers>
         <developer>
