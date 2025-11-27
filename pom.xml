@@ -344,18 +344,6 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>ossrh-distro</id>
-            <name>Sonatype Release Distribution Repository</name>
-            <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <name>Sonatype Development Snapshot Repository</name>
-            <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <developers>
         <developer>
