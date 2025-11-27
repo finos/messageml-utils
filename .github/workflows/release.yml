@@ -24,7 +24,7 @@ jobs:
           # 11 runtime needed for Sonar, we still build with 8 as a target
           distribution: 'adopt'
           java-version: 11
-          server-id: ossrh-distro
+          server-id: ossrh
           server-username: CI_DEPLOY_USERNAME
           server-password: CI_DEPLOY_PASSWORD
           gpg-private-key: ${{ secrets.GPG_KEY }}
