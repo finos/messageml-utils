@@ -28,10 +28,6 @@
 
     <properties>
 
-        <!-- Dependencies -->
-
-        <publish.server.id>ossrh</publish.server.id>
-        <release.goals>install org.sonatype.central:central-publishing-maven-plugin:0.7.0:publish</release.goals>
         <json.schema.validator.version>2.2.14</json.schema.validator.version>
         <jackson.core.version>2.15.2</jackson.core.version>
         <jackson.databind.version>2.15.2</jackson.databind.version>
@@ -88,7 +84,7 @@
                         <version>0.7.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <publishingServerId>${publish.server.id}</publishingServerId>
+                            <publishingServerId>ossrh</publishingServerId>
                             <autoPublish>true</autoPublish>
                         </configuration>
                     </plugin>
@@ -118,7 +114,7 @@
                         <configuration>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <releaseProfiles>release</releaseProfiles>
-                            <goals>${release.goals}</goals>
+                            <goals>deploy</goals>
                         </configuration>
                     </plugin>
                     <plugin>
