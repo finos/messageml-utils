@@ -18,6 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.finos.symphony.messageml.messagemlutils.bi.BiContext;
 import org.finos.symphony.messageml.messagemlutils.bi.BiFields;
 import org.finos.symphony.messageml.messagemlutils.bi.BiItem;
+import org.finos.symphony.messageml.messagemlutils.elements.Attachment;
 import org.finos.symphony.messageml.messagemlutils.elements.Bold;
 import org.finos.symphony.messageml.messagemlutils.elements.BulletList;
 import org.finos.symphony.messageml.messagemlutils.elements.Button;
@@ -67,6 +68,9 @@ import org.finos.symphony.messageml.messagemlutils.elements.Span;
 import org.finos.symphony.messageml.messagemlutils.elements.SplittableElement;
 import org.finos.symphony.messageml.messagemlutils.elements.Subscript;
 import org.finos.symphony.messageml.messagemlutils.elements.Superscript;
+import org.finos.symphony.messageml.messagemlutils.elements.SymAiContext;
+import org.finos.symphony.messageml.messagemlutils.elements.Stream;
+import org.finos.symphony.messageml.messagemlutils.elements.Message;
 import org.finos.symphony.messageml.messagemlutils.elements.Table;
 import org.finos.symphony.messageml.messagemlutils.elements.TableBody;
 import org.finos.symphony.messageml.messagemlutils.elements.TableCell;
@@ -477,6 +481,18 @@ public class MessageMLParser {
 
       case FormElement.INPUT_TAG:
         return createElementFromInput(element, parent);
+
+      case SymAiContext.MESSAGEML_TAG:
+        return new SymAiContext(parent, ++index);
+
+      case Stream.MESSAGEML_TAG:
+        return new Stream(parent);
+
+      case Message.MESSAGEML_TAG:
+        return new Message(parent);
+
+      case Attachment.MESSAGEML_TAG:
+        return new Attachment(parent);
 
       case Bold.MESSAGEML_TAG:
         return new Bold(parent);

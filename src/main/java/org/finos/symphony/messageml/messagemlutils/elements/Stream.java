@@ -3,7 +3,7 @@ package org.finos.symphony.messageml.messagemlutils.elements;
 
 import org.finos.symphony.messageml.messagemlutils.MessageMLParser;
 import org.finos.symphony.messageml.messagemlutils.exceptions.InvalidInputException;
-import org.w3c.dom.Node;
+import org.commonmark.node.Node;
 
 public class Stream extends Element {
     public static final String MESSAGEML_TAG = "stream";
@@ -14,7 +14,7 @@ public class Stream extends Element {
     }
 
     @Override
-    protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
+    protected void buildAttribute(MessageMLParser parser, org.w3c.dom.Node item) throws InvalidInputException {
         switch (item.getNodeName()) {
             case ATTR_ID:
                 setAttribute(ATTR_ID, getStringAttribute(item));
@@ -30,5 +30,10 @@ public class Stream extends Element {
         if (getAttribute(ATTR_ID) == null) {
             throw new InvalidInputException("The attribute 'id' is required for the element 'stream'.");
         }
+    }
+
+    @Override
+    public Node asMarkdown() {
+        return null;
     }
 }

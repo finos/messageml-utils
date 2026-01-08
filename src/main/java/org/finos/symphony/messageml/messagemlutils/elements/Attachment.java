@@ -1,9 +1,11 @@
 
 package org.finos.symphony.messageml.messagemlutils.elements;
 
+import org.commonmark.node.Paragraph;
+import org.commonmark.node.Text;
 import org.finos.symphony.messageml.messagemlutils.MessageMLParser;
 import org.finos.symphony.messageml.messagemlutils.exceptions.InvalidInputException;
-import org.w3c.dom.Node;
+import org.commonmark.node.Node;
 
 public class Attachment extends Element {
     public static final String MESSAGEML_TAG = "attachment";
@@ -16,7 +18,7 @@ public class Attachment extends Element {
     }
 
     @Override
-    protected void buildAttribute(MessageMLParser parser, Node item) throws InvalidInputException {
+    protected void buildAttribute(MessageMLParser parser, org.w3c.dom.Node item) throws InvalidInputException {
         switch (item.getNodeName()) {
             case ATTR_STREAM_ID:
             case ATTR_MESSAGE_ID:
@@ -31,5 +33,10 @@ public class Attachment extends Element {
     @Override
     public void validate() throws InvalidInputException {
         assertNoContent();
+    }
+
+    @Override
+    public Node asMarkdown() {
+        return new Text(String.format("Attachment(streamdId=%s, messageId=%s, fileId=%s)", getAttribute(ATTR_STREAM_ID), getAttribute(ATTR_MESSAGE_ID), getAttribute(ATTR_FILE_ID)));
     }
 }
