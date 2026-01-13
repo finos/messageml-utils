@@ -28,6 +28,13 @@ public class SymAiContext extends Entity {
 
     @Override
     public void validate() throws InvalidInputException {
+        // Check if root MessageML is in beta mode
+        MessageML root = getRoot();
+        if (root == null || !root.isBeta()) {
+            throw new InvalidInputException(
+                    "Element \"sym-ai-context\" is only allowed when messageML has beta=\"true\"");
+        }
+
         super.validate();
         assertNoText();
 
@@ -38,6 +45,17 @@ public class SymAiContext extends Entity {
                                 + "Allowed elements are: " + ALLOWED_CHILDREN);
             }
         }
+    }
+
+    /**
+     * Traverse up the parent chain to find the root MessageML element.
+     */
+    private MessageML getRoot() {
+        Element current = this;
+        while (current.getParent() != null) {
+            current = current.getParent();
+        }
+        return (current instanceof MessageML) ? (MessageML) current : null;
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.finos.symphony.messageml.messagemlutils.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -101,6 +102,45 @@ public class ElementTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Element \"messageML\" may not have attributes");
     context.parseMessageML(invalidAttr, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMessageMLBetaTrue() throws Exception {
+    String input = "<messageML beta=\"true\">Hello world!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    MessageML messageML = context.getMessageML();
+    assertTrue("Beta should be true", messageML.isBeta());
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello world!</div>",
+        context.getPresentationML());
+  }
+
+  @Test
+  public void testMessageMLBetaFalse() throws Exception {
+    String input = "<messageML beta=\"false\">Hello world!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    MessageML messageML = context.getMessageML();
+    assertFalse("Beta should be false", messageML.isBeta());
+    assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello world!</div>",
+        context.getPresentationML());
+  }
+
+  @Test
+  public void testMessageMLBetaDefault() throws Exception {
+    String input = "<messageML>Hello world!</messageML>";
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+
+    MessageML messageML = context.getMessageML();
+    assertFalse("Beta should default to false", messageML.isBeta());
+  }
+
+  @Test
+  public void testMessageMLBetaInvalid() throws Exception {
+    String input = "<messageML beta=\"invalid\">Hello world!</messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"beta\" of element \"messageML\" can only be one of the following values: [true, false].");
+    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test
