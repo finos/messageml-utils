@@ -6,7 +6,7 @@ import org.finos.symphony.messageml.messagemlutils.exceptions.InvalidInputExcept
 import org.commonmark.node.Node;
 
 public class Stream extends Element {
-    public static final String MESSAGEML_TAG = "stream";
+    public static final String MESSAGEML_TAG = "sym-ai-stream";
     private static final String ATTR_ID = "id";
 
     public Stream(Element parent) {
@@ -28,7 +28,7 @@ public class Stream extends Element {
     public void validate() throws InvalidInputException {
         assertNoContent();
         if (getAttribute(ATTR_ID) == null) {
-            throw new InvalidInputException("The attribute 'id' is required for the element 'stream'.");
+            throw new InvalidInputException("The attribute 'id' is required for the element 'sym-ai-stream'.");
         }
     }
 

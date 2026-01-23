@@ -1,25 +1,33 @@
 package org.finos.symphony.messageml.messagemlutils.elements;
 
+import org.finos.symphony.messageml.messagemlutils.MessageMLContext;
 import org.finos.symphony.messageml.messagemlutils.exceptions.InvalidInputException;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class SymAiContextTest extends ElementTest {
 
+    @Before
+    @Override
+    public void setUp() {
+        context = new MessageMLContext(dataProvider, true);
+    }
+
     @Test
     public void testSymAiContextWithInvalidChild() {
-        String invalidChild = "<messageML beta=\"true\"><sym-ai-context><p>invalid child</p></sym-ai-context></messageML>";
+        String invalidChild = "<messageML><sym-ai-context><p>invalid child</p></sym-ai-context></messageML>";
 
         Exception exception = assertThrows(InvalidInputException.class, () -> context.parseMessageML(invalidChild, null, null));
-        String expectedMessage = "Element 'p' is not allowed in 'sym-ai-context'. Allowed elements are: [stream, message, attachment]";
+        String expectedMessage = "Element 'p' is not allowed in 'sym-ai-context'. Allowed elements are: [sym-ai-stream, sym-ai-message, sym-ai-attachment]";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
     public void testSymAiContextWithText() {
-        String textChild = "<messageML beta=\"true\"><sym-ai-context>text</sym-ai-context></messageML>";
+        String textChild = "<messageML><sym-ai-context>text</sym-ai-context></messageML>";
 
         Exception exception = assertThrows(InvalidInputException.class, () -> context.parseMessageML(textChild, null, null));
         String expectedMessage = "Element \"sym-ai-context\" may not have text content";
@@ -29,10 +37,10 @@ public class SymAiContextTest extends ElementTest {
 
     @Test
     public void testSymAiContextWithValidChildren() throws Exception {
-        String validChildren = "<messageML beta=\"true\"><sym-ai-context>"
-                + "<stream id=\"stream1\"/>"
-                + "<message id=\"msg1\"/>"
-                + "<attachment streamId=\"stream2\" messageId=\"msg2\" fileId=\"file1\"/>"
+        String validChildren = "<messageML><sym-ai-context>"
+                + "<sym-ai-stream id=\"stream1\"/>"
+                + "<sym-ai-message id=\"msg1\"/>"
+                + "<sym-ai-attachment streamId=\"stream2\" messageId=\"msg2\" fileId=\"file1\"/>"
                 + "</sym-ai-context></messageML>";
         context.parseMessageML(validChildren, null, null);
 
@@ -52,23 +60,14 @@ public class SymAiContextTest extends ElementTest {
 
     @Test
     public void testSymAiContextNotAllowedWithoutBeta() {
+        // Create a context without beta
+        MessageMLContext nonBetaContext = new MessageMLContext(dataProvider);
         String input = "<messageML><sym-ai-context>"
-                + "<stream id=\"stream1\"/>"
+                + "<sym-ai-stream id=\"stream1\"/>"
                 + "</sym-ai-context></messageML>";
 
-        Exception exception = assertThrows(InvalidInputException.class, () -> context.parseMessageML(input, null, null));
-        String expectedMessage = "Element \"sym-ai-context\" is only allowed when messageML has beta=\"true\"";
-        assertEquals(expectedMessage, exception.getMessage());
-    }
-
-    @Test
-    public void testSymAiContextNotAllowedWithBetaFalse() {
-        String input = "<messageML beta=\"false\"><sym-ai-context>"
-                + "<stream id=\"stream1\"/>"
-                + "</sym-ai-context></messageML>";
-
-        Exception exception = assertThrows(InvalidInputException.class, () -> context.parseMessageML(input, null, null));
-        String expectedMessage = "Element \"sym-ai-context\" is only allowed when messageML has beta=\"true\"";
+        Exception exception = assertThrows(InvalidInputException.class, () -> nonBetaContext.parseMessageML(input, null, null));
+        String expectedMessage = "Element \"sym-ai-context\" is only allowed when MessageMLContext is initialized with beta=true";
         assertEquals(expectedMessage, exception.getMessage());
     }
 

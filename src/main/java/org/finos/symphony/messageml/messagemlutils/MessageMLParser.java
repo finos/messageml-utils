@@ -148,6 +148,7 @@ public class MessageMLParser {
   });
 
   private final IDataProvider dataProvider;
+  private final boolean beta;
 
   private BiContext biContext;
   private FormatEnum messageFormat;
@@ -167,7 +168,12 @@ public class MessageMLParser {
   }
 
   MessageMLParser(IDataProvider dataProvider) {
+    this(dataProvider, false);
+  }
+
+  MessageMLParser(IDataProvider dataProvider, boolean beta) {
     this.dataProvider = dataProvider;
+    this.beta = beta;
   }
 
   /**
@@ -372,6 +378,7 @@ public class MessageMLParser {
     }
 
     MessageML result = new MessageML(messageFormat, version);
+    result.setBeta(beta);
     result.buildAll(this, docElement);
     result.enhanceFinancialTags(result, dataProvider);
     result.validate();

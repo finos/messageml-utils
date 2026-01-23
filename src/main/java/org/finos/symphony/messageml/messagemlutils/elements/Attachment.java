@@ -8,7 +8,7 @@ import org.finos.symphony.messageml.messagemlutils.exceptions.InvalidInputExcept
 import org.commonmark.node.Node;
 
 public class Attachment extends Element {
-    public static final String MESSAGEML_TAG = "attachment";
+    public static final String MESSAGEML_TAG = "sym-ai-attachment";
     private static final String ATTR_STREAM_ID = "streamId";
     private static final String ATTR_MESSAGE_ID = "messageId";
     private static final String ATTR_FILE_ID = "fileId";

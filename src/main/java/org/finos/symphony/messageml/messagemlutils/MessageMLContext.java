@@ -49,6 +49,7 @@ public class MessageMLContext {
   private final MessageMLParser messageMLParser;
   private final MarkdownParser markdownParser;
   private final ShortID shortID;
+  private final boolean beta;
 
   private MarkdownRenderer markdownRenderer;
   private MessageML messageML;
@@ -57,10 +58,15 @@ public class MessageMLContext {
   private String presentationML;
 
   public MessageMLContext(IDataProvider dataProvider) {
+    this(dataProvider, false);
+  }
+
+  public MessageMLContext(IDataProvider dataProvider, boolean beta) {
     this.markdownParser = new MarkdownParser(dataProvider);
-    this.messageMLParser = new MessageMLParser(dataProvider);
+    this.messageMLParser = new MessageMLParser(dataProvider, beta);
     this.shortID = new ShortID();
     this.biContext = new BiContext();
+    this.beta = beta;
   }
 
   /**

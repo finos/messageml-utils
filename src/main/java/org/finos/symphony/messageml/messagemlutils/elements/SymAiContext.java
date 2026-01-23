@@ -32,7 +32,7 @@ public class SymAiContext extends Entity {
         MessageML root = getRoot();
         if (root == null || !root.isBeta()) {
             throw new InvalidInputException(
-                    "Element \"sym-ai-context\" is only allowed when messageML has beta=\"true\"");
+                    "Element \"sym-ai-context\" is only allowed when MessageMLContext is initialized with beta=true");
         }
 
         super.validate();
