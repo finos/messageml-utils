@@ -63,6 +63,7 @@ public class MessageML extends Element {
   private static final String ATTR_FORMAT = "data-format";
   private static final String ATTR_VERSION = "data-version";
   private static final String ATTR_XMLNS = "xmlns";
+  private static final String ATTR_BETA = "beta";
   private static final String PRESENTATIONML_FORMAT = "PresentationML";
 
   private String version;
@@ -94,6 +95,15 @@ public class MessageML extends Element {
       switch (item.getNodeName()) {
         case ATTR_XMLNS:
           this.xmlns = getStringAttribute(item);
+          break;
+
+        case ATTR_BETA:
+          String betaValue = getStringAttribute(item);
+          if (!"true".equals(betaValue) && !"false".equals(betaValue)) {
+            throw new InvalidInputException(
+                "Attribute \"beta\" of element \"messageML\" can only be one of the following values: [true, false].");
+          }
+          this.beta = Boolean.parseBoolean(betaValue);
           break;
 
         default:

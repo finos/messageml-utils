@@ -378,8 +378,14 @@ public class MessageMLParser {
     }
 
     MessageML result = new MessageML(messageFormat, version);
-    result.setBeta(beta);
     result.buildAll(this, docElement);
+
+    // Validate that beta attribute on messageML is only allowed when context permits it
+    if (result.isBeta() && !beta) {
+      throw new InvalidInputException(
+          "Attribute \"beta\" on element \"messageML\" is only allowed when MessageMLContext is initialized with beta=true");
+    }
+
     result.enhanceFinancialTags(result, dataProvider);
     result.validate();
     return result;
