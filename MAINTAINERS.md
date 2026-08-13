@@ -4,21 +4,21 @@ This file lists the maintainers of this repository.
 
 ## Current maintainers
 
-| GitHub Username | Name | Organization | Email |
-|----------------|------|--------------|-------|
-| @Camille-Sym | Camille Vésiez - Symphony | *please add organization* | *please add email* |
-| @FabienVSymphony | Fabien Vicente | Symphony | *please add email* |
-| @Yannick-Malins | Yannick | @SymphonyOSF | *please add email* |
+| GitHub Username | Name | Organization | Email (optional) |
+|----------------|------|--------------|------------------|
+| @Camille-Sym | Camille Vésiez - Symphony | *please add organization* |  |
+| @FabienVSymphony | Fabien Vicente | Symphony |  |
+| @Yannick-Malins | Yannick | @SymphonyOSF |  |
 | @jspasquali | jpasquali | *please add organization* | jean.pasquali@gmail.com |
-| @justinesymphony | *please add name* | Symphony | *please add email* |
+| @justinesymphony | *please add name* | Symphony |  |
 | @ldrozdz | Łukasz Dróżdż | *please add organization* | drozdz.luk@gmail.com |
-| @sbenmoussati | Salah Benmoussati | *please add organization* | *please add email* |
-| @symphony-elias | Elias Croze | *please add organization* | *please add email* |
-| @symphony-enrico | Enrico Molino | Symphony | *please add email* |
-| @symphony-mariacristina | Mariacristina De Dominicis | Symphony | *please add email* |
-| @symphony-soufiane | Soufiane Aourinmouche | @SymphonyOSF | *please add email* |
-| @symphonydarlys | Darlys Maldonado | Symphony | *please add email* |
-| @thibauult | Thibault Pensec | @SymphonyOSF  | *please add email* |
+| @sbenmoussati | Salah Benmoussati | *please add organization* |  |
+| @symphony-elias | Elias Croze | *please add organization* |  |
+| @symphony-enrico | Enrico Molino | Symphony |  |
+| @symphony-mariacristina | Mariacristina De Dominicis | Symphony |  |
+| @symphony-soufiane | Soufiane Aourinmouche | @SymphonyOSF |  |
+| @symphonydarlys | Darlys Maldonado | Symphony |  |
+| @thibauult | Thibault Pensec | @SymphonyOSF  |  |
 
 For information about maintainer responsibilities and resources, see the [FINOS Maintainers Cheatsheet](https://community.finos.org/docs/finos-maintainers-cheatsheet).
 
