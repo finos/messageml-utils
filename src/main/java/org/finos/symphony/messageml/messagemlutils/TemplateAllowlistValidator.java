@@ -12,6 +12,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Validates FreeMarker templates before execution to prevent Server-Side Template Injection (SSTI).
+ * <p>
+ * This validator enforces a strict allowlist of FreeMarker directives, expressions, 
+ * and built-ins. It ensures that the template only performs safe formatting and conditional 
+ * rendering logic, preventing users from executing arbitrary code, reading arbitrary files, 
+ * or accessing unauthorized environment variables on the Agent.
+ * <p>
+ * Key security mechanisms include:
+ * <ul>
+ * <li>Disallowing special variables and method calls.</li>
+ * <li>Blocking numerical interpolation which can be leveraged for SSTI.</li>
+ * <li>Enforcing that all variables reference allowed models (e.g., "data" or "entity").</li>
+ * <li>Restricting loop and assignment scopes to valid models.</li>
+ * </ul>
+ */
 public class TemplateAllowlistValidator {
 
     private static final Set ALLOWED_ELEMENT_CLASSES = new HashSet();

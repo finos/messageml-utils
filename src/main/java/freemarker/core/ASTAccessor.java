@@ -1,5 +1,12 @@
 package freemarker.core;
 
+/**
+ * Utility class placed in the {@code freemarker.core} package to bypass package-private 
+ * access restrictions in FreeMarker's Abstract Syntax Tree (AST) classes.
+ * <p>
+ * This is necessary for the {@link org.finos.symphony.messageml.messagemlutils.TemplateAllowlistValidator} 
+ * to introspect the parsed template and enforce security policies (preventing SSTI) before execution.
+ */
 public class ASTAccessor {
     public static String getNodeTypeSymbol(TemplateObject obj) {
         return obj.getNodeTypeSymbol();
