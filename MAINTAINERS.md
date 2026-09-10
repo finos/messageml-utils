@@ -6,19 +6,16 @@ This file lists the maintainers of this repository.
 
 | GitHub Username | Name | Organization | Email (optional) |
 |----------------|------|--------------|------------------|
-| @Camille-Sym | Camille Vésiez - Symphony | *please add organization* |  |
-| @FabienVSymphony | Fabien Vicente | Symphony |  |
+| @Camille-Sym | Camille Vésiez | @SymphonyOSF |  |
+| @FabienVSymphony | Fabien Vicente | @Symphony |  |
 | @Yannick-Malins | Yannick | @SymphonyOSF |  |
-| @jspasquali | jpasquali | *please add organization* | jean.pasquali@gmail.com |
-| @justinesymphony | *please add name* | Symphony |  |
-| @ldrozdz | Łukasz Dróżdż | *please add organization* | drozdz.luk@gmail.com |
-| @sbenmoussati | Salah Benmoussati | *please add organization* |  |
-| @symphony-elias | Elias Croze | *please add organization* |  |
+| @jspasquali | jpasquali | @SymphonyOSF |  |
+| @justinesymphony | *please add name* | @SymphonyOSF |  |
+| @sbenmoussati | Salah Benmoussati | @SymphonyOSF |  |
 | @symphony-enrico | Enrico Molino | Symphony |  |
-| @symphony-mariacristina | Mariacristina De Dominicis | Symphony |  |
-| @symphony-soufiane | Soufiane Aourinmouche | @SymphonyOSF |  |
-| @symphonydarlys | Darlys Maldonado | Symphony |  |
 | @thibauult | Thibault Pensec | @SymphonyOSF  |  |
+| @iaShatalov | Iaroslav Shatalov | @SymphonyOSF |  |
+
 
 For information about maintainer responsibilities and resources, see the [FINOS Maintainers Cheatsheet](https://community.finos.org/docs/finos-maintainers-cheatsheet).
 
