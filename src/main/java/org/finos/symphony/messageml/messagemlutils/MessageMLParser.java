@@ -167,6 +167,8 @@ public class MessageMLParser {
     FREEMARKER.setLogTemplateExceptions(false);
     FREEMARKER.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
     FREEMARKER.setObjectWrapper(new SimpleObjectWrapper(Configuration.VERSION_2_3_30));
+    FREEMARKER.setOutputFormat(freemarker.core.XMLOutputFormat.INSTANCE);
+    FREEMARKER.setAutoEscapingPolicy(Configuration.ENABLE_IF_SUPPORTED_AUTO_ESCAPING_POLICY);
   }
 
   MessageMLParser(IDataProvider dataProvider) {
@@ -322,7 +324,7 @@ public class MessageMLParser {
   /**
    * Expand Freemarker templates.
    */
-  private String expandTemplates(String message, JsonNode entityJson) throws IOException, TemplateException {
+  private String expandTemplates(String message, JsonNode entityJson) throws IOException, TemplateException, InvalidInputException {
     // quick bypass to avoid creating the templating engine if possible
     if (!containsFreemarkerTags(message)) {
       return message;
@@ -336,6 +338,12 @@ public class MessageMLParser {
     // Read MessageMLV2 template
     StringWriter sw = new StringWriter();
     Template template = new Template("messageML", message, FREEMARKER);
+    try {
+      TemplateAllowlistValidator.validate(template);
+    } catch (InvalidInputException e) {
+      this.biContext.updateItemCount(BiFields.FREEMARKER_REJECTED.getValue());
+      throw e;
+    }
 
     // Expand the template
     template.process(data, sw);

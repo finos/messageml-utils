@@ -77,6 +77,7 @@ public enum BiFields {
   MESSAGE_LENGTH("message_length", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   ENTITY_JSON_SIZE("entities_json_size", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   FREEMARKER("use_freemarker", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
+  FREEMARKER_REJECTED("freemarker_rejected", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   POPUPS("popups", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   OPENIM("uiactions_openim", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
   OPENDIALOG("uiactions_opendialog", BiEventType.MESSAGEML_MESSAGE_SENT, "0"),
