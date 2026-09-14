@@ -105,12 +105,6 @@ public class TemplateSecurityTest {
         // Method call getClass() on model
         assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML>${data.getClass()}</messageML>", "{}", MessageML.MESSAGEML_VERSION));
 
-        // <#macro>
-        assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><#macro test>ok</#macro></messageML>", "", MessageML.MESSAGEML_VERSION));
-
-        // <#function>
-        assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><#function test>ok</#function></messageML>", "", MessageML.MESSAGEML_VERSION));
-
         // <#include>
         assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><#include \"test.ftl\"></messageML>", "", MessageML.MESSAGEML_VERSION));
 
@@ -120,8 +114,11 @@ public class TemplateSecurityTest {
         // <#setting>
         assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><#setting locale=\"en_US\"></messageML>", "", MessageML.MESSAGEML_VERSION));
 
-        // <@x/>
+        // <@x/> referring to an undefined macro
         assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><@x/></messageML>", "", MessageML.MESSAGEML_VERSION));
+
+        // <#function> (macros are allowed, user-defined functions are not)
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><#function test>ok</#function></messageML>", "", MessageML.MESSAGEML_VERSION));
 
         // #{data.amount}
         assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML>#{data.amount}</messageML>", "{\"amount\": 10}", MessageML.MESSAGEML_VERSION));
@@ -178,6 +175,149 @@ public class TemplateSecurityTest {
         String builtInData = "{\"text\":\"  hello  \"}";
         context.parseMessageML(builtInMessage, builtInData, MessageML.MESSAGEML_VERSION);
         assertTrue(context.getPresentationML().contains("HELLO"));
+    }
+
+    @Test
+    public void testMacroSuccess() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String message = "<messageML>"
+            + "<#macro renderItem val label=\"Item:\">"
+            + "<span>\n"
+            + "  ${label} ${val}\n"
+            + "</span>"
+            + "</#macro>"
+            + "<@renderItem val=data.item />"
+            + "<@renderItem val=\"Custom\" label=\"Prefix:\" />"
+            + "</messageML>";
+        String data = "{\"item\":\"Apple\"}";
+        context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+        String presentationML = context.getPresentationML();
+        assertTrue(presentationML.contains("Item: Apple"));
+        assertTrue(presentationML.contains("Prefix: Custom"));
+    }
+
+    @Test
+    public void testClassicLoopVariables() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String message = "<messageML>"
+            + "<#list data.items as item>"
+            + "${item_index}: ${item}<#if item_has_next>, </#if>"
+            + "</#list>"
+            + "</messageML>";
+        String data = "{\"items\":[\"A\",\"B\"]}";
+        context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+        String presentationML = context.getPresentationML();
+        assertTrue(presentationML.contains("0: A, 1: B"));
+    }
+
+    @Test
+    public void testModernLoopBuiltins() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String message = "<messageML>"
+            + "<#list data.items as item>"
+            + "Idx: ${item?index}; "
+            + "Cnt: ${item?counter}; "
+            + "Next: ${item?has_next?string}; "
+            + "First: ${item?is_first?string}; "
+            + "Last: ${item?is_last?string}; "
+            + "Even: ${item?is_even_item?string}; "
+            + "Odd: ${item?is_odd_item?string}; "
+            + "Parity: ${item?item_parity}; "
+            + "Cycle: ${item?item_cycle('odd', 'even')}; "
+            + "</#list>"
+            + "</messageML>";
+        String data = "{\"items\":[\"A\",\"B\"]}";
+        context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+        String presentationML = context.getPresentationML();
+        assertTrue(presentationML.contains("Idx: 0; Cnt: 1; Next: true; First: true; Last: false; Even: false; Odd: true; Parity: odd; Cycle: odd;"));
+        assertTrue(presentationML.contains("Idx: 1; Cnt: 2; Next: false; First: false; Last: true; Even: true; Odd: false; Parity: even; Cycle: even;"));
+    }
+
+    @Test
+    public void testItemsSuccess() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String message = "<messageML>"
+            + "<table>"
+            + "<#list data.items>"
+            + "<tbody>"
+            + "<#items as item>"
+            + "<tr><td>${item?counter}: ${item}</td></tr>"
+            + "</#items>"
+            + "</tbody>"
+            + "</#list>"
+            + "</table>"
+            + "</messageML>";
+        String data = "{\"items\":[\"Apple\",\"Banana\"]}";
+        context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+        String presentationML = context.getPresentationML();
+        assertTrue(presentationML.contains("<tr><td>1: Apple</td></tr>"));
+        assertTrue(presentationML.contains("<tr><td>2: Banana</td></tr>"));
+    }
+
+    @Test
+    public void testMacroCalledBeforeItsDefinition() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String message = "<messageML>"
+            + "<@renderItem val=data.item />"
+            + "<#macro renderItem val>Item: ${val}</#macro>"
+            + "</messageML>";
+        context.parseMessageML(message, "{\"item\":\"Apple\"}", MessageML.MESSAGEML_VERSION);
+        assertTrue(context.getPresentationML().contains("Item: Apple"));
+    }
+
+    @Test
+    public void testDeclaredNamesDoNotEscapeTheirScope() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String data = "{\"items\":[\"A\"],\"item\":\"A\"}";
+
+        // A macro parameter is not visible outside the macro body.
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(
+            "<messageML><#macro m p>${p}</#macro>${p}</messageML>", data, MessageML.MESSAGEML_VERSION));
+
+        // Neither is a loop variable, nor its implicit helper variables.
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(
+            "<messageML><#list data.items as row>${row}</#list>${row}</messageML>", data, MessageML.MESSAGEML_VERSION));
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(
+            "<messageML><#list data.items as row>${row}</#list>${row_index}</messageML>", data, MessageML.MESSAGEML_VERSION));
+    }
+
+    @Test
+    public void testNamesBoundToLiteralsAreRefused() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+
+        // <#assign> from a literal never becomes a renderable variable.
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(
+            "<messageML><#assign x=\"literal\">${x}</messageML>", "", MessageML.MESSAGEML_VERSION));
+
+        // The same holds for loop variables, whether declared by <#list> or by a nested <#items>.
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(
+            "<messageML><#list [1, 2] as i>${i}</#list></messageML>", "", MessageML.MESSAGEML_VERSION));
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(
+            "<messageML><#list [1, 2]><#items as i>${i}</#items></#list></messageML>", "", MessageML.MESSAGEML_VERSION));
+    }
+
+    @Test
+    public void testMacroSstiBlock() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        
+        // Block method calls inside macro body
+        String badMacroMessage1 = "<messageML>"
+            + "<#macro badMacro param>"
+            + "${param.getClass()}"
+            + "</#macro>"
+            + "<@badMacro param=data.item />"
+            + "</messageML>";
+        String data = "{\"item\":\"Apple\"}";
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(badMacroMessage1, data, MessageML.MESSAGEML_VERSION));
+
+        // Block unsafe built-ins inside macro body
+        String badMacroMessage2 = "<messageML>"
+            + "<#macro badMacro param>"
+            + "${'param'?eval}"
+            + "</#macro>"
+            + "<@badMacro param=data.item />"
+            + "</messageML>";
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(badMacroMessage2, data, MessageML.MESSAGEML_VERSION));
     }
 
     private boolean containsFreemarkerTags(String message) {
