@@ -1,5 +1,7 @@
 package org.finos.symphony.messageml.messagemlutils;
 
+import org.finos.symphony.messageml.messagemlutils.util.BoundedWriter;
+
 import static org.finos.symphony.messageml.messagemlutils.elements.Element.CLASS_ATTR;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -126,6 +128,13 @@ import javax.xml.xpath.XPathFactory;
 public class MessageMLParser {
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final Configuration FREEMARKER = new Configuration(Configuration.VERSION_2_3_30);
+  
+  /**
+   * The default maximum character size limit allowed for FreeMarker template expansion (2 MB).
+   * Helps guard against out-of-memory or high CPU Denial of Service (DoS) conditions.
+   */
+  private static final int DEFAULT_MAX_TEMPLATE_SIZE = 2 * 1024 * 1024;
+  
 
   // Store XML factories as thread locals as they are costly to create.
   // Sonar warnings are ignored, we favor speed over memory usage, factories will stay in active threads
@@ -335,9 +344,11 @@ public class MessageMLParser {
     data.put("data", MAPPER.convertValue(entityJson, Map.class));
     data.put("entity", MAPPER.convertValue(entityJson, Map.class));
 
-    // Read MessageMLV2 template
+    // Read MessageMLV2 template and compile
     StringWriter sw = new StringWriter();
     Template template = new Template("messageML", message, FREEMARKER);
+    
+    // Validate AST (Abstract Syntax Tree) to ensure template is safe and does not execute arbitrary code (SSTI mitigation).
     try {
       TemplateAllowlistValidator.validate(template);
     } catch (InvalidInputException e) {
@@ -345,8 +356,29 @@ public class MessageMLParser {
       throw e;
     }
 
-    // Expand the template
-    template.process(data, sw);
+    // GATING THE <#ftl> HEADER ESCAPING BYPASS:
+    // Some FTL headers like <#ftl auto_esc=false> or <#ftl output_format="plainText"> are parsed at configuration time
+    // and do not produce AST nodes. As a result, the AST validator cannot inspect them.
+    // To prevent attackers from turning off escaping and introducing raw unescaped markup injection,
+    // we explicitly assert that the output format has not been changed from XML and that auto-escaping remains active.
+    if (template.getOutputFormat() != freemarker.core.XMLOutputFormat.INSTANCE || !template.getAutoEscaping()) {
+      this.biContext.updateItemCount(BiFields.FREEMARKER_REJECTED.getValue());
+      throw new InvalidInputException("Altering FreeMarker auto-escaping settings or output format via FTL header is not allowed.");
+    }
+
+    // EXPANSION WITH RESOURCE BOUNDS (Anti-DoS):
+    // FreeMarker does not natively cap loop counts or output sizes. A malicious loop like <#list 1..50000000>
+    // could generate enormous string payloads in memory, freezing or crashing the JVM.
+    // We process the template using BoundedWriter to enforce a configurable/safe size ceiling dynamically.
+    try {
+      BoundedWriter bw = new BoundedWriter(sw, getMaxTemplateSize());
+      template.process(data, bw);
+    } catch (TemplateException e) {
+      throw e;
+    } catch (java.io.IOException e) {
+      this.biContext.updateItemCount(BiFields.FREEMARKER_REJECTED.getValue());
+      throw new InvalidInputException("Error expanding template: " + e.getMessage(), e);
+    }
 
     if (sw.toString().length() != message.length()) {
       this.biContext.updateItemCount(BiFields.FREEMARKER.getValue());
@@ -358,6 +390,23 @@ public class MessageMLParser {
     // Based https://freemarker.apache.org/docs/dgui_template_directives.html
     // We consider that directives cannot be customized (to use [ or without #)
     return message.contains("<#") || message.contains("<@") || message.contains("${") || message.contains("#{");
+  }
+
+
+
+  private int getMaxTemplateSize() {
+    String val = System.getProperty("messageml.max.template.size");
+    if (val == null) {
+      val = System.getenv("MESSAGEML_MAX_TEMPLATE_SIZE");
+    }
+    if (val != null) {
+      try {
+        return Integer.parseInt(val.trim());
+      } catch (NumberFormatException e) {
+        // fallback to default
+      }
+    }
+    return DEFAULT_MAX_TEMPLATE_SIZE;
   }
 
   /**

@@ -320,6 +320,46 @@ public class TemplateSecurityTest {
         assertThrows(InvalidInputException.class, () -> context.parseMessageML(badMacroMessage2, data, MessageML.MESSAGEML_VERSION));
     }
 
+    @Test
+    public void testContinueSuccess() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String message = "<messageML>"
+            + "<#list data.items as item>"
+            + "<#if item == \"B\"><#continue></#if>"
+            + "${item}"
+            + "</#list>"
+            + "</messageML>";
+        String data = "{\"items\":[\"A\",\"B\",\"C\"]}";
+        context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+        String presentationML = context.getPresentationML();
+        assertTrue(presentationML.contains("A"));
+        assertFalse(presentationML.contains("B"));
+        assertTrue(presentationML.contains("C"));
+    }
+
+    @Test
+    public void testFtlHeaderAutoEscBanned() {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String message1 = "<#ftl auto_esc=false><messageML>${data.item}</messageML>";
+        String message2 = "<#ftl output_format=\"plainText\"><messageML>${data.item}</messageML>";
+        String data = "{\"item\":\"Apple\"}";
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(message1, data, MessageML.MESSAGEML_VERSION));
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(message2, data, MessageML.MESSAGEML_VERSION));
+    }
+
+    @Test
+    public void testLoopDosPrevented() {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        // Huge range loop designed to trigger infinite expansion and exceed 2 MB
+        String message = "<messageML>"
+            + "<#list 1..5000000 as i>"
+            + "some long text content "
+            + "</#list>"
+            + "</messageML>";
+        String data = "{}";
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION));
+    }
+
     private boolean containsFreemarkerTags(String message) {
         return message.contains("<#") || message.contains("<@") || message.contains("${") || message.contains("#{");
     }

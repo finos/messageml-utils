@@ -53,6 +53,7 @@ public final class TemplateAllowlistValidator {
         "Items",
         "Sep",
         "BreakInstruction",
+        "ContinueInstruction",
         "SwitchBlock",
         "Case",
         "Assignment",
