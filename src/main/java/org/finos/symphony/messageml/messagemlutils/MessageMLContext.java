@@ -62,8 +62,20 @@ public class MessageMLContext {
   }
 
   public MessageMLContext(IDataProvider dataProvider, boolean beta) {
+    this(dataProvider, beta, false);
+  }
+
+  /**
+   * @param dataProvider         resolves users, URIs and financial instruments referenced by the message
+   * @param beta                 whether beta MessageML elements are accepted
+   * @param templateAutoEscaping whether values interpolated by Freemarker templates are XML-escaped. When enabled,
+   *                             template expansion can only contribute character data and attribute values, never
+   *                             markup, and the legacy {@code ?html}/{@code ?xml} built-ins and {@code <#escape>}
+   *                             directive are refused. When disabled (the default), values are output as-is.
+   */
+  public MessageMLContext(IDataProvider dataProvider, boolean beta, boolean templateAutoEscaping) {
     this.markdownParser = new MarkdownParser(dataProvider);
-    this.messageMLParser = new MessageMLParser(dataProvider, beta);
+    this.messageMLParser = new MessageMLParser(dataProvider, beta, templateAutoEscaping);
     this.shortID = new ShortID();
     this.biContext = new BiContext();
     this.beta = beta;

@@ -44,6 +44,12 @@ public class ASTAccessor {
         SOURCE_EXPRESSION,
         /** The macro a {@code <@.../>} call invokes. */
         CALLEE,
+        /**
+         * An expression evaluated in the scope of the node's body rather than the enclosing one:
+         * the {@code x?html} of {@code <#escape x as x?html>}, which reads the placeholder variable
+         * the same directive declares.
+         */
+        BODY_EXPRESSION,
         /** Anything else: a sub-expression to validate, or inert compile-time metadata. */
         EXPRESSION
     }
@@ -85,8 +91,12 @@ public class ASTAccessor {
             // rather than by an iterated sequence, so it gets no _index/_has_next helpers.
             return obj instanceof UnifiedCall ? ParamKind.LOCAL_NAME : ParamKind.LOOP_VARIABLE;
         }
-        if (role == ParameterRole.PARAMETER_NAME || role == ParameterRole.CATCH_ALL_PARAMETER_NAME) {
+        if (role == ParameterRole.PARAMETER_NAME || role == ParameterRole.CATCH_ALL_PARAMETER_NAME
+            || role == ParameterRole.PLACEHOLDER_VARIABLE) {
             return ParamKind.LOCAL_NAME;
+        }
+        if (role == ParameterRole.EXPRESSION_TEMPLATE) {
+            return ParamKind.BODY_EXPRESSION;
         }
         if (role == ParameterRole.ASSIGNMENT_TARGET) {
             return ParamKind.NAMESPACE_NAME;
@@ -137,12 +147,19 @@ public class ASTAccessor {
         return obj instanceof NumericalOutput;
     }
 
-    /**
-     * True for a {@code <#function>} definition, which FreeMarker parses into the same AST class as
-     * a {@code <#macro>} but which this validator does not allow.
-     */
-    public static boolean isFunctionDefinition(TemplateObject obj) {
-        return obj instanceof Macro && ((Macro) obj).isFunction();
+    /** The name of a special variable, without its leading dot (e.g. {@code now} for {@code .now}). */
+    public static String getSpecialVariableName(TemplateObject obj) {
+        String symbol = obj.getNodeTypeSymbol();
+        return symbol.startsWith(".") ? symbol.substring(1) : symbol;
+    }
+
+    /** The setting a {@code <#setting name=value>} directive changes, or null for any other node. */
+    public static String getSettingName(TemplateObject obj) {
+        if (obj instanceof PropertySetting) {
+            Object key = obj.getParameterValue(0);
+            return key instanceof String ? (String) key : null;
+        }
+        return null;
     }
 
     /** True for an {@code <#assign>}, {@code <#global>} or {@code <#local>} directive. */
