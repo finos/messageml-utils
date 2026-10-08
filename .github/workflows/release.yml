@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
         with:
           # 11 runtime needed for Sonar, we still build with 8 as a target
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: 11
           server-id: ossrh
           server-username: MAVEN_USERNAME
