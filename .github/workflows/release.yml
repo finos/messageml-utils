@@ -34,5 +34,11 @@ jobs:
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.GPG_KEY }}
           gpg-passphrase: GPG_KEY_PASSPHRASE
+      - name: Set version from release tag
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION="${TAG_NAME#v}"
+          ./mvnw -B versions:set -DnewVersion="$VERSION" -DgenerateBackupPoms=false
       - name: Deploy on Maven Central
         run: ./mvnw -B deploy -Prelease -DskipTests
