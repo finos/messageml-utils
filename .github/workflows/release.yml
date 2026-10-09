@@ -38,7 +38,8 @@ jobs:
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
-          VERSION="${TAG_NAME#v}"
+          VERSION="${TAG_NAME#messageml-}"
+          VERSION="${VERSION#v}"
           ./mvnw -B versions:set -DnewVersion="$VERSION" -DgenerateBackupPoms=false
       - name: Deploy on Maven Central
         run: ./mvnw -B deploy -Prelease -DskipTests
