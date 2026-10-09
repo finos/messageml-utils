@@ -806,6 +806,7 @@ public class MessageMLContextTest {
               + "    \"true\"\n"
               + "    <INTEGER>\n"
               + "    <DECIMAL>\n"
+              + "    <HEX_INTEGER>\n"
               + "    \".\"\n"
               + "    \"+\"\n"
               + "    \"-\"\n"
@@ -1107,7 +1108,7 @@ public class MessageMLContextTest {
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Error parsing EntityJSON: Unrecognized token 'hello': "
         + "was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n"
-        + " at [Source: (String)\"hello\"; line: 1, column: 6]");
+        + " at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 6]");
     context.parseMessageML(message, json, MessageML.MESSAGEML_VERSION);
   }
 

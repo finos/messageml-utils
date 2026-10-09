@@ -244,8 +244,7 @@ public class DatePickerTest extends ElementTest {
     expectedException.expect(InvalidInputException .class);
     expectedException.expectMessage("Error parsing json in attribute \"highlighted-date\": "
         + "Unexpected end-of-input: expected close marker for Object (start marker at [Source: "
-        + "(String)\"[{\"day\": \"2020-09-24\"}, {\"from\": \"2020-09-26\", \"to\": \"2020-09-28\"}, {\"day\": "
-        + "\"2020-09-03\"}, {\"daysOfWeek\": [4,6]\"; line: 1, column: 92])");
+        + "REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 92])");
     context.parseMessageML(input,null, MessageML.MESSAGEML_VERSION);
   }
 
