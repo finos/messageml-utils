@@ -147,6 +147,14 @@ public class TemplateSecurityTest {
 
         // Unknown top-level identifier
         assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML>${unknown_id}</messageML>", "", MessageML.MESSAGEML_VERSION));
+
+        // Multiple assignments in one directive are still validated
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><#assign a='x' b=data.item?eval>${b}</messageML>", "{\"item\":\"1\"}", MessageML.MESSAGEML_VERSION));
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><#assign a='x' b=data.item()>${b}</messageML>", "{\"item\":\"1\"}", MessageML.MESSAGEML_VERSION));
+
+        // Predefined transforms other than the allowlisted ones, and a transform name rebound as a variable
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><@capture_output>x</@capture_output></messageML>", "", MessageML.MESSAGEML_VERSION));
+        assertThrows(InvalidInputException.class, () -> context.parseMessageML("<messageML><#assign compress=data.item><@compress>x</@compress></messageML>", "{\"item\":\"1\"}", MessageML.MESSAGEML_VERSION));
     }
 
     @Test
@@ -372,6 +380,12 @@ public class TemplateSecurityTest {
         "<#setting number_format='0.00'>${data.n}               | 5.00",
         "<#setting locale='en_US'>${data.n}                     | 5",
         "<#compress>  ${data.n}  </#compress>                   | 5",
+        "<@compress single_line=true>  ${data.n}  </@compress>  | 5",
+        "<@normalize_newlines>${data.n}</@normalize_newlines>   | 5",
+        "<#assign a='x' b='y'>${a}${b}                          | xy",
+        "<#global a='x' b='y'>${a}${b}                          | xy",
+        "<#assign a=data.n b=a + 1>${b}                         | 6",
+        "<#assign m='x' n=data.n>${m}${n}                       | x5",
         "<#function twice x><#return x * 2></#function>${twice(data.n)} | 10",
         "<#escape x as x?html>${data.amp}<#noescape>-${data.s}</#noescape></#escape> | a &amp; b-a b",
         "<#list data.items as i>${i}<#continue></#list>         | x",
@@ -385,6 +399,53 @@ public class TemplateSecurityTest {
 
         assertTrue(context.getPresentationML().contains(expected),
             () -> "Expected '" + expected + "' in " + context.getPresentationML());
+    }
+
+    @Test
+    public void testCompressTransformCollapsesWhitespace() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        context.parseMessageML("<messageML><@compress single_line=true>\n\t<p>a</p>\n\t<p>${data.n}</p>\n</@compress></messageML>",
+            "{\"n\":5}", MessageML.MESSAGEML_VERSION);
+        assertTrue(context.getPresentationML().contains("<p>a</p> <p>5</p>"), context.getPresentationML());
+    }
+
+    /** The case-summary template Invesco reported: compress transform, setting, function and legacy escaping. */
+    @Test
+    public void testCaseSummaryTemplateWithCompressTransform() throws Exception {
+        MessageMLContext context = new MessageMLContext(new TestDataProvider());
+        String message = "<messageML>\n"
+            + "\t<@compress single_line=true>\n"
+            + "<#assign status = (data.status!'')?upper_case>\n"
+            + "<#assign owner = (data.owner!'')?capitalize>\n"
+            + "<#assign notes = data.notes![]>\n"
+            + "<#setting time_zone=\"GMT\">\n"
+            + "<#function fmt ts>\n"
+            + "<#if !ts?has_content><#return ''></#if>\n"
+            + "<#return ts?datetime.iso?string[\"dd MMM yyyy HH:mm\"] + ' GMT'>\n"
+            + "</#function>\n"
+            + "<p><b>${data.caseId!} : <#escape x as x?html>${data.title!}</#escape></b></p>\n"
+            + "<p>Status: ${status} | Owner: ${owner} | Opened: ${fmt(data.openedAt!'')}"
+            + " | Due: ${(data.dueDate!'')?date.iso?string[\"dd/MM/yyyy\"]}</p>\n"
+            + "<p>Desk: ${(data.desk!'')?replace('_', ' ')}</p>\n"
+            + "<#if status == 'OPEN'><p>Action required</p><#elseif status == 'CLOSED'><p>Closed</p>"
+            + "<#else><p>Unknown</p></#if>\n"
+            + "<#list notes>\n<ul>\n"
+            + "<#items as n><li>${n?index + 1}. <#escape x as x?html>${n.text!}</#escape> (${fmt(n.at!'')})</li></#items>\n"
+            + "</ul>\n<#else>\n<p>No notes</p>\n</#list>\n"
+            + "</@compress>\n</messageML>";
+        String data = "{\"caseId\":\"CS-1024\",\"title\":\"Margin call <EUR> & USD\",\"status\":\"open\","
+            + "\"owner\":\"john smith\",\"desk\":\"FX_SPOT_LDN\",\"openedAt\":\"2026-10-08T04:29:00Z\","
+            + "\"dueDate\":\"2026-10-15\",\"notes\":[{\"text\":\"Client notified & ack\","
+            + "\"at\":\"2026-10-08T05:00:00Z\"}]}";
+
+        context.parseMessageML(message, data, MessageML.MESSAGEML_VERSION);
+
+        String presentationML = context.getPresentationML();
+        assertTrue(presentationML.contains("Margin call &lt;EUR&gt; &amp; USD"), presentationML);
+        assertTrue(presentationML.contains("Status: OPEN | Owner: John Smith | Opened: 08 Oct 2026 04:29 GMT"), presentationML);
+        assertTrue(presentationML.contains("Due: 15/10/2026"), presentationML);
+        assertTrue(presentationML.contains("Desk: FX SPOT LDN"), presentationML);
+        assertTrue(presentationML.contains("1. Client notified &amp; ack (08 Oct 2026 05:00 GMT)"), presentationML);
     }
 
     @Test
