@@ -65,6 +65,8 @@ public final class TemplateAllowlistValidator {
         "SwitchBlock",
         "Case",
         "Assignment",
+        // <#assign a=1 b=2> with several assignments; its children are the individual Assignment nodes.
+        "AssignmentInstruction",
         "BlockAssignment",
         "Comment",
         "Macro",
@@ -144,6 +146,15 @@ public final class TemplateAllowlistValidator {
         "is_transform", "is_unknown_date_like",
         // missing-value handling
         "default", "exists", "has_content", "if_exists"
+    );
+
+    /**
+     * Transforms FreeMarker predefines as shared variables, callable as {@code <@compress>}. They only
+     * reshape or escape the text of their body. Deliberately absent: {@code capture_output}, which
+     * assigns variables whose names the validator could not track.
+     */
+    private static final Set<String> ALLOWED_PREDEFINED_TRANSFORMS = allowlistOf(
+        "compress", "normalize_newlines", "html_escape", "xml_escape"
     );
 
     /** Special variables that expose no configuration, data model or template internals. */
@@ -336,7 +347,8 @@ public final class TemplateAllowlistValidator {
     }
 
     /**
-     * Requires that a {@code <@name/>} call resolves to a macro defined in the same template.
+     * Requires that a {@code <@name/>} call resolves to a macro defined in the same template or to one of
+     * {@link #ALLOWED_PREDEFINED_TRANSFORMS}.
      * Macro names live in FreeMarker's macro namespace rather than the variable scope, so they are
      * collected up-front instead of being checked as identifiers.
      */
@@ -345,9 +357,17 @@ public final class TemplateAllowlistValidator {
         String name = callee instanceof TemplateObject
             ? ASTAccessor.getNodeTypeSymbol((TemplateObject) callee)
             : null;
-        if (name == null || !scope.declaresMacro(name)) {
+        if (name == null || !(scope.declaresMacro(name) || isPredefinedTransform((TemplateObject) callee, name, scope))) {
             throwException(node, parent, "Custom directive <@" + name + "/> is not defined in this template");
         }
+    }
+
+    /**
+     * True if {@code callee} names one of FreeMarker's predefined transforms. A name the template also
+     * binds as a variable is refused, since at run time the variable could shadow the transform.
+     */
+    private static boolean isPredefinedTransform(TemplateObject callee, String name, Scope scope) {
+        return ASTAccessor.isIdentifier(callee) && ALLOWED_PREDEFINED_TRANSFORMS.contains(name) && !scope.declares(name);
     }
 
     /**
