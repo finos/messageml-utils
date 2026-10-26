@@ -125,10 +125,7 @@ import javax.xml.xpath.XPathFactory;
  */
 public class MessageMLParser {
   private static final ObjectMapper MAPPER = new ObjectMapper();
-  // Interpolated values are output as-is, so templates may build markup from data (pre-1.6.0 behavior)
-  private static final Configuration FREEMARKER = newFreemarkerConfiguration();
-  // Interpolated values are XML-escaped, so expansion contributes character data only
-  private static final Configuration FREEMARKER_AUTO_ESCAPING = newFreemarkerConfiguration();
+  private static final Configuration FREEMARKER = new Configuration(Configuration.VERSION_2_3_30);
 
   // Store XML factories as thread locals as they are costly to create.
   // Sonar warnings are ignored, we favor speed over memory usage, factories will stay in active threads
@@ -153,7 +150,6 @@ public class MessageMLParser {
 
   private final IDataProvider dataProvider;
   private final boolean beta;
-  private final boolean templateAutoEscaping;
 
   private BiContext biContext;
   private FormatEnum messageFormat;
@@ -166,18 +162,13 @@ public class MessageMLParser {
   private Map<String, SplittableData> splittableComponents;
 
   static {
-    FREEMARKER_AUTO_ESCAPING.setOutputFormat(freemarker.core.XMLOutputFormat.INSTANCE);
-    FREEMARKER_AUTO_ESCAPING.setAutoEscapingPolicy(Configuration.ENABLE_IF_SUPPORTED_AUTO_ESCAPING_POLICY);
-  }
-
-  private static Configuration newFreemarkerConfiguration() {
-    Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
-    configuration.setDefaultEncoding("UTF-8");
-    configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-    configuration.setLogTemplateExceptions(false);
-    configuration.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
-    configuration.setObjectWrapper(new SimpleObjectWrapper(Configuration.VERSION_2_3_30));
-    return configuration;
+    FREEMARKER.setDefaultEncoding("UTF-8");
+    FREEMARKER.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    FREEMARKER.setLogTemplateExceptions(false);
+    FREEMARKER.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
+    FREEMARKER.setObjectWrapper(new SimpleObjectWrapper(Configuration.VERSION_2_3_30));
+    FREEMARKER.setOutputFormat(freemarker.core.XMLOutputFormat.INSTANCE);
+    FREEMARKER.setAutoEscapingPolicy(Configuration.ENABLE_IF_SUPPORTED_AUTO_ESCAPING_POLICY);
   }
 
   MessageMLParser(IDataProvider dataProvider) {
@@ -185,13 +176,8 @@ public class MessageMLParser {
   }
 
   MessageMLParser(IDataProvider dataProvider, boolean beta) {
-    this(dataProvider, beta, false);
-  }
-
-  MessageMLParser(IDataProvider dataProvider, boolean beta, boolean templateAutoEscaping) {
     this.dataProvider = dataProvider;
     this.beta = beta;
-    this.templateAutoEscaping = templateAutoEscaping;
   }
 
   /**
@@ -351,8 +337,7 @@ public class MessageMLParser {
 
     // Read MessageMLV2 template
     StringWriter sw = new StringWriter();
-    Template template = new Template("messageML", message,
-        templateAutoEscaping ? FREEMARKER_AUTO_ESCAPING : FREEMARKER);
+    Template template = new Template("messageML", message, FREEMARKER);
     try {
       TemplateAllowlistValidator.validate(template);
     } catch (InvalidInputException e) {
