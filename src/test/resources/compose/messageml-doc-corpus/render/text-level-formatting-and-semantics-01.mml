@@ -1,0 +1,7 @@
+    <h1>Formatting and semantics</h1>
+    <p>This is a <a href="https://docs.developers.symphony.com/">Link</a> to our developer documentation.</p>
+    <p>Part 1 of the paragraph separated from part 2 with a line break.<br/>Part 2 of the paragraph.</p>
+    <p>This text can be either <b>bold</b> or <i>italic</i> or <span style="color:red;">red</span>, or even combine <b><i style="color:red;">several</i></b> formatting tags.</p>
+    <pre>This is a preformatted text.</pre>
+    <code language="html">&lt;h1&gt;Code sample&lt;/h1&gt;
+&lt;p&gt;This is some html&lt;/p&gt;</code>

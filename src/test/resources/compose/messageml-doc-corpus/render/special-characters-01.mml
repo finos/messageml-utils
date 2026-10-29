@@ -1,0 +1,12 @@
+    These are special characters:
+    <ul>
+        <li>&lt;;</li>
+        <li>&#38;;</li>
+        <li>$ or &#36;;</li>
+        <li># or &#35;;</li>
+        <li>> or &gt;;</li>
+        <li>" or &quot;;</li>
+        <li>' or &#39;;</li>
+        <li>* or &#42;;</li>
+        <li>% or &#37;.</li>
+    </ul>

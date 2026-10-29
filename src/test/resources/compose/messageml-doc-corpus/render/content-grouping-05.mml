@@ -1,0 +1,1 @@
+<expandable-card state="expanded"><header>Header</header><body variant="error">Error variant body</body></expandable-card>

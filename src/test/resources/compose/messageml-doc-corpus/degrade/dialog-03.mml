@@ -1,0 +1,22 @@
+    <form id="formId">
+        <text-field name="input" />
+        <ui-action trigger="click" action="open-dialog" target-id="dialogId">
+            <button>Open the Dialog</button>
+        </ui-action>
+        <dialog id="dialogId" width="small">
+            <title>A Dialog</title>
+            <body>
+                <expandable-card state="expanded">
+                    <header>Dialog can include any other messageML component except Interactive Elements Forms</header>
+                    <body>This does not contain any interactive element</body>
+                </expandable-card>
+            </body>
+            <footer>
+                Some text in the footer
+                <button type="cancel" name="cancel-form">Close</button>
+            </footer>
+        </dialog>
+        <h3>Actions</h3>
+        <button name="send-answers" type="action">Submit</button>
+        <button type="reset">Reset Data</button>
+    </form>

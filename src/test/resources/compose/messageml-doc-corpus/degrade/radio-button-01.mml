@@ -1,0 +1,8 @@
+  <form id="form_id">
+    <h2>radio buttons</h2>
+      <radio name="groupId" value="value01" checked="true">red</radio>
+      <radio name="groupId" value="value02">green</radio>
+      <radio name="groupId" value="value03">blue</radio>
+      <button type="reset">Reset</button>
+      <button name="radio" type="action">Submit</button>
+  </form>

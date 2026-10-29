@@ -489,6 +489,19 @@ public class MarkdownRenderer extends AbstractVisitor {
       return (length != 0) ? out.charAt(length - 1) : 0;
     }
 
+    /**
+     * Start a new line unless the output is empty or already ends with one. This keeps the
+     * behavior {@link TextContentWriter#line()} had in commonmark 0.15; newer versions always
+     * append a newline.
+     */
+    @Override
+    public void line() {
+      char lastChar = getLastChar();
+      if (lastChar != 0 && lastChar != '\n') {
+        write('\n');
+      }
+    }
+
     void doubleLine() {
       char lastChar = getLastChar();
       if (lastChar != 0 && lastChar != '\n') {

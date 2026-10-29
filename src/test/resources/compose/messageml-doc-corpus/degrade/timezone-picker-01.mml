@@ -1,0 +1,13 @@
+  <form id="form_id">
+    <h2>timezone-pickers</h2>
+      <timezone-picker name="init" value="" label="With empty default value" />
+      <timezone-picker name="specific_value" value="America/Fortaleza" label="With specific default value" />
+      <timezone-picker name="default_value" label="With default value from the user browser"/>
+      <timezone-picker name="placeholder" placeholder="Only Placeholder..." value="" />
+      <timezone-picker name="label" label="My Label" />
+      <timezone-picker name="tooltip" label="With Tooltip" title="My Tooltip\n With a second line" />
+      <timezone-picker name="noreq" placeholder="Not required" value="" />
+      <timezone-picker name="req" required="true" placeholder="Required" value="" />
+      <timezone-picker name="disabled" label="With Disabled values" value="America/Indiana/Vincennes" disabled-timezone='["America/Detroit", "America/Indiana/Marengo", "America/Indiana/Petersburg"]' />
+      <button name="timezone-picker">Submit</button>
+  </form>
