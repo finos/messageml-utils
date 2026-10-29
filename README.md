@@ -33,6 +33,9 @@ Support of Symphony structured objects comprises the ability to parse and render
   to expand message templates into MessageML messages. Freemarker support is experimental.
 * [Markdown](http://daringfireball.net/projects/markdown/syntax), the legacy text format used by Symphony. Markdown
   parsing and rendering capabilities are provided for compatibility with older versions of Symphony.
+* Extended Markdown, a CommonMark dialect with Symphony entities (mentions, hashtags, cashtags), `:::card` / `:::expand`
+  directives and native `<messageML>` blocks, rendered to MessageML by the `compose` package
+  (see [Composing MessageML from extended Markdown](#composing-messageml-from-extended-markdown)).
 
 More specifically, the MessageML parser can be used to:
 
@@ -46,6 +49,7 @@ More specifically, the MessageML parser can be used to:
   MessageML tags
 * serialize the MessageML tree as Markdown
 * parse Markdown input into a MessageML document tree
+* render extended Markdown to MessageML, and validate and repair MessageML fragments, with the `compose` package
 
 # Usage
 
@@ -84,6 +88,27 @@ The library requires Java 17 or newer (since version 2.0.0). Projects still on J
 The `org.finos.symphony.messageml.messagemlutils.compose` package turns authored input into MessageML that the
 library accepts, and makes MessageML fragments safe to send. It is independent of `MessageMLContext` and of the
 legacy Markdown support above.
+
+> [!TIP]
+> The `compose` package is especially useful to render the output of an LLM in a Symphony chat.
+
+## Why this package exists
+
+LLMs are strong, and close to native, at answering in Markdown, but not in MessageML. At Symphony we believe it is
+important to keep the power of MessageML (mentions, cashtags, cards, expandable sections...) without forcing the LLM to
+write it. The LLM keeps answering in Markdown, extended with a few Symphony-specific forms, and this package turns that
+into MessageML.
+
+Markdown also streams well: any prefix of a Markdown answer is still a readable document. Accepting Markdown from the
+LLM means a message can be streamed to the Symphony chat as it is generated, which is what
+`MessageMLRenderOptions.asIntermediate()` is for.
+
+LLMs make mistakes and are not fully deterministic, so the output cannot be trusted to be valid MessageML. This matters
+most when the LLM writes MessageML directly (native `<messageML>` blocks): MessageML is XML, and a streamed document
+is regularly cut short with tags still open. [`MessageMLValidator`](src/main/java/org/finos/symphony/messageml/messagemlutils/compose/MessageMLValidator.java) first checks the document with the library's own
+parser. When it is invalid, it repairs the faults the parser reports, such as closing unterminated tags, removing
+unknown attributes or elements and escaping stray ampersands, until the document is valid. If no repair applies, it
+falls back to the answer as escaped plain text, so what you send is always valid MessageML.
 
 ## Rendering extended Markdown
 
@@ -130,7 +155,7 @@ PresentationML message is extracted. `SymphonyLinks` builds and normalizes Symph
 
 ## Validating and repairing MessageML
 
-`MessageMLValidator` checks a document with the library's own parser and offers deterministic, error-directed repair
+[`MessageMLValidator`](src/main/java/org/finos/symphony/messageml/messagemlutils/compose/MessageMLValidator.java) checks a document with the library's own parser and offers deterministic, error-directed repair
 and an escaped plain-text fallback:
 
 ```java
@@ -161,7 +186,7 @@ right and wrong examples, suitable for embedding in documentation or in instruct
 `SymphonyContentFormatGuide.text()` returns the longer authoring guide for native `<messageML>` blocks. Every
 `<messageML>` example in the guide is rendered by the test suite, so the guide only teaches what the renderer accepts.
 
-## Contributing
+# Contributing
 
 1. Fork it (<https://github.com/finos/messageml-utils/fork>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
@@ -179,9 +204,9 @@ to be explicitly named on the CCLA.
 
 *Need an ICLA? Unsure if you are covered under an existing CCLA? Email [help@finos.org](mailto:help@finos.org)*
 
-## License
+# License
 
 The code in this repository is distributed under
 the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
-Copyright 2016-2021 Symphony LLC
+Copyright 2016-2026 Symphony LLC
