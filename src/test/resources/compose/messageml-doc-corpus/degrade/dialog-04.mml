@@ -1,0 +1,23 @@
+  <form id="wrapping_dialog">
+    <h4>First part: form wrapping a dialog</h4>
+    <p>Here is the beginning of the form containing the dialog hiding some large text</p>
+    <text-field name="input1" label="This is an interactive Element in the form but outside of the dialog" />
+    <p>Please click on the following button in order to open the dialog and see the hidden information</p>
+    <ui-action action="open-dialog" target-id="dialog_in_form">
+      <button class="secondary">Open the dialog contained in the form</button>
+    </ui-action>
+    <text-field name="input2" label="This is an interactive Element in the form but outside of the dialog" />
+    <button name="wrapping_dialog">Submit Button of the Form</button>
+    <dialog id="dialog_in_form">
+      <title>
+        This is a title
+      </title>
+      <body>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </body>
+      <footer>
+        This is a footer
+        <button name="cancel1" type="cancel">Close</button>
+      </footer>
+    </dialog>
+  </form>

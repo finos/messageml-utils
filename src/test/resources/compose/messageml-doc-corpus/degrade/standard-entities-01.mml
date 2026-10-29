@@ -1,0 +1,7 @@
+ This is a FDC3 action button:
+    <br/>
+    <span class="entity" data-entity-id="0">View Chart
+        <span class="tempo-text-color--red" style="font-size: 10px">
+            <i>(Action button: Desktop Integration Platform is not available.) </i>
+        </span>
+    </span>

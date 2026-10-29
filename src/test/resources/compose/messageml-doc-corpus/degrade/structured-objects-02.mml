@@ -1,0 +1,3 @@
+  Hello <mention email="user@music.org" />. Here is an important message with an
+  <div class="entity" data-entity-id="object001" />
+  included.

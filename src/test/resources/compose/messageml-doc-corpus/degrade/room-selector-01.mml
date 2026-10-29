@@ -1,0 +1,7 @@
+     <form id="test">
+        <room-selector name="room-selector"
+            label="Select the chats where the alert will be sent."
+            value="['rsxB51ieSYfPLQ0jgFKg93___nUqhvz4dA','9139691037944']"
+            placeholder="Select rooms"/>
+        <button name="submit_button" type="action">Create Alert</button>
+    </form>

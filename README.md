@@ -75,6 +75,92 @@ String markdown = context.getMarkdown();
 String text = context.getText();
 ```
 
+## Requirements
+
+The library requires Java 17 or newer (since version 2.0.0). Projects still on Java 8 or 11 can stay on the 1.x line.
+
+# Composing MessageML from extended Markdown
+
+The `org.finos.symphony.messageml.messagemlutils.compose` package turns authored input into MessageML that the
+library accepts, and makes MessageML fragments safe to send. It is independent of `MessageMLContext` and of the
+legacy Markdown support above.
+
+## Rendering extended Markdown
+
+`MarkdownToMessageMLConverter` converts Markdown (CommonMark plus GFM tables) into a MessageML body or document. On top
+of standard Markdown it understands an extended dialect:
+
+* Symphony entities: `@[Jane Doe](mailto:jane.doe@example.com)` or `@[Jane Doe](sym:user/12345)` for mentions,
+  `#[quarterly-review]` for hashtags and `$[AAPL]` for cashtags
+* container directives: `:::card` (a card with a header and a body) and `:::expand Title` (an expandable card)
+* native `<messageML>` blocks, which are inlined after going through the repair pipeline below
+* Symphony room, chat and message links, which are normalized to their canonical form
+
+The converter is stateless and thread-safe. Each call takes an immutable `MessageMLRenderOptions` value:
+`MessageMLRenderOptions.LEGACY` disables the extended dialect, `MessageMLRenderOptions.full()` enables entity syntax and
+container directives, and `withNativeMessageML(true)` additionally enables native blocks.
+
+```java
+MarkdownToMessageMLConverter converter = new MarkdownToMessageMLConverter();
+MessageMLRenderOptions options = MessageMLRenderOptions.full().withNativeMessageML(true);
+
+String markdown = "Filed under #[quarterly-review] for @[Jane Doe](mailto:jane.doe@example.com).\n"
+    + "\n"
+    + ":::card\n"
+    + "### Summary\n"
+    + "All checks passed.\n"
+    + ":::\n";
+
+/* A complete <messageML> document */
+String messageML = converter.renderDocument(markdown, options);
+
+/* The body only, with counts of the entity forms, cards and native blocks that were produced */
+RenderedMessageML rendered = converter.render(markdown, options);
+String body = rendered.body();
+FormCounts forms = rendered.forms();
+
+/* An intermediate update of a message that is still being written: expandable cards are shown expanded and
+   a native block that cannot render yet is replaced by a placeholder */
+String partial = converter.renderDocument(markdown, options.asIntermediate());
+```
+
+`SymphonySyntaxNormalizer.toPlainMarkdown(String)` reduces the extended dialect back to plain Markdown, and
+`StoredMessageText.separateGroupedContent(String)` keeps card headers and bodies apart when the text of a stored
+PresentationML message is extracted. `SymphonyLinks` builds and normalizes Symphony deep links.
+
+## Validating and repairing MessageML
+
+`MessageMLValidator` checks a document with the library's own parser and offers deterministic, error-directed repair
+and an escaped plain-text fallback:
+
+```java
+MessageMLValidator validator = new MessageMLValidator();
+
+String error = validator.validate(messageML, entityJson);             // null when valid
+if (error != null) {
+  String repaired = validator.repair(messageML, entityJson, error);  // null when no rule applies
+  if (repaired == null || validator.validate(repaired, entityJson) != null) {
+    messageML = validator.escapedFallback(messageML, plainText);     // always valid
+  } else {
+    messageML = repaired;
+  }
+}
+```
+
+The fragment pipeline is also available step by step: `MessageMLSanitizer` rejects templating directives, Symphony
+Elements forms and entity references, and escapes interpolations; `MessageMLBalancer` closes a fragment that was cut
+short; `MessageMLStructureRepairer` rebuilds well-formed markup from tag soup. `NativeMessageMLRenderer` chains them
+with validation and repair for one native block and reports whether the block was `RENDERED`, `REPAIRED` or
+`DEGRADED` (replaced by a collapsed card that shows the original source).
+
+## The dialect's reference text
+
+The `compose.format` package holds the written description of the extended dialect, kept next to the code that
+implements it. `OutputFormatContract.block(boolean)` returns a compact contract that lists every special form with
+right and wrong examples, suitable for embedding in documentation or in instructions given to an author.
+`SymphonyContentFormatGuide.text()` returns the longer authoring guide for native `<messageML>` blocks. Every
+`<messageML>` example in the guide is rendered by the test suite, so the guide only teaches what the renderer accepts.
+
 ## Contributing
 
 1. Fork it (<https://github.com/finos/messageml-utils/fork>)

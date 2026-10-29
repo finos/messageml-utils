@@ -1,0 +1,12 @@
+  <form id="form_id">
+    <h2>masked text-fields</h2>
+      <text-field masked="true" name="init">With initial value</text-field>
+      <text-field masked="true" name="placeholder" placeholder="Only Placeholder"></text-field>
+      <text-field masked="true" name="noreq" placeholder="Not required"></text-field>
+      <text-field masked="true" name="req" required="true" placeholder="Required"></text-field>
+      <text-field masked="true" name="regex" pattern="^[a-zA-Z]{3,3}$" pattern-error-message="My error message - must contain exactly 3 letters">Regex</text-field>
+      <text-field masked="true" name="min" placeholder="With min length" minlength="3"></text-field>
+      <text-field masked="true" name="label" label="My Label">With Label</text-field>
+      <text-field masked="true" name="tooltip" title="My Tooltip\n With a second line">With Tooltip</text-field>
+      <button name="maskedtext-field">Submit</button>
+  </form>
