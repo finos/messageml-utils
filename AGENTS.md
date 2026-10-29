@@ -97,6 +97,14 @@ String markdown = context.getMarkdown();         // Markdown output
 String text = context.getText();                 // Plain text
 ```
 
+## Spec-Driven Changes (OpenSpec)
+
+Non-trivial changes are planned with [OpenSpec](https://github.com/Fission-AI/OpenSpec) before implementation.
+
+- Specs live in `openspec/specs/`; in-flight changes in `openspec/changes/`; completed ones in `openspec/changes/archive/`.
+- Claude Code commands (`/opsx:propose`, `/opsx:apply`, `/opsx:archive`, ...) and the matching `openspec-*` skills live in `.claude/`.
+- The `OpenSpec` GitHub workflow fails a PR if a change under `openspec/changes/` is not archived (opt out with `allowUnarchived: true` in its `.openspec.yaml`).
+
 ## License
 
 Apache License, Version 2.0
