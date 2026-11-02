@@ -1,0 +1,6 @@
+  <form id="form_id">
+    <h2>textareas</h2>
+      <textarea name="id1" >With initial value</textarea>
+      <textarea name="req" required="true" label="My label" title="My title\nWith second line" pattern="^[a-zA-Z]{3,3}$" pattern-error-message="My error message - must contain exactly 3 letters" placeholder="Required, with a placeholder, a regex, a label, and a tooltip"></textarea>
+      <button name="textarea">Submit</button>
+  </form>

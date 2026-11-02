@@ -1,0 +1,6 @@
+  <form id="form_id">
+    <button name="send-primary" type="action" class="primary">Primary Button</button>
+    <button name="send-secondary" type="action" class="secondary">Secondary Button</button>
+    <button name="send-tertiary" type="action" class="tertiary">Tertiary Button</button>
+    <button name="send-destructive" type="action" class="destructive">Destructive Button</button>
+  </form>

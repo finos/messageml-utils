@@ -1,0 +1,30 @@
+    <h1>Tables</h1>
+    <p>This is table:</p>
+    <table>
+        <thead>
+            <tr>
+                <td>Header column 1</td>
+                <td>Header column 2</td>
+                <td>Header column 2</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Cell row 1 column 1</td>
+                <td>Cell row 1 column 2</td>
+                <td>Cell row 1 column 3</td>
+            </tr>
+            <tr>
+                <td>Cell row 2 column 1</td>
+                <td>Cell row 2 column 2</td>
+                <td>Cell row 2 column 3</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Footer column 1</td>
+                <td>Footer column 2</td>
+                <td>Footer column 2</td>
+            </tr>
+        </tfoot>
+    </table>

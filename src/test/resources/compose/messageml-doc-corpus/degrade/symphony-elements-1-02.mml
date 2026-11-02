@@ -1,0 +1,14 @@
+  <form id="default">
+    <text-field name="test"> This form becomes disabled once submitted</text-field>
+    <button name="default">Submit</button>
+  </form>
+  <hr/>
+  <form id="multi-submit-reset" multi-submit="reset">
+    <text-field name="test" label="Resets values to default"> This form can be submitted more than once</text-field>
+    <button name="multi-submit-reset">Submit</button>
+  </form>
+  <hr/>
+  <form id="multi-submit-no-reset" multi-submit="no-reset">
+    <text-field name="test" label="Keeps last submitted values"> This form  can be submitted more than once</text-field>
+    <button name="multi-submit-no-reset">Submit</button>
+  </form>

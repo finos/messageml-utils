@@ -1,0 +1,27 @@
+<#macro createSelectHeader>
+    <#if data.select.type=='checkbox'>
+        <td>
+            <input type="checkbox" name="tablesel-header" />
+        </td>
+        <#elseif data.select.type='button'>
+            <td>Select</td>
+    </#if>
+</#macro>
+<form id="example">
+    <table>
+        <#if data.header?has_content>
+            <thead>
+                <tr>
+                    <#if data.select.position=='left'>
+                        <@createSelectHeader/>
+                    </#if>
+                    <#list data.header as row>
+                        <#list row as cell>
+                            <td>${cell}</td>
+                        </#list>
+                    </#list>
+                </tr>
+            </thead>
+        </#if>
+    </table>
+</form>

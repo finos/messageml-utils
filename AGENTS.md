@@ -11,8 +11,9 @@ The core of the library consists of:
 - A Markdown parser (`MarkdownParser`) for handling Markdown input.
 - An EntityJSON parser (`EntityJsonParser`) for validating and processing structured data used in messages.
 - `MessageMLContext` which is the main entry point for using the library.
+- The `compose` package, which renders extended Markdown (Symphony entity syntax, `:::card`/`:::expand` directives, native `<messageML>` blocks) to MessageML, validates and repairs MessageML fragments, and holds the written description of that dialect (`compose.format`).
 
-The project is built with Apache Maven and targets Java 1.8.
+The project is built with Apache Maven and targets Java 17.
 
 ## Project Structure
 
@@ -22,15 +23,19 @@ src/
 │   ├── MessageMLContext.java    # Main entry point
 │   ├── MessageMLParser.java     # Core MessageML parser
 │   ├── bi/                      # Business Intelligence components
+│   ├── compose/                 # Extended Markdown to MessageML, fragment validation and repair
+│   │   ├── format/              # Format contract and content format guide (dialect description)
+│   │   └── parser/              # commonmark extensions (entities, directives, native blocks)
 │   ├── elements/                # MessageML element implementations
 │   ├── exceptions/              # Custom exceptions
 │   ├── markdown/                # Markdown parsing/rendering
 │   └── util/                    # Utility classes
 ├── main/resources/
-│   └── emoji.properties         # Emoji mappings
+│   ├── emoji.properties         # Emoji mappings
+│   └── org/finos/.../compose/format/symphony-content-format-guide.md
 └── test/
     ├── java/                    # Unit tests (JUnit 5)
-    └── resources/               # Test fixtures and payloads
+    └── resources/               # Test fixtures and payloads (compose/ for the compose package)
 ```
 
 ## Building and Running

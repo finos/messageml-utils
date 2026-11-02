@@ -1,0 +1,7 @@
+  <form id="form_id">
+    <checkbox name="id1" value="value01" checked="true">Red</checkbox>
+    <checkbox name="id2" value="value02" checked="false">Green</checkbox>
+    <checkbox name="id3" value="value03" checked="false">Blue</checkbox>
+    <button type="reset">Reset</button>
+    <button name="example-button" type="action">Submit</button>
+  </form>

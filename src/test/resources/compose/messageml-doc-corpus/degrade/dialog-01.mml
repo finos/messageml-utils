@@ -1,0 +1,14 @@
+    <ui-action trigger="click" action="open-dialog" target-id="dialogId">
+        <button>Simple dialog</button>
+    </ui-action>
+    <dialog id="dialogId">
+        <form id="formId">
+            <title>A Simple dialog</title>
+            <body>
+                This is a simple dialog.
+            </body>
+            <footer>
+                <button type="cancel" name="cancel-button">Close</button>
+            </footer>
+        </form>
+    </dialog>

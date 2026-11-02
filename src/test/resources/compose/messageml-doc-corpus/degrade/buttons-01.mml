@@ -1,0 +1,5 @@
+  <form id="form_id">
+    <text-field name="text-field" placeholder="Add your comment here" required="true">Initial value</text-field>
+    <button type="reset">Reset</button>
+    <button name="submit_button" type="action">Submit</button>
+  </form>

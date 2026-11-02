@@ -1,0 +1,4 @@
+  <br/><span>Mention with an email: </span>
+  <mention email="pierre.neu@symphony.com"/>
+  <br/><span>Mention with a user Id: </span>
+  <mention uid="71811853190567"/>

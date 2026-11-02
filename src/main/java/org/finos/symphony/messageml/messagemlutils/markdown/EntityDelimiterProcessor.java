@@ -59,16 +59,6 @@ public class EntityDelimiterProcessor implements DelimiterProcessor {
     return 0;
   }
 
-  @Override
-  public int getDelimiterUse(DelimiterRun opener, DelimiterRun closer) {
-    if (opener.length() >= 1 && closer.length() >= 1) {
-      // Use exactly one delimiter even if we have more, and don't care about internal openers/closers.
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-
   private Node createNode(Text node) {
     String[] text = node.getLiteral().split(String.valueOf(FIELD_DELIMITER));
     if (text.length >= 2) {
@@ -111,7 +101,14 @@ public class EntityDelimiterProcessor implements DelimiterProcessor {
   }
 
   @Override
-  public void process(Text opener, Text closer, int delimiterUse) {
+  public int process(DelimiterRun openingRun, DelimiterRun closingRun) {
+    if (openingRun.length() < 1 || closingRun.length() < 1) {
+      return 0;
+    }
+
+    // Use exactly one delimiter even if we have more, and don't care about internal openers/closers.
+    Text opener = openingRun.getOpener();
+    mergeTextNodesBetween(opener, closingRun.getCloser());
     Node node = opener.getNext();
 
     if (node instanceof Text) {
@@ -121,6 +118,31 @@ public class EntityDelimiterProcessor implements DelimiterProcessor {
         opener.insertAfter(result);
         node.unlink();
       }
+    }
+    return 1;
+  }
+
+  /**
+   * Merge adjacent text nodes between the opener and the closer (exclusive), so that the entity
+   * text is one node even when it contains delimiter characters such as "_". commonmark 0.15 did
+   * this before calling the processor; newer versions do not.
+   */
+  private static void mergeTextNodesBetween(Text opener, Text closer) {
+    Text first = null;
+    Node node = opener.getNext();
+    while (node != null && node != closer) {
+      Node next = node.getNext();
+      if (node instanceof Text) {
+        if (first == null) {
+          first = (Text) node;
+        } else {
+          first.setLiteral(first.getLiteral() + ((Text) node).getLiteral());
+          node.unlink();
+        }
+      } else {
+        first = null;
+      }
+      node = next;
     }
   }
 }
