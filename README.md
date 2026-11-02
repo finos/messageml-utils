@@ -83,6 +83,10 @@ String text = context.getText();
 
 The library requires Java 17 or newer (since version 2.0.0). Projects still on Java 8 or 11 can stay on the 1.x line.
 
+Version 2.x moves to `org.commonmark` 0.30. Consumers declaring `com.atlassian.commonmark` directly should drop it:
+both artifacts ship the same `org.commonmark.*` classes, so Maven would put both jars on the classpath and the behavior
+would be unpredictable.
+
 # Composing MessageML from extended Markdown
 
 The `org.finos.symphony.messageml.messagemlutils.compose` package turns authored input into MessageML that the

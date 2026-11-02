@@ -797,4 +797,20 @@ class MarkdownToMessageMLConverterTest {
         assertEquals("<messageML>&lt;messageML&gt;&lt;h1&gt;Hello</messageML>", mml);
         assertValidMessageML(mml);
     }
+
+    @Test
+    void explicitEntityValue_isEscaped() {
+        String mml = converter.renderDocument("Filed under #[R&D]", MessageMLRenderOptions.full());
+
+        assertEquals("<messageML>Filed under <hash tag=\"R&amp;D\"/></messageML>", mml);
+        assertValidMessageML(mml);
+    }
+
+    @Test
+    void blockQuote_withContentGrouping_emphasisesEachParagraph() {
+        String mml = converter.renderDocument("> First\n>\n> Second", MessageMLRenderOptions.full());
+
+        assertEquals("<messageML><i>First</i><br/><i>Second</i></messageML>", mml);
+        assertValidMessageML(mml);
+    }
 }

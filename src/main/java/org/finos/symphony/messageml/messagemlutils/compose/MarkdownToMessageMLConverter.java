@@ -120,6 +120,8 @@ public class MarkdownToMessageMLConverter {
         private final FormCounts.Tally tally;
         private final Parser containerBodyParser;
         private final NativeMessageMLRenderer nativeRenderer = new NativeMessageMLRenderer();
+        /** True while rendering a quote as emphasised content, so each paragraph gets its own emphasis. */
+        private boolean emphasiseParagraphs;
 
         /** Conservative shape check for a mention destination that carries no explicit scheme. */
         private static final Pattern EMAIL = Pattern.compile("[^\\s@]+@[^\\s@]+\\.[^\\s@]+");
@@ -341,14 +343,15 @@ public class MarkdownToMessageMLConverter {
          * the explicit {@code :::card} syntax: two very different sources producing the same element.
          * The collision is resolved by the content-grouping toggle rather than by picking one - with
          * grouping off, every existing agent keeps the appearance it has today; with grouping on, a card
-         * comes only from a directive and a quote is emphasised inline content.
+         * comes only from a directive and a quote is emphasised inline content, with the emphasis applied per paragraph.
          */
         @Override
         public void visit(BlockQuote blockQuote) {
             if (options.contentGrouping()) {
-                sb.append("<i>");
+                boolean outer = emphasiseParagraphs;
+                emphasiseParagraphs = true;
                 visitChildren(blockQuote);
-                sb.append("</i>");
+                emphasiseParagraphs = outer;
                 return;
             }
             sb.append("<card><body>");
@@ -366,7 +369,13 @@ public class MarkdownToMessageMLConverter {
 
         @Override
         public void visit(Paragraph paragraph) {
-            visitChildren(paragraph);
+            if (emphasiseParagraphs) {
+                sb.append("<i>");
+                visitChildren(paragraph);
+                sb.append("</i>");
+            } else {
+                visitChildren(paragraph);
+            }
             if (paragraph.getNext() != null) {
                 sb.append("<br/>");
             }
@@ -563,7 +572,7 @@ public class MarkdownToMessageMLConverter {
                 return;
             }
             sb.append("<").append(entity.kind().element())
-                    .append(" tag=\"").append(entity.value()).append("\"/>");
+                    .append(" tag=\"").append(escapeHtml(entity.value())).append("\"/>");
             if (entity.kind() == SymphonyEntityNode.Kind.HASH) {
                 tally.hash();
             } else {
