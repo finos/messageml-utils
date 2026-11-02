@@ -28,7 +28,7 @@ jobs:
         with:
           # Library baseline is Java 17
           distribution: 'temurin'
-          java-version: 17
+          java-version: 25
           server-id: ossrh
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
