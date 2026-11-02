@@ -8,6 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.finos.symphony.messageml.messagemlutils.MessageMLContext;
 import org.finos.symphony.messageml.messagemlutils.util.NoOpDataProvider;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * The {@code :::card} / {@code :::expand} container directives.
@@ -367,6 +373,84 @@ class ContainerDirectiveTest {
         assertTrue(mml.contains("<i>quoted text</i>"), mml);
     }
 
+    // A quote is emphasised paragraph by paragraph, never around a block element: <ul>, <ol>, <h1>-<h6>,
+    // <pre> and <table> are rejected inside <i> or <b>, and the validator cannot repair that without
+    // dropping the list.
+
+    static Stream<Arguments> quotesWithBlockChildren() {
+        return Stream.of(
+                Arguments.of("bullet list",
+                        "> Lead paragraph.\n>\n> - one\n> - two",
+                        "<i>Lead paragraph.</i><br/><ul><li><i>one</i></li><li><i>two</i></li></ul>"),
+                Arguments.of("ordered list",
+                        "> Steps:\n>\n> 1. first\n> 2. second",
+                        "<i>Steps:</i><br/><ol><li><i>first</i></li><li><i>second</i></li></ol>"),
+                Arguments.of("heading",
+                        "> ### Title\n> Body text.",
+                        "<h3>Title</h3><i>Body text.</i>"),
+                Arguments.of("fenced code block",
+                        "> Run this:\n>\n> ```\n> make test\n> ```",
+                        "<i>Run this:</i><br/><code>make test\n</code>"));
+    }
+
+    @ParameterizedTest(name = "quote with a {0} keeps the block outside the emphasis")
+    @MethodSource("quotesWithBlockChildren")
+    void blockquote_withABlockChild_keepsItOutsideTheEmphasis(String shape, String md, String expectedBody) {
+        String mml = converter.renderDocument(md, GROUPING);
+
+        assertEquals("<messageML>" + expectedBody + "</messageML>", mml, shape);
+        assertNoBlockInsideInline(mml);
+        assertValid(mml);
+    }
+
+    @Test
+    void blockquote_nested_isEmphasisedOnce() {
+        String md = """
+                > outer
+                >
+                > > inner""";
+
+        String mml = converter.renderDocument(md, GROUPING);
+
+        assertEquals("<messageML><i>outer</i><br/><i>inner</i></messageML>", mml);
+        assertFalse(mml.contains("<i><i>"), mml);
+        assertValid(mml);
+    }
+
+    @Test
+    void blockquote_withGroupingDisabled_keepsBlockChildrenInsideTheCard() {
+        String md = """
+                > Lead paragraph.
+                >
+                > - one""";
+
+        String mml = converter.renderDocument(md, MessageMLRenderOptions.LEGACY);
+
+        assertEquals("<messageML><card><body>Lead paragraph.<br/><ul><li>one</li></ul></body></card></messageML>", mml);
+        assertValid(mml);
+    }
+
+    /** A quoted reminder with a bold lead and bullets: rendered with the production options, it has to validate. */
+    @Test
+    void blockquote_quotedReminderWithBullets_validatesWithFullOptions() {
+        String md = """
+                Here is the draft I will send:
+
+                > Please be reminded that all on-call shifts must be entered.
+                >
+                > **Important Time Tracking Deadline:**
+                > - Active On-Call Entry Accuracy: enter exact duration.
+                > - Timesheet Lock: Starting November 1st, timesheets will be locked.
+
+                Shall I proceed?""";
+
+        String mml = converter.renderDocument(md, MessageMLRenderOptions.full());
+
+        assertTrue(mml.contains("<ul><li><i>Active On-Call Entry Accuracy"), mml);
+        assertNoBlockInsideInline(mml);
+        assertValid(mml);
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Counters
     // ---------------------------------------------------------------------------------------------
@@ -456,6 +540,13 @@ class ContainerDirectiveTest {
             index = haystack.indexOf(needle, index + needle.length());
         }
         return count;
+    }
+
+    /** Fails when an {@code <i>} or {@code <b>} directly contains a block element. */
+    private static void assertNoBlockInsideInline(String markup) {
+        Pattern blockInsideInline = Pattern.compile(
+                "<(i|b)>(?:(?!</\\1>).)*<(ul|ol|h[1-6]|pre|table)[\\s>]", Pattern.DOTALL);
+        assertFalse(blockInsideInline.matcher(markup).find(), () -> "block element inside inline: " + markup);
     }
 
     private static void assertValid(String markup) {

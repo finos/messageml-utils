@@ -120,8 +120,13 @@ public class MarkdownToMessageMLConverter {
         private final FormCounts.Tally tally;
         private final Parser containerBodyParser;
         private final NativeMessageMLRenderer nativeRenderer = new NativeMessageMLRenderer();
-        /** True while rendering a quote as emphasised content, so each paragraph gets its own emphasis. */
-        private boolean emphasiseParagraphs;
+        /**
+         * How many content-grouping blockquotes enclose the node being visited. A quote is emphasised
+         * paragraph by paragraph (see {@link #visit(BlockQuote)}), so the paragraph handler needs to
+         * know it sits inside one. A depth, not a flag, so a nested quote neither double-wraps nor
+         * switches the emphasis off early.
+         */
+        private int quoteDepth;
 
         /** Conservative shape check for a mention destination that carries no explicit scheme. */
         private static final Pattern EMAIL = Pattern.compile("[^\\s@]+@[^\\s@]+\\.[^\\s@]+");
@@ -343,15 +348,23 @@ public class MarkdownToMessageMLConverter {
          * the explicit {@code :::card} syntax: two very different sources producing the same element.
          * The collision is resolved by the content-grouping toggle rather than by picking one - with
          * grouping off, every existing agent keeps the appearance it has today; with grouping on, a card
-         * comes only from a directive and a quote is emphasised inline content, with the emphasis applied per paragraph.
+         * comes only from a directive and a quote is emphasised inline content.
+         *
+         * <p>The emphasis is applied per paragraph rather than around the whole quote. A quote's
+         * children are blocks, and a list, heading, code block or table inside {@code <i>} is rejected
+         * ("Element "ul" is not allowed in "i""). So the quote only raises {@link #quoteDepth},
+         * {@link #visit(Paragraph)} wraps the text it owns and the block children render exactly as
+         * they would outside a quote.
          */
         @Override
         public void visit(BlockQuote blockQuote) {
             if (options.contentGrouping()) {
-                boolean outer = emphasiseParagraphs;
-                emphasiseParagraphs = true;
-                visitChildren(blockQuote);
-                emphasiseParagraphs = outer;
+                quoteDepth++;
+                try {
+                    visitChildren(blockQuote);
+                } finally {
+                    quoteDepth--;
+                }
                 return;
             }
             sb.append("<card><body>");
@@ -369,7 +382,7 @@ public class MarkdownToMessageMLConverter {
 
         @Override
         public void visit(Paragraph paragraph) {
-            if (emphasiseParagraphs) {
+            if (quoteDepth > 0) {
                 sb.append("<i>");
                 visitChildren(paragraph);
                 sb.append("</i>");
