@@ -163,4 +163,29 @@ class SymphonyLinksTest {
     void normalize_null_returnsNull() {
         assertNull(SymphonyLinks.normalize(null));
     }
+
+    @Test
+    void appLink_usesAPlaceholderPublisherAndEncodesTheName() {
+        assertEquals("https://open.symphony.com/?app/agent/local.mohamed.belkhalifa.c7TVIu/Amine%20on%20local",
+            SymphonyLinks.appLink("local.mohamed.belkhalifa.c7TVIu", "Amine on local"));
+    }
+
+    @Test
+    void appLink_usesTheGivenPublisher() {
+        assertEquals("https://open.symphony.com/?app/acme/app.id/My%20App",
+            SymphonyLinks.appLink("acme", "app.id", "My App"));
+    }
+
+    @Test
+    void appLink_blankPartGivesNull() {
+        assertNull(SymphonyLinks.appLink(null, "Bot"));
+        assertNull(SymphonyLinks.appLink("sym.ai.agent.iNPEcr", " "));
+        assertNull(SymphonyLinks.appLink(" ", "app.id", "Bot"));
+    }
+
+    @Test
+    void normalize_appLink_returnsUnchanged() {
+        String link = SymphonyLinks.appLink("app.id", "My App");
+        assertEquals(link, SymphonyLinks.normalize(link));
+    }
 }

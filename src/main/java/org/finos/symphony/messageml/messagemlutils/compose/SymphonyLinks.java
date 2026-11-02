@@ -50,6 +50,7 @@ public final class SymphonyLinks {
     private static final String STREAM_TYPE = "streamType";
 
     private static final String HOST = "open.symphony.com";
+    private static final String APP_PUBLISHER_PLACEHOLDER = "agent";
     private static final String LEGACY_SCHEME = "symphony:";
 
     private SymphonyLinks() {
@@ -69,6 +70,39 @@ public final class SymphonyLinks {
             return null;
         }
         return PREFIX + STREAM_ID + "=" + stream + "&" + MESSAGE_ID + "=" + message;
+    }
+
+    /**
+     * Builds the link that opens an extension app in the Symphony client, with a placeholder
+     * publisher segment. See {@link #appLink(String, String, String)}.
+     *
+     * @return the link or {@code null} when the app ID or name is blank
+     */
+    public static String appLink(String appId, String name) {
+        return appLink(APP_PUBLISHER_PLACEHOLDER, appId, name);
+    }
+
+    /**
+     * Builds the link that opens an extension app in the Symphony client. Symphony writes it as
+     * {@code ?app/{publisher}/{appId}/{name}} but looks the app up by ID only, so the publisher
+     * segment can be any non-blank value. There is no slot for a tab or other parameters inside
+     * the app.
+     *
+     * @return the link or {@code null} when the publisher, app ID or name is blank
+     */
+    public static String appLink(String publisher, String appId, String name) {
+        if (isBlank(publisher) || isBlank(appId) || isBlank(name)) {
+            return null;
+        }
+        return PREFIX + "app/" + encodeSegment(publisher) + "/" + encodeSegment(appId) + "/" + encodeSegment(name);
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private static String encodeSegment(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20");
     }
 
     /**
