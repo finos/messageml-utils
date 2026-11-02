@@ -43,7 +43,7 @@
         <jmh.version>1.37</jmh.version>
         <xmlunit.version>2.10.0</xmlunit.version>
         <lombok.version>1.18.48</lombok.version>
-        <guava.version>33.7.2-jre</guava.version>
+        <guava.version>33.8.0-jre</guava.version>
 
         <!-- Maven Plugins -->
         <jacoco-maven-plugin.version>0.8.16</jacoco-maven-plugin.version>
