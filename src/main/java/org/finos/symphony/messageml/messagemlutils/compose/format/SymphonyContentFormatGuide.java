@@ -24,6 +24,14 @@ import java.nio.charset.StandardCharsets;
 /**
  * The authoring guide for native {@code <messageML>} blocks inside extended Markdown, loaded once from
  * a classpath resource next to this class. Any producer can show it to authors or serve it on demand.
+ *
+ * <p>The resource is a reference for writing complex messages, not just a sample: the markup rules,
+ * every non-interactive element with its attributes and content model, every {@code style} property
+ * {@link org.finos.symphony.messageml.messagemlutils.elements.Styles} accepts, the colour classes,
+ * common mistakes and rendered examples. It describes what the parser in
+ * {@code org.finos.symphony.messageml.messagemlutils.elements} actually accepts, so it must change
+ * whenever an element does. The accompanying test renders every example and checks the style list
+ * against {@code Styles.ALLOWED_PROPERTIES}.
  */
 public final class SymphonyContentFormatGuide {
 
@@ -34,7 +42,10 @@ public final class SymphonyContentFormatGuide {
   private SymphonyContentFormatGuide() {
   }
 
-  /** The guide text: when to use a block, the block rules, supported elements and what is not allowed. */
+  /**
+   * The guide text: when to use a block, the block and markup rules, the element reference, styling,
+   * what is not allowed, common mistakes and examples.
+   */
   public static String text() {
     return TEXT;
   }

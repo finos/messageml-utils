@@ -4,6 +4,7 @@ import org.finos.symphony.messageml.messagemlutils.compose.MessageMLRenderOption
 import org.finos.symphony.messageml.messagemlutils.compose.NativeMessageMLRenderer;
 import org.finos.symphony.messageml.messagemlutils.compose.parser.MessageMLBlock;
 import org.finos.symphony.messageml.messagemlutils.compose.parser.SymphonyMarkdownExtension;
+import org.finos.symphony.messageml.messagemlutils.elements.Styles;
 
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.CustomBlock;
@@ -16,17 +17,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
- * Every {@code <messageML>} example in the guide resource must actually render, not just read well -
- * a stale example would otherwise teach the model a form it would then watch fail.
+ * Every {@code <messageML>} example in the guide resource must actually render as written, not just
+ * read well - a stale example would otherwise teach the model a form it would then watch fail or get
+ * silently rewritten.
  */
 class SymphonyContentFormatGuideTest {
 
@@ -36,7 +39,7 @@ class SymphonyContentFormatGuideTest {
       .build();
 
   @TestFactory
-  Stream<DynamicTest> everyExampleBlock_rendersWithoutDegrading() {
+  Stream<DynamicTest> everyExampleBlock_rendersAsWritten() {
     List<MessageMLBlock> blocks = new ArrayList<>();
     PARSER.parse(SymphonyContentFormatGuide.text()).accept(new AbstractVisitor() {
       @Override
@@ -57,10 +60,22 @@ class SymphonyContentFormatGuideTest {
       return dynamicTest("example " + n + ": " + firstLine(block.body()), () -> {
         assertTrue(block.closed(), "example " + n + " is missing its closing </messageML>");
         NativeMessageMLRenderer.Result result = RENDERER.render(block.body(), MessageMLRenderOptions.full());
-        assertNotEquals(NativeMessageMLRenderer.Outcome.DEGRADED, result.outcome(),
-            () -> "example " + n + " degraded: " + block.body());
+        assertEquals(NativeMessageMLRenderer.Outcome.RENDERED, result.outcome(),
+            () -> "example " + n + " needed repair or degraded: " + block.body());
       });
     });
+  }
+
+  /** The guide's style table must list every property {@link Styles} accepts, so none goes unused. */
+  @Test
+  void guide_listsEveryAllowedStyleProperty() {
+    String guide = SymphonyContentFormatGuide.text();
+    List<String> missing = Styles.ALLOWED_PROPERTIES.stream()
+        .filter(property -> !guide.contains("`" + property + "`"))
+        .sorted()
+        .collect(Collectors.toList());
+
+    assertTrue(missing.isEmpty(), "style properties missing from the guide: " + missing);
   }
 
   @Test
