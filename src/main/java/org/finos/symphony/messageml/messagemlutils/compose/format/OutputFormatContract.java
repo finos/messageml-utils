@@ -86,19 +86,27 @@ public final class OutputFormatContract {
       """;
 
   /**
-   * Appended after {@link #BLOCK} when native blocks are enabled. Short on purpose: the authoring rules
-   * live in {@link SymphonyContentFormatGuide}, not here. A caller that exposes the guide through some
-   * other channel can append its own pointer after {@link #block(boolean) block(true)}.
+   * Appended after {@link #BLOCK} when native blocks are enabled. Short on purpose: it names what a
+   * block is for and the few markup rules that hold for every block, so a model that skips the guide
+   * still writes well-formed markup. The element, attribute and style reference lives in
+   * {@link SymphonyContentFormatGuide}, not here. A caller that exposes the guide through some other
+   * channel can append its own pointer after {@link #block(boolean) block(true)}.
    */
   private static final String NATIVE_BLOCK = """
 
-      One more form, for content Markdown cannot express: a styled layout, a card with an icon, a
-      coloured span, a structured date. Read the content format guide once before
-      your first block to see the full rules and the supported elements, then write:
+      One more form, for content Markdown cannot express: a card with a coloured accent or an icon,
+      side-by-side columns or a grid of figures, a table with merged cells or a styled header row,
+      coloured text or status badges, a structured date.
+      Read the content format guide once before your first block: it lists every element, attribute
+      and style property you may use, with examples. Then write:
 
       <messageML>
       ...MessageML markup here...
       </messageML>
+
+      Inside a block, write strict markup, never Markdown: close every tag you open, self-close empty
+      ones (<br/>, <hr/>, <img src="..."/>), write & as &amp;, and use only the elements, attributes
+      and style properties the guide lists - anything else makes the block fail.
 
       Use it only when the content genuinely needs it, never for a short answer. Switch back to
       Markdown right after - the two forms can alternate freely within one answer.
