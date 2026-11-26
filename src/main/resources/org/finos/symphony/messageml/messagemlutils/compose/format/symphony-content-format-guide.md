@@ -19,7 +19,10 @@ answer and never nested one inside another.
 
 - A block starts with `<messageML>` at the beginning of a line and ends at the first `</messageML>`.
   Nothing else on those two lines is part of the block.
-- A block only exists at the top level of your answer, never inside a list item or a quote.
+- A block only exists at the top level of your answer, never inside a list item or a quote. Write
+  `<messageML>` unindented and without a `>` prefix: it then ends any list, quote or paragraph just
+  before it, blank line or not. Indented under a list item or prefixed with `>`, it is shown as
+  literal text.
 - Write real MessageML markup inside a block, not Markdown - no `**bold**`, no `# heading`, no
   `- list item`. Markdown syntax inside a block is shown as literal text, not rendered.
 - Switch back to Markdown right after a block closes. The two forms can alternate freely within one
@@ -212,6 +215,7 @@ Never use the class names `entity`, `card`, `cardHeader`, `cardBody`, `expandabl
 | `<expandable-card>` | `<expandable-card state="collapsed">` |
 | `<ul>Item</ul>` | `<ul><li>Item</li></ul>` |
 | `<tag fullbbgcompticker="AAPL US Equity"/>` | `<tag fullbbgcompticker="AAPL US Equity" fallback-ticker="AAPL"/>` |
+| `- Last item` then `  <messageML>`, indented under the item | `- Last item` then `<messageML>` at the start of the line |
 
 ## Supported elements
 

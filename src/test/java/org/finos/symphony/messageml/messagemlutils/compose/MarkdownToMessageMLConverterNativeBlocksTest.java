@@ -56,6 +56,30 @@ class MarkdownToMessageMLConverterNativeBlocksTest {
     // ---------------------------------------------------------------------------------------------
 
     @Test
+    void blockRightAfterABulletList_isRenderedAsMarkupNotAsLiteralText() {
+        String md = """
+                - **The Rise:** the threat returns.
+                - **The Resistance:** the hunt begins.
+
+                <messageML>
+                <table style="border-collapse:collapse;width:100%;">
+                <tbody><tr><td>Years 1-3</td><td>Philosopher's Stone &amp; Chamber of Secrets</td></tr></tbody>
+                </table>
+                </messageML>
+
+                ## The Final Stand""";
+
+        String mml = converter.renderDocument(md, FINAL);
+
+        assertValidMessageML(mml);
+        assertFalse(mml.contains("&lt;messageML"), mml);
+        assertFalse(mml.contains("&lt;table"), mml);
+        assertTrue(mml.contains("<table style=\"border-collapse:collapse;width:100%;\">"), mml);
+        assertTrue(mml.indexOf("</ul>") < mml.indexOf("<table"), mml);
+        assertTrue(mml.contains("<h2>The Final Stand</h2>"), mml);
+    }
+
+    @Test
     void mixedAnswer_withTwoValidBlocks_producesOneValidDocumentWithBothInlined() {
         String md = """
                 # PROJ-1032 status
