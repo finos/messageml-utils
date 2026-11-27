@@ -87,6 +87,17 @@ class OutputFormatContractTest {
     assertTrue(OutputFormatContract.block(true).contains("Read the content format guide once before"));
   }
 
+  /** A model that never reads the guide must still write well-formed markup. */
+  @Test
+  void blockWithFlagTrue_teachesTheStrictMarkupRules() {
+    String block = OutputFormatContract.block(true);
+
+    assertTrue(block.contains("close every tag you open"), block);
+    assertTrue(block.contains("<br/>"), block);
+    assertTrue(block.contains("write & as &amp;"), block);
+    assertTrue(block.contains("style properties the guide lists"), block);
+  }
+
   @Test
   void blockWithFlagTrue_containsNoExpressionDelimiter() {
     String block = OutputFormatContract.block(true);

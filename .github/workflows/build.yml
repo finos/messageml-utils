@@ -12,6 +12,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      # Comment the published SNAPSHOT version on the PR
+      pull-requests: write
+
+    env:
+      # Empty on PRs from forks (no secrets), which skips the SNAPSHOT publication
+      MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+      MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
     - name: Cache Maven packages
@@ -26,5 +36,29 @@ jobs:
         # Library baseline is Java 17
         distribution: 'temurin'
         java-version: 25
+        server-id: ossrh
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+
+    - name: Compute PR SNAPSHOT version
+      if: github.event_name == 'pull_request'
+      run: echo "SNAPSHOT_VERSION=PR-${{ github.event.pull_request.number }}-SNAPSHOT" >> $GITHUB_ENV
+
     - name: Build with Maven
       run: ./mvnw -B --file pom.xml verify
+
+    - name: Publish SNAPSHOT artifacts
+      if: github.event_name == 'pull_request' && env.MAVEN_USERNAME != ''
+      run: |
+        ./mvnw -B versions:set -DnewVersion="${SNAPSHOT_VERSION}" -DgenerateBackupPoms=false
+        ./mvnw -B deploy -Prelease -DskipTests -Dgpg.skip=true
+
+    - name: Report published SNAPSHOT
+      if: github.event_name == 'pull_request' && env.MAVEN_USERNAME != ''
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        BODY="**SNAPSHOT published:** \`org.finos.symphony.messageml:messageml-utils:${SNAPSHOT_VERSION}\`
+        Repository: https://central.sonatype.com/repository/maven-snapshots/"
+        gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "${BODY}" --edit-last \
+          || gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "${BODY}"

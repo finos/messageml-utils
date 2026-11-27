@@ -18,6 +18,8 @@ package org.finos.symphony.messageml.messagemlutils.compose.parser;
 
 import org.commonmark.node.Block;
 import org.commonmark.node.Document;
+import org.commonmark.node.ListBlock;
+import org.commonmark.node.Paragraph;
 import org.commonmark.parser.SourceLine;
 import org.commonmark.parser.block.AbstractBlockParser;
 import org.commonmark.parser.block.BlockContinue;
@@ -42,7 +44,8 @@ import java.util.regex.Pattern;
  *
  * <p>Only matched at the top level of the document (not inside a list item or a quote) and outside code:
  * the indent check below is the same four-space rule commonmark applies everywhere else and the parent
- * check in {@link Factory} rejects anything matched inside another container block.
+ * check in {@link Factory} rejects anything matched inside another container block. A block may follow a
+ * paragraph or a list directly, without a blank line, and closes them like any other block start.
  */
 class MessageMLBlockParser extends AbstractBlockParser {
 
@@ -105,8 +108,7 @@ class MessageMLBlockParser extends AbstractBlockParser {
 
     @Override
     public BlockStart tryStart(ParserState state, MatchedBlockParser matchedBlockParser) {
-      if (state.getIndent() >= 4
-          || !(matchedBlockParser.getMatchedBlockParser().getBlock() instanceof Document)) {
+      if (state.getIndent() >= 4 || !isTopLevel(matchedBlockParser.getMatchedBlockParser().getBlock())) {
         return BlockStart.none();
       }
       String line = state.getLine().getContent().toString().substring(state.getNextNonSpaceIndex());
@@ -124,6 +126,21 @@ class MessageMLBlockParser extends AbstractBlockParser {
         addBodyUnlessBlank(parser.block, openingLineRemainder);
       }
       return BlockStart.of(parser).atIndex(state.getLine().getContent().length());
+    }
+
+    /**
+     * Whether a line whose deepest matched block is {@code matched} sits at the top level of the document.
+     *
+     * <p>Besides the document itself, two top-level blocks can be the deepest match of a line that is not
+     * inside them: a paragraph, which every non-blank line continues until another block interrupts it,
+     * and a list, which every line continues even when the line is not indented into any of its items.
+     * Without them a block written right after a paragraph, or anywhere after a list - blank line or not -
+     * would never start and would be sent as literal text. A paragraph or a list nested in a list item or
+     * a quote is not top level, so a block inside those is still ignored.
+     */
+    private static boolean isTopLevel(Block matched) {
+      return matched instanceof Document
+          || (matched instanceof Paragraph || matched instanceof ListBlock) && matched.getParent() instanceof Document;
     }
   }
 }

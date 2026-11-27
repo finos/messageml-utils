@@ -102,6 +102,99 @@ class MessageMLBlockParserTest {
   }
 
   @Test
+  void blockRightAfterAList_isATopLevelBlock() {
+    String md = """
+        - item one
+        - item two
+        <messageML>
+        <h1>After the list</h1>
+        </messageML>""";
+
+    List<MessageMLBlock> blocks = blocksIn(md);
+
+    assertEquals(1, blocks.size());
+    assertEquals("<h1>After the list</h1>", blocks.get(0).body());
+    assertTrue(blocks.get(0).closed());
+  }
+
+  @Test
+  void blockAfterAListAndABlankLine_isATopLevelBlock() {
+    String md = """
+        - item one
+        - item two
+
+        <messageML>
+        <h1>After the list</h1>
+        </messageML>""";
+
+    List<MessageMLBlock> blocks = blocksIn(md);
+
+    assertEquals(1, blocks.size());
+    assertEquals("<h1>After the list</h1>", blocks.get(0).body());
+  }
+
+  @Test
+  void blockAfterANestedList_isATopLevelBlock() {
+    String md = """
+        - item one
+          - nested item
+
+        <messageML>
+        <h1>After the list</h1>
+        </messageML>""";
+
+    assertEquals(1, blocksIn(md).size());
+  }
+
+  @Test
+  void blockIndentedIntoTheOuterItemOfANestedList_isIgnored() {
+    String md = """
+        - item one
+          - nested item
+
+          <messageML>
+          <h1>Not a block</h1>
+          </messageML>""";
+
+    assertTrue(blocksIn(md).isEmpty());
+  }
+
+  @Test
+  void blockRightAfterAParagraph_isATopLevelBlock() {
+    String md = """
+        Here is the table:
+        <messageML>
+        <h1>After the paragraph</h1>
+        </messageML>""";
+
+    List<MessageMLBlock> blocks = blocksIn(md);
+
+    assertEquals(1, blocks.size());
+    assertEquals("<h1>After the paragraph</h1>", blocks.get(0).body());
+  }
+
+  @Test
+  void blockRightAfterAQuote_isATopLevelBlock() {
+    String md = """
+        > quoted
+        <messageML>
+        <h1>After the quote</h1>
+        </messageML>""";
+
+    assertEquals(1, blocksIn(md).size());
+  }
+
+  @Test
+  void blockInsideAQuote_isIgnored() {
+    String md = """
+        > <messageML>
+        > <h1>Not a block</h1>
+        > </messageML>""";
+
+    assertTrue(blocksIn(md).isEmpty());
+  }
+
+  @Test
   void singleLineBlock_isOneBlockWithThatLineAsBody() {
     String md = "<messageML><card><body>x</body></card></messageML>";
 
