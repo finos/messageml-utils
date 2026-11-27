@@ -6,7 +6,7 @@ Markdown covers almost every answer. Switch to a `<messageML>` block only for on
 that genuinely needs something Markdown cannot express:
 
 - a card, with a coloured accent or an icon, or a section the reader must click to reveal;
-- coloured or styled text: a status badge, a highlighted figure, a red/green change;
+- highlighted or styled text: a status badge, a highlighted figure, a signed change;
 - a layout: side-by-side columns, a grid of figures, a padded or bordered panel;
 - a table with merged cells, a styled header row, aligned numbers or a footer row;
 - a structured date, an inline emoji, a person mention, a financial instrument, a code sample with
@@ -14,6 +14,9 @@ that genuinely needs something Markdown cannot express:
 
 Keep the rest of the answer in Markdown around it and use a block sparingly - never for a short
 answer and never nested one inside another.
+
+Colour in a block follows the reader's Symphony theme: use the theme classes described under
+"Colours" and no hard-coded colour, unless the user explicitly asks for specific colours.
 
 ## Block rules
 
@@ -171,18 +174,44 @@ Mobile clients apply only `color`, `background-color`, `border` (and its sides),
 `border-radius`, `font-size`, `font-weight`, `font-style`, `margin`, `padding` and `display:none`.
 Make a layout readable even when its flexbox or grid styles are ignored.
 
-### Colour classes
+### Colours
 
-The `class` attribute takes Symphony's colour classes, which follow the reader's light or dark
-theme. Prefer them to hard-coded colours for text and backgrounds:
+**Default: theme colours only.** Colour text, backgrounds and card accents with the theme classes
+below, set through the `class` attribute (and `accent` on a card). They follow each reader's
+Symphony theme, light or dark, so the message stays readable and consistent with the app.
 
-- Text: `tempo-text-color--` followed by `white`, `black`, `red`, `green`, `blue`, `yellow`, `cyan`,
-  `purple` or `orange`; or the theme-aware `tempo-text-color--normal`, `tempo-text-color--secondary`,
-  `tempo-text-color--theme-primary`, `tempo-text-color--theme-accent`.
-- Background: `tempo-bg-color--` followed by the same nine colours; or the theme-aware
-  `tempo-bg-color--theme-primary`, `tempo-bg-color--theme-accent`.
-- A card's `accent` takes a background class: `accent="tempo-bg-color--green"`.
-- Orange marks external users and companies in Symphony: avoid it for anything else.
+Do not hard-code a colour: no `#rrggbb`, `rgb(...)`, colour name (`red`, `yellow`) or fixed colour
+class (`tempo-text-color--red`) in a `style` or `class` - unless the user explicitly asks for
+specific colours or a palette ("make it red", "use our brand blue"). A request for a nicer, bolder
+or more colourful message is not such a request: stay on theme colours.
+
+| Class | Use for |
+|---|---|
+| `tempo-text-color--normal` | regular text (the default; rarely needed) |
+| `tempo-text-color--secondary` | secondary text: captions, labels, sources, units |
+| `tempo-text-color--theme-primary` | emphasised text in the theme's navigation colour |
+| `tempo-text-color--theme-accent` | emphasised text in the theme's accent colour |
+| `tempo-text-color--disabled` | text that is inactive or not applicable |
+| `tempo-bg-color--theme-primary` | a card accent, a header row or a panel in the navigation colour |
+| `tempo-bg-color--theme-accent` | a highlighted panel, tile or badge; the usual choice |
+| `tempo-ui--background` | a background matching the app's own (dark or light) |
+| `tempo-ui--layout` | the opposite of the app background: white in dark theme, black in light |
+| `tempo-text-color--external`, `tempo-bg-color--external` | data, users or companies outside the reader's organisation, and nothing else |
+
+- Links are coloured automatically: never colour an `<a>`.
+- Put a background class on an element and leave its text colour alone: the default text stays
+  readable, and a hard-coded text colour may not on another reader's theme.
+- Theme colours have no red, green or warning shades. Convey status, severity and direction of change
+  with words, signs (`+1.2%`, `-0.4%`) and emoji (`white_check_mark`, `warning`, `x`, `red_circle`,
+  `green_circle`), never with colour alone.
+- Borders have no theme class: leave the colour out (`border:1px solid;`) and it follows the text
+  colour.
+
+**Only when the user asks for specific colours:** prefer the fixed classes `tempo-text-color--` and
+`tempo-bg-color--` followed by `white`, `black`, `red`, `green`, `blue`, `yellow`, `cyan`, `purple` or
+`orange`; use `#rrggbb` in `style` only for an exact colour the user gave. A card's `accent` takes a
+background class: `accent="tempo-bg-color--green"`. Orange marks external users and companies in
+Symphony: avoid it for anything else, and use the `external` classes for those.
 
 Never use the class names `entity`, `card`, `cardHeader`, `cardBody`, `expandable-card`,
 `expandableCardHeader` or `expandableCardBody` yourself: they are reserved.
@@ -204,6 +233,8 @@ Never use the class names `entity`, `card`, `cardHeader`, `cardBody`, `expandabl
 | Wrong | Right |
 |---|---|
 | `<strong>Total</strong>` | `<b>Total</b>` |
+| `<span style="color:red;">Late</span>`, unless the user asked for red | `<span class="tempo-text-color--theme-accent">Late</span>` |
+| `<div style="background-color:#2e7d32;color:white;">` | `<div class="tempo-bg-color--theme-accent">` |
 | `<br>` | `<br/>` |
 | `<p>Q&A</p>` | `<p>Q&amp;A</p>` |
 | `<b>Due <dateTime value="..."/></b>` | `<p><b>Due</b> <dateTime value="..."/></p>` |
@@ -231,7 +262,7 @@ Headings, paragraphs and line breaks:
 Text-level formatting:
 
 <messageML>
-<p>Use <b>bold</b>, <i>italic</i>, <b><i>both</i></b> or <span style="color:red;">a coloured span</span>.</p>
+<p>Use <b>bold</b>, <i>italic</i>, <b><i>both</i></b> or <span class="tempo-text-color--theme-accent">a themed span</span>.</p>
 <p>H<sub>2</sub>O, E = mc<sup>2</sup>, and <span class="tempo-text-color--secondary">secondary text</span>.</p>
 </messageML>
 
@@ -252,7 +283,7 @@ Lists, nested:
 A styled block:
 
 <messageML>
-<div style="background-color:yellow;text-align:center;">Styled text</div>
+<div class="tempo-bg-color--theme-accent" style="padding:8px;text-align:center;">Styled text</div>
 </messageML>
 
 A table:
@@ -268,26 +299,26 @@ A table:
 </table>
 </messageML>
 
-A table with merged cells, a styled header, aligned numbers and a footer:
+A table with merged cells, a themed header, aligned numbers and a footer:
 
 <messageML>
 <table style="border-collapse:collapse;width:100%;">
 <thead>
-<tr style="background-color:#0b2a4a;color:white;">
+<tr class="tempo-bg-color--theme-accent" style="font-weight:bold;">
 <td rowspan="2" style="text-align:left;padding:6px;">Desk</td>
 <td colspan="2" style="text-align:center;padding:6px;">P&amp;L (USD m)</td>
 </tr>
-<tr style="background-color:#0b2a4a;color:white;">
+<tr class="tempo-bg-color--theme-accent" style="font-weight:bold;">
 <th style="text-align:right;padding:6px;">Q1</th>
 <th style="text-align:right;padding:6px;">Q2</th>
 </tr>
 </thead>
 <tbody>
-<tr><td style="padding:6px;">Rates</td><td style="text-align:right;padding:6px;">12.4</td><td style="text-align:right;padding:6px;" class="tempo-text-color--green">15.1</td></tr>
-<tr><td style="padding:6px;">Credit</td><td style="text-align:right;padding:6px;">8.9</td><td style="text-align:right;padding:6px;" class="tempo-text-color--red">-2.3</td></tr>
+<tr><td style="padding:6px;">Rates</td><td style="text-align:right;padding:6px;">12.4</td><td style="text-align:right;padding:6px;">+15.1</td></tr>
+<tr><td style="padding:6px;">Credit</td><td style="text-align:right;padding:6px;">8.9</td><td style="text-align:right;padding:6px;">-2.3</td></tr>
 </tbody>
 <tfoot>
-<tr style="font-weight:bold;border-top:2px solid #0b2a4a;"><td style="padding:6px;">Total</td><td style="text-align:right;padding:6px;">21.3</td><td style="text-align:right;padding:6px;">12.8</td></tr>
+<tr style="font-weight:bold;border-top:2px solid;"><td style="padding:6px;">Total</td><td style="text-align:right;padding:6px;">21.3</td><td style="text-align:right;padding:6px;">12.8</td></tr>
 </tfoot>
 </table>
 </messageML>
@@ -295,7 +326,7 @@ A table with merged cells, a styled header, aligned numbers and a footer:
 A card:
 
 <messageML>
-<card accent="tempo-bg-color--blue">
+<card accent="tempo-bg-color--theme-primary">
 <header>Card header</header>
 <body>Card body.</body>
 </card>
@@ -304,11 +335,11 @@ A card:
 A card with an icon, styled content and a table in its body:
 
 <messageML>
-<card accent="tempo-bg-color--green" iconSrc="https://example.com/icon.png">
+<card accent="tempo-bg-color--theme-accent" iconSrc="https://example.com/icon.png">
 <header>
 <div style="display:flex;justify-content:space-between;align-items:center;">
 <b>Daily risk summary</b>
-<span style="background-color:#2e7d32;color:white;padding:2px 8px;border-radius:10px;font-size:12px;">ON TRACK</span>
+<span class="tempo-bg-color--theme-accent" style="padding:2px 8px;border-radius:10px;font-size:12px;">ON TRACK</span>
 </div>
 </header>
 <body>
@@ -351,11 +382,11 @@ Two side-by-side columns:
 
 <messageML>
 <div style="display:flex;gap:16px;">
-<div style="flex:1;padding:8px;border:1px solid #c7ccd1;border-radius:6px;">
+<div style="flex:1;padding:8px;border:1px solid;border-radius:6px;">
 <h4>Bull case</h4>
 <p>Margins expand as input costs fall.</p>
 </div>
-<div style="flex:1;padding:8px;border:1px solid #c7ccd1;border-radius:6px;">
+<div style="flex:1;padding:8px;border:1px solid;border-radius:6px;">
 <h4>Bear case</h4>
 <p>Demand slows in the second half.</p>
 </div>
@@ -371,23 +402,32 @@ A grid of key figures:
 <div style="font-size:12px;">EUR/USD</div>
 </div>
 <div style="padding:8px;border-radius:6px;text-align:center;" class="tempo-bg-color--theme-accent">
-<div style="font-size:20px;font-weight:bold;" class="tempo-text-color--green">+0.8%</div>
-<div style="font-size:12px;">S&amp;P 500</div>
+<div style="font-size:20px;font-weight:bold;">+0.8%</div>
+<div style="font-size:12px;" class="tempo-text-color--secondary">S&amp;P 500</div>
 </div>
 <div style="padding:8px;border-radius:6px;text-align:center;" class="tempo-bg-color--theme-accent">
-<div style="font-size:20px;font-weight:bold;" class="tempo-text-color--red">-1.2%</div>
-<div style="font-size:12px;">Brent</div>
+<div style="font-size:20px;font-weight:bold;">-1.2%</div>
+<div style="font-size:12px;" class="tempo-text-color--secondary">Brent</div>
 </div>
 </div>
 </messageML>
 
-Status badges:
+Status badges: one theme colour for all, the status carried by an emoji and the word:
 
 <messageML>
 <p>
-<span style="background-color:#2e7d32;color:white;padding:2px 8px;border-radius:10px;">Approved</span>
-<span style="background-color:#f9a825;color:black;padding:2px 8px;border-radius:10px;">Pending</span>
-<span style="background-color:#c62828;color:white;padding:2px 8px;border-radius:10px;">Rejected</span>
+<span class="tempo-bg-color--theme-accent" style="padding:2px 8px;border-radius:10px;"><emoji shortcode="white_check_mark"/> Approved</span>
+<span class="tempo-bg-color--theme-accent" style="padding:2px 8px;border-radius:10px;"><emoji shortcode="warning"/> Pending</span>
+<span class="tempo-bg-color--theme-accent" style="padding:2px 8px;border-radius:10px;"><emoji shortcode="x"/> Rejected</span>
+</p>
+</messageML>
+
+Explicit colours, only when the user asked for them (here, "approved in green, rejected in red"):
+
+<messageML>
+<p>
+<span class="tempo-bg-color--green tempo-text-color--white" style="padding:2px 8px;border-radius:10px;">Approved</span>
+<span class="tempo-bg-color--red tempo-text-color--white" style="padding:2px 8px;border-radius:10px;">Rejected</span>
 </p>
 </messageML>
 
